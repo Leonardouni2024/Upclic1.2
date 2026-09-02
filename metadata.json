@@ -1,0 +1,6 @@
+{
+  "name": "UpClic - Licencias Microsoft Office y Windows",
+  "description": "Tienda especializada en licencias digitales de Microsoft Office y Windows con entrega inmediata y soporte personalizado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

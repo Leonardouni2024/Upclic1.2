@@ -1,0 +1,138 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background subtle studio lighting -->
+    <radialGradient id="bgGlow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef2f6"/>
+    </radialGradient>
+
+    <!-- Floor shadow gradient -->
+    <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.35)"/>
+      <stop offset="40%" stop-color="rgba(15, 23, 42, 0.18)"/>
+      <stop offset="80%" stop-color="rgba(15, 23, 42, 0.04)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0)"/>
+    </radialGradient>
+
+    <!-- Box Front Gradient -->
+    <linearGradient id="frontGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D83B01"/>
+      <stop offset="60%" stop-color="#A80000"/>
+      <stop offset="100%" stop-color="#A80000"/>
+    </linearGradient>
+
+    <!-- Box Spine Gradient -->
+    <linearGradient id="spineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A80000"/>
+      <stop offset="50%" stop-color="#D83B01"/>
+      <stop offset="100%" stop-color="#A80000"/>
+    </linearGradient>
+
+    <!-- Top Cap Gradient -->
+    <linearGradient id="topGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D83B01"/>
+      <stop offset="100%" stop-color="#E81123"/>
+    </linearGradient>
+
+    <!-- Gloss Highlight Overlay -->
+    <linearGradient id="frontGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.45)"/>
+      <stop offset="30%" stop-color="rgba(255,255,255,0.12)"/>
+      <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1000" height="1000" fill="url(#bgGlow)"/>
+
+  <!-- Pedestal Floor Shadow -->
+  <ellipse cx="500" cy="855" rx="360" ry="42" fill="url(#floorShadow)"/>
+  <ellipse cx="490" cy="845" rx="270" ry="24" fill="rgba(15, 23, 42, 0.45)"/>
+
+  <!-- 3D SOFTWARE BOX -->
+  <!-- Top Face -->
+  <!-- Coordinates: BackLeft (280, 160), BackRight (680, 140), FrontRight (740, 205), FrontCorner (350, 230) -->
+  <polygon points="270,165 670,145 745,210 355,235" fill="url(#topGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+
+  <!-- Spine / Left Face (Width approx 85px) -->
+  <!-- Coordinates: TopLeft (270, 165), TopRight (355, 235), BottomRight (355, 815), BottomLeft (270, 745) -->
+  <polygon points="270,165 355,235 355,815 270,745" fill="url(#spineGrad)" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+
+  <!-- Front Face -->
+  <!-- Coordinates: TopLeft (355, 235), TopRight (745, 210), BottomRight (745, 785), BottomLeft (355, 815) -->
+  <polygon points="355,235 745,210 745,785 355,815" fill="url(#frontGrad)" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+  <polygon points="355,235 745,210 745,785 355,815" fill="url(#frontGloss)"/>
+
+  <!-- Spine Text & Logo (Vertical spine design) -->
+  <g transform="translate(312, 490) rotate(-90)">
+    <text x="0" y="0" text-anchor="middle" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-weight="700" font-size="28" fill="#ffffff" letter-spacing="4">
+      OFFICE 2024 · PROFESSIONAL PLUS
+    </text>
+  </g>
+  <circle cx="312.5" cy="205" r="14" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- FRONT COVER DESIGN -->
+  <!-- Microsoft / Brand Header at Top of Box -->
+  <g transform="translate(400, 280)">
+    <!-- Microsoft 4-square logo small -->
+    <rect x="0" y="0" width="13" height="13" fill="#F25022"/>
+    <rect x="16" y="0" width="13" height="13" fill="#7FBA00"/>
+    <rect x="0" y="16" width="13" height="13" fill="#00A4EF"/>
+    <rect x="16" y="16" width="13" height="13" fill="#FFB900"/>
+    <text x="38" y="22" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="20" font-weight="600" fill="#ffffff" letter-spacing="2">Microsoft</text>
+  </g>
+
+  <!-- Big Title on Front -->
+  <g transform="translate(400, 360)">
+    <text x="0" y="0" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="44" font-weight="800" fill="#ffffff" letter-spacing="0.5">
+      Office 2024
+    </text>
+    <text x="0" y="38" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="24" font-weight="600" fill="#FF8C00" letter-spacing="1">
+      Professional Plus
+    </text>
+    <text x="0" y="68" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.8)" letter-spacing="2">
+      LICENCIA DE POR VIDA
+    </text>
+  </g>
+
+  <!-- Hero Center Graphic on Front -->
+  <!-- Office App Hexagons / Ribbon / Year -->
+  <g transform="translate(540, 520)">
+    <circle cx="0" cy="0" r="90" fill="rgba(255,255,255,0.08)"/>
+    <!-- Office Central Icon / Ribbon -->
+    <path d="M-45,-40 L0,-65 L45,-40 L45,40 L0,65 L-45,40 Z" fill="rgba(255,255,255,0.18)" stroke="#ffffff" stroke-width="3"/>
+    <text x="0" y="14" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="38" font-weight="900" fill="#ffffff">2024</text>
+    <!-- Mini App Badges -->
+    <g transform="translate(-85, 80)">
+      <rect x="0" y="0" width="34" height="34" rx="7" fill="#185ABD"/><text x="17" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">W</text>
+      <rect x="42" y="0" width="34" height="34" rx="7" fill="#107C41"/><text x="59" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">X</text>
+      <rect x="84" y="0" width="34" height="34" rx="7" fill="#C43E1C"/><text x="101" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">P</text>
+      <rect x="126" y="0" width="34" height="34" rx="7" fill="#0078D4"/><text x="143" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">O</text>
+    </g>
+  </g>
+
+  <!-- Bottom Details on Front Cover -->
+  <g transform="translate(400, 715)">
+    <!-- Genuine Seal Badge -->
+    <rect x="0" y="0" width="300" height="42" rx="8" fill="rgba(0,0,0,0.25)"/>
+    <circle cx="24" cy="21" r="10" fill="#10B981"/>
+    <path d="M19,21 L22,24 L29,17" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+    <text x="44" y="27" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="1">
+      ENTREGA DIGITAL INSTANTÁNEA
+    </text>
+  </g>
+
+  <!-- Top Right Corner Badge -->
+  <g transform="translate(710, 175)">
+    <polygon points="0,0 150,0 150,150" fill="#FF8C00" opacity="0.95"/>
+    <text x="110" y="55" transform="rotate(45, 110, 55)" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="900" fill="#0f172a" letter-spacing="1">
+      TOP VENTAS
+    </text>
+  </g>
+</svg>

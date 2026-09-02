@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var originalFetch = window.fetch ? window.fetch.bind(window) : null;
+          var customFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+              return customFetch || originalFetch;
+            },
+            set: function(fn) {
+              customFetch = fn;
+            }
+          });
+        } catch (e) {
+          try {
+            var proto = Object.getPrototypeOf(window);
+            if (proto) {
+              var origFetch = proto.fetch ? proto.fetch.bind(window) : null;
+              var cFetch = origFetch;
+              Object.defineProperty(proto, 'fetch', {
+                configurable: true,
+                enumerable: true,
+                get: function() {
+                  return cFetch || origFetch;
+                },
+                set: function(fn) {
+                  cFetch = fn;
+                }
+              });
+            }
+          } catch (err) {}
+        }
+        window.addEventListener('error', function(e) {
+          if (e && e.message && e.message.indexOf('Cannot set property fetch') !== -1) {
+            e.preventDefault();
+            if (e.stopImmediatePropagation) {
+              e.stopImmediatePropagation();
+            }
+          }
+        }, true);
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UpClic - Licencias Microsoft Office y Windows</title>
+    <meta name="description" content="Tienda especializada en licencias digitales de Microsoft Office y Windows con entrega inmediata y soporte personalizado." />
+    <meta property="og:title" content="UpClic - Licencias Microsoft Office y Windows" />
+    <meta property="og:description" content="Tienda especializada en licencias digitales de Microsoft Office y Windows con entrega inmediata y soporte personalizado." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#f8fafc] text-[#0f172a] font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-[#0066FF] selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

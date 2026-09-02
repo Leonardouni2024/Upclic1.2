@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 70" fill="none">
+  <defs>
+    <linearGradient id="logoBlueGrad" x1="0%" y1="30%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#0099FF" />
+      <stop offset="60%" stop-color="#0062E0" />
+      <stop offset="100%" stop-color="#0042B3" />
+    </linearGradient>
+
+    <linearGradient id="logoOrangeGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E65100" />
+      <stop offset="50%" stop-color="#FF6A00" />
+      <stop offset="100%" stop-color="#FFA000" />
+    </linearGradient>
+
+    <linearGradient id="logoCursorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00B4FF" />
+      <stop offset="60%" stop-color="#0066FF" />
+      <stop offset="100%" stop-color="#0047BA" />
+    </linearGradient>
+
+    <filter id="badgeShadow" x="-15%" y="-15%" width="135%" height="135%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="1.5" floodColor="#00358a" floodOpacity="0.2" />
+    </filter>
+  </defs>
+
+  {/* Emblem */}
+  <g transform="translate(6, 4)" filter="url(#badgeShadow)">
+    {/* Orange ascending ribbon + arrow */}
+    <path
+      d="M52 6L34 11L39 15C30 24 26 36 26 48C29 47 32 45 35 44C36 35 41 26 47 20L53 24L52 6Z"
+      fill="url(#logoOrangeGrad)"
+    />
+
+    {/* Blue U-loop base */}
+    <path
+      d="M18 30C15 39 16 48 21 56C26 63 34 66 42 65C47 64 51 61 54 57L49 53C47 56 43 58 39 58C33 58 27 54 25 48C22 42 22 35 24 29L18 30Z"
+      fill="#0050C8"
+    />
+
+    {/* Blue ascending sweep + arrow */}
+    <path
+      d="M29 51C32 42 38 33 46 27L51 31L58 14L41 19L46 24C39 30 34 39 31 48C30 49 30 50 29 51Z"
+      fill="url(#logoBlueGrad)"
+    />
+
+    {/* Mouse pointer click cursor */}
+    <path
+      d="M43 39L59 53L51 55L56 65L51 68L46 58L40 63L43 39Z"
+      fill="url(#logoCursorGrad)"
+      stroke="#FFFFFF"
+      stroke-width="2.2"
+      stroke-linejoin="round"
+    />
+  </g>
+
+  {/* Typography */}
+  <g transform="translate(76, 44)">
+    {/* "Up" in Blue */}
+    <text font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" fill="#0062E0" letter-spacing="-0.5">
+      Up
+    </text>
+    {/* "Clic" in Orange */}
+    <text x="44" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" fill="#FF6A00" letter-spacing="-0.5">
+      Clic
+    </text>
+
+    {/* 3 Click rays over the 'i' */}
+    <g transform="translate(93, -31)">
+      {/* Left ray */}
+      <line x1="-3" y1="2" x2="-6" y2="-2" stroke="#FFA000" stroke-width="2" stroke-linecap="round"/>
+      {/* Middle top ray */}
+      <line x1="0" y1="0" x2="0" y2="-4" stroke="#FFA000" stroke-width="2" stroke-linecap="round"/>
+      {/* Right ray */}
+      <line x1="3" y1="2" x2="6" y2="-2" stroke="#FFA000" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    {/* Subtitle */}
+    <text x="2" y="16" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="700" font-size="9" fill="#64748b" letter-spacing="2">
+      LICENCIAS DIGITALES
+    </text>
+  </g>
+</svg>
