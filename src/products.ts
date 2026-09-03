@@ -231,6 +231,40 @@ export const products: Product[] = [
     ]
   },
   {
+    id: "prod-office-2013",
+    slug: "office-professional-plus-2013",
+    name: "Microsoft Office Professional Plus 2013",
+    category: "office",
+    price: 27.90,
+    oldPrice: 42.00,
+    duration: "Permanente",
+    rating: 4.7,
+    reviews: 98,
+    imageUrl: "/products/office-2013.webp",
+    fallbackImage: "/products/office-2013.png",
+    description: "Paquete ofimático confiable y ligero con interfaz moderna y optimizada para equipos con recursos moderados.",
+    features: [
+      "Word 2013, Excel 2013, PowerPoint 2013, Outlook 2013 y OneNote",
+      "Licencia permanente para 1 PC",
+      "Modo lectura mejorado y compatibilidad con documentos PDF",
+      "Bajo consumo de memoria RAM y rendimiento fluido"
+    ],
+    compatibility: "Compatible con Windows 7, Windows 8.1, Windows 10 y Windows 11",
+    badge: undefined,
+    bestSeller: false,
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/39168D7E-077B-48E7-8728-0E25E0E51512/media/es-es/ProPlusRetail.img",
+    downloadLabel: "Descargar Imagen Oficial Office 2013 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el instalador oficial en formato .IMG mediante el botón provisto.",
+      "Paso 2: Monte o descomprima el archivo descargado en su equipo.",
+      "Paso 3: Ejecute el archivo 'Setup.exe' y complete la instalación.",
+      "Paso 4: Abra cualquier aplicación como Word 2013 o Excel 2013.",
+      "Paso 5: Ingrese la clave de activación de 25 caracteres para validar su licencia permanente."
+    ]
+  },
+  {
     id: "prod-office-2010",
     slug: "office-professional-plus-2010",
     name: "Microsoft Office Professional Plus 2010",

@@ -1,138 +1,179 @@
 <svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Background subtle studio lighting -->
-    <radialGradient id="bgGlow" cx="50%" cy="45%" r="55%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="70%" stop-color="#f8fafc"/>
-      <stop offset="100%" stop-color="#eef2f6"/>
+    <!-- Background -->
+    <rect id="canvasBg" width="1000" height="1000" fill="#ffffff"/>
+
+    <!-- Subtle Ground Shadow -->
+    <radialGradient id="groundShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0, 0, 0, 0.25)"/>
+      <stop offset="50%" stop-color="rgba(0, 0, 0, 0.08)"/>
+      <stop offset="100%" stop-color="rgba(0, 0, 0, 0)"/>
     </radialGradient>
 
-    <!-- Floor shadow gradient -->
-    <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.35)"/>
-      <stop offset="40%" stop-color="rgba(15, 23, 42, 0.18)"/>
-      <stop offset="80%" stop-color="rgba(15, 23, 42, 0.04)"/>
-      <stop offset="100%" stop-color="rgba(15, 23, 42, 0)"/>
-    </radialGradient>
-
-    <!-- Box Front Gradient -->
-    <linearGradient id="frontGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#D83B01"/>
-      <stop offset="60%" stop-color="#A80000"/>
-      <stop offset="100%" stop-color="#A80000"/>
-    </linearGradient>
-
-    <!-- Box Spine Gradient -->
-    <linearGradient id="spineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#A80000"/>
-      <stop offset="50%" stop-color="#D83B01"/>
-      <stop offset="100%" stop-color="#A80000"/>
-    </linearGradient>
+    <!-- Box Drop Shadow -->
+    <filter id="boxDropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="8" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.14"/>
+    </filter>
 
     <!-- Top Cap Gradient -->
-    <linearGradient id="topGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#D83B01"/>
+    <linearGradient id="topCapGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e2e5e8"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+
+    <!-- Spine Gradient -->
+    <linearGradient id="spineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f1f3f5"/>
+      <stop offset="60%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e2e5e8"/>
+    </linearGradient>
+
+    <!-- Front Gloss -->
+    <linearGradient id="frontGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fafbfd"/>
+    </linearGradient>
+
+    <!-- Office Ribbon 3D Gradient Folds -->
+    <linearGradient id="ribbonMain" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#E81123"/>
+      <stop offset="35%" stop-color="#EA3E00"/>
+      <stop offset="70%" stop-color="#F25022"/>
+      <stop offset="100%" stop-color="#FF7800"/>
+    </linearGradient>
+
+    <linearGradient id="ribbonFrontLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8A00"/>
+      <stop offset="50%" stop-color="#F25022"/>
+      <stop offset="100%" stop-color="#D83B01"/>
+    </linearGradient>
+
+    <linearGradient id="ribbonBottomDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B81D00"/>
       <stop offset="100%" stop-color="#E81123"/>
     </linearGradient>
-
-    <!-- Gloss Highlight Overlay -->
-    <linearGradient id="frontGloss" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.45)"/>
-      <stop offset="30%" stop-color="rgba(255,255,255,0.12)"/>
-      <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
-    </linearGradient>
-
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="16" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
   </defs>
 
-  <!-- Canvas Background -->
-  <rect width="1000" height="1000" fill="url(#bgGlow)"/>
+  <!-- Pure White Background -->
+  <rect width="1000" height="1000" fill="#ffffff"/>
 
-  <!-- Pedestal Floor Shadow -->
-  <ellipse cx="500" cy="855" rx="360" ry="42" fill="url(#floorShadow)"/>
-  <ellipse cx="490" cy="845" rx="270" ry="24" fill="rgba(15, 23, 42, 0.45)"/>
+  <!-- Soft Ground Shadow under box -->
+  <ellipse cx="500" cy="920" rx="360" ry="26" fill="url(#groundShadow)"/>
 
-  <!-- 3D SOFTWARE BOX -->
-  <!-- Top Face -->
-  <!-- Coordinates: BackLeft (280, 160), BackRight (680, 140), FrontRight (740, 205), FrontCorner (350, 230) -->
-  <polygon points="270,165 670,145 745,210 355,235" fill="url(#topGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <!-- 3D Retail Software Box -->
+  <g filter="url(#boxDropShadow)">
+    <!-- 1. Top Cap -->
+    <polygon points="195,78 805,142 805,144 255,86" fill="url(#topCapGrad)" stroke="#e2e8f0" stroke-width="0.5"/>
 
-  <!-- Spine / Left Face (Width approx 85px) -->
-  <!-- Coordinates: TopLeft (270, 165), TopRight (355, 235), BottomRight (355, 815), BottomLeft (270, 745) -->
-  <polygon points="270,165 355,235 355,815 270,745" fill="url(#spineGrad)" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+    <!-- 2. Spine Face (Left narrow side) -->
+    <polygon points="195,78 255,86 255,942 195,934" fill="url(#spineGrad)" stroke="#e2e8f0" stroke-width="0.5"/>
+    <line x1="196" y1="79" x2="196" y2="933" stroke="#ffffff" stroke-width="1.5"/>
+    <line x1="254" y1="87" x2="254" y2="941" stroke="#cbd5e1" stroke-width="0.8"/>
 
-  <!-- Front Face -->
-  <!-- Coordinates: TopLeft (355, 235), TopRight (745, 210), BottomRight (745, 785), BottomLeft (355, 815) -->
-  <polygon points="355,235 745,210 745,785 355,815" fill="url(#frontGrad)" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
-  <polygon points="355,235 745,210 745,785 355,815" fill="url(#frontGloss)"/>
-
-  <!-- Spine Text & Logo (Vertical spine design) -->
-  <g transform="translate(312, 490) rotate(-90)">
-    <text x="0" y="0" text-anchor="middle" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-weight="700" font-size="28" fill="#ffffff" letter-spacing="4">
-      OFFICE 2024 · PROFESSIONAL PLUS
-    </text>
-  </g>
-  <circle cx="312.5" cy="205" r="14" fill="rgba(255,255,255,0.2)"/>
-
-  <!-- FRONT COVER DESIGN -->
-  <!-- Microsoft / Brand Header at Top of Box -->
-  <g transform="translate(400, 280)">
-    <!-- Microsoft 4-square logo small -->
-    <rect x="0" y="0" width="13" height="13" fill="#F25022"/>
-    <rect x="16" y="0" width="13" height="13" fill="#7FBA00"/>
-    <rect x="0" y="16" width="13" height="13" fill="#00A4EF"/>
-    <rect x="16" y="16" width="13" height="13" fill="#FFB900"/>
-    <text x="38" y="22" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="20" font-weight="600" fill="#ffffff" letter-spacing="2">Microsoft</text>
-  </g>
-
-  <!-- Big Title on Front -->
-  <g transform="translate(400, 360)">
-    <text x="0" y="0" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="44" font-weight="800" fill="#ffffff" letter-spacing="0.5">
-      Office 2024
-    </text>
-    <text x="0" y="38" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="24" font-weight="600" fill="#FF8C00" letter-spacing="1">
-      Professional Plus
-    </text>
-    <text x="0" y="68" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.8)" letter-spacing="2">
-      LICENCIA DE POR VIDA
-    </text>
-  </g>
-
-  <!-- Hero Center Graphic on Front -->
-  <!-- Office App Hexagons / Ribbon / Year -->
-  <g transform="translate(540, 520)">
-    <circle cx="0" cy="0" r="90" fill="rgba(255,255,255,0.08)"/>
-    <!-- Office Central Icon / Ribbon -->
-    <path d="M-45,-40 L0,-65 L45,-40 L45,40 L0,65 L-45,40 Z" fill="rgba(255,255,255,0.18)" stroke="#ffffff" stroke-width="3"/>
-    <text x="0" y="14" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="38" font-weight="900" fill="#ffffff">2024</text>
-    <!-- Mini App Badges -->
-    <g transform="translate(-85, 80)">
-      <rect x="0" y="0" width="34" height="34" rx="7" fill="#185ABD"/><text x="17" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">W</text>
-      <rect x="42" y="0" width="34" height="34" rx="7" fill="#107C41"/><text x="59" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">X</text>
-      <rect x="84" y="0" width="34" height="34" rx="7" fill="#C43E1C"/><text x="101" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">P</text>
-      <rect x="126" y="0" width="34" height="34" rx="7" fill="#0078D4"/><text x="143" y="24" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">O</text>
+    <!-- Spine Vertical Text: "Office Professional Plus 2024" -->
+    <g transform="translate(225, 510) rotate(-90)">
+      <text x="0" y="0" text-anchor="middle" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif" font-weight="600" font-size="29" fill="#334155" letter-spacing="1.5">
+        Office <tspan font-weight="400" font-size="25" fill="#475569">Professional Plus</tspan> <tspan font-weight="400" font-size="20" fill="#64748b">2024</tspan>
+      </text>
     </g>
-  </g>
 
-  <!-- Bottom Details on Front Cover -->
-  <g transform="translate(400, 715)">
-    <!-- Genuine Seal Badge -->
-    <rect x="0" y="0" width="300" height="42" rx="8" fill="rgba(0,0,0,0.25)"/>
-    <circle cx="24" cy="21" r="10" fill="#10B981"/>
-    <path d="M19,21 L22,24 L29,17" stroke="#ffffff" stroke-width="2.5" fill="none"/>
-    <text x="44" y="27" font-family="'Segoe UI', 'Plus Jakarta Sans', Arial, sans-serif" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="1">
-      ENTREGA DIGITAL INSTANTÁNEA
-    </text>
-  </g>
+    <!-- 3. Front Face (Main Cover) -->
+    <polygon points="255,86 805,142 805,868 255,942" fill="url(#frontGloss)" stroke="#e2e8f0" stroke-width="0.5"/>
 
-  <!-- Top Right Corner Badge -->
-  <g transform="translate(710, 175)">
-    <polygon points="0,0 150,0 150,150" fill="#FF8C00" opacity="0.95"/>
-    <text x="110" y="55" transform="rotate(45, 110, 55)" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="900" fill="#0f172a" letter-spacing="1">
-      TOP VENTAS
-    </text>
+    <!-- FRONT FACE ELEMENTS (Projected into front plane coordinates) -->
+    <!-- Microsoft Logo + Wordmark -->
+    <g transform="translate(288, 116)">
+      <!-- 4 Colored Squares -->
+      <rect x="0" y="0" width="13" height="13" fill="#F25022"/>
+      <rect x="15" y="0" width="13" height="13" fill="#7FBA00"/>
+      <rect x="0" y="15" width="13" height="13" fill="#00A4EF"/>
+      <rect x="15" y="15" width="13" height="13" fill="#FFB900"/>
+      <!-- Text -->
+      <text x="36" y="21" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="25" fill="#475569" letter-spacing="0.2">
+        Microsoft
+      </text>
+    </g>
+
+    <!-- Main Title -->
+    <g transform="translate(288, 230)">
+      <text x="0" y="0" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif" font-weight="700" font-size="58" fill="#1e293b" letter-spacing="-0.5">
+        Office
+      </text>
+      <text x="0" y="48" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif" font-weight="500" font-size="38" fill="#334155">
+        Professional Plus
+      </text>
+      
+      <!-- Red "2024" Badge -->
+      <g transform="translate(0, 68)">
+        <rect x="0" y="0" width="72" height="28" rx="2" fill="#E81123"/>
+        <text x="36" y="20" font-family="'Segoe UI', Arial, sans-serif" font-weight="800" font-size="18" fill="#ffffff" text-anchor="middle" letter-spacing="1">
+          2024
+        </text>
+      </g>
+    </g>
+
+    <!-- Apps List (Left Column) -->
+    <g transform="translate(288, 485)">
+      <!-- Word -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#185ABD"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">W</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">Word</text>
+      </g>
+
+      <!-- Excel -->
+      <g transform="translate(0, 56)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#107C41"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">X</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">Excel</text>
+      </g>
+
+      <!-- PowerPoint -->
+      <g transform="translate(0, 112)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#C43E1C"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">P</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">PowerPoint</text>
+      </g>
+
+      <!-- Outlook -->
+      <g transform="translate(0, 168)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#0078D4"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">O</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">Outlook</text>
+      </g>
+
+      <!-- Teams -->
+      <g transform="translate(0, 224)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#464EB8"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">T</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">Teams</text>
+      </g>
+
+      <!-- OneNote -->
+      <g transform="translate(0, 280)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#7719AA"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">N</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">OneNote</text>
+      </g>
+
+      <!-- Access -->
+      <g transform="translate(0, 336)">
+        <rect x="0" y="0" width="42" height="42" rx="7" fill="#A4373A"/>
+        <text x="21" y="29" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="22" fill="#ffffff">A</text>
+        <text x="60" y="28" font-family="'Segoe UI', Arial, sans-serif" font-weight="500" font-size="24" fill="#334155">Access</text>
+      </g>
+    </g>
+
+    <!-- 3D Office Ribbon Loop Logo (Right side of front face) -->
+    <g transform="translate(558, 515)">
+      <!-- Main Ribbon Body -->
+      <path d="M 40,65 C 65,25 155,20 185,55 C 215,90 220,225 220,255 C 220,285 180,315 130,320 C 80,325 45,295 45,270 C 45,250 62,240 85,245 C 110,250 145,235 155,205 C 165,175 165,95 145,70 C 125,45 85,52 62,80 Z" fill="url(#ribbonMain)"/>
+      
+      <!-- Back / Left Column Dark Shading -->
+      <path d="M 40,65 C 40,65 10,115 10,210 C 10,275 65,305 110,305 C 65,300 35,260 35,205 C 35,125 50,90 50,90 Z" fill="url(#ribbonBottomDark)"/>
+      
+      <!-- Front Loop Light Gradient -->
+      <path d="M 155,205 C 145,235 110,250 85,245 C 62,240 45,250 45,270 C 45,295 80,325 130,320 C 180,315 220,285 220,255 C 220,225 215,90 185,55 C 175,65 170,82 170,105 C 170,170 165,190 155,205 Z" fill="url(#ribbonFrontLight)"/>
+    </g>
   </g>
 </svg>
