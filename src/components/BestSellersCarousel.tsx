@@ -85,15 +85,9 @@ export const BestSellersCarousel: React.FC = () => {
               <Flame className="w-6 h-6 fill-white" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0f172a] tracking-tight">
-                  Más Vendidos
-                </h2>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-2xs font-black uppercase tracking-wider bg-orange-100 text-orange-800 border border-orange-200 animate-pulse">
-                  <Sparkles className="w-3 h-3 text-orange-600" />
-                  Carrete en vivo
-                </span>
-              </div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0f172a] tracking-tight">
+                Más Vendidos
+              </h2>
               <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
                 Nuestras licencias oficiales con mayor demanda actualizadas en tiempo real
               </p>

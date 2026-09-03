@@ -323,12 +323,12 @@ export const products: Product[] = [
     badge: "MÁS VENDIDO",
     bestSeller: true,
     featured: true,
-    downloadUrl: "https://www.microsoft.com/software-download/windows11",
-    downloadLabel: "Descargar ISO Oficial Windows 11 (Microsoft)",
-    isoFormat: "Imagen ISO Oficial (64 bits) Servidores Microsoft",
+    downloadUrl: "https://archive.org/download/win-11-24-h-2-spanish-x-64/Win11_24H2_Spanish_x64.iso",
+    downloadLabel: "Descargar ISO Directa Windows 11 (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
     installationSteps: [
-      "Paso 1: Haga clic en 'Descargar ISO Oficial' para acceder a la web oficial de Microsoft Software Download.",
-      "Paso 2: Descargue la 'Imagen de disco (ISO) de Windows 11' o use la 'Herramienta de creación de medios' para crear un USB booteable de al menos 8 GB.",
+      "Paso 1: Haga clic en 'Descargar ISO Directa' para descargar la imagen ISO oficial en español.",
+      "Paso 2: Grabe la ISO en una unidad USB (mínimo 8 GB) usando herramientas estándar como Rufus o Ventoy.",
       "Paso 3: Si ya tiene Windows 11 Home, puede subir directamente a Pro ingresando la clave sin reinstalar.",
       "Paso 4: Para activar: Diríjase a Inicio > Configuración > Sistema > Activación.",
       "Paso 5: Haga clic en 'Cambiar la clave de producto', escriba su clave original de 25 caracteres y presione 'Activar'."
@@ -358,12 +358,12 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/software-download/windows11",
-    downloadLabel: "Descargar ISO Oficial Windows 11 (Microsoft)",
-    isoFormat: "Imagen ISO Oficial (64 bits) Servidores Microsoft",
+    downloadUrl: "https://archive.org/download/win-11-24-h-2-spanish-x-64/Win11_24H2_Spanish_x64.iso",
+    downloadLabel: "Descargar ISO Directa Windows 11 Home (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
     installationSteps: [
-      "Paso 1: Descargue la ISO oficial de Windows 11 desde Microsoft con el botón de descarga.",
-      "Paso 2: Grabe la ISO en un pendrive USB con la herramienta oficial Media Creation Tool o Rufus.",
+      "Paso 1: Descargue la ISO oficial de Windows 11 directamente mediante el botón de descarga.",
+      "Paso 2: Grabe la ISO en un pendrive USB con la herramienta Rufus o Media Creation Tool.",
       "Paso 3: Inicie su equipo desde el USB e instale Windows 11 Home.",
       "Paso 4: Vaya a Inicio > Configuración > Sistema > Activación.",
       "Paso 5: Ingrese su clave de 25 caracteres para activar permanentemente."
@@ -393,14 +393,14 @@ export const products: Product[] = [
     badge: "EMPRESARIAL",
     bestSeller: false,
     featured: true,
-    downloadUrl: "https://www.microsoft.com/evalcenter/evaluate-windows-11-enterprise",
-    downloadLabel: "Descargar ISO Oficial Windows 11 Enterprise",
-    isoFormat: "Imagen ISO Oficial Microsoft Evaluation Center",
+    downloadUrl: "https://archive.org/download/win-11-24-h-2-spanish-x-64/Win11_24H2_Spanish_x64.iso",
+    downloadLabel: "Descargar ISO Directa Windows 11 Enterprise",
+    isoFormat: "Descarga Directa ISO Oficial (x64) Español",
     installationSteps: [
-      "Paso 1: Descargue la ISO empresarial desde Microsoft Evaluation Center mediante el botón de descarga.",
+      "Paso 1: Descargue la ISO de Windows 11 directamente mediante el botón de descarga provisto.",
       "Paso 2: Cree el medio de instalación en un USB o aplique la imagen en su servidor de despliegue.",
       "Paso 3: Instale Windows 11 Enterprise en los equipos de su red.",
-      "Paso 4: Ingrese a Configuración > Activación.",
+      "Paso 4: Ingrese a Configuración > Sistema > Activación.",
       "Paso 5: Ingrese su clave de activación empresarial permanente."
     ]
   },
@@ -428,13 +428,13 @@ export const products: Product[] = [
     badge: "MÁS VENDIDO",
     bestSeller: true,
     featured: true,
-    downloadUrl: "https://www.microsoft.com/software-download/windows10",
-    downloadLabel: "Descargar ISO Oficial Windows 10 (Microsoft)",
-    isoFormat: "Imagen ISO Oficial (32/64 bits) Servidores Microsoft",
+    downloadUrl: "https://archive.org/download/windows-10-22h2-multi-edition-iso/Windows%2010%20v.22H2/Win10_22H2_Spanish/Win10_22H2_Spanish_x64v1.iso",
+    downloadLabel: "Descargar ISO Directa Windows 10 Pro (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
     installationSteps: [
-      "Paso 1: Haga clic en 'Descargar ISO Oficial' para ir a la página oficial de Microsoft Software Download de Windows 10.",
-      "Paso 2: Descargue la herramienta de creación de medios oficial o la ISO directa.",
-      "Paso 3: Si ya tiene Windows 10 Home, no necesita reinstalar: ingrese la clave directamente en Activación para actualizar a Pro.",
+      "Paso 1: Haga clic en 'Descargar ISO Directa' para descargar la imagen ISO oficial 22H2 en español.",
+      "Paso 2: Cree una unidad USB booteable con Rufus o grabe la imagen en un medio físico.",
+      "Paso 3: Si ya tiene Windows 10 Home instalado, no necesita reinstalar: ingrese la clave directamente en Activación para actualizar a Pro.",
       "Paso 4: Abra Inicio > Configuración > Actualización y seguridad > Activación.",
       "Paso 5: Haga clic en 'Cambiar clave de producto' e ingrese su clave de 25 caracteres para activar permanentemente."
     ]
@@ -462,12 +462,12 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/software-download/windows10",
-    downloadLabel: "Descargar ISO Oficial Windows 10 (Microsoft)",
-    isoFormat: "Imagen ISO Oficial (32/64 bits) Servidores Microsoft",
+    downloadUrl: "https://archive.org/download/windows-10-22h2-multi-edition-iso/Windows%2010%20v.22H2/Win10_22H2_Spanish/Win10_22H2_Spanish_x64v1.iso",
+    downloadLabel: "Descargar ISO Directa Windows 10 Home (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
     installationSteps: [
-      "Paso 1: Descargue la ISO oficial de Windows 10 desde Microsoft mediante el botón de descarga.",
-      "Paso 2: Instale Windows 10 Home en su equipo.",
+      "Paso 1: Descargue la ISO oficial de Windows 10 directamente mediante el botón de descarga.",
+      "Paso 2: Cree el pendrive de instalación e instale Windows 10 Home en su equipo.",
       "Paso 3: Vaya a Configuración > Actualización y seguridad > Activación.",
       "Paso 4: Ingrese su clave digital de 25 caracteres para activar de por vida."
     ]
@@ -495,13 +495,13 @@ export const products: Product[] = [
     badge: "EMPRESARIAL",
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise",
-    downloadLabel: "Descargar ISO Oficial Windows 10 Enterprise",
-    isoFormat: "Imagen ISO Oficial Microsoft Evaluation Center",
+    downloadUrl: "https://archive.org/download/windows-10-22h2-multi-edition-iso/Windows%2010%20v.22H2/Win10_22H2_Spanish/Win10_22H2_Spanish_x64v1.iso",
+    downloadLabel: "Descargar ISO Directa Windows 10 Enterprise",
+    isoFormat: "Descarga Directa ISO Oficial (x64) Español",
     installationSteps: [
-      "Paso 1: Descargue la ISO empresarial desde Microsoft Evaluation Center.",
-      "Paso 2: Instale la edición Enterprise en su equipo de trabajo.",
-      "Paso 3: Diríjase a Configuración > Activación e ingrese la clave provista."
+      "Paso 1: Descargue la imagen ISO oficial de Windows 10 mediante el botón provisto.",
+      "Paso 2: Instale la edición Enterprise en su equipo de trabajo o servidor.",
+      "Paso 3: Diríjase a Configuración > Actualización y seguridad > Activación e ingrese la clave provista."
     ]
   },
   {
