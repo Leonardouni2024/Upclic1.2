@@ -29,7 +29,7 @@ const AppContent: React.FC = () => {
       return <CheckoutPage />;
     }
 
-    if (currentPath.startsWith('/producto/') && currentProductSlug) {
+    if (currentPath.includes('/producto/') && currentProductSlug) {
       return <ProductDetailPage slug={currentProductSlug} />;
     }
 

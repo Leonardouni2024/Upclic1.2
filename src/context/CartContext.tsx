@@ -79,22 +79,41 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [activeCategory, setActiveCategory] = useState<ProductCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Routing state
-  const [currentPath, setCurrentPath] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const path = window.location.pathname;
-      if (path.startsWith('/producto/') || path === '/checkout') {
-        return path;
+  const resolvePath = (): string => {
+    if (typeof window === 'undefined') return '/';
+    try {
+      const hash = window.location.hash || '';
+      if (hash.startsWith('#/producto/')) {
+        return hash.replace('#', '');
       }
-      if (window.location.hash.startsWith('#/producto/')) {
-        return window.location.hash.replace('#', '');
-      }
-      if (window.location.hash === '#/checkout') {
+      if (hash === '#/checkout') {
         return '/checkout';
       }
+
+      const search = window.location.search || '';
+      if (search.startsWith('?/')) {
+        const raw = search.slice(2).split('&')[0];
+        if (raw.includes('producto/') || raw === 'checkout' || raw === '/checkout') {
+          return raw.startsWith('/') ? raw : `/${raw}`;
+        }
+      }
+
+      const path = window.location.pathname || '/';
+      const prodIndex = path.indexOf('/producto/');
+      if (prodIndex !== -1) {
+        return path.slice(prodIndex);
+      }
+      if (path.endsWith('/checkout') || path === '/checkout') {
+        return '/checkout';
+      }
+    } catch {
+      // ignore
     }
     return '/';
-  });
+  };
+
+  // Routing state
+  const [currentPath, setCurrentPath] = useState<string>(resolvePath);
 
   // Keep localStorage updated for cart
   useEffect(() => {
@@ -118,23 +137,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [appliedCoupon]);
 
-  // Sync with browser back/forward buttons
+  // Sync with browser back/forward buttons and hash changes
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname;
-      if (path.startsWith('/producto/') || path === '/checkout') {
-        setCurrentPath(path);
-      } else if (window.location.hash.startsWith('#/producto/')) {
-        setCurrentPath(window.location.hash.replace('#', ''));
-      } else if (window.location.hash === '#/checkout') {
-        setCurrentPath('/checkout');
-      } else {
-        setCurrentPath('/');
-      }
+      setCurrentPath(resolvePath());
     };
 
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
   }, []);
 
   const addToast = (toast: Omit<ToastData, 'id'>) => {
@@ -425,9 +439,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const currentProductSlug = currentPath.startsWith('/producto/')
-    ? currentPath.replace('/producto/', '')
-    : undefined;
+  const currentProductSlug = (() => {
+    if (!currentPath.includes('/producto/')) return undefined;
+    const prodIndex = currentPath.indexOf('/producto/');
+    const raw = currentPath.slice(prodIndex + '/producto/'.length);
+    const clean = raw.replace(/\/+$/, '').split('?')[0].split('#')[0];
+    return clean ? decodeURIComponent(clean) : undefined;
+  })();
 
   return (
     <CartContext.Provider

@@ -1,4 +1,4 @@
-import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE } from '../products.ts';
+import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE, MERCADO_PAGO_URL } from '../products.ts';
 import { Product } from '../types.ts';
 
 export interface LocalChatResponse {
@@ -15,196 +15,338 @@ export interface LocalChatResponse {
   showAdminWhatsApp?: boolean;
 }
 
+// Helper to normalize and remove accents
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
 export function generateLocalChatReply(message: string, history?: Array<{ role: string; content: string }>): LocalChatResponse {
   const cleanMessage = message.trim();
-  const cleanLower = cleanMessage.toLowerCase();
+  const rawLower = cleanMessage.toLowerCase();
+  const norm = normalizeText(cleanMessage);
 
-  // Detect explicit user request to talk with a human, administrator or WhatsApp
+  // 1. Explicit request to talk with a human / WhatsApp / phone
   const explicitAdminRequest =
-    cleanLower.includes('quiero hablar con') ||
-    cleanLower.includes('hablar con una persona') ||
-    cleanLower.includes('hablar con un humano') ||
-    cleanLower.includes('hablar con el administrador') ||
-    cleanLower.includes('hablar con el admin') ||
-    cleanLower.includes('hablar con alguien') ||
-    cleanLower.includes('atencion humana') ||
-    cleanLower.includes('atención humana') ||
-    cleanLower.includes('asesor humano') ||
-    cleanLower.includes('pasa con un asesor') ||
-    cleanLower.includes('pasame con un asesor') ||
-    cleanLower.includes('pásame con un asesor') ||
-    cleanLower.includes('pasame con el administrador') ||
-    cleanLower.includes('pásame con el administrador') ||
-    cleanLower.includes('dame el whatsapp') ||
-    cleanLower.includes('tu whatsapp') ||
-    cleanLower.includes('su whatsapp') ||
-    cleanLower.includes('link de whatsapp') ||
-    cleanLower.includes('enlace de whatsapp') ||
-    cleanLower.includes('numero de whatsapp') ||
-    cleanLower.includes('número de whatsapp') ||
-    cleanLower.includes('numero de telefono') ||
-    cleanLower.includes('número de teléfono') ||
-    cleanLower.includes('llamar por telefono') ||
-    cleanLower.includes('quiero llamar');
+    norm.includes('quiero hablar con') ||
+    norm.includes('hablar con una persona') ||
+    norm.includes('hablar con un humano') ||
+    norm.includes('hablar con el administrador') ||
+    norm.includes('hablar con el admin') ||
+    norm.includes('hablar con soporte') ||
+    norm.includes('hablar con alguien') ||
+    norm.includes('asesor humano') ||
+    norm.includes('atencion humana') ||
+    norm.includes('pasame con un asesor') ||
+    norm.includes('pasame con el admin') ||
+    norm.includes('pasame con el administrador') ||
+    norm.includes('dame el whatsapp') ||
+    norm.includes('tu whatsapp') ||
+    norm.includes('su whatsapp') ||
+    norm.includes('link de whatsapp') ||
+    norm.includes('numero de whatsapp') ||
+    norm.includes('numero de telefono') ||
+    norm.includes('quiero llamar') ||
+    norm.includes('llamada telefonica');
 
-  let reply = '';
-  let showAdminWhatsApp = explicitAdminRequest;
-
-  // 1. Explicit request to talk with admin or human
   if (explicitAdminRequest) {
-    reply = `¡Por supuesto! Con mucho gusto te conecto directamente con nuestro **Administrador y Soporte Técnico Oficial** por WhatsApp para que te atienda personalmente:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Horario de atención:** Lunes a Domingo de 8:00 AM a 11:00 PM.\n\nTambién puedes hacer clic en el botón directo de WhatsApp que te dejé abajo. ¡Estamos listos para ayudarte!`;
     return {
-      reply,
+      reply: `¡Con mucho gusto te conecto directamente con nuestro **Administrador y Soporte Técnico Oficial** por WhatsApp! 😊\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Horario de atención:** Lunes a Domingo de 8:00 AM a 11:00 PM.\n\nTambién puedes pulsar el botón directo de WhatsApp abajo para iniciar la conversación de inmediato. ¡Te atenderán al instante!`,
       showAdminWhatsApp: true,
       suggestedProducts: [],
     };
   }
 
-  // 2. Off-topic queries - Answer warmly and redirect to store topics without admin links
-  const offTopicKeywords = [
-    'netflix', 'spotify', 'juego', 'gta', 'minecraft', 'playstation', 'xbox', 'steam',
-    'tarjeta de video', 'laptop dell', 'memoria ram', 'disco duro', 'celular', 'iphone',
-    'ropa', 'comida', 'restaurante', 'clima', 'vuelo', 'hotel', 'adobe', 'photoshop', 'canva'
-  ];
-  const isOffTopic = offTopicKeywords.some(k => cleanLower.includes(k));
-
-  if (isOffTopic) {
-    reply = `¡Hola! Con mucho gusto te ayudo. 😊\n\nAquí en **UpClic** nos dedicamos al 100% a la venta de **licencias digitales oficiales de Microsoft** (Office, Windows, Visio y Project), por lo que no manejamos cuentas de streaming, videojuegos ni equipos físicos.\n\nPero si lo que necesitas es instalar o renovar **Word, Excel, PowerPoint** o activar **Windows 10/11** con clave original permanente, ¡cuéntame qué versión estás buscando o qué uso le vas a dar a tu computadora y te asesoro al instante!`;
-  }
-  // 3. Greetings & friendly introductions
-  else if (
-    cleanLower === 'hola' ||
-    cleanLower === 'buenas' ||
-    cleanLower === 'buenas tardes' ||
-    cleanLower === 'buenos dias' ||
-    cleanLower === 'buenos días' ||
-    cleanLower === 'buenas noches' ||
-    cleanLower.startsWith('hola ') ||
-    cleanLower.startsWith('que tal') ||
-    cleanLower.startsWith('qué tal')
+  // 2. Specific technical troubleshooting & installation issues
+  // Example: Error code 0xC004C008, 0xC004C003, error de activacion, etc.
+  if (
+    norm.includes('error') ||
+    norm.includes('no funciona la clave') ||
+    norm.includes('clave invalida') ||
+    norm.includes('clave no funciona') ||
+    norm.includes('falla') ||
+    norm.includes('problema al activar') ||
+    norm.includes('no puedo activar') ||
+    norm.includes('0x')
   ) {
-    reply = `¡Hola! Qué gusto saludarte. 😊 Bienvenido a **UpClic**.\n\nSoy tu asesor virtual y estoy aquí para ayudarte a elegir la mejor licencia de **Microsoft Office**, **Windows**, **Visio** o **Project** para tu equipo, explicarte cómo se instalan, o ayudarte a aprovechar nuestras promociones.\n\n¿En qué te puedo colaborar hoy?`;
-  }
-  // 4. Questions about who they are / identity
-  else if (cleanLower.includes('quien eres') || cleanLower.includes('quién eres') || cleanLower.includes('como te llamas') || cleanLower.includes('cómo te llamas')) {
-    reply = `¡Hola! Soy el **Asistente Virtual de UpClic**. 🤖✨\n\nEstoy capacitado para responder todas tus preguntas sobre licencias oficiales de Microsoft, recomendarte el software ideal según tus necesidades y presupuesto, guiarte en el proceso de compra y activación, o compartirte nuestros cupones de descuento.\n\n¿En qué te gustaría que te oriente hoy?`;
-  }
-  // 5. Difference OEM vs Retail
-  else if (cleanLower.includes('oem') || cleanLower.includes('retail') || cleanLower.includes('diferencia')) {
-    reply = `¡Excelente pregunta! Es una de las dudas más frecuentes y la diferencia es muy sencilla:\n\n🔹 **Clave OEM (Original Equipment Manufacturer):**\n• Se enlaza a la placa madre (hardware) de tu computadora actual.\n• Es la opción más económica.\n• La activación es **permanente e ilimitada** en esa misma PC (puedes formatear y reinstalar tantas veces como quieras sin perderla).\n\n🔹 **Clave Retail (Licencia Comercial Completa):**\n• Se asocia directamente a tu cuenta de Microsoft.\n• Te da la ventaja de que, si en el futuro cambias de computadora o compras una nueva laptop, **puedes transferir tu licencia** al nuevo equipo.\n\nEn **UpClic** puedes elegir entre versión OEM y Retail en productos como **Windows 11 Pro** y **Windows 10 Pro**. ¿Cuál se adapta mejor a lo que buscas?`;
-  }
-  // 6. Installation, activation and delivery process
-  else if (
-    cleanLower.includes('instalar') ||
-    cleanLower.includes('activar') ||
-    cleanLower.includes('activacion') ||
-    cleanLower.includes('activación') ||
-    cleanLower.includes('descarga') ||
-    cleanLower.includes('como funciona') ||
-    cleanLower.includes('cómo funciona') ||
-    cleanLower.includes('como se compra') ||
-    cleanLower.includes('como es la entrega') ||
-    cleanLower.includes('cómo es la entrega') ||
-    cleanLower.includes('cuanto demora') ||
-    cleanLower.includes('cuánto demora')
-  ) {
-    reply = `El proceso de compra, entrega e instalación es súper fácil y 100% transparente:\n\n1️⃣ **Realizas tu pedido:** Seleccionas tu producto en la tienda y pagas con tu método preferido (Yape, Plin, BCP, BBVA, Interbank o Tarjeta).\n2️⃣ **Entrega Digital Inmediata:** En cuestión de minutos recibes tu clave original de 25 caracteres y los enlaces oficiales de descarga de Microsoft directamente por WhatsApp y a tu correo.\n3️⃣ **Descarga e Instalación:** Descargas el instalador oficial y colocas la clave.\n4️⃣ **Activación de por Vida:** El software queda 100% activado, con actualizaciones oficiales de Microsoft y garantía de 6 meses a 1 año.\n\n¿Te gustaría que te recomiende la versión perfecta para tu equipo?`;
-  }
-  // 7. Discounts, coupons & volume promos
-  else if (
-    cleanLower.includes('cupon') ||
-    cleanLower.includes('cupón') ||
-    cleanLower.includes('descuento') ||
-    cleanLower.includes('promocion') ||
-    cleanLower.includes('promoción') ||
-    cleanLower.includes('oferta') ||
-    cleanLower.includes('precio') ||
-    cleanLower.includes('barato')
-  ) {
-    reply = `¡Claro que sí! En UpClic tenemos promociones activas para que ahorres al máximo:\n\n🎁 **Cupón exclusivo del 10%:** Puedes usar el código **\`${PROMO_COUPON_CODE}\`** al momento de pagar en compras desde S/ 40.00.\n🔥 **Descuento por volumen automático:** Si agregas 2 o más productos a tu carrito, el sistema te aplica un **10% de descuento automático** sin necesidad de cupón.\n💡 **Combos ahorro:** Nuestros combos (como Windows 11 + Office 2024) ya tienen más de un 40% de descuento aplicado.\n\n¿Qué producto o combinación tienes en mente?`;
-  }
-  // 8. Payment methods
-  else if (
-    cleanLower.includes('pago') ||
-    cleanLower.includes('pagar') ||
-    cleanLower.includes('yape') ||
-    cleanLower.includes('plin') ||
-    cleanLower.includes('bcp') ||
-    cleanLower.includes('bbva') ||
-    cleanLower.includes('interbank') ||
-    cleanLower.includes('scotiabank') ||
-    cleanLower.includes('tarjeta') ||
-    cleanLower.includes('efectivo')
-  ) {
-    reply = `Aceptamos los métodos de pago más seguros y rápidos del Perú:\n\n• 📱 **Billeteras Digitales:** Yape y Plin (con confirmación inmediata).\n• 🏦 **Transferencias Bancarias:** BCP, BBVA, Interbank y Scotiabank.\n• 💳 **Tarjetas de Débito y Crédito:** Visa, Mastercard, Diners y Amex mediante la pasarela segura de Mercado Pago.\n\nUna vez completado el pago, tu clave y guía de instalación se envían de forma instantánea. ¿Deseas hacer tu pedido ahora?`;
-  }
-  // 9. Microsoft Office specific queries
-  else if (
-    cleanLower.includes('office') ||
-    cleanLower.includes('word') ||
-    cleanLower.includes('excel') ||
-    cleanLower.includes('powerpoint') ||
-    cleanLower.includes('access') ||
-    cleanLower.includes('outlook')
-  ) {
-    reply = `Te presento las mejores opciones de **Microsoft Office** que tenemos disponibles según tu necesidad:\n\n1. 🌟 **Office 2024 Professional Plus (S/ 25.00):** La versión más nueva y rápida de pago único permanente. Diseñada especialmente para Windows 10 y 11.\n2. 💼 **Office 2021 Professional Plus (S/ 20.00):** La suite más probada y completa (Word, Excel, PowerPoint, Outlook, Access, Publisher) de pago único de por vida.\n3. ☁️ **Microsoft 365 Profesional 1 Año (S/ 46.50):** Ideal si necesitas usar Office en hasta 5 dispositivos (PC, Mac, celular, tablet) e incluye **100 GB de almacenamiento en OneDrive**.\n4. 🚀 **Office 2019 / 2016 (Desde S/ 18.00):** Excelente para computadoras con Windows 7, 8.1 o 10.\n\n¿Para qué tipo de tareas o equipo lo vas a utilizar?`;
-  }
-  // 10. Windows specific queries
-  else if (
-    cleanLower.includes('windows') ||
-    cleanLower.includes('win 11') ||
-    cleanLower.includes('win 10') ||
-    cleanLower.includes('sistema operativo') ||
-    cleanLower.includes('formatear')
-  ) {
-    reply = `Para **Windows** contamos con licencias 100% originales y permanentes:\n\n• 💻 **Windows 11 Pro (64-bit):** La versión recomendada para máxima seguridad, rendimiento gaming y compatibilidad moderna. Desde **S/ 19.90** (OEM) y versión Retail disponible.\n• 🖥️ **Windows 10 Pro (32/64 bits):** Muy fluido, compatible con todo tipo de programas y hardware. Desde **S/ 18.90** (OEM) y Retail disponible.\n• 🔥 **Combos con Office:** Puedes llevar Windows 11 o 10 junto con Office 2024 o 2021 a precio especial con descuento.\n\n¿Tu computadora ya tiene Windows instalado para activarlo, o necesitas hacer una instalación limpia desde cero?`;
-  }
-  // 11. Combos & Packs
-  else if (cleanLower.includes('combo') || cleanLower.includes('pack') || cleanLower.includes('juntos')) {
-    reply = `¡Los combos son la mejor opción para ahorrar! Te llevas el sistema operativo y la suite de oficina juntos:\n\n🔥 **Combo Windows 11 Pro + Office 2024 Professional Plus:** Solo **S/ 46.50** (Ahorras más de S/ 40.00 vs comprar por separado).\n⚡ **Combo Windows 10 Pro + Office 2021 Professional Plus:** Solo **S/ 42.00**.\n\nAmbos incluyen activación permanente, claves de 25 caracteres, enlaces de descarga y garantía oficial. ¿Te gustaría añadir alguno al carrito?`;
-  }
-  // 12. Visio & Project
-  else if (cleanLower.includes('visio') || cleanLower.includes('project') || cleanLower.includes('diagrama') || cleanLower.includes('gantt') || cleanLower.includes('cronograma')) {
-    reply = `Para gestión y diagramación profesional tenemos:\n\n• 📐 **Microsoft Visio 2024 / 2021 Professional (S/ 24.50):** Para diagramas de flujo, mapas de procesos, planos y organigramas avanzados.\n• 📊 **Microsoft Project 2024 / 2021 Professional (S/ 24.50):** Para planificación de proyectos, diagramas de Gantt, gestión de recursos y cronogramas.\n\nSon licencias de pago único permanente de por vida. ¿Cuál de los dos necesitas?`;
-  }
-  // 13. Guarantee, security, trust
-  else if (cleanLower.includes('garantia') || cleanLower.includes('garantía') || cleanLower.includes('seguro') || cleanLower.includes('confiable') || cleanLower.includes('original')) {
-    reply = `En **UpClic** garantizamos tu compra con total seguridad:\n\n🛡️ **Claves 100% Originales:** Se validan y activan directamente en los servidores de Microsoft.\n⏱️ **Garantía Oficial:** Cuentas con 6 meses a 1 año de garantía ante cualquier inconveniente.\n⚡ **Soporte Incluido:** Si necesitas ayuda durante la instalación, te acompañamos paso a paso.\n⭐ **Opiniones Reales:** Cientos de clientes satisfechos en todo el Perú respaldan nuestro servicio.\n\n¿Tienes alguna duda específica sobre algún producto?`;
-  }
-  // 14. Compatibility / Mac / Requirements
-  else if (cleanLower.includes('mac') || cleanLower.includes('apple') || cleanLower.includes('macbook')) {
-    reply = `Si tienes una **Mac (macOS)**, la versión ideal y compatible es:\n\n🍎 **Microsoft 365 Profesional (1 Año):** Es 100% compatible con computadoras Mac, Windows, iPad, iPhone y tablets Android. Te da acceso a Word, Excel, PowerPoint, Outlook y 100 GB en OneDrive a solo **S/ 46.50**.\n\n*Nota:* Las versiones Office 2024/2021 Professional Plus son exclusivas para Windows 10 y 11. ¿Tu equipo principal es Mac o Windows?`;
-  }
-  // 15. Thanks / Goodbye
-  else if (cleanLower.includes('gracias') || cleanLower.includes('muchas gracias') || cleanLower.includes('genial') || cleanLower.includes('vale') || cleanLower.includes('perfecto')) {
-    reply = `¡Con mucho gusto! Para eso estamos. 😊 Si te surge cualquier otra duda al elegir tu licencia o al hacer tu compra, escríbeme con total confianza. ¡Que tengas un excelente día! ✨`;
-  }
-  // 16. Default open, conversational response
-  else {
-    reply = `Te entiendo perfectamente. 😊 En **UpClic** contamos con licencias digitales originales para **Microsoft Office** (2024, 2021, 365), **Windows 10 y 11 Pro/Home**, además de **Project y Visio**, todas con activación permanente, entrega inmediata y garantía oficial.\n\nCuéntame un poco más sobre lo que necesitas o qué uso le das a tu computadora (estudio, oficina, diseño, juegos) y con gusto te daré la mejor recomendación.`;
+    return {
+      reply: `Lamento el inconveniente. Vamos a solucionarlo rápidamente paso a paso: 🛠️\n\n1️⃣ **Verifica la edición exacta:** Si compraste *Windows 11 Pro*, asegúrate de no tener instalada la versión *Home* o *Single Language* sin actualizar.\n2️⃣ **Verifica la conexión:** Comprueba que tu equipo tenga conexión estable a Internet y que la fecha y hora de tu sistema estén sincronizadas automáticamente.\n3️⃣ **Comando de activación rápida (en Windows):**\n   - Abre el menú Inicio, escribe **cmd**, haz clic derecho y selecciona **Ejecutar como administrador**.\n   - Escribe: \`slmgr.vbs /ipk TU-CLAVE-DE-25-DIGITOS\` y presiona Enter.\n   - Luego escribe: \`slmgr.vbs /ato\` y presiona Enter.\n4️⃣ **Para Office:** Asegúrate de desinstalar versiones previas de Office de prueba antes de ingresar tu clave oficial.\n\nSi el problema persiste, todas nuestras claves cuentan con **garantía de reemplazo inmediato**. ¡Cuéntame qué mensaje o código de error exacto te aparece en pantalla y te guío con la solución!`,
+      suggestedProducts: [],
+      showAdminWhatsApp: false,
+    };
   }
 
-  // Detect matching products to attach visual cards
-  const matchedProducts = products.filter((p: Product) => {
-    const pNameLower = p.name.toLowerCase();
-    const pSlugLower = p.slug.toLowerCase();
-    return (
-      reply.toLowerCase().includes(pNameLower) ||
-      cleanLower.includes(p.slug) ||
-      (cleanLower.includes('2024') && pSlugLower.includes('2024')) ||
-      (cleanLower.includes('2021') && pSlugLower.includes('2021')) ||
-      (cleanLower.includes('365') && pSlugLower.includes('365')) ||
-      (cleanLower.includes('combo') && pSlugLower.includes('combo')) ||
-      (cleanLower.includes('visio') && pSlugLower.includes('visio')) ||
-      (cleanLower.includes('project') && pSlugLower.includes('project')) ||
-      (cleanLower.includes('windows 11') && pSlugLower.includes('windows-11')) ||
-      (cleanLower.includes('windows 10') && pSlugLower.includes('windows-10'))
-    );
+  // 3. Questions about RUC, corporate invoices or formal quotes
+  if (norm.includes('factura') || norm.includes('boleta') || norm.includes('ruc') || norm.includes('empresa') || norm.includes('cotizacion')) {
+    return {
+      reply: `📄 **Emisión de Comprobantes y Cotizaciones Corporativas en UpClic:**\n\n• Emitimos **Boleta o Factura electrónica con RUC** para personas naturales, profesionales independientes y empresas.\n• Al momento de completar tu compra en el checkout, puedes seleccionar la opción de comprobante e ingresar tu RUC o DNI y razón social.\n• Si necesitas una **cotización formal en PDF** para tu empresa o compras por volumen (5 a 50+ licencias), te la preparamos en minutos.\n\n¿Para cuántos equipos necesitas licencias o qué productos deseas cotizar?`,
+      suggestedProducts: [],
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 4. Questions about difference between Office 2024, Office 2021, and Office 365
+  if (
+    (norm.includes('diferencia') || norm.includes('cual es mejor') || norm.includes('que me recomiendas')) &&
+    (norm.includes('office') || norm.includes('2024') || norm.includes('2021') || norm.includes('365'))
+  ) {
+    return {
+      reply: `Aquí tienes una comparativa clara para que elijas la versión perfecta de **Microsoft Office**: 💡\n\n1️⃣ **Office 2024 Professional Plus (S/ 25.00 - Pago Único Permanente):**\n   • La versión más moderna, con interfaz renovada, fórmulas nuevas en Excel y máxima velocidad en Windows 10 y 11.\n   • **Ventaja:** Pagas una sola vez y te queda de por vida.\n\n2️⃣ **Office 2021 Professional Plus (S/ 20.00 - Pago Único Permanente):**\n   • Súper estable, probada y económica. Incluye Word, Excel, PowerPoint, Outlook, Access, Publisher y OneNote.\n   • **Ventaja:** Ideal para trabajo diario de oficina, colegios y universidades.\n\n3️⃣ **Microsoft 365 Profesional (S/ 46.50 - Suscripción 1 Año):**\n   • Incluye acceso completo a las apps en hasta **5 dispositivos simultáneos** (PC, Mac, celular, tablet) + **100 GB en OneDrive**.\n   • **Ventaja:** Si tienes Mac o varios dispositivos, esta es tu mejor opción.\n\n¿En qué tipo de equipo lo vas a instalar?`,
+      suggestedProducts: products.filter(p => p.category === 'office').slice(0, 3).map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 5. Questions about OEM vs Retail
+  if (norm.includes('oem') || norm.includes('retail') || (norm.includes('diferencia') && norm.includes('clave'))) {
+    return {
+      reply: `¡Excelente consulta! Te explico la diferencia exacta entre las dos modalidades: 🔑\n\n🔹 **Clave OEM (Original Equipment Manufacturer):**\n• Se enlaza a la placa madre (hardware) de tu computadora actual.\n• Es la alternativa más económica (**desde S/ 18.90**).\n• Activación **permanente e ilimitada** en esa misma PC: puedes formatear tu disco y reinstalar Windows todas las veces que quieras sin perder la licencia.\n\n🔹 **Clave Retail (Licencia Comercial Transferible):**\n• Se asocia a tu cuenta personal de Microsoft.\n• Te da la ventaja de que, si en el futuro cambias de laptop o armas una nueva PC, **puedes transferir tu licencia** al nuevo equipo.\n\nEn **UpClic** puedes elegir entre OEM y Retail tanto para **Windows 11 Pro** como para **Windows 10 Pro**. ¿Cuál se acomoda mejor a lo que buscas?`,
+      suggestedProducts: products.filter(p => p.category === 'windows').slice(0, 2).map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 6. Step-by-step activation / installation guide
+  if (
+    norm.includes('como se instala') ||
+    norm.includes('como instalar') ||
+    norm.includes('como activo') ||
+    norm.includes('como activar') ||
+    norm.includes('pasos para instalar') ||
+    norm.includes('donde descargo') ||
+    norm.includes('donde se descarga') ||
+    norm.includes('link de descarga')
+  ) {
+    return {
+      reply: `Aquí tienes la **guía rápida de instalación y activación oficial**: 🚀\n\n📌 **Para Microsoft Office (2024 / 2021):**\n1. Desinstala cualquier versión previa o de prueba de Office en tu panel de control.\n2. Descarga la imagen oficial (.IMG) de Microsoft desde el enlace seguro que te proporcionamos.\n3. Haz doble clic en el archivo descargado y ejecuta **Setup.exe**.\n4. Al abrir Word o Excel, aparecerá la ventana de activación. Escribe tu clave de 25 caracteres y presiona **Activar**.\n\n📌 **Para Windows 10 / 11:**\n1. Ve a **Inicio > Configuración > Sistema > Activación**.\n2. Haz clic en **Cambiar la clave del producto**.\n3. Ingresa tu clave de 25 dígitos provista y presiona **Siguiente > Activar**.\n\n¡La activación queda enlazada de inmediato con los servidores de Microsoft! ¿Tienes alguna consulta sobre algún paso?`,
+      suggestedProducts: [],
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 7. Questions about Mac / Apple compatibility
+  if (norm.includes('mac') || norm.includes('apple') || norm.includes('macbook') || norm.includes('macos')) {
+    return {
+      reply: `Para computadoras **Mac (MacBook Air, MacBook Pro, iMac, Mac Mini)**, la versión oficial compatible es:\n\n🍏 **Microsoft Office 365 Profesional (Cuenta 1 Año - S/ 46.50):**\n• 100% compatible con **macOS** (y también Windows, iPad, iPhone y Android).\n• Te permite instalar Word, Excel, PowerPoint y Outlook nativos para Mac.\n• Incluye **100 GB de almacenamiento en OneDrive**.\n• Se activa iniciando sesión con tu cuenta oficial asignada en portal.office.com.\n\n*Nota:* Las versiones Office 2024 / 2021 Professional Plus son exclusivamente para sistemas operativos Windows 10 y 11.\n\n¿Deseas que te agregue Microsoft 365 a tu pedido?`,
+      suggestedProducts: products.filter(p => p.id === 'prod-m365').map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 8. Payment methods & delivery time
+  if (
+    norm.includes('como pago') ||
+    norm.includes('metodos de pago') ||
+    norm.includes('medio de pago') ||
+    norm.includes('yape') ||
+    norm.includes('plin') ||
+    norm.includes('transferencia') ||
+    norm.includes('tarjeta') ||
+    norm.includes('mercado pago') ||
+    norm.includes('bcp') ||
+    norm.includes('bbva') ||
+    norm.includes('interbank')
+  ) {
+    return {
+      reply: `En **UpClic** cuentas con los métodos de pago más cómodos y seguros de Perú: 💳\n\n• 📱 **Billeteras Digitales:** Yape y Plin (confirmación rápida y sin comisiones).\n• 🏦 **Transferencias Bancarias:** BCP, BBVA, Interbank y Scotiabank (pago directo vía banca móvil).\n• 💳 **Tarjetas de Débito y Crédito:** Visa, Mastercard, American Express y Diners a través de la pasarela segura de Mercado Pago.\n\n⚡ **Entrega:** La entrega es **100% digital e inmediata**. Una vez verificado tu comprobante o pago en línea, te enviamos tu clave original, los enlaces de descarga directa de Microsoft y el instructivo por WhatsApp y correo electrónico.\n\n¿Tienes listo el producto que deseas adquirir?`,
+      suggestedProducts: [],
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 9. Coupons, discounts, pricing & offers
+  if (
+    norm.includes('cupon') ||
+    norm.includes('descuento') ||
+    norm.includes('promocion') ||
+    norm.includes('oferta') ||
+    norm.includes('rebaja') ||
+    norm.includes('mas barato') ||
+    norm.includes('precio')
+  ) {
+    return {
+      reply: `¡Tenemos promociones imperdibles para que compres al mejor precio! 🎉\n\n🎁 **Cupón especial de apertura:** Aplica el código **\`${PROMO_COUPON_CODE}\`** en tu carrito de compras y obtén un **10% de descuento** en compras a partir de S/ 40.00.\n🔥 **Descuento automático por volumen:** Al llevar 2 o más licencias en tu carrito, el sistema te aplica un **10% de descuento adicional automático**.\n💥 **Combos ahorro:** Nuestros combos de Windows + Office ya tienen un ahorro de más de S/ 40.00 incluido.\n\n¿Qué software necesitas para tu equipo?`,
+      suggestedProducts: products.filter(p => p.featured || p.bestSeller).slice(0, 3).map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 10. Combos & Packs
+  if (norm.includes('combo') || norm.includes('pack') || norm.includes('juntos') || (norm.includes('windows') && norm.includes('office'))) {
+    return {
+      reply: `¡Nuestros combos son la opción más recomendada y con mayor ahorro! 📦🔥\n\n1️⃣ **Combo Windows 11 Pro + Office 2024 Professional Plus:**\n   • Todo lo último de Microsoft con activación permanente de por vida.\n   • **Precio Especial:** Solo **S/ 46.50** (Ahorras más de S/ 40.00 comparado con comprar por separado).\n\n2️⃣ **Combo Windows 10 Pro + Office 2021 Professional Plus:**\n   • Ideal para rendimiento ágil, estabilidad y compatibilidad en cualquier computadora.\n   • **Precio Especial:** Solo **S/ 42.00**.\n\nAmbos combos incluyen 2 claves originales independientes, enlaces oficiales de descarga, guía paso a paso y garantía de 1 año. ¿Te gustaría añadir alguno a tu carrito?`,
+      suggestedProducts: products.filter(p => p.category === 'combos').map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 11. Visio & Project
+  if (norm.includes('visio') || norm.includes('project') || norm.includes('diagrama') || norm.includes('gantt') || norm.includes('cronograma')) {
+    return {
+      reply: `Contamos con las herramientas profesionales oficiales de Microsoft para ingeniería, gestión y arquitectura: 📐📊\n\n• 📐 **Microsoft Visio 2024 / 2021 Professional (S/ 24.50):** Creación avanzada de diagramas de flujo, planos de redes, mapas de procesos, organigramas y esquemas técnicos.\n• 📊 **Microsoft Project 2024 / 2021 Professional (S/ 24.50):** Planificación integral de proyectos, diagramas de Gantt, control de costos, asignación de recursos y tiempos.\n\nAmbas licencias son de **pago único permanente de por vida** para Windows 10 y 11 con soporte oficial. ¿Cuál de los dos necesitas?`,
+      suggestedProducts: products.filter(p => p.category === 'project-visio').map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 12. Windows 11 / Windows 10 recommendations
+  if (norm.includes('windows') || norm.includes('win 11') || norm.includes('win 10') || norm.includes('formatear') || norm.includes('sistema operativo')) {
+    return {
+      reply: `Para el sistema operativo de tu PC te ofrecemos licencias 100% oficiales y permanentes: 💻\n\n• 🌟 **Windows 11 Pro (64-bit):** La versión más segura, veloz y moderna con soporte para Auto HDR, DirectStorage y pestañas en el explorador. Desde **S/ 19.90** (OEM) y Retail disponible.\n• ⚡ **Windows 10 Pro (32/64 bits):** Excelente estabilidad y bajo consumo de recursos para cualquier hardware. Desde **S/ 18.90** (OEM) y Retail disponible.\n• 🔥 **Windows 11 Home / Windows 10 Home:** Opciones ideales para uso personal y hogareño desde **S/ 18.90**.\n\n¿Tu computadora ya tiene Windows instalado para activarlo, o vas a hacer una instalación limpia desde cero?`,
+      suggestedProducts: products.filter(p => p.category === 'windows').slice(0, 3).map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 13. Office recommendations
+  if (norm.includes('office') || norm.includes('word') || norm.includes('excel') || norm.includes('powerpoint') || norm.includes('access')) {
+    return {
+      reply: `En **UpClic** disponemos de todas las ediciones oficiales de **Microsoft Office**: 💼\n\n• 🌟 **Office 2024 Professional Plus (S/ 25.00):** La edición más moderna de pago único permanente para Windows 10 y 11.\n• 💼 **Office 2021 Professional Plus (S/ 20.00):** La más utilizada en empresas y universidades (Word, Excel, PowerPoint, Outlook, Access, Publisher, OneNote).\n• ☁️ **Microsoft 365 Profesional 1 Año (S/ 46.50):** Hasta 5 dispositivos simultáneos (PC, Mac, celular) con 100 GB en la nube OneDrive.\n• 🚀 **Office 2019 / 2016 (Desde S/ 18.00):** Para computadoras con Windows 7, 8.1 o 10.\n\n¿Para qué tipo de computadora o trabajo lo vas a emplear? Te recomiendo la versión exacta.`,
+      suggestedProducts: products.filter(p => p.category === 'office').slice(0, 3).map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 14. Off-topic topics
+  const offTopicWords = ['netflix', 'spotify', 'juego', 'gta', 'minecraft', 'playstation', 'xbox', 'steam', 'ram', 'laptop', 'celular', 'iphone', 'adobe', 'photoshop', 'canva'];
+  if (offTopicWords.some(w => norm.includes(w))) {
+    return {
+      reply: `¡Hola! Con gusto te oriento. 😊\n\nEn **UpClic** nos enfocamos exclusivamente en la venta de **licencias digitales oficiales de Microsoft** (Office, Windows, Visio y Project) para asegurarte activación 100% original, garantía y los precios más accesibles de Perú.\n\nNo comercializamos hardware físico, cuentas de streaming ni software de terceros. Si necesitas instalar o activar **Office** (Word, Excel, PowerPoint) o **Windows 10/11**, ¡cuéntame qué versión estás buscando y te ayudo al instante!`,
+      suggestedProducts: [],
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 15. Friendly greetings
+  if (
+    norm === 'hola' ||
+    norm === 'buenas' ||
+    norm === 'buenas tardes' ||
+    norm === 'buenos dias' ||
+    norm === 'buenas noches' ||
+    norm.startsWith('hola ') ||
+    norm.startsWith('que tal')
+  ) {
+    return {
+      reply: `¡Hola! Qué gusto tenerte por aquí. 😊 Bienvenido a **UpClic**.\n\nSoy tu asesor digital y estoy listo para resolver cualquier duda sobre nuestras licencias originales de **Microsoft Office, Windows 10/11, Visio y Project**, guiarte con tu proceso de instalación o ayudarte a encontrar el mayor descuento para tu pedido.\n\n¿En qué te puedo asesorar hoy?`,
+      suggestedProducts: products.filter(p => p.featured).slice(0, 2).map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 16. Gratitude / farewell
+  if (norm.includes('gracias') || norm.includes('genial') || norm.includes('perfecto') || norm.includes('excelente') || norm.includes('listo')) {
+    return {
+      reply: `¡Un placer ayudarte! 😊 Si te surge cualquier otra pregunta durante tu compra o al activar tu licencia, solo escríbeme por aquí. ¡Que tengas un excelente día y mucho éxito con tu software! 🌟`,
+      suggestedProducts: [],
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 17. Intelligent keyword & context matcher for any other query
+  // Finds best matching products in store catalog
+  const matchingKeywords = norm.split(/\s+/).filter(w => w.length > 2);
+  const matched = products.filter((p: Product) => {
+    const pText = normalizeText(`${p.name} ${p.category} ${p.description} ${p.features.join(' ')}`);
+    return matchingKeywords.some(k => pText.includes(k));
   }).slice(0, 3);
 
+  if (matched.length > 0) {
+    const pNames = matched.map(p => `• **${p.name}:** S/ ${p.price.toFixed(2)} (${p.duration})`).join('\n');
+    return {
+      reply: `Comprendo lo que necesitas. 👍 Para lo que me consultas, te recomiendo revisar estas opciones disponibles en nuestra tienda:\n\n${pNames}\n\nTodas nuestras licencias cuentan con activación 100% original con los servidores de Microsoft, entrega digital inmediata tras tu pago y garantía oficial.\n\n¿Deseas conocer más detalles técnicos o cómo realizar la instalación de alguna de ellas?`,
+      suggestedProducts: matched.map(p => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // Default helpful response
   return {
-    reply,
-    suggestedProducts: matchedProducts.map((p: Product) => ({
+    reply: `¡Entendido! En **UpClic** contamos con un catálogo completo de licencias digitales oficiales de **Microsoft Office** (2024, 2021, 365), **Windows 10 y 11** (Pro, Home, OEM y Retail), **Project y Visio**, todas con activación permanente y garantía.\n\n¿Te gustaría que te recomiende la mejor opción para tu computadora, o tienes alguna consulta sobre la instalación o métodos de pago?`,
+    suggestedProducts: products.filter(p => p.featured).slice(0, 2).map(p => ({
       id: p.id,
       slug: p.slug,
       name: p.name,
@@ -213,7 +355,6 @@ export function generateLocalChatReply(message: string, history?: Array<{ role: 
       imageUrl: p.fallbackImage || p.imageUrl,
       badge: p.badge,
     })),
-    showAdminWhatsApp: showAdminWhatsApp,
+    showAdminWhatsApp: false,
   };
 }
-

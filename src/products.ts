@@ -1014,7 +1014,27 @@ export function getWhatsAppConfirmationUrl(
 
 // Find product by slug or id
 export function getProductBySlug(slug: string): Product | undefined {
-  return products.find(p => p.slug === slug || p.id === slug);
+  if (!slug) return undefined;
+  let clean = '';
+  try {
+    clean = decodeURIComponent(slug).trim().toLowerCase();
+  } catch {
+    clean = slug.trim().toLowerCase();
+  }
+  // Strip trailing slashes and hash/query parts if present
+  clean = clean.replace(/\/+$/, '').split('?')[0].split('#')[0];
+  if (clean.startsWith('/producto/')) {
+    clean = clean.replace('/producto/', '');
+  } else if (clean.startsWith('producto/')) {
+    clean = clean.replace('producto/', '');
+  }
+
+  // Exact slug or ID match
+  const exact = products.find(p => p.slug.toLowerCase() === clean || p.id.toLowerCase() === clean);
+  if (exact) return exact;
+
+  // Suffix match (e.g. if slug passed was full URL or path)
+  return products.find(p => clean.endsWith(p.slug.toLowerCase()) || p.slug.toLowerCase().endsWith(clean));
 }
 
 // Smart Search Function with Prefix & Tokenized Matching:
