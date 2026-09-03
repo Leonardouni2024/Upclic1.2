@@ -26,7 +26,8 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
       setLoading(true);
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión con Google.');
+      console.error("Auth error:", err);
+      setError(`Error: ${err.code || err.message}`);
     } finally {
       setLoading(false);
     }
@@ -48,7 +49,12 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
         await createUserWithEmailAndPassword(auth, email, password);
       }
     } catch (err: any) {
-      setError(err.message || 'Ocurrió un error al autenticar.');
+      console.error("Auth error:", err);
+      let msg = err.code || err.message;
+      if (err.code === 'auth/email-already-in-use') msg = 'El correo ya está registrado. Inicia sesión.';
+      if (err.code === 'auth/invalid-credential') msg = 'Correo o contraseña incorrectos.';
+      if (err.code === 'auth/weak-password') msg = 'La contraseña debe tener al menos 6 caracteres.';
+      setError(`Error: ${msg}`);
     } finally {
       setLoading(false);
     }
