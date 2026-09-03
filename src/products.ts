@@ -78,13 +78,13 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10, Windows 11, macOS, iOS y Android",
     bestSeller: true,
     featured: true,
-    downloadUrl: "https://portal.office.com",
-    downloadLabel: "Acceder a Portal Office y Descargar",
-    isoFormat: "Portal Oficial Microsoft 365 (portal.office.com)",
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/O365ProPlusRetail.img",
+    downloadLabel: "Descargar Instalador Office 365 (.IMG) Oficial",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN + Portal portal.office.com",
     installationSteps: [
       "Paso 1: Una vez confirmado su pago, le enviaremos sus credenciales oficiales (correo y clave) asignadas a su dominio.",
       "Paso 2: Ingrese a portal.office.com e inicie sesión con las credenciales provistas.",
-      "Paso 3: En el panel principal de bienvenida de Microsoft 365, presione el botón superior 'Instalar aplicaciones'.",
+      "Paso 3: En el panel principal de bienvenida de Microsoft 365, presione el botón superior 'Instalar aplicaciones' o descargue la imagen oficial .IMG provista.",
       "Paso 4: Ejecute el instalador descargado para instalar Word, Excel, PowerPoint y Outlook.",
       "Paso 5: Abra cualquiera de las aplicaciones instaladas e inicie sesión con su cuenta para activar su licencia y OneDrive."
     ]
@@ -253,12 +253,12 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://officecdn.microsoft.com/pr/39168D7E-077B-48E7-8728-0E25E0E51512/media/es-es/ProPlusRetail.img",
-    downloadLabel: "Descargar Imagen Oficial Office 2013 (.IMG)",
-    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    downloadUrl: "https://archive.org/download/office-2013-sp1-proplus-spanish/es_office_professional_plus_2013_with_sp1_x64_dvd_3928788.iso",
+    downloadLabel: "Descargar ISO Directa Office 2013 SP1 (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial SP1 en Español",
     installationSteps: [
-      "Paso 1: Descargue el instalador oficial en formato .IMG mediante el botón provisto.",
-      "Paso 2: Monte o descomprima el archivo descargado en su equipo.",
+      "Paso 1: Descargue el instalador oficial en formato .ISO mediante el botón provisto.",
+      "Paso 2: Monte o descomprima el archivo ISO descargado en su equipo.",
       "Paso 3: Ejecute el archivo 'Setup.exe' y complete la instalación.",
       "Paso 4: Abra cualquier aplicación como Word 2013 o Excel 2013.",
       "Paso 5: Ingrese la clave de activación de 25 caracteres para validar su licencia permanente."
@@ -288,12 +288,12 @@ export const products: Product[] = [
     badge: "CLÁSICO",
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/download/",
-    downloadLabel: "Descargar Instalador Office 2010 (Microsoft)",
-    isoFormat: "Instalador Oficial Microsoft",
+    downloadUrl: "https://archive.org/download/Microsoft_Office_2010_Pro_Plus_10_LANG/es_office_professional_plus_2010_x86_x64_dvd_515085.iso",
+    downloadLabel: "Descargar ISO Directa Office 2010 (Español)",
+    isoFormat: "Descarga Directa ISO Oficial en Español (x86/x64)",
     installationSteps: [
-      "Paso 1: Descargue el instalador oficial de Microsoft Office 2010 mediante el enlace proporcionado.",
-      "Paso 2: Ejecute el instalador e ingrese su clave original de 25 caracteres provista.",
+      "Paso 1: Descargue la imagen ISO oficial de Microsoft Office 2010 mediante el botón de descarga.",
+      "Paso 2: Monte o descomprima la ISO y ejecute 'Setup.exe' e ingrese su clave original de 25 caracteres provista.",
       "Paso 3: Seleccione los componentes que desea instalar (Word, Excel, PowerPoint, Access).",
       "Paso 4: Complete la instalación y verifique en Archivo > Ayuda que figure con licencia permanente."
     ]
@@ -509,11 +509,11 @@ export const products: Product[] = [
     slug: "windows-8-1-pro",
     name: "Windows 8.1 Pro",
     category: "windows",
-    price: 24.90,
-    oldPrice: 39.90,
+    price: 54.00,
+    oldPrice: 79.00,
     duration: "Permanente",
-    rating: 4.5,
-    reviews: 63,
+    rating: 4.8,
+    reviews: 78,
     imageUrl: "/products/windows-8-1-pro.webp",
     fallbackImage: "/products/windows-8-1-pro.png",
     description: "Sistema operativo ligero optimizado para equipos de generación anterior y pantallas táctiles.",
@@ -525,7 +525,7 @@ export const products: Product[] = [
       "Licencia permanente digital"
     ],
     compatibility: "Equipos clásicos con procesadores de 32 o 64 bits",
-    badge: undefined,
+    badge: "OFERTA",
     bestSeller: false,
     featured: false,
     downloadUrl: "https://archive.org/download/windows-8.1-core-pro-update-3-win-8.1-spanish-x-64/Windows%208.1%20Core-Pro%20Update%203---Win8.1_Spanish_x64.iso",
@@ -805,13 +805,13 @@ export const products: Product[] = [
     badge: "CLÁSICO",
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/download/details.aspx?id=35108",
-    downloadLabel: "Descargar Instalador Visio 2013 (Microsoft)",
-    isoFormat: "Instalador Oficial Microsoft",
+    downloadUrl: "https://archive.org/download/Microsoft_Visio_2013_Professional_x86_x64.iso/Microsoft_Visio_2013_Professional_x86_x64.iso",
+    downloadLabel: "Descargar ISO Directa Visio 2013 (x86/x64)",
+    isoFormat: "Descarga Directa ISO Oficial (32/64 bits)",
     installationSteps: [
-      "Paso 1: Descargue el instalador oficial de Visio 2013 desde la web de Microsoft mediante el enlace de descarga.",
-      "Paso 2: Ejecute el instalador e ingrese la clave provista.",
-      "Paso 3: Siga los pasos del asistente y finalice la instalación."
+      "Paso 1: Descargue la imagen ISO oficial de Visio 2013 desde el botón de descarga.",
+      "Paso 2: Monte el archivo ISO descargado o extráigalo y ejecute 'Setup.exe'.",
+      "Paso 3: Siga los pasos del asistente e ingrese la clave de 25 caracteres provista para la activación permanente."
     ]
   }
 ];
