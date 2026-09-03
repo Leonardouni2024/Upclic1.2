@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
 import { ProductReviewsSection } from './ProductReviewsSection.tsx';
+import { ComparisonTable } from './ComparisonTable.tsx';
 import {
   Star,
   ShoppingCart,
@@ -476,6 +477,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             </div>
           </div>
         </div>
+
+        {/* Interactive Comparison Table */}
+        <ComparisonTable currentCategory={product.category} />
 
         {/* Customer Reviews and Rating System */}
         <ProductReviewsSection product={product} />

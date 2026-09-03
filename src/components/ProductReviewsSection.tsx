@@ -8,9 +8,11 @@ import {
   ThumbsUp,
   Filter,
   Send,
-  Sparkles,
   ShieldCheck,
-  Award
+  Award,
+  Database,
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
 
 interface ProductReviewsSectionProps {
@@ -18,7 +20,7 @@ interface ProductReviewsSectionProps {
 }
 
 export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ product }) => {
-  const { getProductReviews, getProductStats, addReview } = useReviews();
+  const { getProductReviews, getProductStats, addReview, connectionStatus, isSaving, syncWithServer } = useReviews();
 
   const reviews = getProductReviews(product.id);
   const stats = getProductStats(product.id);
@@ -45,7 +47,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
     5: 'Excelente - Totalmente recomendado'
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
 
@@ -64,7 +66,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       return;
     }
 
-    addReview({
+    await addReview({
       productId: product.id,
       author: author.trim(),
       city: city.trim() || undefined,
@@ -106,10 +108,34 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/90 text-[#0066FF] text-xs font-bold uppercase tracking-wider mb-2 border border-blue-100 shadow-2xs">
-            <Star className="w-3.5 h-3.5 fill-[#0066FF]" />
-            <span>Opiniones Verificadas</span>
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/90 text-[#0066FF] text-xs font-bold uppercase tracking-wider border border-blue-100 shadow-2xs">
+              <Star className="w-3.5 h-3.5 fill-[#0066FF]" />
+              <span>Opiniones Verificadas</span>
+            </div>
+
+            {/* Database Connection Status Badge */}
+            <div
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all ${
+                connectionStatus === 'connected'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : connectionStatus === 'syncing'
+                  ? 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse'
+                  : 'bg-slate-100 text-slate-600 border-slate-200'
+              }`}
+              title="Estado de conexión con la base de datos de reseñas"
+            >
+              <Database className="w-3 h-3" />
+              <span>
+                {connectionStatus === 'connected'
+                  ? 'Conexión activa a base de datos'
+                  : connectionStatus === 'syncing'
+                  ? 'Sincronizando reseñas...'
+                  : 'Guardado local sincronizado'}
+              </span>
+            </div>
           </div>
+
           <h2 className="text-2xl sm:text-3xl font-black text-[#0f172a] tracking-tight">
             Calificaciones y Reseñas de Clientes
           </h2>
@@ -118,17 +144,28 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setShowForm(!showForm);
-            setSubmittedSuccess(false);
-            setFormError(null);
-          }}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all cursor-pointer active:scale-98 border border-blue-500/20 self-start sm:self-auto"
-        >
-          <MessageSquarePlus className="w-4 h-4" />
-          <span>{showForm ? 'Ocultar formulario' : 'Escribir una opinión'}</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => syncWithServer()}
+            title="Sincronizar reseñas con la base de datos"
+            className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-[#0066FF] hover:bg-slate-50 transition-colors cursor-pointer"
+            aria-label="Sincronizar base de datos"
+          >
+            <RefreshCw className={`w-4 h-4 ${connectionStatus === 'syncing' ? 'animate-spin' : ''}`} />
+          </button>
+
+          <button
+            onClick={() => {
+              setShowForm(!showForm);
+              setSubmittedSuccess(false);
+              setFormError(null);
+            }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all cursor-pointer active:scale-98 border border-blue-500/20"
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            <span>{showForm ? 'Ocultar formulario' : 'Escribir una opinión'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Scorecard & Rating Breakdown Card */}
@@ -226,7 +263,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                 ¡Muchas gracias por tu reseña!
               </h4>
               <p className="text-xs sm:text-sm text-emerald-700 mt-1 max-w-md mx-auto">
-                Tu opinión ha sido registrada exitosamente y ya se refleja en la calificación promedio del producto en UpClic.
+                Tu opinión ha sido guardada en la base de datos de UpClic y ya se refleja en la calificación oficial del producto.
               </p>
             </div>
           ) : (
@@ -324,16 +361,27 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                  disabled={isSaving}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20 disabled:opacity-60"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Publicar opinión</span>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Guardando en servidor...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Publicar y guardar opinión</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

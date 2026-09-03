@@ -494,12 +494,12 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/software-download/windows8ISO",
-    downloadLabel: "Descargar ISO Oficial Windows 8.1 (Microsoft)",
-    isoFormat: "Imagen ISO Oficial (32/64 bits) Servidores Microsoft",
+    downloadUrl: "https://archive.org/download/windows-8.1-core-pro-update-3-win-8.1-spanish-x-64/Windows%208.1%20Core-Pro%20Update%203---Win8.1_Spanish_x64.iso",
+    downloadLabel: "Descargar ISO Directa Windows 8.1 Pro (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial (64 bits - Español)",
     installationSteps: [
-      "Paso 1: Descargue la imagen ISO oficial de Windows 8.1 desde Microsoft.",
-      "Paso 2: Grabe la ISO en un pendrive USB o DVD.",
+      "Paso 1: Haga clic en 'Descargar ISO Directa' para bajar el instalador oficial en formato .iso.",
+      "Paso 2: Grabe la ISO en un pendrive USB (mediante Rufus o Ventoy) o DVD.",
       "Paso 3: Instale el sistema y active con su clave de 25 caracteres en Configuración del PC > Activar Windows."
     ]
   },
@@ -527,12 +527,12 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/download/details.aspx?id=5842",
-    downloadLabel: "Descargar Imagen Windows 7 (Microsoft)",
-    isoFormat: "Imagen de Sistema Oficial Microsoft",
+    downloadUrl: "https://archive.org/download/Win7ProSP1ESP/es_windows_7_professional_with_sp1_x64_dvd_u_676947.iso",
+    downloadLabel: "Descargar ISO Directa Windows 7 Pro SP1 (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial SP1 (64 bits - Español)",
     installationSteps: [
-      "Paso 1: Descargue los archivos oficiales de instalación mediante el botón de descarga.",
-      "Paso 2: Instale Windows 7 Professional en su PC o máquina virtual.",
+      "Paso 1: Haga clic en 'Descargar ISO Directa' para descargar el archivo .iso oficial de Windows 7 Professional SP1 en Español.",
+      "Paso 2: Cree un USB de arranque con Rufus e instale Windows 7 en su equipo o máquina virtual.",
       "Paso 3: Haga clic derecho en 'Equipo' > 'Propiedades'.",
       "Paso 4: En la parte inferior, haga clic en 'Activar Windows ahora' e ingrese su clave original de 25 caracteres."
     ]
@@ -555,17 +555,17 @@ export const products: Product[] = [
       "Incluye todas las características existentes en Windows 7",
       "Soporte multilingüe con paquetes de 35 idiomas integrados",
       "Cifrado BitLocker y subsistema para aplicaciones basadas en Unix",
-      "Licencia digital permanente"
+      "Licencia digital permanente para 1 PC"
     ],
     compatibility: "Equipos antiguos o especializados (32 y 64 bits)",
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://www.microsoft.com/download/details.aspx?id=5842",
-    downloadLabel: "Descargar Imagen Windows 7 Ultimate (Microsoft)",
-    isoFormat: "Imagen de Sistema Oficial Microsoft",
+    downloadUrl: "https://archive.org/download/Win7UltimateSP1ESP/es_windows_7_ultimate_with_sp1_x64_dvd_u_677350.iso",
+    downloadLabel: "Descargar ISO Directa Windows 7 Ultimate SP1 (64 bits)",
+    isoFormat: "Descarga Directa ISO Oficial SP1 Multilenguaje (64 bits - Español)",
     installationSteps: [
-      "Paso 1: Descargue los archivos de instalación mediante el botón de descarga.",
+      "Paso 1: Haga clic en 'Descargar ISO Directa' para iniciar la descarga inmediata del archivo .iso oficial de Windows 7 Ultimate SP1.",
       "Paso 2: Instale la edición Ultimate en su equipo.",
       "Paso 3: Ingrese a Propiedades del sistema y active con su clave de 25 caracteres."
     ]
