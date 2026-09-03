@@ -276,25 +276,18 @@ export const AIAssistantChat: React.FC = () => {
         {!isOpen && hasUnreadNotice && (
           <div
             onClick={() => setIsOpen(true)}
-            className="hidden sm:flex items-center gap-2.5 bg-white py-2 px-3.5 rounded-2xl border border-blue-200/80 shadow-lg cursor-pointer hover:border-blue-400 transition-all transform hover:-translate-y-0.5 animate-bounce"
+            className="hidden sm:flex items-center gap-1.5 bg-white py-1.5 px-3 rounded-full border border-blue-200 shadow-md cursor-pointer hover:border-blue-400 transition-all transform hover:-translate-y-0.5"
           >
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <div className="text-left">
-              <p className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                Asistente Virtual UpClic
-              </p>
-              <p className="text-[11px] text-slate-500">¿Dudas o soporte con tu licencia? ¡Escríbeme!</p>
-            </div>
+            <span className="text-xs font-bold text-slate-700">¿Te ayudo?</span>
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setHasUnreadNotice(false);
               }}
-              className="text-slate-400 hover:text-slate-600 p-0.5"
+              className="text-slate-400 hover:text-slate-600 ml-1 p-0.5 rounded-full hover:bg-slate-100"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3" />
             </button>
           </div>
         )}
@@ -303,29 +296,20 @@ export const AIAssistantChat: React.FC = () => {
           id="btn-open-ai-chat"
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-full font-extrabold text-sm shadow-xl transition-all duration-200 cursor-pointer ${
+          className={`flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-300 cursor-pointer ${
             isOpen
-              ? 'bg-slate-800 hover:bg-slate-900 text-white'
-              : 'bg-gradient-to-r from-[#0066FF] to-[#0052cc] hover:from-[#0052cc] hover:to-[#003d99] text-white hover:shadow-2xl hover:scale-105 active:scale-95'
+              ? 'bg-slate-800 hover:bg-slate-900 text-white scale-90'
+              : 'bg-gradient-to-br from-[#0066FF] to-[#0047b3] text-white hover:scale-110 active:scale-95 animate-bounce shadow-blue-500/30'
           }`}
           aria-label={isOpen ? 'Cerrar Asistente UpClic' : 'Abrir Asistente UpClic'}
         >
           {isOpen ? (
-            <>
-              <X className="w-5 h-5" />
-              <span>Cerrar Chat</span>
-            </>
+            <X className="w-6 h-6" />
           ) : (
-            <>
-              <div className="relative">
-                <Bot className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border-2 border-[#0066FF] rounded-full" />
-              </div>
-              <span className="font-bold">Asistente UpClic</span>
-              <span className="bg-white/20 text-[11px] py-0.5 px-2 rounded-full font-semibold hidden sm:inline">
-                Online
-              </span>
-            </>
+            <div className="relative flex items-center justify-center">
+              <Bot className="w-7 h-7" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-[#0066FF] rounded-full animate-pulse" />
+            </div>
           )}
         </button>
       </div>
