@@ -21,13 +21,22 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleGoogleSignIn = async () => {
+    if (window.self !== window.top) {
+      setError('Por seguridad, Google no permite iniciar sesión dentro del editor. Por favor, abre tu tienda en una pestaña nueva (con el botón ↗️ arriba a la derecha).');
+      return;
+    }
+
     try {
       setError('');
       setLoading(true);
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
       console.error("Auth error:", err);
-      setError(`Error: ${err.code || err.message}`);
+      let msg = err.code || err.message;
+      if (err.code === 'auth/popup-closed-by-user') msg = 'Se cerró la ventana antes de terminar.';
+      if (err.code === 'auth/unauthorized-domain') msg = 'Este dominio no está autorizado en Firebase. Añádelo en la configuración.';
+      if (err.code === 'auth/cancelled-popup-request') msg = 'Petición cancelada por el navegador.';
+      setError(`Error de Google: ${msg}`);
     } finally {
       setLoading(false);
     }
