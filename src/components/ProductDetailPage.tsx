@@ -7,6 +7,7 @@ import { ProductCard } from './ProductCard.tsx';
 import { ProductReviewsSection } from './ProductReviewsSection.tsx';
 import { ComparisonTable } from './ComparisonTable.tsx';
 import { InstallationModal } from './InstallationModal.tsx';
+import { ShareModal } from './ShareModal.tsx';
 import {
   Star,
   ShoppingCart,
@@ -36,6 +37,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showInstallModal, setShowInstallModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const product = getProductBySlug(slug) || products[0];
   const stats = getProductStats(product.id);
@@ -51,22 +53,48 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const activePrice = currentVariant ? currentVariant.price : product.price;
   const activeOldPrice = currentVariant ? currentVariant.oldPrice : product.oldPrice;
 
-  // Synchronize dynamic SEO title and meta description tag
+  // Synchronize dynamic SEO title, meta description, and OpenGraph social share tags
   useEffect(() => {
-    document.title = `${product.name} | UpClic`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute(
-        'content',
-        `Compra ${product.name} en UpClic. Consulta precio, características y opciones de compra digital inmediata.`
-      );
-    }
+    const pageTitle = `${product.name} - S/ ${activePrice.toFixed(2)} | UpClic`;
+    document.title = pageTitle;
+
+    const shortDesc = `Compra ${product.name} al mejor precio de S/ ${activePrice.toFixed(2)} en UpClic. Licencia digital original, entrega inmediata y garantía oficial.`;
+    
+    // Update or create helper for meta tags
+    const updateMetaTag = (selector: string, attr: string, value: string) => {
+      let element = document.querySelector(selector);
+      if (!element) {
+        element = document.createElement('meta');
+        if (selector.includes('property=')) {
+          const propName = selector.match(/property="([^"]+)"/)?.[1];
+          if (propName) element.setAttribute('property', propName);
+        } else if (selector.includes('name=')) {
+          const nameAttr = selector.match(/name="([^"]+)"/)?.[1];
+          if (nameAttr) element.setAttribute('name', nameAttr);
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute(attr, value);
+    };
+
+    const fullImageUrl = window.location.origin + product.imageUrl;
+    const currentUrl = window.location.href;
+
+    updateMetaTag('meta[name="description"]', 'content', shortDesc);
+    updateMetaTag('meta[property="og:title"]', 'content', pageTitle);
+    updateMetaTag('meta[property="og:description"]', 'content', shortDesc);
+    updateMetaTag('meta[property="og:image"]', 'content', fullImageUrl);
+    updateMetaTag('meta[property="og:url"]', 'content', currentUrl);
+    updateMetaTag('meta[name="twitter:title"]', 'content', pageTitle);
+    updateMetaTag('meta[name="twitter:description"]', 'content', shortDesc);
+    updateMetaTag('meta[name="twitter:image"]', 'content', fullImageUrl);
+
     setImgSrc(product.imageUrl);
     if (product.variants && product.variants.length > 0) {
       setSelectedVariantId(product.variants[0].id);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [product]);
+  }, [product, activePrice]);
 
   const handleAddToCart = () => {
     addItem(product, quantity, currentVariant ? currentVariant.id : undefined);
@@ -134,17 +162,33 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-linear-to-b from-slate-50/60 via-white to-white p-8 border border-slate-200/80 shadow-2xs flex items-center justify-center">
-                {product.badge && (
-                  <span className="absolute top-4 left-4 px-3 py-1.5 text-xs font-black rounded-lg bg-[#0066FF] text-white uppercase tracking-wider shadow-2xs border border-white/20">
-                    {product.badge}
-                  </span>
-                )}
-                {product.cloudStorage && (
-                  <span className="absolute top-4 right-4 px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-50/90 text-[#0066FF] border border-blue-200/70 shadow-2xs">
-                    {product.cloudStorage}
-                  </span>
-                )}
+              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-linear-to-b from-slate-50/60 via-white to-white p-8 border border-slate-200/80 shadow-2xs flex items-center justify-center group">
+                {/* Badges on Top-Left */}
+                <div className="absolute top-3.5 left-3.5 flex flex-col items-start gap-1.5 z-10">
+                  {product.badge && (
+                    <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-black rounded-lg bg-[#0066FF] text-white uppercase tracking-wider shadow-2xs border border-white/20">
+                      {product.badge}
+                    </span>
+                  )}
+                  {product.cloudStorage && (
+                    <span className="px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg bg-blue-50/95 text-[#0066FF] border border-blue-200/80 shadow-2xs backdrop-blur-xs">
+                      {product.cloudStorage}
+                    </span>
+                  )}
+                </div>
+
+                {/* Share Button on Top-Right of the image */}
+                <button
+                  type="button"
+                  onClick={() => setShowShareModal(true)}
+                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 hover:bg-[#0066FF] text-slate-700 hover:text-white border border-slate-200 hover:border-[#0066FF] shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-xs"
+                  title="Compartir producto en redes sociales"
+                  aria-label="Compartir en redes sociales"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#0066FF] group-hover/share:text-white transition-colors" />
+                  <span className="text-[11px] sm:text-xs font-bold">Compartir</span>
+                </button>
+
                 <img
                   src={imgSrc}
                   alt={product.name}
@@ -153,7 +197,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       setImgSrc(product.fallbackImage);
                     }
                   }}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
 
@@ -619,6 +663,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         product={product}
         isOpen={showInstallModal}
         onClose={() => setShowInstallModal(false)}
+      />
+
+      {/* Social Media & Product Share Modal */}
+      <ShareModal
+        product={product}
+        currentVariant={currentVariant}
+        activePrice={activePrice}
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
       />
     </div>
   );
