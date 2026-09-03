@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
-import { products, getProductBySlug } from '../products.ts';
+import { products, getProductBySlug, WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from '../products.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
@@ -18,7 +18,10 @@ import {
   AlertCircle,
   Share2,
   Lock,
-  ChevronDown
+  ChevronDown,
+  Download,
+  ExternalLink,
+  BookOpen
 } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -65,13 +68,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
   const faqs = [
     {
-      q: '¿Cómo y cuándo recibiré mi licencia de software?',
-      a: 'La entrega es inmediata tras confirmar tu pago por WhatsApp o correo. Recibirás tu clave digital original de 25 caracteres junto con el enlace oficial de descarga de Microsoft y una guía de instalación paso a paso.'
+      q: product.isAccountAccess
+        ? '¿Cómo recibiré mi acceso a Office 365 Profesional?'
+        : '¿Cómo y cuándo recibiré mi licencia de software?',
+      a: product.isAccountAccess
+        ? 'La entrega es inmediata. Recibirás tu correo electrónico y contraseña exclusiva asignada a tu dominio para iniciar sesión directamente en portal.office.com y descargar las aplicaciones activadas en tus dispositivos.'
+        : 'La entrega es inmediata tras confirmar tu pago por WhatsApp o correo. Recibirás tu clave digital original de 25 caracteres junto con el enlace oficial de descarga de Microsoft y una guía de instalación paso a paso.'
     },
     {
       q: '¿La licencia es original y permanente?',
       a: product.duration === '1 año'
         ? 'Es una suscripción original garantizada por 1 año con 100 GB de almacenamiento OneDrive y soporte continuo de Microsoft.'
+        : product.isAccountAccess
+        ? 'Es una cuenta oficial corporativa con acceso completo a las aplicaciones de Office (Word, Excel, PowerPoint, Outlook) con actualizaciones continuas.'
         : 'Sí, es una licencia 100% original, perpetua y de por vida para 1 computadora. No tiene costos mensuales ni renovaciones.'
     },
     {
@@ -80,7 +89,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     },
     {
       q: '¿Puedo reinstalar el software si formateo mi PC?',
-      a: 'Sí, la clave permanece asociada a tu equipo o cuenta, permitiéndote reinstalar el software siempre que sea en la misma máquina.'
+      a: product.isAccountAccess
+        ? 'Sí, solo debes volver a iniciar sesión con tu cuenta en portal.office.com y reinstalar las aplicaciones en tu equipo.'
+        : 'Sí, la clave permanece asociada a tu equipo o cuenta, permitiéndote reinstalar el software siempre que sea en la misma máquina.'
     }
   ];
 
@@ -146,6 +157,24 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             {/* Information & Purchase Column */}
             <div className="lg:col-span-6 flex flex-col justify-between">
               <div>
+                {/* Account Access notice for Office 365 Professional */}
+                {product.isAccountAccess && (
+                  <div className="mb-4 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 shadow-xs">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                      <div className="text-xs sm:text-sm">
+                        <span className="font-black text-amber-900 block uppercase tracking-wider text-xs mb-1">
+                          ⚠️ AVISO IMPORTANTE: NO ES KEY · ACCESO POR CUENTA
+                        </span>
+                        <p className="font-medium leading-relaxed">
+                          {product.accountNotice ||
+                            'Este producto no es una clave de producto (key). El acceso es directo por cuenta oficial. Se le enviará el correo electrónico y la contraseña asignados a su dominio para iniciar sesión en portal.office.com y activar todas las aplicaciones.'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Warning notice if legacy version */}
                 {product.warning && (
                   <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-800 bg-amber-50/90 px-3 py-1.5 rounded-xl border border-amber-200/70">
@@ -191,9 +220,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 {/* License Tag & Cloud pill */}
                 <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-200/60">
-                    Licencia: {product.duration}
+                    Modalidad: {product.duration}
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] sm:text-xs font-bold border border-emerald-100">
+                  {product.isAccountAccess ? (
+                    <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-100 text-amber-800 text-[11px] sm:text-xs font-bold border border-amber-200">
+                      Cuenta con dominio · No es Key
+                    </span>
+                  ) : (
+                    <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] sm:text-xs font-bold border border-emerald-100">
+                      ✓ Clave original Microsoft de 25 dígitos
+                    </span>
+                  )}
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-blue-50 text-[#0066FF] text-[11px] sm:text-xs font-bold border border-blue-100">
                     ✓ Entrega digital inmediata
                   </span>
                 </div>
@@ -217,11 +255,28 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 </div>
 
                 {/* 35% Auto Discount or 30% Coupon reminder */}
-                <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-blue-50/90 to-sky-50/80 border border-blue-200 text-[11px] sm:text-xs font-bold text-[#0066FF] flex items-center gap-2 shadow-2xs">
+                <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-linear-to-r from-blue-50/90 to-sky-50/80 border border-blue-200 text-[11px] sm:text-xs font-bold text-[#0066FF] flex items-center gap-2 shadow-2xs">
                   <span className="text-base shrink-0">🔥</span>
                   <span className="leading-snug">
                     ¡Lleva 2 o más productos y obtén <span className="text-emerald-700 underline font-black">35% de descuento</span>! O usa el cupón <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 text-[#0066FF] font-mono">PRIMUPCLIC</code> para 30% de descuento (en productos desde S/ 39.90).
                   </span>
+                </div>
+
+                {/* Direct Download ISO link banner */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 text-xs text-slate-700 font-semibold">
+                    <Download className="w-4 h-4 text-[#0066FF]" />
+                    <span>Descarga directa disponible ({product.isoFormat || 'ISO Oficial'})</span>
+                  </div>
+                  <a
+                    href={product.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:underline"
+                  >
+                    <span>Descargar ahora</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
 
                 {/* Quantity selector */}
@@ -277,8 +332,82 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
         {/* Details & Specs Tabs */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* Description & Features (2 cols) */}
+          {/* Description & Features & Installation Guide (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Download ISO & Installation Guide Block */}
+            <div
+              id="download-and-installation-guide"
+              className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Download className="w-5 h-5 text-[#0066FF]" />
+                    <h3 className="text-lg font-black text-[#0f172a]">
+                      Descarga Oficial de la ISO / Instalador
+                    </h3>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                    {product.isoFormat || 'Archivo oficial directo de los servidores de Microsoft.'}
+                  </p>
+                </div>
+
+                <a
+                  id="product-detail-download-iso-btn"
+                  href={product.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3 px-5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20 shrink-0"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>{product.downloadLabel || 'Descargar ISO Oficial'}</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                </a>
+              </div>
+
+              {/* Step-by-Step Installation Instructions */}
+              <div className="pt-6">
+                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Instrucciones de Instalación Paso a Paso</span>
+                </h4>
+
+                <div className="space-y-3">
+                  {product.installationSteps.map((step, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80"
+                    >
+                      <span className="w-7 h-7 rounded-xl bg-[#0066FF] text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                        {idx + 1}
+                      </span>
+                      <div className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                        {step}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/60 flex items-center justify-between flex-wrap gap-2 text-xs">
+                  <span className="text-slate-600 font-medium flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    ¿Tienes dudas o necesitas asistencia remota durante la instalación?
+                  </span>
+                  <a
+                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                      `Hola UpClic, necesito ayuda para la instalación de ${product.name}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0066FF] font-bold hover:underline"
+                  >
+                    Escríbenos al WhatsApp {WHATSAPP_DISPLAY} →
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Product Description */}
             <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
               <h3 className="text-lg font-black text-[#0f172a] mb-4 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-[#0066FF]" />
@@ -312,13 +441,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-600">
-                <div className="p-3 rounded-xl border border-slate-200">
+                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
                   <span className="font-bold text-slate-800 block mb-1">Modalidad de Licencia:</span>
                   <span>{product.duration}</span>
                 </div>
-                <div className="p-3 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-800 block mb-1">Tipo de Clave:</span>
-                  <span>Clave digital alfanumérica de 25 caracteres</span>
+                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+                  <span className="font-bold text-slate-800 block mb-1">
+                    {product.isAccountAccess ? 'Tipo de Acceso:' : 'Tipo de Clave:'}
+                  </span>
+                  <span className={product.isAccountAccess ? 'font-bold text-amber-800' : ''}>
+                    {product.isAccountAccess
+                      ? 'Cuenta oficial (correo y contraseña a su dominio) · No es Key'
+                      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft)'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -386,3 +521,4 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     </div>
   );
 };
+

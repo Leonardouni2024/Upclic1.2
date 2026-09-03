@@ -20,6 +20,12 @@ export interface Product {
   featured?: boolean;
   cloudStorage?: string;
   warning?: string;
+  isAccountAccess?: boolean;
+  accountNotice?: string;
+  downloadUrl: string;
+  downloadLabel?: string;
+  isoFormat?: string;
+  installationSteps: string[];
 }
 
 export interface PromoCoupon {

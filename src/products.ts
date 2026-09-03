@@ -39,12 +39,22 @@ export const products: Product[] = [
     compatibility: "Compatible con PC y Laptops arquitectura x64 (Windows 11 Pro + Office 2024)",
     badge: "🔥 COMBO 2 EN 1",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2024Retail.img",
+    downloadLabel: "Descargar Imagen Office 2024 (.IMG)",
+    isoFormat: "Imagen (.IMG) Office 2024 + ISO Windows 11 Oficial Microsoft",
+    installationSteps: [
+      "Paso 1: Para Windows 11, descargue la imagen ISO oficial desde Microsoft (microsoft.com/software-download/windows11) o use la herramienta oficial en un USB.",
+      "Paso 2: Instale o actualice a Windows 11 Pro en su computadora y active en: Inicio > Configuración > Sistema > Activación con la primera clave provista.",
+      "Paso 3: Para Office 2024, pulse el botón de descarga para bajar la imagen oficial (.IMG) directamente de los servidores CDN de Microsoft.",
+      "Paso 4: Haga doble clic en el archivo .IMG descargado para montarlo y ejecute 'Setup.exe'.",
+      "Paso 5: Al terminar la instalación, abra Word o Excel e introduzca la segunda clave de 25 caracteres para activar permanentemente su suite."
+    ]
   },
   {
     id: "prod-m365",
     slug: "microsoft-365",
-    name: "Microsoft 365",
+    name: "Microsoft 365 (Office 365 Profesional)",
     category: "office",
     price: 59.90,
     oldPrice: 89.90,
@@ -53,20 +63,34 @@ export const products: Product[] = [
     reviews: 142,
     imageUrl: "/products/microsoft-365.webp",
     fallbackImage: "/products/microsoft-365.svg",
-    description: "Suscripción digital con acceso a las aplicaciones y servicios incluidos en la modalidad comercializada.",
+    description: "Suscripción oficial a Microsoft 365 / Office 365 Profesional. NO ES UNA CLAVE (KEY): El acceso es mediante cuenta oficial de Microsoft, la cual se le enviará con correo y contraseña asignados a su dominio para activar hasta 5 dispositivos y disfrutar de 100 GB en OneDrive.",
     cloudStorage: "100 GB en la nube",
+    badge: "ACCESO POR CUENTA (NO KEY)",
+    isAccountAccess: true,
+    accountNotice: "ATENCIÓN: Este producto NO es una clave (key) alfanumérica. El acceso es por cuenta oficial de Office 365 / Microsoft 365. Se le enviará a su WhatsApp o correo las credenciales (correo electrónico y contraseña asignados a su dominio) para iniciar sesión en el portal oficial portal.office.com y descargar las aplicaciones en sus equipos.",
     features: [
-      "Aplicaciones completas de escritorio: Word, Excel, PowerPoint y Outlook",
-      "100 GB de almacenamiento seguro en la nube OneDrive",
-      "1 año completo de suscripción activa y garantizada",
-      "Acceso y sincronización continua en PC, Mac, tablets y smartphones",
-      "Actualizaciones continuas de características y parches de seguridad oficial",
-      "Entrega digital instantánea con guía de activación paso a paso"
+      "MODALIDAD: Acceso directo por cuenta asignada a su dominio (NO es clave de producto / key)",
+      "Se le enviará el correo electrónico y la contraseña oficial de inicio de sesión",
+      "Aplicaciones completas de escritorio: Word, Excel, PowerPoint, Outlook y OneNote",
+      "100 GB de almacenamiento en la nube OneDrive garantizado",
+      "Acceso y sincronización en PC, Mac, tablets y smartphones (hasta 5 equipos simultáneos)",
+      "Actualizaciones continuas y oficiales de Microsoft durante el año de suscripción",
+      "Entrega digital inmediata tras confirmación de pago"
     ],
     compatibility: "Compatible con Windows 10, Windows 11, macOS, iOS y Android",
-    badge: "1 AÑO",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://portal.office.com",
+    downloadLabel: "Acceder a Portal Office y Descargar",
+    isoFormat: "Portal Oficial Microsoft 365 (portal.office.com)",
+    installationSteps: [
+      "IMPORTANTE: Recuerde que este producto NO funciona con una clave alfanumérica (key). Su activación es por cuenta.",
+      "Paso 1: Una vez confirmado su pago, le enviaremos a su WhatsApp o correo su usuario oficial (correo) y contraseña asignados a su dominio.",
+      "Paso 2: Abra su navegador web e ingrese al portal oficial de Microsoft: https://portal.office.com",
+      "Paso 3: Inicie sesión con el correo y contraseña provistos. En el primer ingreso, el sistema le pedirá actualizar su contraseña por una personal.",
+      "Paso 4: En el panel principal de bienvenida, haga clic en el botón superior 'Instalar aplicaciones' y elija 'Aplicaciones de Microsoft 365'.",
+      "Paso 5: Se descargará el instalador oficial. Ejecútelo y espere la instalación. Al abrir Word o Excel, inicie sesión con su cuenta para disfrutar de Office y OneDrive."
+    ]
   },
   {
     id: "prod-office-2024",
@@ -92,7 +116,17 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10 y Windows 11 (ediciones de 32 y 64 bits)",
     badge: "TOP VENTAS",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2024Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Office 2024 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Haga clic en 'Descargar Imagen Oficial' para obtener el archivo .IMG original desde los servidores oficiales de Microsoft.",
+      "Paso 2: Una vez finalizada la descarga, haga doble clic sobre el archivo descargado para montarlo como unidad virtual de disco (o clic derecho > 'Montar').",
+      "Paso 3: Dentro de la unidad montada, abra el archivo 'Setup.exe' y espere a que la instalación concluya.",
+      "Paso 4: Abra cualquier programa de la suite, como Microsoft Word o Excel.",
+      "Paso 5: En la ventana de activación, ingrese su clave de producto original de 25 caracteres y presione 'Activar producto'."
+    ]
   },
   {
     id: "prod-office-2021",
@@ -118,7 +152,17 @@ export const products: Product[] = [
     compatibility: "Compatible exclusivamente con Windows 10 y Windows 11",
     badge: "MÁS VENDIDO",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2021Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Office 2021 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el archivo de instalación oficial (.IMG) de Office 2021 Pro Plus con el botón de descarga.",
+      "Paso 2: Al descargarse, haga doble clic sobre el archivo para montarlo en Windows 10 u 11.",
+      "Paso 3: Ejecute el archivo 'Setup.exe' que aparece en la unidad y permita que la instalación finalice.",
+      "Paso 4: Inicie Microsoft Word o Excel.",
+      "Paso 5: Introduzca la clave digital de 25 dígitos que le entregamos para la activación permanente de por vida."
+    ]
   },
   {
     id: "prod-office-2019",
@@ -143,7 +187,17 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10 y Windows 11",
     badge: "OFERTA",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2019Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Office 2019 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Pulse 'Descargar Imagen Oficial' para descargar la imagen .IMG oficial de Microsoft Office 2019.",
+      "Paso 2: Abra el archivo descargado haciendo doble clic (Windows lo abrirá como si fuera un disco).",
+      "Paso 3: Haga doble clic en 'Setup.exe' para iniciar el instalador.",
+      "Paso 4: Al finalizar, abra Word 2019 y pulse en 'Cuenta'.",
+      "Paso 5: Ingrese su clave de activación de 25 caracteres para validar la licencia perpetua."
+    ]
   },
   {
     id: "prod-office-2016",
@@ -167,7 +221,17 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 7, Windows 8.1, Windows 10 y Windows 11",
     badge: undefined,
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/39168D7E-077B-48E7-8728-0E25E0E51512/media/es-es/ProPlusRetail.img",
+    downloadLabel: "Descargar Imagen Oficial Office 2016 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el instalador oficial en formato .IMG pulsando el botón de descarga.",
+      "Paso 2: Monte el archivo .IMG en su explorador de Windows o extráigalo.",
+      "Paso 3: Ejecute 'Setup.exe' y espere la instalación de los programas de Office 2016.",
+      "Paso 4: Inicie Word 2016 o Excel 2016.",
+      "Paso 5: Escriba su clave de 25 caracteres cuando el asistente de activación lo solicite."
+    ]
   },
   {
     id: "prod-office-2010",
@@ -192,7 +256,16 @@ export const products: Product[] = [
     compatibility: "Windows 7, Windows Vista, Windows XP (No recomendado para Windows 11)",
     badge: "CLÁSICO",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/download/",
+    downloadLabel: "Descargar Instalador Office 2010 (Microsoft)",
+    isoFormat: "Instalador Oficial Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue el instalador oficial de Microsoft Office 2010 mediante el enlace proporcionado.",
+      "Paso 2: Ejecute el instalador e ingrese su clave original de 25 caracteres provista.",
+      "Paso 3: Seleccione los componentes que desea instalar (Word, Excel, PowerPoint, Access).",
+      "Paso 4: Complete la instalación y verifique en Archivo > Ayuda que figure con licencia permanente."
+    ]
   },
   {
     id: "prod-win11-pro",
@@ -218,7 +291,17 @@ export const products: Product[] = [
     compatibility: "Requiere PC con procesador compatible de 64 bits y soporte TPM 2.0 / Secure Boot",
     badge: "MÁS VENDIDO",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://www.microsoft.com/software-download/windows11",
+    downloadLabel: "Descargar ISO Oficial Windows 11 (Microsoft)",
+    isoFormat: "Imagen ISO Oficial (64 bits) Servidores Microsoft",
+    installationSteps: [
+      "Paso 1: Haga clic en 'Descargar ISO Oficial' para acceder a la web oficial de Microsoft Software Download.",
+      "Paso 2: Descargue la 'Imagen de disco (ISO) de Windows 11' o use la 'Herramienta de creación de medios' para crear un USB booteable de al menos 8 GB.",
+      "Paso 3: Si ya tiene Windows 11 Home, puede subir directamente a Pro ingresando la clave sin reinstalar.",
+      "Paso 4: Para activar: Diríjase a Inicio > Configuración > Sistema > Activación.",
+      "Paso 5: Haga clic en 'Cambiar la clave de producto', escriba su clave original de 25 caracteres y presione 'Activar'."
+    ]
   },
   {
     id: "prod-win11-home",
@@ -243,7 +326,17 @@ export const products: Product[] = [
     compatibility: "Requiere equipo de 64 bits con TPM 2.0 habilitado",
     badge: undefined,
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/software-download/windows11",
+    downloadLabel: "Descargar ISO Oficial Windows 11 (Microsoft)",
+    isoFormat: "Imagen ISO Oficial (64 bits) Servidores Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue la ISO oficial de Windows 11 desde Microsoft con el botón de descarga.",
+      "Paso 2: Grabe la ISO en un pendrive USB con la herramienta oficial Media Creation Tool o Rufus.",
+      "Paso 3: Inicie su equipo desde el USB e instale Windows 11 Home.",
+      "Paso 4: Vaya a Inicio > Configuración > Sistema > Activación.",
+      "Paso 5: Ingrese su clave de 25 caracteres para activar permanentemente."
+    ]
   },
   {
     id: "prod-win11-enterprise",
@@ -268,7 +361,17 @@ export const products: Product[] = [
     compatibility: "Equipos empresariales con arquitectura x64 y TPM 2.0",
     badge: "EMPRESARIAL",
     bestSeller: false,
-    featured: true
+    featured: true,
+    downloadUrl: "https://www.microsoft.com/evalcenter/evaluate-windows-11-enterprise",
+    downloadLabel: "Descargar ISO Oficial Windows 11 Enterprise",
+    isoFormat: "Imagen ISO Oficial Microsoft Evaluation Center",
+    installationSteps: [
+      "Paso 1: Descargue la ISO empresarial desde Microsoft Evaluation Center mediante el botón de descarga.",
+      "Paso 2: Cree el medio de instalación en un USB o aplique la imagen en su servidor de despliegue.",
+      "Paso 3: Instale Windows 11 Enterprise en los equipos de su red.",
+      "Paso 4: Ingrese a Configuración > Activación.",
+      "Paso 5: Ingrese su clave de activación empresarial permanente."
+    ]
   },
   {
     id: "prod-win10-pro",
@@ -293,7 +396,17 @@ export const products: Product[] = [
     compatibility: "Cualquier PC o laptop con procesador de 32 o 64 bits",
     badge: "MÁS VENDIDO",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://www.microsoft.com/software-download/windows10",
+    downloadLabel: "Descargar ISO Oficial Windows 10 (Microsoft)",
+    isoFormat: "Imagen ISO Oficial (32/64 bits) Servidores Microsoft",
+    installationSteps: [
+      "Paso 1: Haga clic en 'Descargar ISO Oficial' para ir a la página oficial de Microsoft Software Download de Windows 10.",
+      "Paso 2: Descargue la herramienta de creación de medios oficial o la ISO directa.",
+      "Paso 3: Si ya tiene Windows 10 Home, no necesita reinstalar: ingrese la clave directamente en Activación para actualizar a Pro.",
+      "Paso 4: Abra Inicio > Configuración > Actualización y seguridad > Activación.",
+      "Paso 5: Haga clic en 'Cambiar clave de producto' e ingrese su clave de 25 caracteres para activar permanentemente."
+    ]
   },
   {
     id: "prod-win10-home",
@@ -317,7 +430,16 @@ export const products: Product[] = [
     compatibility: "PC y notebooks con procesadores de 32 o 64 bits",
     badge: undefined,
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/software-download/windows10",
+    downloadLabel: "Descargar ISO Oficial Windows 10 (Microsoft)",
+    isoFormat: "Imagen ISO Oficial (32/64 bits) Servidores Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue la ISO oficial de Windows 10 desde Microsoft mediante el botón de descarga.",
+      "Paso 2: Instale Windows 10 Home en su equipo.",
+      "Paso 3: Vaya a Configuración > Actualización y seguridad > Activación.",
+      "Paso 4: Ingrese su clave digital de 25 caracteres para activar de por vida."
+    ]
   },
   {
     id: "prod-win10-enterprise",
@@ -341,7 +463,15 @@ export const products: Product[] = [
     compatibility: "PC y terminales empresariales (32/64 bits)",
     badge: "EMPRESARIAL",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise",
+    downloadLabel: "Descargar ISO Oficial Windows 10 Enterprise",
+    isoFormat: "Imagen ISO Oficial Microsoft Evaluation Center",
+    installationSteps: [
+      "Paso 1: Descargue la ISO empresarial desde Microsoft Evaluation Center.",
+      "Paso 2: Instale la edición Enterprise en su equipo de trabajo.",
+      "Paso 3: Diríjase a Configuración > Activación e ingrese la clave provista."
+    ]
   },
   {
     id: "prod-win8-pro",
@@ -366,7 +496,15 @@ export const products: Product[] = [
     compatibility: "Equipos clásicos con procesadores de 32 o 64 bits",
     badge: undefined,
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/software-download/windows8ISO",
+    downloadLabel: "Descargar ISO Oficial Windows 8.1 (Microsoft)",
+    isoFormat: "Imagen ISO Oficial (32/64 bits) Servidores Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue la imagen ISO oficial de Windows 8.1 desde Microsoft.",
+      "Paso 2: Grabe la ISO en un pendrive USB o DVD.",
+      "Paso 3: Instale el sistema y active con su clave de 25 caracteres en Configuración del PC > Activar Windows."
+    ]
   },
   {
     id: "prod-win7-pro",
@@ -391,7 +529,16 @@ export const products: Product[] = [
     compatibility: "Equipos antiguos o dedicados de 32 o 64 bits",
     badge: undefined,
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/download/details.aspx?id=5842",
+    downloadLabel: "Descargar Imagen Windows 7 (Microsoft)",
+    isoFormat: "Imagen de Sistema Oficial Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue los archivos oficiales de instalación mediante el botón de descarga.",
+      "Paso 2: Instale Windows 7 Professional en su PC o máquina virtual.",
+      "Paso 3: Haga clic derecho en 'Equipo' > 'Propiedades'.",
+      "Paso 4: En la parte inferior, haga clic en 'Activar Windows ahora' e ingrese su clave original de 25 caracteres."
+    ]
   },
   {
     id: "prod-win7-ultimate",
@@ -416,7 +563,15 @@ export const products: Product[] = [
     compatibility: "Equipos antiguos o especializados (32 y 64 bits)",
     badge: undefined,
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/download/details.aspx?id=5842",
+    downloadLabel: "Descargar Imagen Windows 7 Ultimate (Microsoft)",
+    isoFormat: "Imagen de Sistema Oficial Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue los archivos de instalación mediante el botón de descarga.",
+      "Paso 2: Instale la edición Ultimate en su equipo.",
+      "Paso 3: Ingrese a Propiedades del sistema y active con su clave de 25 caracteres."
+    ]
   },
 
   // MICROSOFT PROJECT PROFESSIONAL (2024, 2021, 2019)
@@ -444,7 +599,17 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10 y Windows 11 (32 y 64 bits)",
     badge: "PROYECTOS 2024",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2024Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Project 2024 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Haga clic en 'Descargar Imagen Oficial' para descargar la imagen oficial .IMG desde los servidores de Microsoft.",
+      "Paso 2: Haga doble clic sobre el archivo .IMG descargado para montarlo como disco virtual.",
+      "Paso 3: Abra 'Setup.exe' para iniciar la instalación.",
+      "Paso 4: Al terminar, abra Microsoft Project 2024.",
+      "Paso 5: Escriba su clave de activación de 25 caracteres provista para dejarlo activado de por vida."
+    ]
   },
   {
     id: "prod-project-2021",
@@ -469,7 +634,16 @@ export const products: Product[] = [
     compatibility: "Compatible exclusivamente con Windows 10 y Windows 11",
     badge: "PROYECTOS",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2021Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Project 2021 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el archivo de instalación .IMG oficial mediante el botón de descarga.",
+      "Paso 2: Monte el archivo .IMG con doble clic.",
+      "Paso 3: Ejecute 'Setup.exe' y aguarde a que finalice.",
+      "Paso 4: Abra Project 2021 e introduzca su clave de activación permanente de 25 caracteres."
+    ]
   },
   {
     id: "prod-project-2019",
@@ -494,7 +668,15 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10 y Windows 11",
     badge: "OFERTA",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2019Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Project 2019 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue la imagen oficial .IMG desde el botón de descarga.",
+      "Paso 2: Abra el archivo .IMG descargado y ejecute 'Setup.exe'.",
+      "Paso 3: Al concluir la instalación, inicie Project 2019 e ingrese la clave de activación provista."
+    ]
   },
 
   // MICROSOFT VISIO PROFESSIONAL (2024, 2021, 2013)
@@ -522,7 +704,17 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10 y Windows 11 (32 y 64 bits)",
     badge: "DIAGRAMAS 2024",
     bestSeller: true,
-    featured: true
+    featured: true,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioPro2024Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Visio 2024 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Haga clic en 'Descargar Imagen Oficial' para descargar la imagen oficial .IMG de Microsoft Visio 2024.",
+      "Paso 2: Haga doble clic sobre el archivo descargado para montarlo en Windows.",
+      "Paso 3: Ejecute 'Setup.exe' y espere que la instalación termine.",
+      "Paso 4: Abra Visio 2024.",
+      "Paso 5: Escriba su clave de 25 caracteres para activar permanentemente su licencia."
+    ]
   },
   {
     id: "prod-visio-2021",
@@ -547,7 +739,16 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 10 y Windows 11",
     badge: "DIAGRAMAS",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioPro2021Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Visio 2021 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue la imagen oficial de Visio 2021 en formato .IMG mediante el botón de descarga.",
+      "Paso 2: Monte la imagen con doble clic y ejecute 'Setup.exe'.",
+      "Paso 3: Al concluir, abra Microsoft Visio.",
+      "Paso 4: Escriba su clave de activación de 25 caracteres provista para disfrutar de su activación permanente."
+    ]
   },
   {
     id: "prod-visio-2013",
@@ -572,7 +773,15 @@ export const products: Product[] = [
     compatibility: "Compatible con Windows 7, 8.1, 10 y 11 (32 y 64 bits)",
     badge: "CLÁSICO",
     bestSeller: false,
-    featured: false
+    featured: false,
+    downloadUrl: "https://www.microsoft.com/download/details.aspx?id=35108",
+    downloadLabel: "Descargar Instalador Visio 2013 (Microsoft)",
+    isoFormat: "Instalador Oficial Microsoft",
+    installationSteps: [
+      "Paso 1: Descargue el instalador oficial de Visio 2013 desde la web de Microsoft mediante el enlace de descarga.",
+      "Paso 2: Ejecute el instalador e ingrese la clave provista.",
+      "Paso 3: Siga los pasos del asistente y finalice la instalación."
+    ]
   }
 ];
 
@@ -656,7 +865,12 @@ export function buildWhatsAppMessage(
   const { totalQuantity, subtotal, hasDiscount, discountRate, discountAmount, total, discountReason } = calculateCartTotals(items, appliedCoupon);
   
   const productLines = items
-    .map(item => `• ${item.product.name} x${item.quantity} - S/ ${(item.product.price * item.quantity).toFixed(2)}`)
+    .map(item => {
+      const accountNote = item.product.isAccountAccess
+        ? '\n  *(Nota: Acceso por cuenta oficial. Se enviará correo y clave a su dominio - No es key)*'
+        : '';
+      return `• ${item.product.name} x${item.quantity} - S/ ${(item.product.price * item.quantity).toFixed(2)}${accountNote}`;
+    })
     .join('\n');
 
   let discountBlock = '';

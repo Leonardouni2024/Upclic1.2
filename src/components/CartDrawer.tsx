@@ -56,7 +56,7 @@ export const CartDrawer: React.FC = () => {
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                Tu Carrito <span className="text-slate-400 font-semibold text-sm">({totalQuantity})</span>
+                Mi Pedido <span className="text-slate-400 font-semibold text-sm">({totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'})</span>
               </h2>
             </div>
             <div className="flex items-center gap-2">
@@ -65,7 +65,7 @@ export const CartDrawer: React.FC = () => {
                   type="button"
                   onClick={clearCart}
                   className="text-[11px] font-bold text-slate-400 hover:text-red-600 transition-colors cursor-pointer px-2 py-1 rounded-md hover:bg-red-50"
-                  title="Vaciar todos los productos del carrito"
+                  title="Vaciar todos los productos"
                 >
                   Vaciar
                 </button>
@@ -73,7 +73,7 @@ export const CartDrawer: React.FC = () => {
               <button
                 onClick={() => setIsCartOpen(false)}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer border border-transparent hover:border-slate-200"
-                aria-label="Cerrar carrito"
+                aria-label="Cerrar panel de pedido"
               >
                 <X className="w-4.5 h-4.5" />
               </button>
@@ -174,6 +174,13 @@ export const CartDrawer: React.FC = () => {
                       <div className="text-[11px] text-slate-500 font-medium mt-0.5">
                         Unitario: S/ {item.product.price.toFixed(2)} · {item.product.duration}
                       </div>
+
+                      {item.product.isAccountAccess && (
+                        <div className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md mt-1">
+                          <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
+                          <span>Acceso por cuenta (No es key)</span>
+                        </div>
+                      )}
 
                       {/* Quantity & Price Row */}
                       <div className="mt-2.5 flex items-center justify-between gap-2">
