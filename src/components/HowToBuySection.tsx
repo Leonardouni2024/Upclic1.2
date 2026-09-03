@@ -1,41 +1,46 @@
 import React from 'react';
-import { ShoppingCart, CheckCheck, CreditCard, DollarSign, MessageCircle } from 'lucide-react';
+import { ExternalLink, CreditCard, Send, CheckCircle2, Clock } from 'lucide-react';
 
 export const HowToBuySection: React.FC = () => {
   const steps = [
     {
       num: '1',
       title: 'PASO 1',
-      text: 'Selecciona tus productos y agrégalos al carrito.',
-      icon: ShoppingCart,
+      headline: 'Link de pago y monto',
+      text: 'Al comprar serás redireccionado al link de pago seguro. Digita el monto exacto y haz clic en "Continuar".',
+      icon: ExternalLink,
       color: 'bg-blue-100 text-[#0066FF]'
     },
     {
       num: '2',
       title: 'PASO 2',
-      text: 'Verifica la cantidad y el total con descuento automático.',
-      icon: CheckCheck,
+      headline: 'Opciones de pago',
+      text: 'Elige tu medio preferido: Tarjeta de crédito/débito, Banca por internet, Agentes, PagoEfectivo o Yape.',
+      icon: CreditCard,
       color: 'bg-indigo-100 text-indigo-600'
     },
     {
       num: '3',
       title: 'PASO 3',
-      text: 'Presiona "Pagar con Mercado Pago".',
-      icon: CreditCard,
+      headline: 'Redirección a WhatsApp',
+      text: 'Al completar el pago, serás redireccionado automáticamente al chat de WhatsApp del proveedor.',
+      icon: Send,
       color: 'bg-sky-100 text-sky-600'
     },
     {
       num: '4',
       title: 'PASO 4',
-      text: 'Realiza el pago seguro por el importe exacto mostrado.',
-      icon: DollarSign,
+      headline: 'Envía tu captura',
+      text: 'Envía la captura o comprobante de pago por WhatsApp como confirmación de tu compra.',
+      icon: CheckCircle2,
       color: 'bg-emerald-100 text-emerald-600'
     },
     {
       num: '5',
       title: 'PASO 5',
-      text: 'Después del pago, presiona "Confirmar compra por WhatsApp".',
-      icon: MessageCircle,
+      headline: 'Entrega (10 a 20 min)',
+      text: 'Validamos tu pago y te enviamos tu clave original y guía. La respuesta demora entre 10 a 20 min.',
+      icon: Clock,
       color: 'bg-green-100 text-green-600'
     }
   ];
@@ -51,7 +56,7 @@ export const HowToBuySection: React.FC = () => {
             ¿Cómo comprar en UpClic?
           </h2>
           <p className="text-sm text-slate-500 mt-2 font-medium">
-            Sigue estos 5 pasos simples para recibir tu licencia digital en minutos
+            Guía clara y rápida: Paga con tu método favorito y recibe tu licencia en 10 a 20 minutos
           </p>
         </div>
 
@@ -65,7 +70,7 @@ export const HowToBuySection: React.FC = () => {
                 className="bg-slate-50/70 rounded-2xl p-5 border border-slate-200/80 hover:border-blue-300 hover:bg-white hover:shadow-xs transition-all flex flex-col justify-between relative group"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div className={`w-9 h-9 rounded-xl ${step.color} flex items-center justify-center border border-white shadow-2xs`}>
                       <Icon className="w-4.5 h-4.5" />
                     </div>
@@ -73,12 +78,16 @@ export const HowToBuySection: React.FC = () => {
                       {step.title}
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                  <h3 className="text-xs font-black uppercase text-slate-900 tracking-wide mb-1">
+                    {step.headline}
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
                     {step.text}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-slate-200/70 text-[11px] text-slate-400 font-semibold">
-                  Atención instantánea
+                <div className="mt-4 pt-3 border-t border-slate-200/70 text-[11px] text-slate-400 font-semibold flex items-center justify-between">
+                  <span>Paso {idx + 1} de 5</span>
+                  <span className="text-emerald-600 font-bold">Garantizado</span>
                 </div>
               </div>
             );

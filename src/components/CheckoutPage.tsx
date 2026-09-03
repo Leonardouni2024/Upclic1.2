@@ -120,51 +120,85 @@ export const CheckoutPage: React.FC = () => {
               </h2>
 
               <div className="space-y-3.5">
-                {/* Paso 1 (anteriormente Paso 3) */}
+                {/* Paso 1 */}
                 <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 flex gap-3.5 items-start">
                   <div className="w-7 h-7 rounded-lg bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                     1
                   </div>
                   <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-[#0066FF]">PASO 1</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-[#0066FF]">PASO 1: Link de pago y monto</h3>
                     <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Presiona "Pagar con Mercado Pago".
+                      Haz clic en "Pagar con Mercado Pago" para ir al link de pago seguro.
                     </p>
-                  </div>
-                </div>
-
-                {/* Paso 2 (anteriormente Paso 4) */}
-                <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    2
-                  </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-emerald-700">PASO 2</h3>
-                    <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Realiza el pago por el importe exacto mostrado:
+                    <p className="text-xs text-slate-600 mt-1">
+                      Digita el monto exacto de tu compra y haz clic en <strong className="text-slate-800 font-bold">"Continuar"</strong>:
                     </p>
-                    <div className="mt-2 inline-block px-3 py-1.5 rounded-xl bg-white border border-emerald-200 shadow-2xs">
-                      <span className="text-xs font-bold text-slate-500 mr-2">TOTAL A PAGAR:</span>
-                      <span className="text-lg font-black text-emerald-600 tabular-nums">
+                    <div className="mt-2 inline-block px-3 py-1.5 rounded-xl bg-white border border-sky-200 shadow-2xs">
+                      <span className="text-xs font-bold text-slate-500 mr-2">MONTO EXACTO A DIGITAR:</span>
+                      <span className="text-lg font-black text-[#0066FF] tabular-nums">
                         S/ {total.toFixed(2)}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Paso 3 (anteriormente Paso 5) */}
-                <div className="p-4 rounded-2xl bg-green-50/60 border border-green-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-green-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                {/* Paso 2 */}
+                <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 flex gap-3.5 items-start">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    2
+                  </div>
+                  <div>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-indigo-700">PASO 2: Opciones de pago</h3>
+                    <p className="text-sm font-bold text-slate-900 mt-0.5">
+                      Se abrirán las opciones de pago de tu preferencia:
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
+                        💳 Tarjeta de crédito o débito
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
+                        🏦 Banca o agentes
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
+                        🧾 PagoEfectivo
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
+                        📱 Yape
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Paso 3 */}
+                <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex gap-3.5 items-start">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                     3
                   </div>
                   <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-green-700">PASO 3</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-emerald-700">PASO 3: Redirección a WhatsApp y Captura</h3>
                     <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Después de realizar el pago, presiona:
+                      Al completar el pago, serás redireccionado automáticamente al chat de WhatsApp del proveedor.
                     </p>
-                    <span className="inline-block mt-1 font-bold text-green-800 text-xs bg-green-100/80 border border-green-200 px-2.5 py-1 rounded-lg">
-                      "Confirmar compra por WhatsApp"
-                    </span>
+                    <p className="text-xs text-slate-600 mt-1">
+                      Envía la captura de tu comprobante de pago por el chat como confirmación.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Paso 4 */}
+                <div className="p-4 rounded-2xl bg-green-50/60 border border-green-100 flex gap-3.5 items-start">
+                  <div className="w-7 h-7 rounded-lg bg-green-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    4
+                  </div>
+                  <div>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-green-700">PASO 4: Confirmación y Entrega</h3>
+                    <p className="text-sm font-bold text-slate-900 mt-0.5">
+                      Espera la respuesta con tu clave digital oficial y guía de instalación.
+                    </p>
+                    <div className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-green-800 bg-green-100/80 border border-green-200 px-2.5 py-1 rounded-lg w-fit">
+                      <Clock className="w-3.5 h-3.5 text-green-700 shrink-0" />
+                      <span>Tiempo estimado de atención: 10 a 20 minutos</span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -22,7 +22,9 @@ import {
   ChevronDown,
   Download,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  CreditCard,
+  Send
 } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -73,8 +75,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         ? '¿Cómo recibiré mi acceso a Office 365 Profesional?'
         : '¿Cómo y cuándo recibiré mi licencia de software?',
       a: product.isAccountAccess
-        ? 'La entrega es inmediata. Recibirás tu correo electrónico y contraseña exclusiva asignada a tu dominio para iniciar sesión directamente en portal.office.com y descargar las aplicaciones activadas en tus dispositivos.'
-        : 'La entrega es inmediata tras confirmar tu pago por WhatsApp o correo. Recibirás tu clave digital original de 25 caracteres junto con el enlace oficial de descarga de Microsoft y una guía de instalación paso a paso.'
+        ? 'Al completar tu pago y enviar la captura por WhatsApp, validamos la transacción y te enviamos tus credenciales oficiales de acceso en un lapso de 10 a 20 minutos.'
+        : 'Al completar tu pago y enviar tu captura de comprobante por WhatsApp, validamos tu compra y te entregamos tu clave digital original de 25 caracteres y guía oficial en un lapso estimado de 10 a 20 minutos.'
     },
     {
       q: '¿La licencia es original y permanente?',
@@ -311,6 +313,88 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Description & Features & Installation Guide (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Short & Understandable Buying Instructions */}
+            <div
+              id="how-to-buy-product-guide"
+              className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs"
+            >
+              <div className="flex items-center gap-2.5 pb-5 border-b border-slate-100">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center border border-blue-100">
+                  <CheckCircle2 className="w-4.5 h-4.5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-[#0f172a]">
+                    ¿Cómo comprar {product.name}?
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Proceso de 4 pasos simples y rápidos para recibir tu licencia
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Paso 1 */}
+                <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-100 flex gap-3 items-start">
+                  <span className="w-7 h-7 rounded-xl bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    1
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-[#0066FF] mb-1">
+                      1. Link de Pago y Monto
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      Al presionar <strong className="text-slate-900 font-bold">"Comprar ahora"</strong>, serás redireccionado al link de pago seguro. Digita el monto exacto: <span className="font-bold text-[#0066FF]">S/ {product.price.toFixed(2)}</span> y presiona <strong className="text-slate-900 font-bold">"Continuar"</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Paso 2 */}
+                <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex gap-3 items-start">
+                  <span className="w-7 h-7 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    2
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-indigo-700 mb-1">
+                      2. Opciones de Pago
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      Se abrirán tus métodos preferidos: <strong className="text-slate-900">Tarjeta de crédito/débito</strong>, <strong className="text-slate-900">Banca o agentes</strong>, <strong className="text-slate-900">PagoEfectivo</strong> y <strong className="text-slate-900">Yape</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Paso 3 */}
+                <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex gap-3 items-start">
+                  <span className="w-7 h-7 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    3
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-emerald-700 mb-1">
+                      3. Redirección y Captura
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      Al completar el pago, serás redireccionado automáticamente al chat de WhatsApp del proveedor. Envía la <strong className="text-slate-900 font-bold">captura de tu pago</strong> como confirmación.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Paso 4 */}
+                <div className="p-4 rounded-2xl bg-green-50/70 border border-green-100 flex gap-3 items-start">
+                  <span className="w-7 h-7 rounded-xl bg-green-600 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    4
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-green-700 mb-1">
+                      4. Entrega (10 a 20 min)
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      Validamos tu comprobante y te entregamos tu clave original y guía de activación. El tiempo de respuesta es de <span className="font-bold text-green-800">10 a 20 minutos</span>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Download ISO & Installation Guide Block */}
             <div
               id="download-and-installation-guide"
