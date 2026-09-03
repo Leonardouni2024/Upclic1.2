@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Review, ProductStats } from '../types.ts';
 import { initialReviews } from '../initialReviews.ts';
+import { db } from '../firebase.ts';
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 
 export type DatabaseConnectionStatus = 'connected' | 'syncing' | 'offline' | 'error';
 
@@ -25,68 +27,62 @@ interface ReviewsContextType {
 
 const ReviewsContext = createContext<ReviewsContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_REVIEWS_KEY = 'upclic_reviews_v2';
-
 export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [reviews, setReviews] = useState<Review[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_REVIEWS_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Error loading reviews from localStorage:', e);
-    }
-    return initialReviews;
-  });
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
 
   const [connectionStatus, setConnectionStatus] = useState<DatabaseConnectionStatus>('syncing');
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
 
-  // Sync with backend server
+  // Sync with Firebase Firestore
   const syncWithServer = useCallback(async () => {
     try {
       setConnectionStatus('syncing');
-      const response = await fetch('/api/reviews', { method: 'GET' });
-      if (!response.ok) {
-        throw new Error(`Server returned status ${response.status}`);
-      }
-      const data = await response.json();
-      if (data.success && Array.isArray(data.reviews) && data.reviews.length > 0) {
-        setReviews(data.reviews);
-        try {
-          localStorage.setItem(LOCAL_STORAGE_REVIEWS_KEY, JSON.stringify(data.reviews));
-        } catch (e) {
-          console.warn('Could not write to localStorage:', e);
-        }
+      
+      const q = query(collection(db, 'reviews'), orderBy('timestamp', 'desc'));
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const fetchedReviews = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            productId: data.productId,
+            author: data.author || '',
+            city: data.city,
+            rating: data.rating || 5,
+            comment: data.comment || '',
+            date: data.date || '',
+            isDemo: data.isDemo || false,
+            verifiedPurchase: data.verifiedPurchase || true,
+          } as Review;
+        });
+        
+        // Combine real user reviews from Firestore with initial demo reviews
+        setReviews([...fetchedReviews, ...initialReviews]);
         setConnectionStatus('connected');
         setLastSavedAt(new Date());
-      } else {
-        setConnectionStatus('connected');
-      }
+      }, (error) => {
+        console.error('Firestore snapshot error:', error);
+        setConnectionStatus('error');
+      });
+      
+      return unsubscribe;
     } catch (err) {
-      console.warn('[ReviewsContext] Server sync unavailable, using local cache:', err);
+      console.warn('[ReviewsContext] Server sync unavailable:', err);
       setConnectionStatus('offline');
     }
   }, []);
 
-  // On mount, fetch latest from server
   useEffect(() => {
-    syncWithServer();
+    let unsub: any;
+    const init = async () => {
+      unsub = await syncWithServer();
+    };
+    init();
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
   }, [syncWithServer]);
-
-  // Persist reviews to localStorage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem(LOCAL_STORAGE_REVIEWS_KEY, JSON.stringify(reviews));
-    } catch (e) {
-      console.error('Error saving reviews to localStorage:', e);
-    }
-  }, [reviews]);
 
   const getProductReviews = (productId: string): Review[] => {
     return reviews.filter(r => r.productId === productId);
@@ -139,68 +135,31 @@ export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const now = new Date();
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 
-    const tempReview: Review = {
-      id: `rev-user-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-      productId,
-      author: author.trim(),
-      city: city?.trim() || undefined,
-      rating: Math.max(1, Math.min(5, Math.round(rating))),
-      comment: comment.trim(),
-      date: formattedDate,
-      isDemo: false,
-      verifiedPurchase: true
-    };
-
-    // Optimistic client update
-    setReviews(prev => [tempReview, ...prev]);
-
-    // Send to server backend to save persistently in data/reviews.json
     try {
-      const response = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          productId,
-          author: author.trim(),
-          city: city?.trim() || undefined,
-          rating: Math.round(rating),
-          comment: comment.trim()
-        })
+      await addDoc(collection(db, 'reviews'), {
+        productId,
+        author: author.trim(),
+        city: city?.trim() || undefined,
+        rating: Math.max(1, Math.min(5, Math.round(rating))),
+        comment: comment.trim(),
+        date: formattedDate,
+        timestamp: serverTimestamp(),
+        isDemo: false,
+        verifiedPurchase: true
       });
-
-      if (!response.ok) {
-        throw new Error(`Server returned status ${response.status}`);
-      }
-
-      const resData = await response.json();
-      if (resData.success && resData.review) {
-        // Replace temp review with canonical review from server
-        setReviews(prev => [resData.review, ...prev.filter(r => r.id !== tempReview.id)]);
-        setConnectionStatus('connected');
-        setLastSavedAt(new Date());
-      }
+      
       setIsSaving(false);
       return { success: true };
     } catch (err: any) {
-      console.warn('[ReviewsContext] Saved locally. Server push pending:', err);
-      setConnectionStatus('offline');
+      console.error('[ReviewsContext] Firestore save error:', err);
       setIsSaving(false);
-      // Still consider success because it's saved locally
-      return { success: true };
+      return { success: false, error: err.message };
     }
   };
 
   const resetReviews = async () => {
-    setReviews(initialReviews);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_REVIEWS_KEY, JSON.stringify(initialReviews));
-      await fetch('/api/reviews/reset', { method: 'POST' });
-      setConnectionStatus('connected');
-    } catch (e) {
-      console.error('Error resetting reviews:', e);
-    }
+    // Left unimplemented for public site to prevent malicious users from clearing db
+    // Can be used if admin panel is added
   };
 
   return (
@@ -215,7 +174,7 @@ export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addReview,
         resetReviews,
         resetToDemoReviews: resetReviews,
-        syncWithServer
+        syncWithServer: async () => {} // sync is handled real-time now
       }}
     >
       {children}
