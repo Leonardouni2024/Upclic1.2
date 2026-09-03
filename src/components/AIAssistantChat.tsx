@@ -17,6 +17,7 @@ import {
 import { useCart } from '../context/CartContext.tsx';
 import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from '../products.ts';
 import { Product } from '../types.ts';
+import { generateLocalChatReply } from '../utils/aiChatClient.ts';
 
 interface ChatMessage {
   id: string;
@@ -98,32 +99,47 @@ export const AIAssistantChat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Build conversation history for context
-      const historyPayload = messages
-        .filter((m) => m.id !== 'msg-welcome')
-        .map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
+      let data: any = null;
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: messageText,
-          history: historyPayload,
-        }),
-      });
+      try {
+        // Attempt backend endpoint first (works on FullStack servers / Cloud Run)
+        const historyPayload = messages
+          .filter((m) => m.id !== 'msg-welcome')
+          .map((m) => ({
+            role: m.role,
+            content: m.content,
+          }));
 
-      const data = await response.json();
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: messageText,
+            history: historyPayload,
+          }),
+        });
+
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (fetchErr) {
+        // Network error / static GitHub Pages hosting
+        console.warn('Backend /api/chat not reachable, using client-side AI knowledge base:', fetchErr);
+      }
+
+      // If backend is not present (e.g. static hosting on GitHub Pages), use the rich client-side knowledge engine
+      if (!data || !data.reply) {
+        data = generateLocalChatReply(messageText);
+      }
 
       const replyContent =
         data.reply ||
         `¡Hola! Para consultas personalizadas o soporte técnico rápido, puedes contactar directamente a nuestro Administrador por WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
 
       const checkAdminInReply =
+        data.showAdminWhatsApp ||
         replyContent.toLowerCase().includes('whatsapp') ||
         replyContent.toLowerCase().includes('administrador') ||
         messageText.toLowerCase().includes('whatsapp') ||
@@ -141,11 +157,13 @@ export const AIAssistantChat: React.FC = () => {
       setMessages((prev) => [...prev, newBotMessage]);
     } catch (err) {
       console.error('Error in chat request:', err);
+      const localFallback = generateLocalChatReply(messageText);
       const fallbackMsg: ChatMessage = {
-        id: `bot-err-${Date.now()}`,
+        id: `bot-fallback-${Date.now()}`,
         role: 'model',
-        content: `Disculpa el inconveniente con la conexión. Puedes contactar directamente a nuestro **Administrador Oficial** por WhatsApp para atención inmediata:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})`,
+        content: localFallback.reply,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        suggestedProducts: localFallback.suggestedProducts || [],
         showAdminWhatsApp: true,
       };
       setMessages((prev) => [...prev, fallbackMsg]);
