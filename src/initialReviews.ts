@@ -10,7 +10,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Activación inmediata y los 100 GB en OneDrive se habilitaron sin ningún problema. Pude sincronizar mi laptop y mi celular en 5 minutos.',
     date: '14/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -21,7 +20,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Súper fácil de configurar. La atención por WhatsApp fue muy amable y me resolvieron una duda sobre Word al instante. Excelente servicio.',
     date: '02/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -30,9 +28,8 @@ export const initialReviews: Review[] = [
     author: 'Jorge Huamán',
     city: 'Cusco',
     rating: 4,
-    comment: 'Buen producto y entrega rápida por correo y WhatsApp. Todo original de Microsoft, muy satisfecho.',
+    comment: 'Buen producto y entrega rápida de credenciales por WhatsApp. La configuración en portal.office.com fue muy rápida, todo original de Microsoft.',
     date: '28/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -45,7 +42,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Excelente versión de Office 2024. Licencia perpetua activada directamente en los servidores de Microsoft sin necesidad de cracks ni programas raros.',
     date: '18/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -54,9 +50,8 @@ export const initialReviews: Review[] = [
     author: 'Lucía Paredes',
     city: 'Trujillo',
     rating: 5,
-    comment: 'Compré 2 licencias para mi estudio contable y me aplicaron el 10% de descuento automático. Excel 2024 vuela y las nuevas fórmulas son perfectas.',
+    comment: 'Compré 2 licencias para mi estudio contable y me aplicaron el descuento automático. Excel 2024 vuela y las nuevas fórmulas son perfectas.',
     date: '10/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -64,10 +59,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-office-2024',
     author: 'Rodrigo Salazar',
     city: 'Chiclayo',
-    rating: 5,
-    comment: 'Pago por Mercado Pago súper seguro y confirmación inmediata por WhatsApp. Clave enviada con guía paso a paso en menos de 3 minutos.',
+    rating: 4,
+    comment: 'Pago seguro por Mercado Pago y confirmación rápida por WhatsApp. Clave enviada con guía en menos de 5 minutos, funciona muy bien.',
     date: '25/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -80,7 +74,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Clave 100% original. Activó al primer intento en Windows 11. La mejor compra para evitar cuotas mensuales.',
     date: '12/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -91,18 +84,16 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Todo perfecto con Word y Excel 2021. La función BUSCARX funciona impecable. La atención por WhatsApp fue muy paciente y rápida.',
     date: '30/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
     id: 'rev-off21-3',
     productId: 'prod-office-2021',
     author: 'Silvia Tello',
-    city: 'Lima',
+    city: 'Tacna',
     rating: 4,
-    comment: 'Licencia permanente sin problemas. Me enviaron el instalador directo de setup.office.com y activó sin contratiempos.',
-    date: '19/07/2026',
-    isDemo: true,
+    comment: 'Atención cordial por WhatsApp. La clave activó bien y los programas están muy estables en mi laptop.',
+    date: '15/07/2026',
     verifiedPurchase: true
   },
 
@@ -110,23 +101,21 @@ export const initialReviews: Review[] = [
   {
     id: 'rev-off19-1',
     productId: 'prod-office-2019',
-    author: 'Manuel Quispitupa',
-    city: 'Cusco',
+    author: 'Manuel Benavides',
+    city: 'Lima',
     rating: 5,
-    comment: 'Excelente para mi laptop de trabajo. La instalación tomó menos de 10 minutos y quedó activado para siempre.',
-    date: '05/08/2026',
-    isDemo: true,
+    comment: 'Excelente estabilidad. No quería suscripciones mensuales y esta versión 2019 cumple con creces en mi estudio jurídico.',
+    date: '08/08/2026',
     verifiedPurchase: true
   },
   {
     id: 'rev-off19-2',
     productId: 'prod-office-2019',
-    author: 'Karla Benavides',
+    author: 'Karla Mendoza',
     city: 'Arequipa',
-    rating: 5,
-    comment: 'Muy buen precio y soporte técnico de primera. Me asistieron por WhatsApp para desinstalar una versión previa que me daba error.',
+    rating: 4,
+    comment: 'Buen producto, precio accesible y soporte técnico atento por WhatsApp. Me ayudaron con la desinstalación de la versión anterior.',
     date: '22/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -134,23 +123,21 @@ export const initialReviews: Review[] = [
   {
     id: 'rev-off16-1',
     productId: 'prod-office-2016',
-    author: 'Ricardo Vega',
-    city: 'Ica',
+    author: 'Ricardo Véliz',
+    city: 'Chimbote',
     rating: 5,
-    comment: 'Liviano y perfecto para mi PC de oficina con especificaciones modestas. Rápido y sin complicaciones.',
-    date: '08/08/2026',
-    isDemo: true,
+    comment: 'Clave válida permanente para mi computadora de oficina. Activó en línea sin problemas y todo el paquete funciona perfecto.',
+    date: '05/08/2026',
     verifiedPurchase: true
   },
   {
     id: 'rev-off16-2',
     productId: 'prod-office-2016',
-    author: 'Patricia Ramos',
-    city: 'Lima',
+    author: 'Patricia León',
+    city: 'Ica',
     rating: 4,
-    comment: 'Buena opción económica, todo funciona según lo descrito en la tienda. Clave original.',
-    date: '15/07/2026',
-    isDemo: true,
+    comment: 'Llegó rápido y funcionó en mi laptop con Windows 10 sin contratiempos. Buena opción económica.',
+    date: '19/07/2026',
     verifiedPurchase: true
   },
 
@@ -163,7 +150,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Excelente para equipos con hardware antiguo en nuestro taller. Activación sin contratiempos.',
     date: '03/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -174,7 +160,6 @@ export const initialReviews: Review[] = [
     rating: 4,
     comment: 'Me sirvió justo para una máquina de laboratorio que requería esta versión específica. Muchas gracias.',
     date: '20/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -187,7 +172,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Activó Windows 11 Pro al instante desde Configuración > Activación. BitLocker y Escritorio Remoto funcionando al 100%.',
     date: '19/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -195,10 +179,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-win11-pro',
     author: 'Esteban Rivas',
     city: 'Arequipa',
-    rating: 5,
+    rating: 4,
     comment: 'Compré la clave para mi nueva PC gamer armada. Todo original y entrega en minutos por WhatsApp con enlace oficial de Microsoft.',
     date: '11/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -209,7 +192,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Excelente soporte, tenía dudas con el TPM 2.0 y el asesor me ayudó de inmediato por llamada de WhatsApp. Recomendadísimos.',
     date: '01/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -222,7 +204,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Activación limpia para la laptop de estudio de mi hijo. Muy buen precio comparado con comprarlo directo.',
     date: '14/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -230,10 +211,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-win11-home',
     author: 'Sofía Medina',
     city: 'Chimbote',
-    rating: 5,
+    rating: 4,
     comment: 'Fácil de aplicar la clave en Windows. Proceso transparente y rápido con Mercado Pago.',
     date: '29/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -246,7 +226,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Implementado en equipos de nuestra empresa. Activación impecable y directivas de seguridad corporativas operativas.',
     date: '16/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -254,10 +233,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-win11-enterprise',
     author: 'Héctor Vidal',
     city: 'Callao',
-    rating: 5,
-    comment: 'Soporte empresarial rápido y comprobado. La clave se validó sin problemas en el dominio.',
+    rating: 4,
+    comment: 'Soporte empresarial rápido y comprobado. La clave se validó sin problemas en el dominio corporativo.',
     date: '04/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -270,7 +248,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'El sistema más estable. Activé mi PC de escritorio en 1 minuto. Ya no me aparece la marca de agua de activar Windows.',
     date: '17/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -281,7 +258,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Rápido, seguro y confiable. Pagué por Mercado Pago y me llegó la clave al WhatsApp de inmediato con instrucciones detalladas.',
     date: '09/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -289,10 +265,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-win10-pro',
     author: 'Walter Espinoza',
     city: 'Huancayo',
-    rating: 5,
+    rating: 4,
     comment: 'Excelente servicio postventa, me resolvieron todas las dudas para formatear e instalar desde cero.',
     date: '27/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -305,7 +280,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Todo perfecto para uso en casa y tareas escolares. Licencia permanente sin fechas de vencimiento.',
     date: '13/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -316,7 +290,6 @@ export const initialReviews: Review[] = [
     rating: 4,
     comment: 'Buen precio y entrega digital veloz. Totalmente recomendado para no gastar de más.',
     date: '23/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -329,7 +302,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Ideal para terminales de red y oficinas que requieren estabilidad prolongada sin reinicios forzados.',
     date: '15/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -337,10 +309,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-win10-enterprise',
     author: 'Marcos Del Solar',
     city: 'Arequipa',
-    rating: 5,
+    rating: 4,
     comment: 'Soporte corporativo eficiente y clave válida verificada en los servidores oficiales.',
     date: '31/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -353,7 +324,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Funcionó perfecto para una laptop táctil antigua. Activación en segundos.',
     date: '06/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -364,7 +334,6 @@ export const initialReviews: Review[] = [
     rating: 4,
     comment: 'Todo conforme, la clave fue aceptada sin problemas en el asistente de activación.',
     date: '18/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -377,7 +346,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Indispensable para nuestro torno CNC que solo corre en Windows 7. 100% operativo y activado.',
     date: '10/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -388,7 +356,6 @@ export const initialReviews: Review[] = [
     rating: 4,
     comment: 'Activación exitosa, excelente para máquinas de trabajo antiguas en taller automotriz.',
     date: '21/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -401,7 +368,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Trae los paquetes de idiomas completos y BitLocker. Clave original permanente.',
     date: '12/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -409,10 +375,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-win7-ultimate',
     author: 'Clara Meza',
     city: 'Cusco',
-    rating: 5,
+    rating: 4,
     comment: 'Muy contenta con la atención y la rapidez en responder por WhatsApp con la clave.',
     date: '26/07/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -425,7 +390,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'El mejor combo de la tienda. Activé mi laptop nueva con Windows 11 Pro y Office 2024 en cuestión de minutos. El ahorro es tremendo.',
     date: '20/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -433,10 +397,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-combo-win11-office2024',
     author: 'Brenda Vilchez',
     city: 'Arequipa',
-    rating: 5,
-    comment: 'Ambas claves funcionaron a la perfección. La atención por WhatsApp fue super rápida y cordial.',
+    rating: 4,
+    comment: 'Ambas claves funcionaron a la perfección. La atención por WhatsApp fue rápida y cordial.',
     date: '16/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -449,7 +412,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Project 2024 con diagramas de Gantt y gestión de recursos actualizada. Licencia original que activó sin ninguna complicación.',
     date: '19/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
   {
@@ -457,10 +419,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-project-2024',
     author: 'Daniela Cáceres',
     city: 'Trujillo',
-    rating: 5,
-    comment: 'Excelente herramienta para la gestión de proyectos de mi empresa constructora. 100% recomendada.',
+    rating: 4,
+    comment: 'Excelente herramienta para la gestión de proyectos de mi empresa constructora. Recomendado.',
     date: '14/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -470,10 +431,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-project-2021',
     author: 'Gabriel Ramos',
     city: 'Huancayo',
-    rating: 5,
-    comment: 'Muy estable y rápido. Clave permanente vinculada a mi cuenta. Servicio de soporte técnico impecable.',
+    rating: 4,
+    comment: 'Muy estable y rápido. Clave permanente vinculada a mi equipo. Servicio de soporte técnico atento.',
     date: '11/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -486,7 +446,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Justo la versión que requería para compatibilidad con las plantillas de mi cliente. Activación al instante.',
     date: '08/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -499,7 +458,6 @@ export const initialReviews: Review[] = [
     rating: 5,
     comment: 'Visio 2024 trae plantillas de redes y arquitectura en la nube fantásticas. Activó en línea directo con Microsoft.',
     date: '18/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -509,10 +467,9 @@ export const initialReviews: Review[] = [
     productId: 'prod-visio-2021',
     author: 'Patricia Wong',
     city: 'Chiclayo',
-    rating: 5,
+    rating: 4,
     comment: 'Excelente software para diagramación de procesos y flujogramas ISO. Muy satisfecha con la compra.',
     date: '13/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   },
 
@@ -525,7 +482,6 @@ export const initialReviews: Review[] = [
     rating: 4,
     comment: 'Ideal para computadoras de bajo rendimiento en planta. Cumple perfectamente con su función y activa de por vida.',
     date: '05/08/2026',
-    isDemo: true,
     verifiedPurchase: true
   }
 ];

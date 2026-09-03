@@ -157,24 +157,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             {/* Information & Purchase Column */}
             <div className="lg:col-span-6 flex flex-col justify-between">
               <div>
-                {/* Account Access notice for Office 365 Professional */}
-                {product.isAccountAccess && (
-                  <div className="mb-4 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 shadow-xs">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                      <div className="text-xs sm:text-sm">
-                        <span className="font-black text-amber-900 block uppercase tracking-wider text-xs mb-1">
-                          ⚠️ AVISO IMPORTANTE: NO ES KEY · ACCESO POR CUENTA
-                        </span>
-                        <p className="font-medium leading-relaxed">
-                          {product.accountNotice ||
-                            'Este producto no es una clave de producto (key). El acceso es directo por cuenta oficial. Se le enviará el correo electrónico y la contraseña asignados a su dominio para iniciar sesión en portal.office.com y activar todas las aplicaciones.'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Warning notice if legacy version */}
                 {product.warning && (
                   <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-800 bg-amber-50/90 px-3 py-1.5 rounded-xl border border-amber-200/70">
@@ -222,15 +204,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-200/60">
                     Modalidad: {product.duration}
                   </span>
-                  {product.isAccountAccess ? (
-                    <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-100 text-amber-800 text-[11px] sm:text-xs font-bold border border-amber-200">
-                      Cuenta con dominio · No es Key
-                    </span>
-                  ) : (
-                    <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] sm:text-xs font-bold border border-emerald-100">
-                      ✓ Clave original Microsoft de 25 dígitos
-                    </span>
-                  )}
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] sm:text-xs font-bold border border-emerald-100">
+                    ✓ Licencia 100% Original Microsoft
+                  </span>
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-blue-50 text-[#0066FF] text-[11px] sm:text-xs font-bold border border-blue-100">
                     ✓ Entrega digital inmediata
                   </span>
@@ -373,19 +349,26 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 </h4>
 
                 <div className="space-y-3">
-                  {product.installationSteps.map((step, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80"
-                    >
-                      <span className="w-7 h-7 rounded-xl bg-[#0066FF] text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                        {idx + 1}
-                      </span>
-                      <div className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                        {step}
+                  {(product.installationSteps.length >= 5
+                    ? product.installationSteps.slice(2, 5)
+                    : product.installationSteps
+                  ).map((rawStep, idx) => {
+                    const cleanText = rawStep.replace(/^Paso\s*\d+\s*:\s*/i, '');
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80"
+                      >
+                        <span className="w-7 h-7 rounded-xl bg-[#0066FF] text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                          {idx + 1}
+                        </span>
+                        <div className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                          <span className="font-bold text-slate-900 mr-1.5">Paso {idx + 1}:</span>
+                          {cleanText}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="mt-4 p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/60 flex items-center justify-between flex-wrap gap-2 text-xs">
@@ -447,11 +430,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 </div>
                 <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
                   <span className="font-bold text-slate-800 block mb-1">
-                    {product.isAccountAccess ? 'Tipo de Acceso:' : 'Tipo de Clave:'}
+                    Tipo de Entrega / Clave:
                   </span>
-                  <span className={product.isAccountAccess ? 'font-bold text-amber-800' : ''}>
-                    {product.isAccountAccess
-                      ? 'Cuenta oficial (correo y contraseña a su dominio) · No es Key'
+                  <span>
+                    {product.id === 'prod-m365'
+                      ? 'Credenciales oficiales directas (correo y contraseña asignados a su dominio)'
                       : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft)'}
                   </span>
                 </div>

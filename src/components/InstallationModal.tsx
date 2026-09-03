@@ -69,24 +69,6 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="p-6 overflow-y-auto space-y-6">
-          {/* Notice if Office 365 (Access by account, NOT key) */}
-          {product.isAccountAccess && (
-            <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <div className="text-xs sm:text-sm">
-                  <span className="font-black text-amber-900 block uppercase tracking-wider text-xs mb-1">
-                    AVISO DE MODALIDAD: NO ES CLAVE (KEY)
-                  </span>
-                  <p className="font-medium leading-relaxed">
-                    {product.accountNotice ||
-                      'Este producto NO es una clave alfanumérica. El acceso es mediante cuenta oficial de Office 365 / Microsoft 365. Se le enviará a su WhatsApp o correo el correo electrónico y contraseña asignados a su dominio para iniciar sesión en portal.office.com y activar todas las aplicaciones.'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Download Action Box */}
           <div className="p-5 rounded-2xl bg-linear-to-br from-blue-50/90 via-sky-50/60 to-white border border-blue-200/80 shadow-2xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -126,7 +108,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
             </div>
           </div>
 
-          {/* Step-by-Step Installation Instructions */}
+          {/* Step-by-Step Installation Instructions (steps 3 to 5 reordered from 1) */}
           <div>
             <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -134,19 +116,26 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
             </h4>
 
             <div className="space-y-3">
-              {product.installationSteps.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70"
-                >
-                  <span className="w-6 h-6 rounded-full bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
-                    {idx + 1}
-                  </span>
-                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                    {step}
-                  </p>
-                </div>
-              ))}
+              {(product.installationSteps.length >= 5
+                ? product.installationSteps.slice(2, 5)
+                : product.installationSteps
+              ).map((rawStep, idx) => {
+                const cleanText = rawStep.replace(/^Paso\s*\d+\s*:\s*/i, '');
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70"
+                  >
+                    <span className="w-6 h-6 rounded-full bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                      <span className="font-bold text-slate-900 mr-1.5">Paso {idx + 1}:</span>
+                      {cleanText}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

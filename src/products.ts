@@ -63,13 +63,11 @@ export const products: Product[] = [
     reviews: 142,
     imageUrl: "/products/microsoft-365.webp",
     fallbackImage: "/products/microsoft-365.svg",
-    description: "Suscripción oficial a Microsoft 365 / Office 365 Profesional. NO ES UNA CLAVE (KEY): El acceso es mediante cuenta oficial de Microsoft, la cual se le enviará con correo y contraseña asignados a su dominio para activar hasta 5 dispositivos y disfrutar de 100 GB en OneDrive.",
+    description: "Suscripción oficial a Microsoft 365 (Office 365 Profesional) por 1 año. Modalidad de acceso por cuenta oficial: este producto no se entrega mediante clave alfanumérica (key), sino mediante una cuenta oficial de Microsoft con correo electrónico y contraseña asignados a su dominio para iniciar sesión en portal.office.com y descargar las aplicaciones en hasta 5 dispositivos (PC, Mac, tablets o smartphones), con 100 GB de almacenamiento en la nube OneDrive y actualizaciones continuas durante todo el periodo.",
     cloudStorage: "100 GB en la nube",
-    badge: "ACCESO POR CUENTA (NO KEY)",
-    isAccountAccess: true,
-    accountNotice: "ATENCIÓN: Este producto NO es una clave (key) alfanumérica. El acceso es por cuenta oficial de Office 365 / Microsoft 365. Se le enviará a su WhatsApp o correo las credenciales (correo electrónico y contraseña asignados a su dominio) para iniciar sesión en el portal oficial portal.office.com y descargar las aplicaciones en sus equipos.",
+    badge: "1 AÑO - 100 GB",
     features: [
-      "MODALIDAD: Acceso directo por cuenta asignada a su dominio (NO es clave de producto / key)",
+      "Acceso directo por cuenta oficial asignada a su dominio en portal.office.com",
       "Se le enviará el correo electrónico y la contraseña oficial de inicio de sesión",
       "Aplicaciones completas de escritorio: Word, Excel, PowerPoint, Outlook y OneNote",
       "100 GB de almacenamiento en la nube OneDrive garantizado",
@@ -84,12 +82,11 @@ export const products: Product[] = [
     downloadLabel: "Acceder a Portal Office y Descargar",
     isoFormat: "Portal Oficial Microsoft 365 (portal.office.com)",
     installationSteps: [
-      "IMPORTANTE: Recuerde que este producto NO funciona con una clave alfanumérica (key). Su activación es por cuenta.",
-      "Paso 1: Una vez confirmado su pago, le enviaremos a su WhatsApp o correo su usuario oficial (correo) y contraseña asignados a su dominio.",
-      "Paso 2: Abra su navegador web e ingrese al portal oficial de Microsoft: https://portal.office.com",
-      "Paso 3: Inicie sesión con el correo y contraseña provistos. En el primer ingreso, el sistema le pedirá actualizar su contraseña por una personal.",
-      "Paso 4: En el panel principal de bienvenida, haga clic en el botón superior 'Instalar aplicaciones' y elija 'Aplicaciones de Microsoft 365'.",
-      "Paso 5: Se descargará el instalador oficial. Ejecútelo y espere la instalación. Al abrir Word o Excel, inicie sesión con su cuenta para disfrutar de Office y OneDrive."
+      "Paso 1: Una vez confirmado su pago, le enviaremos sus credenciales oficiales (correo y clave) asignadas a su dominio.",
+      "Paso 2: Ingrese a portal.office.com e inicie sesión con las credenciales provistas.",
+      "Paso 3: En el panel principal de bienvenida de Microsoft 365, presione el botón superior 'Instalar aplicaciones'.",
+      "Paso 4: Ejecute el instalador descargado para instalar Word, Excel, PowerPoint y Outlook.",
+      "Paso 5: Abra cualquiera de las aplicaciones instaladas e inicie sesión con su cuenta para activar su licencia y OneDrive."
     ]
   },
   {
@@ -865,12 +862,7 @@ export function buildWhatsAppMessage(
   const { totalQuantity, subtotal, hasDiscount, discountRate, discountAmount, total, discountReason } = calculateCartTotals(items, appliedCoupon);
   
   const productLines = items
-    .map(item => {
-      const accountNote = item.product.isAccountAccess
-        ? '\n  *(Nota: Acceso por cuenta oficial. Se enviará correo y clave a su dominio - No es key)*'
-        : '';
-      return `• ${item.product.name} x${item.quantity} - S/ ${(item.product.price * item.quantity).toFixed(2)}${accountNote}`;
-    })
+    .map(item => `• ${item.product.name} x${item.quantity} - S/ ${(item.product.price * item.quantity).toFixed(2)}`)
     .join('\n');
 
   let discountBlock = '';

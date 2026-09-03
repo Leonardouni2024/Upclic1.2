@@ -70,7 +70,7 @@ export interface Review {
   rating: number; // 1 to 5
   comment: string;
   date: string;
-  isDemo: boolean;
+  isDemo?: boolean;
   verifiedPurchase?: boolean;
 }
 

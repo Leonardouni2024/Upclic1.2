@@ -175,13 +175,6 @@ export const CartDrawer: React.FC = () => {
                         Unitario: S/ {item.product.price.toFixed(2)} · {item.product.duration}
                       </div>
 
-                      {item.product.isAccountAccess && (
-                        <div className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md mt-1">
-                          <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
-                          <span>Acceso por cuenta (No es key)</span>
-                        </div>
-                      )}
-
                       {/* Quantity & Price Row */}
                       <div className="mt-2.5 flex items-center justify-between gap-2">
                         {/* Editable Stepper */}

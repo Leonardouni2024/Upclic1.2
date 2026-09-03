@@ -9,7 +9,6 @@ import {
   Filter,
   Send,
   Sparkles,
-  Info,
   ShieldCheck,
   Award
 } from 'lucide-react';
@@ -98,10 +97,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       if (sortBy === 'lowest') {
         return a.rating - b.rating;
       }
-      // 'recent' by default: non-demo reviews first, then ID/date
-      if (a.isDemo !== b.isDemo) {
-        return a.isDemo ? 1 : -1;
-      }
+      // 'recent' by default
       return b.id.localeCompare(a.id);
     });
 
@@ -345,15 +341,6 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         </div>
       )}
 
-      {/* Demo notice pill */}
-      <div className="mb-6 p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900 flex items-start gap-2.5 shadow-2xs">
-        <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-        <div className="leading-relaxed">
-          <span className="font-black mr-1">Aviso sobre opiniones de muestra:</span>
-          Las opiniones marcadas con la insignia <span className="inline-block px-2 py-0.5 rounded-md bg-amber-200 text-amber-900 font-black text-[10px] uppercase tracking-wider mx-1">DEMO</span> son ejemplos precargados para demostrar la funcionalidad del sistema. Puedes enviar tu propia opinión con el botón superior para ver cómo se guarda y actualiza el promedio al instante.
-        </div>
-      </div>
-
       {/* Filters and Sorting Bar */}
       <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-3.5 sm:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
         {/* Star filter chips */}
@@ -426,21 +413,10 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                           {review.author}
                         </h4>
 
-                        {/* DEMO or Verified Badge */}
-                        {review.isDemo ? (
-                          <span
-                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-100/90 text-amber-900 border border-amber-300 shadow-2xs"
-                            title="Opinión de demostración precargada"
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
-                            DEMO
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                            Compra Verificada
-                          </span>
-                        )}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                          Compra Verificada
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">

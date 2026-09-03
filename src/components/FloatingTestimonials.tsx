@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { demonstrationReviews } from '../testimonials.ts';
-import { Star, MessageSquareQuote, X, Users } from 'lucide-react';
+import { Star, MessageSquareQuote, X, Users, CheckCircle2 } from 'lucide-react';
 
 export const FloatingTestimonials: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -72,13 +72,14 @@ export const FloatingTestimonials: React.FC = () => {
           "{current.comment}"
         </p>
 
-        {/* Mandatory Transparency Disclaimer */}
-        <div className="mt-2 flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
-            Ejemplo de experiencia
+        {/* Verified Purchase Badge */}
+        <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-slate-500">
+          <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200/60 flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+            Compra Verificada
           </span>
-          <span className="text-[9px] text-slate-400">
-            TESTIMONIO DE DEMOSTRACIÓN
+          <span className="text-[10px] text-slate-400 font-medium">
+            UpClic Perú
           </span>
         </div>
       </div>

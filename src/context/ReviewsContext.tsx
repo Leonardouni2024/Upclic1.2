@@ -13,12 +13,13 @@ interface ReviewsContextType {
     rating: number;
     comment: string;
   }) => void;
-  resetToDemoReviews: () => void;
+  resetReviews: () => void;
+  resetToDemoReviews?: () => void;
 }
 
 const ReviewsContext = createContext<ReviewsContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_REVIEWS_KEY = 'upclic_reviews_v1';
+const LOCAL_STORAGE_REVIEWS_KEY = 'upclic_reviews_v2';
 
 export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [reviews, setReviews] = useState<Review[]>(() => {
@@ -110,7 +111,7 @@ export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setReviews(prev => [newReview, ...prev]);
   };
 
-  const resetToDemoReviews = () => {
+  const resetReviews = () => {
     setReviews(initialReviews);
     try {
       localStorage.setItem(LOCAL_STORAGE_REVIEWS_KEY, JSON.stringify(initialReviews));
@@ -126,7 +127,8 @@ export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getProductReviews,
         getProductStats,
         addReview,
-        resetToDemoReviews
+        resetReviews,
+        resetToDemoReviews: resetReviews
       }}
     >
       {children}

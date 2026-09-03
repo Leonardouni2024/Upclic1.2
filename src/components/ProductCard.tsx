@@ -43,9 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {product.badge ? (
             <span
               className={`px-2.5 py-1 text-[10px] sm:text-[11px] font-black rounded-lg uppercase tracking-wide shadow-2xs border border-white/20 ${
-                product.isAccountAccess
-                  ? 'bg-amber-600 text-white'
-                  : product.badge.includes('TOP') || product.badge.includes('MÁS VENDIDO')
+                product.badge.includes('TOP') || product.badge.includes('MÁS VENDIDO')
                   ? 'bg-[#0066FF] text-white'
                   : product.badge.includes('1 AÑO')
                   ? 'bg-purple-600 text-white'
@@ -90,14 +88,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Card Body Details */}
         <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between bg-white">
           <div className="flex-1 flex flex-col">
-            {/* Account Access notice if Office 365 Professional */}
-            {product.isAccountAccess && (
-              <div className="mb-2 p-1.5 rounded-lg bg-amber-50 border border-amber-200/90 text-[10px] font-bold text-amber-900 flex items-center gap-1.5 leading-tight">
-                <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span className="truncate">No es Key · Acceso por cuenta a su dominio</span>
-              </div>
-            )}
-
             {/* Warning notice if legacy software */}
             {product.warning ? (
               <div className="mb-2 flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-lg border border-amber-200/60">

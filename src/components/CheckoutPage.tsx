@@ -120,52 +120,26 @@ export const CheckoutPage: React.FC = () => {
               </h2>
 
               <div className="space-y-3.5">
-                {/* Paso 1 */}
-                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 text-[#0066FF] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                {/* Paso 1 (anteriormente Paso 3) */}
+                <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 flex gap-3.5 items-start">
+                  <div className="w-7 h-7 rounded-lg bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                     1
                   </div>
                   <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-slate-400">PASO 1</h3>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">
-                      Selecciona tus productos y agrégalos al carrito.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Paso 2 */}
-                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 text-[#0066FF] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    2
-                  </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-slate-400">PASO 2</h3>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">
-                      Verifica la cantidad y el total con descuento (35% por 2 o más productos, o 30% con cupón PRIMUPCLIC).
-                    </p>
-                  </div>
-                </div>
-
-                {/* Paso 3 */}
-                <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    3
-                  </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-[#0066FF]">PASO 3</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-[#0066FF]">PASO 1</h3>
                     <p className="text-sm font-bold text-slate-900 mt-0.5">
                       Presiona "Pagar con Mercado Pago".
                     </p>
                   </div>
                 </div>
 
-                {/* Paso 4 */}
+                {/* Paso 2 (anteriormente Paso 4) */}
                 <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex gap-3.5 items-start">
                   <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    4
+                    2
                   </div>
                   <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-emerald-700">PASO 4</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-emerald-700">PASO 2</h3>
                     <p className="text-sm font-bold text-slate-900 mt-0.5">
                       Realiza el pago por el importe exacto mostrado:
                     </p>
@@ -178,13 +152,13 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Paso 5 */}
+                {/* Paso 3 (anteriormente Paso 5) */}
                 <div className="p-4 rounded-2xl bg-green-50/60 border border-green-100 flex gap-3.5 items-start">
                   <div className="w-7 h-7 rounded-lg bg-green-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    5
+                    3
                   </div>
                   <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-green-700">PASO 5</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-wider text-green-700">PASO 3</h3>
                     <p className="text-sm font-bold text-slate-900 mt-0.5">
                       Después de realizar el pago, presiona:
                     </p>
@@ -194,21 +168,6 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Direct WhatsApp message preview box */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-2xs">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Mensaje de confirmación del pedido:
-                </span>
-                <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                  Listo para enviar
-                </span>
-              </div>
-              <pre className="text-xs font-mono bg-slate-50/90 p-4 rounded-2xl text-slate-700 whitespace-pre-wrap border border-slate-200/70 leading-relaxed">
-                {rawMessage}
-              </pre>
             </div>
           </div>
 
