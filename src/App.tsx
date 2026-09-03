@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { CartProvider, useCart } from './context/CartContext.tsx';
 import { ReviewsProvider } from './context/ReviewsContext.tsx';
-import { AuthProvider } from './context/AuthContext.tsx';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
 import { BestSellersCarousel } from './components/BestSellersCarousel.tsx';
@@ -15,14 +14,12 @@ import { FloatingMobileCart } from './components/FloatingMobileCart.tsx';
 import { FloatingTestimonials } from './components/FloatingTestimonials.tsx';
 import { ToastContainer } from './components/Toast.tsx';
 import { Footer } from './components/Footer.tsx';
-import { UserModal } from './components/UserModal.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
 import { AIAssistantChat } from './components/AIAssistantChat.tsx';
 import { CartReminder } from './components/CartReminder.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug } = useCart();
-  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [helpTopic, setHelpTopic] = useState<string | null>(null);
 
   // Render main view based on current path
@@ -58,7 +55,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] text-[#0f172a] font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Sticky Header with Navigation, Live Search and Cart Counter */}
-      <Header onOpenUserModal={() => setIsUserModalOpen(true)} />
+      <Header />
 
       {/* Dynamic View Content */}
       <div className="flex-1">
@@ -83,9 +80,6 @@ const AppContent: React.FC = () => {
       {/* Real-time Toast Notifications */}
       <ToastContainer />
 
-      {/* Customer User Account and License Portal Modal */}
-      <UserModal isOpen={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} />
-
       {/* Help, FAQs & Legal Modal */}
       <HelpModal topic={helpTopic} onClose={() => setHelpTopic(null)} />
 
@@ -97,12 +91,10 @@ const AppContent: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ReviewsProvider>
-        <CartProvider>
-          <AppContent />
-        </CartProvider>
-      </ReviewsProvider>
-    </AuthProvider>
+    <ReviewsProvider>
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
+    </ReviewsProvider>
   );
 }
