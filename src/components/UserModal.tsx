@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, User, Key, Mail, Lock, LogOut, MessageCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { auth, googleProvider } from '../firebase.ts';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { WHATSAPP_NUMBER } from '../products.ts';
 
 interface UserModalProps {
@@ -20,6 +20,15 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  React.useEffect(() => {
+    getRedirectResult(auth).catch((err) => {
+      console.error("Redirect auth error:", err);
+      let msg = err.code || err.message;
+      if (err.code === 'auth/unauthorized-domain') msg = 'Este dominio no está autorizado en Firebase. Revisa la lista de dominios.';
+      setError(`Error de Google: ${msg}`);
+    });
+  }, []);
+
   const handleGoogleSignIn = async () => {
     if (window.self !== window.top) {
       setError('Por seguridad, Google no permite iniciar sesión dentro del editor. Por favor, abre tu tienda en una pestaña nueva (con el botón ↗️ arriba a la derecha).');
@@ -29,15 +38,12 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     try {
       setError('');
       setLoading(true);
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (err: any) {
       console.error("Auth error:", err);
       let msg = err.code || err.message;
-      if (err.code === 'auth/popup-closed-by-user') msg = 'Se cerró la ventana antes de terminar.';
       if (err.code === 'auth/unauthorized-domain') msg = 'Este dominio no está autorizado en Firebase. Añádelo en la configuración.';
-      if (err.code === 'auth/cancelled-popup-request') msg = 'Petición cancelada por el navegador.';
       setError(`Error de Google: ${msg}`);
-    } finally {
       setLoading(false);
     }
   };
