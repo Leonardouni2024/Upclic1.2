@@ -17,6 +17,7 @@ import { Footer } from './components/Footer.tsx';
 import { UserModal } from './components/UserModal.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
 import { AIAssistantChat } from './components/AIAssistantChat.tsx';
+import { CartReminder } from './components/CartReminder.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug } = useCart();
@@ -74,6 +75,9 @@ const AppContent: React.FC = () => {
 
       {/* 5-Second Auto-Rotating Demonstrative Testimonial Widget */}
       <FloatingTestimonials />
+
+      {/* Cart Reminder Notification */}
+      <CartReminder />
 
       {/* Real-time Toast Notifications */}
       <ToastContainer />
