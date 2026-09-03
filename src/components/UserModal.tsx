@@ -84,7 +84,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
               <Key className="w-5 h-5 text-[#0066FF] shrink-0" />
               <div>
                 <span className="text-xs font-bold text-slate-900 block">Licencias 100% Originales</span>
-                <span className="text-[11px] text-slate-500 font-medium">Garantía permanente</span>
+                <span className="text-[11px] text-slate-500 font-medium">Garantía oficial por 1 año</span>
               </div>
             </div>
           </div>

@@ -97,8 +97,8 @@ export const CartDrawer: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="font-extrabold text-[12px] leading-tight">
                       {isMultiItemDiscount
-                        ? '¡35% de descuento aplicado por llevar 2 o más productos!'
-                        : '¡30% de descuento aplicado con cupón PRIMUPCLIC!'}
+                        ? '¡10% de descuento aplicado por llevar 2 o más productos!'
+                        : '¡10% de descuento aplicado con cupón PRIMUPCLIC!'}
                     </div>
                     <div className="text-[10px] font-normal text-slate-600 mt-0.5">
                       {discountReason} • <span className="font-semibold">Descuentos no combinables</span>
@@ -108,11 +108,11 @@ export const CartDrawer: React.FC = () => {
               ) : (
                 <div className="flex items-center justify-between">
                   <div className="text-[11px] leading-tight">
-                    <span className="font-extrabold">Lleva 2 o más productos para 35% OFF</span>
-                    <span className="block text-[10px] text-slate-500 font-normal">O cupón PRIMUPCLIC para 30% OFF (desde S/ 39.90)</span>
+                    <span className="font-extrabold">Lleva 2 o más productos para 10% OFF</span>
+                    <span className="block text-[10px] text-slate-500 font-normal">O cupón PRIMUPCLIC para 10% OFF (desde S/ 40.00)</span>
                   </div>
                   <span className="font-black text-[10px] bg-white px-2 py-0.5 rounded-full border border-blue-200 text-[#0066FF] uppercase shrink-0">
-                    Hasta 35% OFF
+                    Hasta 10% OFF
                   </span>
                 </div>
               )}
@@ -139,9 +139,11 @@ export const CartDrawer: React.FC = () => {
               </div>
             ) : (
               items.map(item => {
-                const itemSubtotal = item.product.price * item.quantity;
+                const itemUnitPrice = item.unitPrice ?? item.product.price;
+                const itemSubtotal = itemUnitPrice * item.quantity;
+                const itemKey = item.variantId ? `${item.product.id}-${item.variantId}` : item.product.id;
                 return (
-                  <div key={item.product.id} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
+                  <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
                     {/* 1:1 Image */}
                     <div className="w-16 h-16 rounded-xl bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
                       <img
@@ -157,12 +159,19 @@ export const CartDrawer: React.FC = () => {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug" title={item.product.name}>
-                          {item.product.name}
-                        </h4>
+                        <div>
+                          <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug" title={item.product.name}>
+                            {item.product.name}
+                          </h4>
+                          {item.selectedVariant && (
+                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0066FF] border border-blue-200">
+                              {item.selectedVariant.name}
+                            </span>
+                          )}
+                        </div>
                         <button
                           type="button"
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => removeItem(item.product.id, item.variantId)}
                           className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
                           title="Eliminar producto"
                           aria-label="Eliminar producto"
@@ -172,7 +181,7 @@ export const CartDrawer: React.FC = () => {
                       </div>
 
                       <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                        Unitario: S/ {item.product.price.toFixed(2)} · {item.product.duration}
+                        Unitario: S/ {itemUnitPrice.toFixed(2)} · {item.product.duration}
                       </div>
 
                       {/* Quantity & Price Row */}
@@ -181,7 +190,7 @@ export const CartDrawer: React.FC = () => {
                         <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, -1)}
+                            onClick={() => updateQuantity(item.product.id, -1, item.variantId)}
                             className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
                             aria-label="Disminuir cantidad"
                             title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir cantidad'}
@@ -196,7 +205,7 @@ export const CartDrawer: React.FC = () => {
                             onChange={(e) => {
                               const val = parseInt(e.target.value, 10);
                               if (!isNaN(val)) {
-                                setQuantity(item.product.id, val);
+                                setQuantity(item.product.id, val, item.variantId);
                               }
                             }}
                             className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -205,7 +214,7 @@ export const CartDrawer: React.FC = () => {
                           />
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, 1)}
+                            onClick={() => updateQuantity(item.product.id, 1, item.variantId)}
                             className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
                             aria-label="Aumentar cantidad"
                             title="Aumentar cantidad"
@@ -230,7 +239,7 @@ export const CartDrawer: React.FC = () => {
                         </span>
                         <button
                           type="button"
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => removeItem(item.product.id, item.variantId)}
                           className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -260,7 +269,7 @@ export const CartDrawer: React.FC = () => {
                       onClick={() => applyCoupon(PROMO_COUPON_CODE)}
                       className="text-[10px] font-bold text-[#0066FF] hover:underline cursor-pointer bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
                     >
-                      Usar {PROMO_COUPON_CODE} (-30%)
+                      Usar {PROMO_COUPON_CODE} (-10%)
                     </button>
                   )}
                 </div>
@@ -274,7 +283,7 @@ export const CartDrawer: React.FC = () => {
                           {appliedCoupon}
                         </span>
                         <span className="text-[11px] text-emerald-700 ml-1.5 font-medium">
-                          {isMultiItemDiscount ? 'Activo (Aplica 35% por 2+ items)' : '30% descuento apertura'}
+                          {isMultiItemDiscount ? 'Activo (Aplica 10% por 2+ items)' : '10% descuento cupón'}
                         </span>
                       </div>
                     </div>
@@ -373,7 +382,7 @@ export const CartDrawer: React.FC = () => {
                 </button>
                 <span className="flex items-center gap-1 text-slate-600 font-medium">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Garantía oficial UpClic
+                  Garantía oficial por 1 año
                 </span>
               </div>
             </div>

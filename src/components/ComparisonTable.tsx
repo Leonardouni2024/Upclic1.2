@@ -296,7 +296,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
         <div className="flex items-center gap-2 text-slate-700">
           <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <span>
-            <strong>Garantía UpClic Perú:</strong> Todas nuestras licencias de 1 PC incluyen activación permanente y soporte oficial en línea.
+            <strong>Garantía UpClic Perú:</strong> Todas nuestras licencias de 1 PC incluyen activación permanente con garantía oficial por 1 año y soporte en línea.
           </span>
         </div>
         <div className="text-slate-500 text-[11px] font-medium">

@@ -5,12 +5,12 @@ import {
   X,
   Download,
   CheckCircle2,
-  AlertCircle,
   ExternalLink,
   ShieldCheck,
   Headphones,
   Copy,
-  Check
+  Check,
+  BookOpen
 } from 'lucide-react';
 
 interface InstallationModalProps {
@@ -45,12 +45,12 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-100/70 text-[#0066FF] flex items-center justify-center font-black">
+            <div className="w-10 h-10 rounded-xl bg-blue-100/70 text-[#0066FF] flex items-center justify-center font-black shadow-2xs">
               <Download className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-black text-slate-900 text-base sm:text-lg leading-tight">
-                Descarga e Instalación Oficial
+                Instalación y Descarga Oficial
               </h3>
               <p className="text-xs text-slate-500 font-medium truncate max-w-xs sm:max-w-md">
                 {product.name}
@@ -68,35 +68,36 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
-          {/* Download Action Box */}
+        <div className="p-6 overflow-y-auto space-y-5">
+          {/* Download Action Box (Exclusivo) */}
           <div className="p-5 rounded-2xl bg-linear-to-br from-blue-50/90 via-sky-50/60 to-white border border-blue-200/80 shadow-2xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider block mb-1">
-                  {product.isoFormat || 'Descarga Oficial desde Microsoft'}
+                  {product.isoFormat || 'Descarga Oficial Directa de Microsoft'}
                 </span>
                 <p className="text-xs text-slate-600 font-medium">
-                  Enlace directo a los servidores de Microsoft sin intermediarios ni virus.
+                  Servidores oficiales de Microsoft. Descarga segura, directa, sin intermediarios ni publicidad.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <a
+                  id={`modal-exclusive-download-${product.id}`}
                   href={product.downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2.5 px-4 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition-all active:scale-98 cursor-pointer"
+                  className="py-2.5 px-4 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all active:scale-98 cursor-pointer border border-blue-500/20"
                 >
                   <Download className="w-4 h-4" />
-                  <span>{product.downloadLabel || 'Descargar ISO / Software'}</span>
+                  <span>Descargar instalador</span>
                   <ExternalLink className="w-3 h-3 opacity-70" />
                 </a>
 
                 <button
                   onClick={handleCopyLink}
                   className="p-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
-                  title="Copiar enlace de descarga"
+                  title="Copiar enlace de descarga directa"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-emerald-600" />
@@ -108,25 +109,24 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
             </div>
           </div>
 
-          {/* Step-by-Step Installation Instructions (steps 3 to 5 reordered from 1) */}
+
+
+          {/* Step-by-Step Installation Instructions */}
           <div>
-            <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-3.5 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Instrucciones de Instalación Paso a Paso</span>
+              <span>Resumen Rápido de Instalación</span>
             </h4>
 
-            <div className="space-y-3">
-              {(product.installationSteps.length >= 5
-                ? product.installationSteps.slice(2, 5)
-                : product.installationSteps
-              ).map((rawStep, idx) => {
+            <div className="space-y-2.5">
+              {product.installationSteps.map((rawStep, idx) => {
                 const cleanText = rawStep.replace(/^Paso\s*\d+\s*:\s*/i, '');
                 return (
                   <div
                     key={idx}
-                    className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70"
+                    className="flex items-start gap-3 p-3 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70"
                   >
-                    <span className="w-6 h-6 rounded-full bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="w-6 h-6 rounded-full bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                       {idx + 1}
                     </span>
                     <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">

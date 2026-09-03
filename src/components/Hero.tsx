@@ -23,14 +23,14 @@ export const Hero: React.FC = () => {
       <div className="absolute top-1/3 -left-20 w-[400px] h-[400px] bg-cyan-400/8 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Banner destacado: COMPRA 2 O MÁS PRODUCTOS Y OBTÉN 35% DE DESCUENTO O USA PRIMUPCLIC PARA 30% */}
+        {/* Banner destacado: COMPRA 2 O MÁS PRODUCTOS Y OBTÉN 10% DE DESCUENTO O USA PRIMUPCLIC PARA 10% */}
         <div className="mb-5 sm:mb-6 flex justify-center">
           <div
             id="promo-discount-banner"
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-linear-to-r from-[#0066FF] to-[#0047BA] text-white text-[10px] xs:text-[11px] sm:text-xs font-black shadow-xs shadow-blue-500/20 border border-blue-400/30 uppercase tracking-wider text-center"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0" />
-            <span>🔥 35% OFF llevando 2 o más • Cupón 30% (desde S/ 39.90): PRIMUPCLIC</span>
+            <span>🔥 10% OFF llevando 2 o más • Cupón 10% (desde S/ 40.00): PRIMUPCLIC</span>
           </div>
         </div>
 

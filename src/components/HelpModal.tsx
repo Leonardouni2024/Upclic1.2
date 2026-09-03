@@ -17,21 +17,29 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
           <div className="space-y-4 text-xs sm:text-sm text-slate-700">
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo se envía la licencia?</h4>
-              <p className="text-slate-600">Se entrega de forma digital por WhatsApp o correo electrónico de manera inmediata tras verificar tu pago.</p>
+              <p className="text-slate-600">Se entrega de forma digital por WhatsApp o correo electrónico de manera inmediata tras verificar tu pago (10 a 20 minutos).</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tengo al comprar en UpClic?</h4>
+              <p className="text-slate-600">Cuentas con garantía de 6 meses si presentas algún inconveniente durante o después de la activación. Nuestro equipo de soporte técnico te asiste en tiempo real vía WhatsApp.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 mb-1">¿Puedo reinstalar si formateo mi PC?</h4>
+              <p className="text-slate-600">Solo para las licencias Windows están disponibles, ya que estas licencias se vinculan directamente en placa de su dispositivo PC/laptop.</p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo realizo el pago con Mercado Pago?</h4>
-              <p className="text-slate-600">Al presionar "Pagar con Mercado Pago" serás redirigido al link de pago oficial. Puedes abonar con tarjeta de crédito, débito, transferencia o efectivo según las opciones disponibles.</p>
+              <p className="text-slate-600">Al presionar "Pagar con Mercado Pago" serás redirigido al link de pago oficial. Puedes abonar con tarjeta de crédito, débito, transferencia bancaria, Yape o efectivo.</p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los descuentos y promociones?</h4>
               <p className="text-slate-600">
-                Al agregar 2 o más productos a tu carrito obtienes un <span className="font-bold text-emerald-700">35% de descuento automático</span>. También contamos con el cupón de apertura <code className="bg-slate-100 px-1 py-0.5 rounded font-mono font-bold text-[#0066FF]">PRIMUPCLIC</code> que otorga un 30% de descuento en productos con precio desde S/ 39.90 (vigente por 30 días). Los descuentos no son combinables entre sí.
+                Al agregar 2 o más productos a tu carrito obtienes un <span className="font-bold text-emerald-700">10% de descuento automático</span>. También contamos con el cupón de apertura <code className="bg-slate-100 px-1 py-0.5 rounded font-mono font-bold text-[#0066FF]">PRIMUPCLIC</code> que otorga un 10% de descuento en productos con precio desde S/ 40.00 (vigente por 30 días). Los descuentos no son combinables entre sí.
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Qué incluye Microsoft 365?</h4>
-              <p className="text-slate-600">Incluye 1 año de suscripción completa a las aplicaciones Office con exactamente 100 GB de almacenamiento en OneDrive.</p>
+              <h4 className="font-bold text-slate-900 mb-1">¿Qué incluye Microsoft Office 365 Profesional Cuenta?</h4>
+              <p className="text-slate-600">Incluye 1 año de suscripción oficial en modalidad de cuenta (correo y contraseña oficial asignados a su dominio) para hasta 5 dispositivos con 100 GB de almacenamiento en OneDrive.</p>
             </div>
           </div>
         );

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { products } from '../products.ts';
+import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
-import { Trophy, Star, Check, ShoppingCart, ArrowRight, Download } from 'lucide-react';
+import { Trophy, Star, Check, ShoppingCart, ArrowRight } from 'lucide-react';
 
 export const TopProductsSection: React.FC = () => {
   const { addItem, navigateToProduct } = useCart();
@@ -127,23 +128,14 @@ export const TopProductsSection: React.FC = () => {
                       className="px-3.5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 border border-blue-500/20"
                     >
                       <ShoppingCart className="w-4 h-4" />
-                      <span>Comprar</span>
+                      <span>Al carrito</span>
                     </button>
-                    <a
-                      href={item.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#0066FF] border border-blue-200/70 transition-colors cursor-pointer"
-                      title={`Descargar ISO Oficial: ${item.name}`}
-                    >
-                      <Download className="w-4 h-4" />
-                    </a>
                     <button
                       onClick={() => navigateToProduct(item.slug)}
-                      className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 transition-colors cursor-pointer"
-                      title="Ver detalles"
+                      className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center gap-1.5 cursor-pointer border border-slate-200"
                     >
                       <ArrowRight className="w-4 h-4" />
+                      <span>Comprar</span>
                     </button>
                   </div>
                 </div>

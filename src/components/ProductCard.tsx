@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
-import { InstallationModal } from './InstallationModal.tsx';
 import {
   Star,
   ShoppingCart,
   Eye,
   AlertCircle,
-  Download,
-  BookOpen
 } from 'lucide-react';
 
 interface ProductCardProps {
@@ -22,7 +19,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
   const [isHovered, setIsHovered] = useState(false);
-  const [showInstallModal, setShowInstallModal] = useState(false);
 
   useEffect(() => {
     setImgSrc(product.imageUrl);
@@ -139,6 +135,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Pricing & Buttons - Anchored to bottom with fixed height price line */}
           <div className="pt-2.5 sm:pt-3 border-t border-slate-100 mt-auto">
             <div className="min-h-[1.75rem] sm:min-h-[2rem] flex items-baseline gap-1.5 mb-2.5 sm:mb-3">
+              {product.variants && (
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Desde</span>
+              )}
               <span className="text-xs sm:text-sm font-bold text-slate-500">S/</span>
               <span className="text-lg sm:text-xl font-black text-[#0f172a] tracking-tight tabular-nums leading-none">
                 {product.price.toFixed(2)}
@@ -151,61 +150,31 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              {/* Botón Principal: Agregar al carrito */}
-              <button
-                id={`add-to-cart-${product.id}`}
-                onClick={() => addItem(product, 1)}
-                className="w-full py-2 sm:py-2.5 px-3 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 active:scale-98 cursor-pointer border border-blue-500/20"
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span>Agregar al carrito</span>
-              </button>
-
-              {/* Fila con botón de Descargar ISO y Ver producto */}
-              <div className="grid grid-cols-2 gap-1.5">
-                {/* Botón Descarga ISO oficial */}
-                <a
-                  id={`download-iso-${product.id}`}
-                  href={product.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-1.5 sm:py-2 px-2 rounded-xl bg-blue-50/80 hover:bg-blue-100 text-[#0066FF] font-bold text-[11px] sm:text-xs transition-colors flex items-center justify-center gap-1 cursor-pointer border border-blue-200/70"
-                  title={`Descargar ISO / Software oficial: ${product.name}`}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Botón Principal: Agregar al carrito */}
+                <button
+                  id={`add-to-cart-${product.id}`}
+                  onClick={() => addItem(product, 1)}
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs transition-all duration-200 cursor-pointer border border-slate-200"
                 >
-                  <Download className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">Descargar ISO</span>
-                </a>
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  <span className="truncate">Al carrito</span>
+                </button>
 
-                {/* Botón Secundario: Ver producto */}
+                {/* Botón Secundario: Comprar (Ver producto) */}
                 <button
                   id={`view-product-${product.id}`}
                   onClick={() => navigateToProduct(product.slug)}
-                  className="py-1.5 sm:py-2 px-2 rounded-xl bg-slate-50 hover:bg-slate-100/90 text-slate-700 font-semibold text-[11px] sm:text-xs transition-colors flex items-center justify-center gap-1 cursor-pointer border border-slate-200/60"
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 cursor-pointer border border-blue-500/20"
                 >
-                  <Eye className="w-3 h-3 text-slate-500 shrink-0" />
-                  <span className="truncate">Ver producto</span>
+                  <Eye className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Comprar</span>
                 </button>
               </div>
-
-              {/* Botón Rápido: Guía de Instalación */}
-              <button
-                onClick={() => setShowInstallModal(true)}
-                className="w-full py-1 text-[10.5px] font-semibold text-slate-500 hover:text-[#0066FF] flex items-center justify-center gap-1 transition-colors cursor-pointer"
-              >
-                <BookOpen className="w-3 h-3" />
-                <span>Ver pasos de instalación</span>
-              </button>
             </div>
           </div>
         </div>
       </article>
-
-      {/* Modal de Instalación y Descarga */}
-      <InstallationModal
-        product={product}
-        isOpen={showInstallModal}
-        onClose={() => setShowInstallModal(false)}
-      />
     </>
   );
 };

@@ -6,6 +6,7 @@ import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
 import { ProductReviewsSection } from './ProductReviewsSection.tsx';
 import { ComparisonTable } from './ComparisonTable.tsx';
+import { InstallationModal } from './InstallationModal.tsx';
 import {
   Star,
   ShoppingCart,
@@ -20,11 +21,9 @@ import {
   Share2,
   Lock,
   ChevronDown,
-  Download,
-  ExternalLink,
   BookOpen,
   CreditCard,
-  Send
+  Send,
 } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -36,10 +35,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const { getProductStats } = useReviews();
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   const product = getProductBySlug(slug) || products[0];
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
+  const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
+    product.variants ? product.variants[0].id : 'oem'
+  );
+
+  const currentVariant = product.variants
+    ? product.variants.find(v => v.id === selectedVariantId) || product.variants[0]
+    : undefined;
+
+  const activePrice = currentVariant ? currentVariant.price : product.price;
+  const activeOldPrice = currentVariant ? currentVariant.oldPrice : product.oldPrice;
 
   // Synchronize dynamic SEO title and meta description tag
   useEffect(() => {
@@ -52,15 +62,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
       );
     }
     setImgSrc(product.imageUrl);
+    if (product.variants && product.variants.length > 0) {
+      setSelectedVariantId(product.variants[0].id);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [product]);
 
   const handleAddToCart = () => {
-    addItem(product, quantity);
+    addItem(product, quantity, currentVariant ? currentVariant.id : undefined);
   };
 
   const handleBuyNow = () => {
-    addItem(product, quantity);
+    addItem(product, quantity, currentVariant ? currentVariant.id : undefined);
     navigateToCheckout();
   };
 
@@ -88,13 +101,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     },
     {
       q: '¿Qué garantía tengo al comprar en UpClic?',
-      a: 'Cuentas con garantía total de activación. Si presentas algún inconveniente durante la instalación, nuestro equipo de soporte técnico te asiste en tiempo real vía WhatsApp.'
+      a: 'Cuentas con garantía de 6 meses si presentas algún inconveniente durante o después de la instalación. Nuestro equipo de soporte técnico te asiste en tiempo real vía WhatsApp.'
     },
     {
       q: '¿Puedo reinstalar el software si formateo mi PC?',
       a: product.isAccountAccess
         ? 'Sí, solo debes volver a iniciar sesión con tu cuenta en portal.office.com y reinstalar las aplicaciones en tu equipo.'
-        : 'Sí, la clave permanece asociada a tu equipo o cuenta, permitiéndote reinstalar el software siempre que sea en la misma máquina.'
+        : 'Solo para las licencias Windows están disponibles, ya que estas licencias se vinculan directamente en placa de su dispositivo PC/laptop.'
     }
   ];
 
@@ -215,17 +228,87 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   </span>
                 </div>
 
+                {/* Variant Selector (OEM vs Retail) for Windows products */}
+                {product.variants && product.variants.length > 0 && (
+                  <div className="mt-5 p-4 rounded-2xl bg-slate-50 border border-slate-200/90">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-xs font-black uppercase text-slate-800 tracking-wider">
+                        Selecciona el tipo de clave:
+                      </span>
+                      <span className="text-[11px] font-bold text-[#0066FF] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                        {currentVariant?.name} (S/ {activePrice.toFixed(2)})
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {product.variants.map((v) => {
+                        const isSelected = selectedVariantId === v.id;
+                        return (
+                          <button
+                            key={v.id}
+                            type="button"
+                            onClick={() => setSelectedVariantId(v.id)}
+                            className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                              isSelected
+                                ? 'bg-blue-50/60 border-[#0066FF] shadow-xs'
+                                : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <div
+                                  className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                                    isSelected
+                                      ? 'border-[#0066FF] bg-[#0066FF]'
+                                      : 'border-slate-300 bg-white'
+                                  }`}
+                                >
+                                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                </div>
+                                <span className={`text-xs font-black ${isSelected ? 'text-[#0066FF]' : 'text-slate-800'}`}>
+                                  {v.name}
+                                </span>
+                              </div>
+                              {v.badge && (
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200/70 text-slate-700">
+                                  {v.badge}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-baseline gap-1.5 mt-0.5">
+                              <span className="text-xs font-bold text-slate-500">S/</span>
+                              <span className="text-lg font-black text-slate-950 tabular-nums">
+                                {v.price.toFixed(2)}
+                              </span>
+                              {v.oldPrice && (
+                                <span className="text-xs text-slate-400 line-through tabular-nums">
+                                  S/ {v.oldPrice.toFixed(2)}
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-[11px] text-slate-500 leading-snug font-medium">
+                              {v.shortDesc}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Price Display */}
                 <div className="mt-5 sm:mt-6 flex flex-wrap items-baseline gap-2.5 sm:gap-3">
                   <div className="flex items-baseline gap-1">
                     <span className="text-base sm:text-lg font-bold text-slate-500">S/</span>
                     <span className="text-3xl sm:text-4xl font-black text-[#0f172a] tracking-tight tabular-nums leading-none">
-                      {product.price.toFixed(2)}
+                      {activePrice.toFixed(2)}
                     </span>
                   </div>
-                  {product.oldPrice && (
+                  {activeOldPrice && (
                     <span className="text-base sm:text-lg text-slate-400 line-through font-semibold tabular-nums">
-                      S/ {product.oldPrice.toFixed(2)}
+                      S/ {activeOldPrice.toFixed(2)}
                     </span>
                   )}
                   <span className="text-[11px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
@@ -233,29 +316,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   </span>
                 </div>
 
-                {/* 35% Auto Discount or 30% Coupon reminder */}
+                {/* 10% Auto Discount or 10% Coupon reminder */}
                 <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-linear-to-r from-blue-50/90 to-sky-50/80 border border-blue-200 text-[11px] sm:text-xs font-bold text-[#0066FF] flex items-center gap-2 shadow-2xs">
                   <span className="text-base shrink-0">🔥</span>
                   <span className="leading-snug">
-                    ¡Lleva 2 o más productos y obtén <span className="text-emerald-700 underline font-black">35% de descuento</span>! O usa el cupón <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 text-[#0066FF] font-mono">PRIMUPCLIC</code> para 30% de descuento (en productos desde S/ 39.90).
+                    ¡Lleva 2 o más productos y obtén <span className="text-emerald-700 underline font-black">10% de descuento</span>! O usa el cupón <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 text-[#0066FF] font-mono">PRIMUPCLIC</code> para 10% de descuento (en productos desde S/ 40.00).
                   </span>
-                </div>
-
-                {/* Direct Download ISO link banner */}
-                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-xs text-slate-700 font-semibold">
-                    <Download className="w-4 h-4 text-[#0066FF]" />
-                    <span>Descarga directa disponible ({product.isoFormat || 'ISO Oficial'})</span>
-                  </div>
-                  <a
-                    href={product.downloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:underline"
-                  >
-                    <span>Descargar ahora</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
                 </div>
 
                 {/* Quantity selector */}
@@ -284,24 +350,36 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   </div>
                 </div>
 
-                {/* Primary Action Buttons */}
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    id="detail-add-to-cart-btn"
-                    onClick={handleAddToCart}
-                    className="py-3 px-6 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span>Agregar al carrito</span>
-                  </button>
+                {/* Primary Action Buttons & Installation Guide Button */}
+                <div className="mt-6 flex flex-col gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      id="detail-add-to-cart-btn"
+                      onClick={handleAddToCart}
+                      className="py-3 px-6 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>Agregar al carrito</span>
+                    </button>
 
+                    <button
+                      id="detail-buy-now-btn"
+                      onClick={handleBuyNow}
+                      className="py-3 px-6 rounded-xl bg-[#0f172a] hover:bg-slate-900 text-white font-bold text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-800"
+                    >
+                      <Zap className="w-4 h-4 text-amber-400" />
+                      <span>Comprar ahora</span>
+                    </button>
+                  </div>
+
+                  {/* Botón Guía de instalación (Abre ventana con descarga oficial y pasos) */}
                   <button
-                    id="detail-buy-now-btn"
-                    onClick={handleBuyNow}
-                    className="py-3 px-6 rounded-xl bg-[#0f172a] hover:bg-slate-900 text-white font-bold text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-800"
+                    id="detail-guide-btn"
+                    onClick={() => setShowInstallModal(true)}
+                    className="w-full py-3 px-4 rounded-xl bg-blue-50/90 hover:bg-blue-100 text-[#0066FF] font-bold text-sm border border-blue-200/80 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
                   >
-                    <Zap className="w-4 h-4 text-amber-400" />
-                    <span>Comprar ahora</span>
+                    <BookOpen className="w-4 h-4 text-[#0066FF]" />
+                    <span>Guía de instalación</span>
                   </button>
                 </div>
               </div>
@@ -395,84 +473,30 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               </div>
             </div>
 
-            {/* Download ISO & Installation Guide Block */}
-            <div
-              id="download-and-installation-guide"
-              className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+            {/* Compact Installation Guide Trigger Box */}
+            <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 text-[#0066FF] flex items-center justify-center shrink-0 shadow-2xs">
+                  <BookOpen className="w-5 h-5" />
+                </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Download className="w-5 h-5 text-[#0066FF]" />
-                    <h3 className="text-lg font-black text-[#0f172a]">
-                      Descarga Oficial de la ISO / Instalador
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                    {product.isoFormat || 'Archivo oficial directo de los servidores de Microsoft.'}
+                  <h4 className="font-bold text-slate-900 text-sm sm:text-base">
+                    ¿Deseas descargar el instalador oficial o consultar la guía?
+                  </h4>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    Descarga directa desde servidores oficiales y manual de instalación.
                   </p>
                 </div>
-
-                <a
-                  id="product-detail-download-iso-btn"
-                  href={product.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-3 px-5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20 shrink-0"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>{product.downloadLabel || 'Descargar ISO Oficial'}</span>
-                  <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-                </a>
               </div>
 
-              {/* Step-by-Step Installation Instructions */}
-              <div className="pt-6">
-                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Instrucciones de Instalación Paso a Paso</span>
-                </h4>
-
-                <div className="space-y-3">
-                  {(product.installationSteps.length >= 5
-                    ? product.installationSteps.slice(2, 5)
-                    : product.installationSteps
-                  ).map((rawStep, idx) => {
-                    const cleanText = rawStep.replace(/^Paso\s*\d+\s*:\s*/i, '');
-                    return (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80"
-                      >
-                        <span className="w-7 h-7 rounded-xl bg-[#0066FF] text-white font-black text-xs sm:text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                          {idx + 1}
-                        </span>
-                        <div className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                          <span className="font-bold text-slate-900 mr-1.5">Paso {idx + 1}:</span>
-                          {cleanText}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-4 p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/60 flex items-center justify-between flex-wrap gap-2 text-xs">
-                  <span className="text-slate-600 font-medium flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                    ¿Tienes dudas o necesitas asistencia remota durante la instalación?
-                  </span>
-                  <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                      `Hola UpClic, necesito ayuda para la instalación de ${product.name}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#0066FF] font-bold hover:underline"
-                  >
-                    Escríbenos al WhatsApp {WHATSAPP_DISPLAY} →
-                  </a>
-                </div>
-              </div>
+              <button
+                id="product-detail-open-guide-btn"
+                onClick={() => setShowInstallModal(true)}
+                className="w-full sm:w-auto py-2.5 px-5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Guía de instalación</span>
+              </button>
             </div>
 
             {/* Product Description */}
@@ -589,6 +613,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           </div>
         </div>
       </div>
+
+      {/* Installation Guide Modal (Exclusive download button & native hardware steps) */}
+      <InstallationModal
+        product={product}
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+      />
     </div>
   );
 };

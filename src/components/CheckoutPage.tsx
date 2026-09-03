@@ -217,84 +217,93 @@ export const CheckoutPage: React.FC = () => {
 
               {/* Products list */}
               <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto mb-4 pr-1">
-                {items.map(item => (
-                  <div key={item.product.id} className="py-3 flex flex-col gap-2 text-xs">
-                    <div className="flex items-start justify-between gap-2.5">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-10 h-10 rounded-lg bg-slate-50/80 p-1 border border-slate-200/80 shrink-0 flex items-center justify-center">
-                          <img
-                            src={item.product.imageUrl}
-                            alt={item.product.name}
-                            onError={(e) => {
-                              e.currentTarget.src = item.product.fallbackImage;
+                {items.map(item => {
+                  const itemUnitPrice = item.unitPrice ?? item.product.price;
+                  const itemKey = item.variantId ? `${item.product.id}-${item.variantId}` : item.product.id;
+                  return (
+                    <div key={itemKey} className="py-3 flex flex-col gap-2 text-xs">
+                      <div className="flex items-start justify-between gap-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-10 h-10 rounded-lg bg-slate-50/80 p-1 border border-slate-200/80 shrink-0 flex items-center justify-center">
+                            <img
+                              src={item.product.imageUrl}
+                              alt={item.product.name}
+                              onError={(e) => {
+                                e.currentTarget.src = item.product.fallbackImage;
+                              }}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-slate-800 truncate" title={item.product.name}>
+                              {item.product.name}
+                            </div>
+                            {item.selectedVariant && (
+                              <span className="inline-block mt-0.5 text-[10px] font-bold px-1.5 py-0.2 rounded bg-blue-50 text-[#0066FF] border border-blue-200">
+                                {item.selectedVariant.name}
+                              </span>
+                            )}
+                            <div className="text-[11px] text-slate-400 mt-0.5">
+                              Unitario: S/ {itemUnitPrice.toFixed(2)}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => removeItem(item.product.id, item.variantId)}
+                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
+                          title="Eliminar producto"
+                          aria-label="Eliminar producto"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Quantity Stepper & Subtotal row */}
+                      <div className="flex items-center justify-between pl-12">
+                        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.product.id, -1, item.variantId)}
+                            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
+                            aria-label="Disminuir cantidad"
+                            title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir'}
+                          >
+                            <Minus className="w-2.5 h-2.5" />
+                          </button>
+                          <input
+                            type="number"
+                            min="1"
+                            max="99"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (!isNaN(val)) {
+                                setQuantity(item.product.id, val, item.variantId);
+                              }
                             }}
-                            className="w-full h-full object-contain"
+                            className="w-8 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            aria-label="Editar cantidad"
                           />
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.product.id, 1, item.variantId)}
+                            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
+                            aria-label="Aumentar cantidad"
+                            title="Aumentar"
+                          >
+                            <Plus className="w-2.5 h-2.5" />
+                          </button>
                         </div>
-                        <div className="min-w-0">
-                          <div className="font-bold text-slate-800 truncate" title={item.product.name}>
-                            {item.product.name}
-                          </div>
-                          <div className="text-[11px] text-slate-400">
-                            Unitario: S/ {item.product.price.toFixed(2)}
-                          </div>
-                        </div>
+
+                        <span className="font-black text-slate-900 shrink-0 tabular-nums text-sm">
+                          S/ {(itemUnitPrice * item.quantity).toFixed(2)}
+                        </span>
                       </div>
-
-                      <button
-                        type="button"
-                        onClick={() => removeItem(item.product.id)}
-                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                        title="Eliminar producto"
-                        aria-label="Eliminar producto"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
                     </div>
-
-                    {/* Quantity Stepper & Subtotal row */}
-                    <div className="flex items-center justify-between pl-12">
-                      <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.product.id, -1)}
-                          className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
-                          aria-label="Disminuir cantidad"
-                          title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir'}
-                        >
-                          <Minus className="w-2.5 h-2.5" />
-                        </button>
-                        <input
-                          type="number"
-                          min="1"
-                          max="99"
-                          value={item.quantity}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value, 10);
-                            if (!isNaN(val)) {
-                              setQuantity(item.product.id, val);
-                            }
-                          }}
-                          className="w-8 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          aria-label="Editar cantidad"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.product.id, 1)}
-                          className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
-                          aria-label="Aumentar cantidad"
-                          title="Aumentar"
-                        >
-                          <Plus className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
-
-                      <span className="font-black text-slate-900 shrink-0 tabular-nums text-sm">
-                        S/ {(item.product.price * item.quantity).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Coupon input on Checkout */}
@@ -310,7 +319,7 @@ export const CheckoutPage: React.FC = () => {
                       onClick={() => applyCoupon(PROMO_COUPON_CODE)}
                       className="text-[10px] font-bold text-[#0066FF] hover:underline cursor-pointer bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
                     >
-                      Usar {PROMO_COUPON_CODE} (-30%)
+                      Usar {PROMO_COUPON_CODE} (-10%)
                     </button>
                   )}
                 </div>
@@ -323,7 +332,7 @@ export const CheckoutPage: React.FC = () => {
                         {appliedCoupon}
                       </span>
                       <span className="text-[10px] text-emerald-700">
-                        {isMultiItemDiscount ? '(35% aplicado por 2+ items)' : '(30% apertura)'}
+                        {isMultiItemDiscount ? '(10% aplicado por 2+ items)' : '(10% cupón)'}
                       </span>
                     </div>
                     <button
@@ -393,7 +402,7 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-[11px] text-slate-500 italic">
-                    (Lleva 2 o más productos para 35% de descuento, o ingresa PRIMUPCLIC para 30%)
+                    (Lleva 2 o más productos para 10% de descuento, o ingresa PRIMUPCLIC para 10% en productos desde S/ 49.90)
                   </div>
                 )}
 

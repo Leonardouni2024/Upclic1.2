@@ -4,10 +4,10 @@ import { Product, CartTotals } from './types.ts';
 export const WHATSAPP_NUMBER = "51983204384";
 export const WHATSAPP_DISPLAY = "+51 983 204 384";
 
-// Código promocional oficial de apertura (30% de descuento, 30 días de vigencia)
+// Código promocional oficial de apertura (10% de descuento en productos desde S/ 40.00, 30 días de vigencia)
 export const PROMO_COUPON_CODE = "PRIMUPCLIC";
-export const PROMO_COUPON_DISCOUNT = 0.30; // 30%
-export const MULTI_ITEM_DISCOUNT = 0.35; // 35% si lleva 2 o más productos
+export const PROMO_COUPON_DISCOUNT = 0.10; // 10%
+export const MULTI_ITEM_DISCOUNT = 0.10; // 10% si lleva 2 o más productos
 export const PROMO_COUPON_EXPIRATION_DAYS = 30;
 
 // Enlace oficial e inalterable de Mercado Pago según requerimiento
@@ -20,18 +20,18 @@ export const products: Product[] = [
     slug: "combo-windows-11-pro-office-2024",
     name: "Combo Windows 11 Pro + Microsoft Office 2024",
     category: "combos",
-    price: 65.00,
-    oldPrice: 139.80,
+    price: 46.50,
+    oldPrice: 64.90,
     duration: "Permanente (2 Claves)",
     rating: 5.0,
     reviews: 164,
     imageUrl: "/products/combo-win11-office2024.webp",
     fallbackImage: "/products/combo-win11-office2024.png",
-    description: "Paquete definitivo 2 en 1 con super ahorro. Incluye 1 Clave oficial para Windows 11 Pro 64-bit + 1 Clave oficial para Microsoft Office Professional Plus 2024 con activación permanente de por vida.",
+    description: "Paquete definitivo 2 en 1 con super ahorro. Incluye 1 Clave oficial para Windows 11 Pro 64-bit + 1 Clave oficial para Microsoft Office Professional Plus 2024 con activación permanente y garantía de 1 año.",
     features: [
       "1 Licencia original de Windows 11 Pro (32/64 bits) de activación permanente",
       "1 Licencia original de Office Professional Plus 2024 (Word, Excel, PowerPoint, Outlook, Access, OneNote)",
-      "Activación oficial directa y garantizada de por vida",
+      "Activación oficial directa con garantía de 1 año",
       "Ahorro superior en combo respecto a la compra individual",
       "Soporte prioritario y entrega digital instantánea",
       "Reinstalable en los mismos equipos ante formateos"
@@ -54,18 +54,19 @@ export const products: Product[] = [
   {
     id: "prod-m365",
     slug: "microsoft-365",
-    name: "Microsoft 365 (Office 365 Profesional)",
+    name: "Microsoft Office 365 Profesional Cuenta",
     category: "office",
-    price: 59.90,
-    oldPrice: 89.90,
+    price: 46.50,
+    oldPrice: 79.90,
     duration: "1 año",
     rating: 4.9,
     reviews: 142,
     imageUrl: "/products/microsoft-365.webp",
     fallbackImage: "/products/microsoft-365.png",
-    description: "Suscripción oficial a Microsoft 365 (Office 365 Profesional) por 1 año. Modalidad de acceso por cuenta oficial: este producto no se entrega mediante clave alfanumérica (key), sino mediante una cuenta oficial de Microsoft con correo electrónico y contraseña asignados a su dominio para iniciar sesión en portal.office.com y descargar las aplicaciones en hasta 5 dispositivos (PC, Mac, tablets o smartphones), con 100 GB de almacenamiento en la nube OneDrive y actualizaciones continuas durante todo el periodo.",
+    description: "Suscripción oficial a Microsoft Office 365 Profesional Cuenta por 1 año. Modalidad de acceso por cuenta oficial: este producto no se entrega mediante clave alfanumérica (key), sino mediante una cuenta oficial de Microsoft con correo electrónico y contraseña asignados a su dominio para iniciar sesión en portal.office.com y descargar las aplicaciones en hasta 5 dispositivos (PC, Mac, tablets o smartphones), con 100 GB de almacenamiento en la nube OneDrive y actualizaciones continuas durante todo el periodo.",
     cloudStorage: "100 GB en la nube",
     badge: "1 AÑO - 100 GB",
+    isAccountAccess: true,
     features: [
       "Acceso directo por cuenta oficial asignada a su dominio en portal.office.com",
       "Se le enviará el correo electrónico y la contraseña oficial de inicio de sesión",
@@ -73,7 +74,7 @@ export const products: Product[] = [
       "100 GB de almacenamiento en la nube OneDrive garantizado",
       "Acceso y sincronización en PC, Mac, tablets y smartphones (hasta 5 equipos simultáneos)",
       "Actualizaciones continuas y oficiales de Microsoft durante el año de suscripción",
-      "Entrega digital inmediata tras confirmación de pago"
+      "Entrega digital inmediata con garantía de soporte"
     ],
     compatibility: "Compatible con Windows 10, Windows 11, macOS, iOS y Android",
     bestSeller: true,
@@ -94,8 +95,8 @@ export const products: Product[] = [
     slug: "office-professional-plus-2024",
     name: "Microsoft Office Professional Plus 2024",
     category: "office",
-    price: 49.90,
-    oldPrice: 79.90,
+    price: 25.00,
+    oldPrice: 59.90,
     duration: "Permanente",
     rating: 4.9,
     reviews: 218,
@@ -119,7 +120,7 @@ export const products: Product[] = [
     isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
     installationSteps: [
       "Paso 1: Haga clic en 'Descargar Imagen Oficial' para obtener el archivo .IMG original desde los servidores oficiales de Microsoft.",
-      "Paso 2: Una vez finalizada la descarga, haga doble clic sobre el archivo descargado para montarlo como unidad virtual de disco (o clic derecho > 'Montar').",
+      "Paso 2: Una vez finalizada la descarga, haga doble clic sobre el archivo descargado para montarlo (o clic derecho > 'Montar').",
       "Paso 3: Dentro de la unidad montada, abra el archivo 'Setup.exe' y espere a que la instalación concluya.",
       "Paso 4: Abra cualquier programa de la suite, como Microsoft Word o Excel.",
       "Paso 5: En la ventana de activación, ingrese su clave de producto original de 25 caracteres y presione 'Activar producto'."
@@ -130,8 +131,8 @@ export const products: Product[] = [
     slug: "office-professional-plus-2021",
     name: "Microsoft Office Professional Plus 2021",
     category: "office",
-    price: 39.90,
-    oldPrice: 65.00,
+    price: 24.00,
+    oldPrice: 49.90,
     duration: "Permanente",
     rating: 4.8,
     reviews: 324,
@@ -166,8 +167,8 @@ export const products: Product[] = [
     slug: "office-professional-plus-2019",
     name: "Microsoft Office Professional Plus 2019",
     category: "office",
-    price: 34.90,
-    oldPrice: 55.00,
+    price: 23.00,
+    oldPrice: 45.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 189,
@@ -303,14 +304,14 @@ export const products: Product[] = [
     slug: "windows-11-pro",
     name: "Windows 11 Pro",
     category: "windows",
-    price: 39.90,
-    oldPrice: 69.90,
+    price: 24.00,
+    oldPrice: 49.90,
     duration: "Permanente",
     rating: 4.9,
     reviews: 380,
     imageUrl: "/products/windows-11-pro.webp",
     fallbackImage: "/products/windows-11-pro.png",
-    description: "El sistema operativo más avanzado de Microsoft diseñado para profesionales, creadores y empresas que exigen máxima seguridad, virtualización y rendimiento.",
+    description: "El sistema operativo más avanzado de Microsoft diseñado para profesionales, creadores y empresas que exigen máxima seguridad, estabilidad y rendimiento.\n\nTipos de Claves disponibles:\n• Clave OEM (S/ 24.00): Licencia original que se vincula permanentemente a la placa madre (Motherboard) de su equipo PC o Laptop. Es la opción más económica e ideal para 1 equipo, permitiendo reinstalaciones y formateos ilimitados en la misma máquina sin perder la activación.\n• Clave Retail (S/ 29.00): Licencia original oficial transferible de Microsoft. Se vincula a su hardware o cuenta Microsoft y cuenta con la ventaja de poder ser transferida a otra PC o Laptop en caso de renovar o cambiar su equipo en el futuro (1 equipo activo a la vez).",
     features: [
       "Cifrado de disco BitLocker de grado militar para proteger tus archivos",
       "Escritorio Remoto (RDP) oficial para conectarte a tu PC desde cualquier lugar",
@@ -323,6 +324,26 @@ export const products: Product[] = [
     badge: "MÁS VENDIDO",
     bestSeller: true,
     featured: true,
+    variants: [
+      {
+        id: "oem",
+        name: "Clave tipo OEM",
+        type: "OEM",
+        price: 24.00,
+        oldPrice: 45.00,
+        badge: "Económica",
+        shortDesc: "Vinculada a placa madre del equipo. Reinstalable de por vida en la misma PC tras formateos."
+      },
+      {
+        id: "retail",
+        name: "Clave Retail",
+        type: "Retail",
+        price: 29.00,
+        oldPrice: 55.00,
+        badge: "Transferible",
+        shortDesc: "Licencia transferible entre equipos. Se vincula a cuenta o hardware y permite migrar a otra PC en el futuro."
+      }
+    ],
     downloadUrl: "https://archive.org/download/win-11-24-h-2-spanish-x-64/Win11_24H2_Spanish_x64.iso",
     downloadLabel: "Descargar ISO Directa Windows 11 (64 bits)",
     isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
@@ -339,14 +360,14 @@ export const products: Product[] = [
     slug: "windows-11-home",
     name: "Windows 11 Home",
     category: "windows",
-    price: 34.90,
-    oldPrice: 59.90,
+    price: 24.00,
+    oldPrice: 45.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 175,
     imageUrl: "/products/windows-11-home.webp",
     fallbackImage: "/products/windows-11-home.png",
-    description: "Experiencia moderna y fluida con interfaz renovada, perfecta para el hogar, estudiantes y entusiastas de los videojuegos en PC.",
+    description: "Experiencia moderna y fluida con interfaz renovada, perfecta para el hogar, estudiantes y entusiastas de los videojuegos en PC.\n\nTipos de Claves disponibles:\n• Clave OEM (S/ 24.00): Licencia original vinculada a la placa madre de su PC o laptop. Permite reinstalaciones ilimitadas en el mismo equipo ante formateos.\n• Clave Retail (S/ 29.00): Licencia original transferible de Microsoft. Permite transferir la activación si cambia de equipo en el futuro.",
     features: [
       "Diseño estilizado con menú Inicio centrado y diseño de ventanas Snap",
       "DirectStorage y Auto HDR para tiempos de carga ultrarrápidos en juegos",
@@ -358,6 +379,26 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
+    variants: [
+      {
+        id: "oem",
+        name: "Clave tipo OEM",
+        type: "OEM",
+        price: 24.00,
+        oldPrice: 45.00,
+        badge: "Económica",
+        shortDesc: "Vinculada a placa madre del equipo. Reinstalable de por vida en la misma PC tras formateos."
+      },
+      {
+        id: "retail",
+        name: "Clave Retail",
+        type: "Retail",
+        price: 29.00,
+        oldPrice: 55.00,
+        badge: "Transferible",
+        shortDesc: "Licencia transferible entre equipos. Se vincula a cuenta o hardware y permite migrar a otra PC en el futuro."
+      }
+    ],
     downloadUrl: "https://archive.org/download/win-11-24-h-2-spanish-x-64/Win11_24H2_Spanish_x64.iso",
     downloadLabel: "Descargar ISO Directa Windows 11 Home (64 bits)",
     isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
@@ -374,14 +415,14 @@ export const products: Product[] = [
     slug: "windows-11-enterprise",
     name: "Windows 11 Enterprise",
     category: "windows",
-    price: 49.90,
-    oldPrice: 89.90,
+    price: 24.00,
+    oldPrice: 59.00,
     duration: "Permanente",
     rating: 4.9,
     reviews: 94,
     imageUrl: "/products/windows-11-enterprise.webp",
     fallbackImage: "/products/windows-11-enterprise.png",
-    description: "Edición diseñada para organizaciones y corporaciones que necesitan gestión avanzada de TI, políticas de grupo y máxima protección contra ciberataques.",
+    description: "Edición diseñada para organizaciones y corporaciones que necesitan gestión avanzada de TI, políticas de grupo y máxima protección contra ciberataques.\n\nTipos de Claves disponibles:\n• Clave OEM (S/ 24.00): Licencia original vinculada a la placa madre de su equipo.\n• Clave Retail (S/ 29.00): Licencia transferible de Microsoft para mayor flexibilidad empresarial.",
     features: [
       "Windows Defender Application Guard y Credential Guard",
       "Soporte completo para DirectAccess y BranchCache",
@@ -393,6 +434,26 @@ export const products: Product[] = [
     badge: "EMPRESARIAL",
     bestSeller: false,
     featured: true,
+    variants: [
+      {
+        id: "oem",
+        name: "Clave tipo OEM",
+        type: "OEM",
+        price: 24.00,
+        oldPrice: 45.00,
+        badge: "Económica",
+        shortDesc: "Vinculada a placa madre del equipo. Reinstalable de por vida en la misma PC tras formateos."
+      },
+      {
+        id: "retail",
+        name: "Clave Retail",
+        type: "Retail",
+        price: 29.00,
+        oldPrice: 55.00,
+        badge: "Transferible",
+        shortDesc: "Licencia transferible entre equipos. Se vincula a cuenta o hardware y permite migrar a otra PC en el futuro."
+      }
+    ],
     downloadUrl: "https://archive.org/download/win-11-24-h-2-spanish-x-64/Win11_24H2_Spanish_x64.iso",
     downloadLabel: "Descargar ISO Directa Windows 11 Enterprise",
     isoFormat: "Descarga Directa ISO Oficial (x64) Español",
@@ -409,14 +470,14 @@ export const products: Product[] = [
     slug: "windows-10-pro",
     name: "Windows 10 Pro",
     category: "windows",
-    price: 29.90,
-    oldPrice: 49.90,
+    price: 25.50,
+    oldPrice: 45.00,
     duration: "Permanente",
     rating: 4.9,
     reviews: 410,
     imageUrl: "/products/windows-10-pro.webp",
     fallbackImage: "/products/windows-10-pro.png",
-    description: "El sistema operativo más estable y compatible del mundo. Reconocido por su alta compatibilidad con software industrial, juegos y periféricos.",
+    description: "El sistema operativo más estable y compatible del mundo. Reconocido por su alta compatibilidad con software industrial, juegos y periféricos.\n\nTipos de Claves disponibles:\n• Clave OEM (S/ 25.50): Licencia original que se vincula permanentemente a la placa madre (Motherboard) de su equipo PC o Laptop. Es la opción más económica e ideal para 1 equipo, permitiendo reinstalaciones y formateos ilimitados en la misma máquina sin perder la activación.\n• Clave Retail (S/ 31.50): Licencia original oficial transferible de Microsoft. Se vincula a su hardware o cuenta Microsoft y cuenta con la ventaja de poder ser transferida a otra PC o Laptop en caso de renovar o cambiar su equipo en el futuro (1 equipo activo a la vez).",
     features: [
       "Protección de datos mediante cifrado de disco BitLocker",
       "Escritorio remoto incorporado de alta velocidad",
@@ -428,6 +489,26 @@ export const products: Product[] = [
     badge: "MÁS VENDIDO",
     bestSeller: true,
     featured: true,
+    variants: [
+      {
+        id: "oem",
+        name: "Clave tipo OEM",
+        type: "OEM",
+        price: 25.50,
+        oldPrice: 40.00,
+        badge: "Económica",
+        shortDesc: "Vinculada a placa madre del equipo. Reinstalable de por vida en la misma PC tras formateos."
+      },
+      {
+        id: "retail",
+        name: "Clave Retail",
+        type: "Retail",
+        price: 31.50,
+        oldPrice: 50.00,
+        badge: "Transferible",
+        shortDesc: "Licencia transferible entre equipos. Se vincula a cuenta o hardware y permite migrar a otra PC en el futuro."
+      }
+    ],
     downloadUrl: "https://archive.org/download/windows-10-22h2-multi-edition-iso/Windows%2010%20v.22H2/Win10_22H2_Spanish/Win10_22H2_Spanish_x64v1.iso",
     downloadLabel: "Descargar ISO Directa Windows 10 Pro (64 bits)",
     isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
@@ -444,14 +525,14 @@ export const products: Product[] = [
     slug: "windows-10-home",
     name: "Windows 10 Home",
     category: "windows",
-    price: 24.90,
+    price: 25.50,
     oldPrice: 40.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 145,
     imageUrl: "/products/windows-10-home.webp",
     fallbackImage: "/products/windows-10-home.png",
-    description: "La edición confiable para uso doméstico, navegación web, trabajo escolar y entretenimiento diario.",
+    description: "La edición confiable para uso doméstico, navegación web, trabajo escolar y entretenimiento diario.\n\nTipos de Claves disponibles:\n• Clave OEM (S/ 25.50): Licencia original vinculada a la placa madre de su equipo. Permite reinstalaciones ilimitadas en la misma PC ante formateos.\n• Clave Retail (S/ 31.50): Licencia original transferible de Microsoft en caso de renovar equipo.",
     features: [
       "Arranque veloz e inicio de sesión seguro con Windows Hello",
       "Navegador Microsoft Edge ultra eficiente",
@@ -462,6 +543,26 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
+    variants: [
+      {
+        id: "oem",
+        name: "Clave tipo OEM",
+        type: "OEM",
+        price: 25.50,
+        oldPrice: 40.00,
+        badge: "Económica",
+        shortDesc: "Vinculada a placa madre del equipo. Reinstalable de por vida en la misma PC tras formateos."
+      },
+      {
+        id: "retail",
+        name: "Clave Retail",
+        type: "Retail",
+        price: 31.50,
+        oldPrice: 50.00,
+        badge: "Transferible",
+        shortDesc: "Licencia transferible entre equipos. Se vincula a cuenta o hardware y permite migrar a otra PC en el futuro."
+      }
+    ],
     downloadUrl: "https://archive.org/download/windows-10-22h2-multi-edition-iso/Windows%2010%20v.22H2/Win10_22H2_Spanish/Win10_22H2_Spanish_x64v1.iso",
     downloadLabel: "Descargar ISO Directa Windows 10 Home (64 bits)",
     isoFormat: "Descarga Directa ISO Oficial en Español (x64)",
@@ -477,14 +578,14 @@ export const products: Product[] = [
     slug: "windows-10-enterprise",
     name: "Windows 10 Enterprise",
     category: "windows",
-    price: 39.90,
-    oldPrice: 65.00,
+    price: 25.50,
+    oldPrice: 55.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 82,
     imageUrl: "/products/windows-10-enterprise.webp",
     fallbackImage: "/products/windows-10-enterprise.png",
-    description: "Edición orientada a empresas medianas y grandes que requieren estabilidad a largo plazo y máxima seguridad de red.",
+    description: "Edición orientada a empresas medianas y grandes que requieren estabilidad a largo plazo y máxima seguridad de red.\n\nTipos de Claves disponibles:\n• Clave OEM (S/ 25.50): Licencia original vinculada a placa madre de equipo corporativo.\n• Clave Retail (S/ 31.50): Licencia transferible de Microsoft para infraestructura empresarial.",
     features: [
       "Gestión centralizada de dispositivos móviles y equipos",
       "Windows Defender Advanced Threat Protection (ATP)",
@@ -495,6 +596,26 @@ export const products: Product[] = [
     badge: "EMPRESARIAL",
     bestSeller: false,
     featured: false,
+    variants: [
+      {
+        id: "oem",
+        name: "Clave tipo OEM",
+        type: "OEM",
+        price: 25.50,
+        oldPrice: 40.00,
+        badge: "Económica",
+        shortDesc: "Vinculada a placa madre del equipo. Reinstalable de por vida en la misma PC tras formateos."
+      },
+      {
+        id: "retail",
+        name: "Clave Retail",
+        type: "Retail",
+        price: 31.50,
+        oldPrice: 50.00,
+        badge: "Transferible",
+        shortDesc: "Licencia transferible entre equipos. Se vincula a cuenta o hardware y permite migrar a otra PC en el futuro."
+      }
+    ],
     downloadUrl: "https://archive.org/download/windows-10-22h2-multi-edition-iso/Windows%2010%20v.22H2/Win10_22H2_Spanish/Win10_22H2_Spanish_x64v1.iso",
     downloadLabel: "Descargar ISO Directa Windows 10 Enterprise",
     isoFormat: "Descarga Directa ISO Oficial (x64) Español",
@@ -542,8 +663,8 @@ export const products: Product[] = [
     slug: "windows-7-professional",
     name: "Windows 7 Professional",
     category: "windows",
-    price: 19.90,
-    oldPrice: 35.00,
+    price: 31.00,
+    oldPrice: 50.00,
     duration: "Permanente",
     rating: 4.7,
     reviews: 130,
@@ -565,8 +686,8 @@ export const products: Product[] = [
     downloadLabel: "Descargar ISO Directa Windows 7 Pro SP1 (64 bits)",
     isoFormat: "Descarga Directa ISO Oficial SP1 (64 bits - Español)",
     installationSteps: [
-      "Paso 1: Haga clic en 'Descargar ISO Directa' para descargar el archivo .iso oficial de Windows 7 Professional SP1 en Español.",
-      "Paso 2: Cree un USB de arranque con Rufus e instale Windows 7 en su equipo o máquina virtual.",
+      "Paso 1: Haga clic en 'Descargar instalador' para descargar el archivo .iso oficial de Windows 7 Professional SP1 en Español.",
+      "Paso 2: Cree un USB de arranque con Rufus e instale Windows 7 en su computadora (PC o laptop).",
       "Paso 3: Haga clic derecho en 'Equipo' > 'Propiedades'.",
       "Paso 4: En la parte inferior, haga clic en 'Activar Windows ahora' e ingrese su clave original de 25 caracteres."
     ]
@@ -576,8 +697,8 @@ export const products: Product[] = [
     slug: "windows-7-ultimate",
     name: "Windows 7 Ultimate",
     category: "windows",
-    price: 24.90,
-    oldPrice: 40.00,
+    price: 32.00,
+    oldPrice: 55.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 98,
@@ -599,8 +720,8 @@ export const products: Product[] = [
     downloadLabel: "Descargar ISO Directa Windows 7 Ultimate SP1 (64 bits)",
     isoFormat: "Descarga Directa ISO Oficial SP1 Multilenguaje (64 bits - Español)",
     installationSteps: [
-      "Paso 1: Haga clic en 'Descargar ISO Directa' para iniciar la descarga inmediata del archivo .iso oficial de Windows 7 Ultimate SP1.",
-      "Paso 2: Instale la edición Ultimate en su equipo.",
+      "Paso 1: Haga clic en 'Descargar instalador' para iniciar la descarga inmediata del archivo .iso oficial de Windows 7 Ultimate SP1.",
+      "Paso 2: Instale la edición Ultimate en su computadora (PC o laptop).",
       "Paso 3: Ingrese a Propiedades del sistema y active con su clave de 25 caracteres."
     ]
   },
@@ -611,21 +732,21 @@ export const products: Product[] = [
     slug: "project-professional-2024",
     name: "Microsoft Project Professional 2024",
     category: "project-visio",
-    price: 79.90,
-    oldPrice: 149.90,
+    price: 35.00,
+    oldPrice: 69.90,
     duration: "Permanente",
     rating: 4.9,
     reviews: 58,
     imageUrl: "/products/project-2024.webp",
     fallbackImage: "/products/project-2024.png",
-    description: "La herramienta líder mundial para gestión de proyectos, diagramas de Gantt, presupuestos, rutas críticas y asignación de recursos en su versión 2024 más reciente.",
+    description: "La herramienta líder mundial para gestión de proyectos, diagramas de Gantt, presupuestos, rutas críticas y asignación de recursos en su versión 2024 con garantía oficial por 1 año.",
     features: [
       "Diagramas de Gantt dinámicos y automatización de cronogramas",
       "Control exhaustivo de presupuestos, costos y nivelación de recursos",
       "Plantillas predefinidas optimizadas para iniciar proyectos ágilmente",
       "Sincronización con Project Server y SharePoint",
       "Licencia perpetua de un solo pago para 1 computadora",
-      "Activación oficial directa y permanente"
+      "Activación oficial directa con garantía de 1 año"
     ],
     compatibility: "Compatible con Windows 10 y Windows 11 (32 y 64 bits)",
     badge: "PROYECTOS 2024",
@@ -636,7 +757,7 @@ export const products: Product[] = [
     isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
     installationSteps: [
       "Paso 1: Haga clic en 'Descargar Imagen Oficial' para descargar la imagen oficial .IMG desde los servidores de Microsoft.",
-      "Paso 2: Haga doble clic sobre el archivo .IMG descargado para montarlo como disco virtual.",
+      "Paso 2: Haga doble clic sobre el archivo .IMG descargado para explorarlo y montarlo.",
       "Paso 3: Abra 'Setup.exe' para iniciar la instalación.",
       "Paso 4: Al terminar, abra Microsoft Project 2024.",
       "Paso 5: Escriba su clave de activación de 25 caracteres provista para dejarlo activado de por vida."
@@ -647,8 +768,8 @@ export const products: Product[] = [
     slug: "project-professional-2021",
     name: "Microsoft Project Professional 2021",
     category: "project-visio",
-    price: 69.90,
-    oldPrice: 129.90,
+    price: 30.00,
+    oldPrice: 59.90,
     duration: "Permanente",
     rating: 4.8,
     reviews: 72,
@@ -660,7 +781,7 @@ export const products: Product[] = [
       "Programación de tareas flexible y seguimiento de hitos",
       "Generación de informes ejecutivos en tiempo real",
       "Licencia permanente sin cuotas mensuales",
-      "Activación digital oficial 100% garantizada"
+      "Activación digital oficial con garantía de 1 año"
     ],
     compatibility: "Compatible exclusivamente con Windows 10 y Windows 11",
     badge: "PROYECTOS",
@@ -681,8 +802,8 @@ export const products: Product[] = [
     slug: "project-professional-2019",
     name: "Microsoft Project Professional 2019",
     category: "project-visio",
-    price: 59.90,
-    oldPrice: 110.00,
+    price: 32.00,
+    oldPrice: 55.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 64,
@@ -693,7 +814,7 @@ export const products: Product[] = [
       "Diagramación de tareas jerárquicas y dependencias",
       "Control de recursos de personal y materiales",
       "Menú desplegable para vinculación rápida de tareas",
-      "Licencia permanente de por vida",
+      "Licencia permanente con garantía oficial por 1 año",
       "Entrega digital inmediata con soporte"
     ],
     compatibility: "Compatible con Windows 10 y Windows 11",
@@ -716,8 +837,8 @@ export const products: Product[] = [
     slug: "visio-professional-2024",
     name: "Microsoft Visio Professional 2024",
     category: "project-visio",
-    price: 79.90,
-    oldPrice: 149.90,
+    price: 30.00,
+    oldPrice: 65.00,
     duration: "Permanente",
     rating: 4.9,
     reviews: 51,
@@ -730,7 +851,7 @@ export const products: Product[] = [
       "Vinculación en vivo de datos de diagramas con hojas de cálculo Excel",
       "Herramientas táctiles y de dibujo con lápiz digital",
       "Licencia perpetua de un solo pago para 1 equipo",
-      "Activación oficial directa y permanente"
+      "Activación oficial directa con garantía de 1 año"
     ],
     compatibility: "Compatible con Windows 10 y Windows 11 (32 y 64 bits)",
     badge: "DIAGRAMAS 2024",
@@ -752,8 +873,8 @@ export const products: Product[] = [
     slug: "visio-professional-2021",
     name: "Microsoft Visio Professional 2021",
     category: "project-visio",
-    price: 69.90,
-    oldPrice: 120.00,
+    price: 32.00,
+    oldPrice: 60.00,
     duration: "Permanente",
     rating: 4.8,
     reviews: 67,
@@ -765,7 +886,7 @@ export const products: Product[] = [
       "Validación de diagramas y reglas empresariales integradas",
       "Exportación a formatos vectoriales SVG, PDF y alta resolución",
       "Licencia permanente para 1 computadora",
-      "Activación digital instantánea y oficial"
+      "Activación digital instantánea con garantía de 1 año"
     ],
     compatibility: "Compatible con Windows 10 y Windows 11",
     badge: "DIAGRAMAS",
@@ -786,8 +907,8 @@ export const products: Product[] = [
     slug: "visio-professional-2013",
     name: "Microsoft Visio Professional 2013",
     category: "project-visio",
-    price: 45.00,
-    oldPrice: 85.00,
+    price: 49.00,
+    oldPrice: 75.00,
     duration: "Permanente",
     rating: 4.7,
     reviews: 43,
@@ -798,7 +919,7 @@ export const products: Product[] = [
       "Diagramación de procesos, mapas conceptuales y organigramas clásicos",
       "Bajo consumo de memoria RAM y arranque ultra rápido",
       "Soporte amplio en Windows 7, Windows 8.1, Windows 10 y Windows 11",
-      "Licencia digital permanente de por vida",
+      "Licencia digital permanente con garantía oficial de 1 año",
       "Activación garantizada"
     ],
     compatibility: "Compatible con Windows 7, 8.1, 10 y 11 (32 y 64 bits)",
@@ -818,17 +939,18 @@ export const products: Product[] = [
 
 // Helper to calculate cart totals and auto-discount:
 // Reglas requeridas:
-// - Si lleva 2 o más productos: descuento del 35% (no combinable)
-// - Código promocional 'PRIMUPCLIC': 30% de descuento (expiración 30 días por apertura)
-// - REGLA OBLIGATORIA: El descuento de 30% solo aplica desde S/ 39.90 de cada producto (si es menor no aplica)
-export const MIN_PRICE_FOR_30_COUPON = 39.90;
+// - Si lleva 2 o más productos: descuento del 10% (no combinable)
+// - Código promocional 'PRIMUPCLIC': 10% de descuento (expiración 30 días por apertura)
+// - REGLA OBLIGATORIA: El descuento de cupón del 10% solo aplica a productos desde S/ 40.00
+export const MIN_PRICE_FOR_COUPON = 40.00;
+export const MIN_PRICE_FOR_30_COUPON = 40.00; // Alias para compatibilidad
 
 export function calculateCartTotals(
-  items: { product: Product; quantity: number }[],
+  items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
   appliedCoupon?: string
 ): CartTotals {
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => sum + (item.unitPrice ?? item.product.price) * item.quantity, 0);
 
   const cleanCoupon = appliedCoupon ? appliedCoupon.trim().toUpperCase() : '';
   const isCouponValid = cleanCoupon === PROMO_COUPON_CODE;
@@ -842,34 +964,34 @@ export function calculateCartTotals(
   let discountAmount = 0;
 
   if (isMultiItem) {
-    // 2 o más productos: 35% de descuento
+    // 2 o más productos: 10% de descuento
     hasDiscount = true;
-    discountRate = MULTI_ITEM_DISCOUNT; // 0.35
+    discountRate = MULTI_ITEM_DISCOUNT; // 0.10
     isMultiItemDiscount = true;
     discountAmount = Number((subtotal * discountRate).toFixed(2));
     if (isCouponValid) {
       isCouponApplied = true;
-      discountReason = '35% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)';
+      discountReason = '10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)';
     } else {
-      discountReason = '35% de descuento por llevar 2 o más productos';
+      discountReason = '10% de descuento por llevar 2 o más productos';
     }
   } else if (isCouponValid) {
-    // Cupón PRIMUPCLIC 30%: solo aplica a productos con precio >= S/ 39.90
-    const eligibleItems = items.filter(item => item.product.price >= MIN_PRICE_FOR_30_COUPON);
-    const eligibleSubtotal = eligibleItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    // Cupón PRIMUPCLIC 10%: solo aplica a productos con precio >= S/ 40.00
+    const eligibleItems = items.filter(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
+    const eligibleSubtotal = eligibleItems.reduce((sum, item) => sum + (item.unitPrice ?? item.product.price) * item.quantity, 0);
 
     if (eligibleItems.length > 0) {
       hasDiscount = true;
-      discountRate = PROMO_COUPON_DISCOUNT; // 0.30
+      discountRate = PROMO_COUPON_DISCOUNT; // 0.10
       isCouponApplied = true;
       discountAmount = Number((eligibleSubtotal * discountRate).toFixed(2));
-      discountReason = 'Cupón PRIMUPCLIC: 30% de descuento en productos desde S/ 39.90';
+      discountReason = 'Cupón PRIMUPCLIC: 10% de descuento en productos desde S/ 40.00';
     } else {
       hasDiscount = false;
       discountRate = 0;
       discountAmount = 0;
       isCouponApplied = false;
-      discountReason = 'El cupón del 30% solo aplica a productos con precio desde S/ 39.90 (no aplicable a productos de menor precio)';
+      discountReason = 'El cupón del 10% solo aplica a productos con precio desde S/ 40.00 (no aplicable a productos de menor precio)';
     }
   }
 
@@ -890,13 +1012,17 @@ export function calculateCartTotals(
 
 // Generate the exact WhatsApp confirmation message requested
 export function buildWhatsAppMessage(
-  items: { product: Product; quantity: number }[],
+  items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
   appliedCoupon?: string
 ) {
   const { totalQuantity, subtotal, hasDiscount, discountRate, discountAmount, total, discountReason } = calculateCartTotals(items, appliedCoupon);
   
   const productLines = items
-    .map(item => `• ${item.product.name} x${item.quantity} - S/ ${(item.product.price * item.quantity).toFixed(2)}`)
+    .map(item => {
+      const price = item.unitPrice ?? item.product.price;
+      const variantSuffix = item.variantName ? ` (${item.variantName})` : '';
+      return `• ${item.product.name}${variantSuffix} x${item.quantity} - S/ ${(price * item.quantity).toFixed(2)}`;
+    })
     .join('\n');
 
   let discountBlock = '';
@@ -919,7 +1045,7 @@ He realizado el pago y adjunto mi comprobante para la activación de mis licenci
 
 // Generate WhatsApp direct URL with encoded text
 export function getWhatsAppConfirmationUrl(
-  items: { product: Product; quantity: number }[],
+  items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
   appliedCoupon?: string
 ) {
   const message = buildWhatsAppMessage(items, appliedCoupon);
@@ -994,3 +1120,5 @@ export function searchProducts(query: string, list: Product[] = products): Produ
     .sort((a, b) => b.score - a.score)
     .map(item => item.product);
 }
+
+// Guías oficiales de instalación en páginas externas (Microsoft Support / Portal Oficial)

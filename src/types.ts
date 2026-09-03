@@ -1,5 +1,15 @@
 export type ProductCategory = 'all' | 'office' | 'windows' | 'combos' | 'project-visio' | 'top' | 'bestsellers' | 'offers';
 
+export interface ProductVariant {
+  id: 'oem' | 'retail';
+  name: string; // e.g. "Clave tipo OEM" | "Clave tipo Retail"
+  type: 'OEM' | 'Retail';
+  price: number;
+  oldPrice?: number;
+  badge?: string;
+  shortDesc: string;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -26,6 +36,7 @@ export interface Product {
   downloadLabel?: string;
   isoFormat?: string;
   installationSteps: string[];
+  variants?: ProductVariant[];
 }
 
 export interface PromoCoupon {
@@ -49,8 +60,12 @@ export interface CartTotals {
 }
 
 export interface CartItem {
+  id?: string;
   product: Product;
   quantity: number;
+  selectedVariant?: 'oem' | 'retail';
+  variantName?: string;
+  unitPrice?: number;
 }
 
 export interface DemonstrationReview {

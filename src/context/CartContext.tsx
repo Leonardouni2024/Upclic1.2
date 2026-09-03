@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals } from '../types.ts';
-import { calculateCartTotals, PROMO_COUPON_CODE, PROMO_COUPON_EXPIRATION_DAYS, MIN_PRICE_FOR_30_COUPON } from '../products.ts';
+import { calculateCartTotals, PROMO_COUPON_CODE, PROMO_COUPON_EXPIRATION_DAYS, MIN_PRICE_FOR_COUPON } from '../products.ts';
 
 interface ToastData {
   id: string;
@@ -11,10 +11,10 @@ interface ToastData {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, delta: number) => void;
-  setQuantity: (productId: string, quantity: number) => void;
+  addItem: (product: Product, quantity?: number, selectedVariant?: 'oem' | 'retail') => void;
+  removeItem: (itemKeyOrProductId: string) => void;
+  updateQuantity: (itemKeyOrProductId: string, delta: number) => void;
+  setQuantity: (itemKeyOrProductId: string, quantity: number) => void;
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
@@ -163,30 +163,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       let msg = '';
       if (totalQty >= 2) {
-        msg = 'Código PRIMUPCLIC activado. ¡Por llevar 2 o más productos tienes el 35% de descuento aplicado! (Los descuentos no son combinables)';
+        msg = 'Código PRIMUPCLIC activado. ¡Por llevar 2 o más productos tienes el 10% de descuento aplicado! (Los descuentos no son combinables)';
         setCouponFeedback({ type: 'info', message: msg });
         addToast({
           type: 'coupon',
           title: '✓ Código PRIMUPCLIC reconocido',
-          message: 'Descuento del 35% aplicado por 2 o más productos (No combinable).'
+          message: 'Descuento del 10% aplicado por 2 o más productos (No combinable).'
         });
       } else {
-        const eligibleItems = items.filter(item => item.product.price >= MIN_PRICE_FOR_30_COUPON);
+        const eligibleItems = items.filter(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
         if (items.length > 0 && eligibleItems.length === 0) {
-          msg = `Cupón PRIMUPCLIC reconocido, pero solo aplica a productos con precio desde S/ ${MIN_PRICE_FOR_30_COUPON.toFixed(2)}.`;
+          msg = `Cupón PRIMUPCLIC reconocido, pero solo aplica a productos con precio desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)}.`;
           setCouponFeedback({ type: 'error', message: msg });
           addToast({
             type: 'info',
             title: 'Aviso de Cupón',
-            message: `El 30% de descuento solo aplica a productos desde S/ ${MIN_PRICE_FOR_30_COUPON.toFixed(2)}.`
+            message: `El 10% de descuento solo aplica a productos desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)}.`
           });
         } else {
-          msg = `¡Código PRIMUPCLIC aplicado! 30% de descuento en productos desde S/ ${MIN_PRICE_FOR_30_COUPON.toFixed(2)} (válido por ${PROMO_COUPON_EXPIRATION_DAYS} días).`;
+          msg = `¡Código PRIMUPCLIC aplicado! 10% de descuento en productos desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)} (válido por ${PROMO_COUPON_EXPIRATION_DAYS} días).`;
           setCouponFeedback({ type: 'success', message: msg });
           addToast({
             type: 'coupon',
             title: '🎉 ¡Cupón PRIMUPCLIC aplicado!',
-            message: `30% de descuento en productos desde S/ ${MIN_PRICE_FOR_30_COUPON.toFixed(2)}.`
+            message: `10% de descuento en productos desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)}.`
           });
         }
       }
@@ -208,15 +208,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const addItem = (product: Product, quantity: number = 1) => {
+  const getItemKey = (productId: string, variantId?: string) => {
+    return variantId ? `${productId}-${variantId}` : productId;
+  };
+
+  const addItem = (product: Product, quantity: number = 1, selectedVariant?: 'oem' | 'retail') => {
     // Automatically open the cart drawer when adding a product as requested
     setIsCartOpen(true);
+
+    const variant = product.variants
+      ? (product.variants.find(v => v.id === selectedVariant) || product.variants[0])
+      : undefined;
+
+    const variantKey = variant ? variant.id : undefined;
+    const itemKey = getItemKey(product.id, variantKey);
+    const itemPrice = variant ? variant.price : product.price;
+    const variantName = variant ? variant.name : undefined;
 
     setItems(prevItems => {
       const prevQty = prevItems.reduce((sum, item) => sum + item.quantity, 0);
       const newTotalQty = prevQty + quantity;
 
-      const existingIndex = prevItems.findIndex(item => item.product.id === product.id);
+      const existingIndex = prevItems.findIndex(
+        item => (item.id === itemKey) || (!item.id && item.product.id === product.id && item.selectedVariant === variantKey)
+      );
       let updated: CartItem[];
 
       if (existingIndex > -1) {
@@ -224,23 +239,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           idx === existingIndex ? { ...item, quantity: item.quantity + quantity } : item
         );
       } else {
-        updated = [...prevItems, { product, quantity }];
+        updated = [
+          ...prevItems,
+          {
+            id: itemKey,
+            product,
+            quantity,
+            selectedVariant: variantKey,
+            variantName,
+            unitPrice: itemPrice
+          }
+        ];
       }
 
       // Add success toast
       addToast({
         type: 'added',
         title: '✓ Producto agregado al carrito',
-        message: `${product.name} (${quantity > 1 ? `${quantity} uds.` : '1 ud.'})`
+        message: `${product.name}${variantName ? ` (${variantName})` : ''} (${quantity > 1 ? `${quantity} uds.` : '1 ud.'})`
       });
 
-      // If user crossed from 1 to >= 2, celebrate 35% discount!
+      // If user crossed from 1 to >= 2, celebrate 10% discount!
       if (prevQty < 2 && newTotalQty >= 2) {
         setTimeout(() => {
           addToast({
             type: 'discount',
-            title: '🔥 ¡35% de descuento aplicado!',
-            message: 'Ahorras 35% automáticamente por llevar 2 o más productos (descuentos no combinables)'
+            title: '🔥 ¡10% de descuento aplicado!',
+            message: 'Ahorras 10% automáticamente por llevar 2 o más productos (descuentos no combinables)'
           });
         }, 300);
       }
@@ -249,31 +274,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const removeItem = (productId: string) => {
+  const removeItem = (itemKeyOrProductId: string) => {
     setItems(prev => {
-      const target = prev.find(item => item.product.id === productId);
+      const target = prev.find(item => item.id === itemKeyOrProductId || item.product.id === itemKeyOrProductId);
       if (target) {
         addToast({
           type: 'info',
           title: 'Producto eliminado',
-          message: `${target.product.name} fue retirado del carrito`
+          message: `${target.product.name}${target.variantName ? ` (${target.variantName})` : ''} fue retirado del carrito`
         });
       }
-      return prev.filter(item => item.product.id !== productId);
+      return prev.filter(item => item.id !== itemKeyOrProductId && item.product.id !== itemKeyOrProductId);
     });
   };
 
-  const updateQuantity = (productId: string, delta: number) => {
+  const updateQuantity = (itemKeyOrProductId: string, delta: number) => {
     setItems(prev => {
       const prevQty = prev.reduce((sum, item) => sum + item.quantity, 0);
       let removedName = '';
 
       const updated = prev
         .map(item => {
-          if (item.product.id === productId) {
+          if (item.id === itemKeyOrProductId || item.product.id === itemKeyOrProductId) {
             const newQty = item.quantity + delta;
             if (newQty <= 0) {
-              removedName = item.product.name;
+              removedName = `${item.product.name}${item.variantName ? ` (${item.variantName})` : ''}`;
               return null;
             }
             return { ...item, quantity: Math.min(99, newQty) };
@@ -294,8 +319,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (prevQty < 2 && newTotalQty >= 2) {
         addToast({
           type: 'discount',
-          title: '🔥 ¡35% de descuento aplicado!',
-          message: 'Ahorras 35% automáticamente por llevar 2 o más productos'
+          title: '🔥 ¡10% de descuento aplicado!',
+          message: 'Ahorras 10% automáticamente por llevar 2 o más productos'
         });
       }
 
@@ -303,9 +328,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const setQuantity = (productId: string, quantity: number) => {
+  const setQuantity = (itemKeyOrProductId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(productId);
+      removeItem(itemKeyOrProductId);
       return;
     }
 
@@ -314,15 +339,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems(prev => {
       const prevQty = prev.reduce((sum, item) => sum + item.quantity, 0);
       const updated = prev.map(item =>
-        item.product.id === productId ? { ...item, quantity: validQty } : item
+        (item.id === itemKeyOrProductId || item.product.id === itemKeyOrProductId)
+          ? { ...item, quantity: validQty }
+          : item
       );
 
       const newTotalQty = updated.reduce((sum, item) => sum + item.quantity, 0);
       if (prevQty < 2 && newTotalQty >= 2) {
         addToast({
           type: 'discount',
-          title: '🔥 ¡35% de descuento aplicado!',
-          message: 'Ahorras 35% automáticamente por llevar 2 o más productos'
+          title: '🔥 ¡10% de descuento aplicado!',
+          message: 'Ahorras 10% automáticamente por llevar 2 o más productos'
         });
       }
 
