@@ -19,15 +19,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
   const [isHovered, setIsHovered] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
+    product.variants && product.variants.length > 0 ? product.variants[0].id : 'oem'
+  );
 
   useEffect(() => {
     setImgSrc(product.imageUrl);
-  }, [product.imageUrl]);
+    if (product.variants && product.variants.length > 0) {
+      setSelectedVariantId(product.variants[0].id);
+    }
+  }, [product.imageUrl, product.id]);
+
+  const currentVariant = product.variants
+    ? product.variants.find(v => v.id === selectedVariantId) || product.variants[0]
+    : undefined;
+
+  const activePrice = currentVariant ? currentVariant.price : product.price;
+  const activeOldPrice = currentVariant ? currentVariant.oldPrice : product.oldPrice;
 
   const handleImageError = () => {
     if (imgSrc !== product.fallbackImage) {
       setImgSrc(product.fallbackImage);
     }
+  };
+
+  const handleAddToCart = () => {
+    addItem(product, 1, currentVariant ? currentVariant.id : undefined);
   };
 
   return (
@@ -134,17 +151,47 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Pricing & Buttons - Anchored to bottom with fixed height price line */}
           <div className="pt-2.5 sm:pt-3 border-t border-slate-100 mt-auto">
+            {/* Variant selector chips if product has OEM/Retail variants */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="mb-2 flex items-center gap-1.5 p-1 rounded-xl bg-slate-50 border border-slate-200/80">
+                {product.variants.map((v) => {
+                  const isSelected = selectedVariantId === v.id;
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedVariantId(v.id);
+                      }}
+                      className={`flex-1 py-1 px-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-center leading-tight flex items-center justify-center gap-1 ${
+                        isSelected
+                          ? 'bg-white text-[#0066FF] shadow-2xs border border-blue-200'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                      }`}
+                      title={v.name}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#0066FF]' : 'bg-slate-300'}`} />
+                      <span>{v.type || v.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             <div className="min-h-[1.75rem] sm:min-h-[2rem] flex items-baseline gap-1.5 mb-2.5 sm:mb-3">
-              {product.variants && (
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Desde</span>
-              )}
               <span className="text-xs sm:text-sm font-bold text-slate-500">S/</span>
               <span className="text-lg sm:text-xl font-black text-[#0f172a] tracking-tight tabular-nums leading-none">
-                {product.price.toFixed(2)}
+                {activePrice.toFixed(2)}
               </span>
-              {product.oldPrice && (
+              {activeOldPrice && (
                 <span className="text-[11px] sm:text-xs text-slate-400 line-through tabular-nums ml-1">
-                  S/ {product.oldPrice.toFixed(2)}
+                  S/ {activeOldPrice.toFixed(2)}
+                </span>
+              )}
+              {currentVariant && (
+                <span className="text-[10px] font-bold text-blue-600 ml-auto bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+                  {currentVariant.name}
                 </span>
               )}
             </div>
@@ -154,7 +201,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {/* Botón Principal: Agregar al carrito */}
                 <button
                   id={`add-to-cart-${product.id}`}
-                  onClick={() => addItem(product, 1)}
+                  onClick={handleAddToCart}
                   className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs transition-all duration-200 cursor-pointer border border-slate-200"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />

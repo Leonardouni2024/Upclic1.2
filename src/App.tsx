@@ -16,6 +16,7 @@ import { ToastContainer } from './components/Toast.tsx';
 import { Footer } from './components/Footer.tsx';
 import { UserModal } from './components/UserModal.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
+import { AIAssistantChat } from './components/AIAssistantChat.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug } = useCart();
@@ -82,6 +83,9 @@ const AppContent: React.FC = () => {
 
       {/* Help, FAQs & Legal Modal */}
       <HelpModal topic={helpTopic} onClose={() => setHelpTopic(null)} />
+
+      {/* Intelligent AI Support & Recommendation Chatbot */}
+      <AIAssistantChat />
     </div>
   );
 };

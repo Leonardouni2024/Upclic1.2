@@ -3,11 +3,78 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
+import { GoogleGenAI } from "@google/genai";
 import { initialReviews } from "./src/initialReviews.ts";
-import { products } from "./src/products.ts";
+import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE } from "./src/products.ts";
 
 const app = express();
 const PORT = 3000;
+
+// Gemini client lazy initialization
+let aiClient: GoogleGenAI | null = null;
+function getGeminiClient(): GoogleGenAI | null {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+  if (!aiClient) {
+    aiClient = new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        },
+      },
+    });
+  }
+  return aiClient;
+}
+
+// Build compact catalog description for system prompt
+const productCatalogSummary = products
+  .map(
+    (p) =>
+      `• [${p.name}] (Categoría: ${p.category}) - Precio: S/ ${p.price.toFixed(2)}${
+        p.oldPrice ? ` (Antes S/ ${p.oldPrice.toFixed(2)})` : ""
+      } | Tipo: ${p.duration || "Permanente"} | URL: /producto/${p.slug} | Detalles: ${p.description.substring(0, 140)}`
+  )
+  .join("\n");
+
+const SYSTEM_INSTRUCTION = `Eres el Asistente Virtual Oficial y Asesor Experto de "UpClic" (tienda online líder en licencias digitales originales de Microsoft Office, Windows, Visio y Project en Perú).
+
+TU MISIÓN Y TONO:
+- Tu objetivo es ayudar a los clientes con amabilidad, paciencia, empatía y soluciones rápidas y claras.
+- Responde siempre en español con un tono cercano, educado y profesional.
+- Utiliza viñetas y emojis amigables (🛍️, 💡, 🛡️, ⚡, 🔑, 📲) para que la lectura sea dinámica e intuitiva.
+
+REGLAS DE ÁMBITO Y CATÁLOGO (ESTRICTO):
+1. ENTORNO EXCLUSIVO DE UPCLIC: Solo debes recomendar y brindar información sobre los productos y servicios de UpClic (Office, Windows, Visio, Project y Combos).
+2. SI EL CLIENTE CONSULTA POR ALGO FUERA DE LA TIENDA (por ejemplo: videojuegos, hardware, componentes físicos, cuentas de streaming como Netflix/Spotify, software de Adobe u otros programas ajenos):
+   - NO intentes dar soporte ni responder sobre esos productos externos.
+   - Responde de forma muy amable e intuitiva diciendo: "En UpClic nos especializamos exclusivamente en licencias digitales y software oficial de Microsoft para garantizarle el mejor precio, activación 100% garantizada y soporte técnico oficial. Con mucho gusto le puedo ayudar a encontrar la versión ideal de Office o Windows para su computadora."
+
+SOLUCIONES DE SOPORTE TÉCNICO RÁPIDAS:
+- Entrega: 100% digital e inmediata tras confirmar el pago (por correo y WhatsApp).
+- Formato de instalación: Descargas directas oficiales (.ISO / .IMG) desde servidores de Microsoft o portal.office.com (en caso de Microsoft 365).
+- Activación permanente: Claves alfanuméricas originales de 25 caracteres que se ingresan directamente en Word/Excel o en Configuración de Windows. Se pueden reinstalar en el mismo equipo.
+- Microsoft 365: Se entrega por cuenta oficial con usuario y contraseña (hasta 5 dispositivos + 100 GB en OneDrive).
+- Medios de pago aceptados: Yape, Plin, Transferencias directas (BCP, BBVA, Interbank) y Mercado Pago.
+- Promociones vigentes:
+  * Cupón "${PROMO_COUPON_CODE}": 10% de descuento en compras de productos desde S/ 40.00.
+  * Descuento automático del 10% al llevar 2 o más productos en el carrito.
+- Garantía: 6 meses a 1 año de garantía oficial con soporte técnico incluido.
+
+ESCALAMIENTO DIRECTO AL ADMINISTRADOR POR WHATSAPP:
+- Cuando el cliente tenga un problema técnico que requiera atención humana (error de clave no resuelto, soporte remoto guiado, factura corporativa con RUC, compras al por mayor, o si el cliente pide hablar con una persona):
+- Facilita de inmediato el contacto con el Administrador y Soporte Humano:
+  * WhatsApp Oficial: ${WHATSAPP_DISPLAY}
+  * Enlace directo: https://wa.me/${WHATSAPP_NUMBER}
+
+CATÁLOGO DE PRODUCTOS DISPONIBLES EN UPCLIC:
+${productCatalogSummary}
+
+RECOMENDACIONES:
+- Cuando sugieras productos, menciona su nombre, su precio en Soles (S/) y su enlace relativo en la tienda (ejemplo: [Ver producto](/producto/office-professional-plus-2024)).`;
 
 // Middleware for parsing JSON
 app.use(express.json());
@@ -242,6 +309,141 @@ app.delete("/api/reviews/:id", (req, res) => {
   }
 
   return res.status(404).json({ success: false, error: "Reseña no encontrada." });
+});
+
+// --- AI CHATBOT ASSISTANT ENDPOINT (GEMINI) ---
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message, history } = req.body;
+
+    if (!message || typeof message !== "string" || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: "El mensaje es obligatorio.",
+      });
+    }
+
+    const cleanMessage = message.trim();
+    const cleanLower = cleanMessage.toLowerCase();
+
+    // Check if the user is asking to speak with the administrator or human support
+    const asksForAdmin =
+      cleanLower.includes("whatsapp") ||
+      cleanLower.includes("humano") ||
+      cleanLower.includes("administrador") ||
+      cleanLower.includes("asesor") ||
+      cleanLower.includes("persona") ||
+      cleanLower.includes("llamar") ||
+      cleanLower.includes("contacto directo") ||
+      cleanLower.includes("numero");
+
+    const ai = getGeminiClient();
+
+    let reply = "";
+
+    if (ai) {
+      try {
+        // Build contents array for multi-turn chat
+        const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+
+        if (Array.isArray(history) && history.length > 0) {
+          for (const item of history.slice(-8)) {
+            if (item && item.content && (item.role === "user" || item.role === "model")) {
+              contents.push({
+                role: item.role,
+                parts: [{ text: item.content }],
+              });
+            }
+          }
+        }
+
+        // Add current user turn
+        contents.push({
+          role: "user",
+          parts: [{ text: cleanMessage }],
+        });
+
+        const response = await ai.models.generateContent({
+          model: "gemini-3.8-flash",
+          contents: contents as any,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.7,
+            topP: 0.9,
+          },
+        });
+
+        reply = response.text || "";
+      } catch (geminiError: any) {
+        console.error("Error al invocar Gemini API en /api/chat:", geminiError);
+      }
+    }
+
+    // High-quality local smart fallback if Gemini is offline or API key is not configured
+    if (!reply) {
+      // Off-topic query detection
+      const offTopicKeywords = [
+        "netflix", "spotify", "juego", "gta", "minecraft", "playstation", "xbox", "steam",
+        "tarjeta de video", "laptop dell", "memoria ram", "disco duro", "celular", "iphone",
+        "ropa", "comida", "restaurante", "clima", "vuelo", "hotel", "adobe", "photoshop", "canva"
+      ];
+      const isOffTopic = offTopicKeywords.some(k => cleanLower.includes(k));
+
+      if (isOffTopic) {
+        reply = `¡Hola! Con mucho gusto le atiendo. 😊\n\nEn **UpClic** nos especializamos **exclusivamente en licencias digitales y software oficial de Microsoft** (Office, Windows, Visio, Project y Combos) para garantizarle los mejores precios, entrega digital inmediata y garantía oficial.\n\nNo disponemos de productos de terceros o hardware físico. Si necesita activar o renovar **Microsoft Office** (desde S/ 18.00) o **Windows 10/11** (desde S/ 18.90), ¡dígame y le recomendaré la versión ideal para su equipo! 🛍️`;
+      } else if (asksForAdmin) {
+        reply = `¡Con mucho gusto! Puede comunicarse directamente con nuestro **Administrador Oficial y Soporte Técnico** por WhatsApp para atención personalizada, cotizaciones corporativas con RUC o asistencia remota:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Atención rápida:** Lunes a Domingo de 8:00 AM a 11:00 PM.`;
+      } else if (cleanLower.includes("cupón") || cleanLower.includes("descuento") || cleanLower.includes("promocion") || cleanLower.includes("oferta")) {
+        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n1. 🎁 **Cupón especial:** Aplique el código **\`${PROMO_COUPON_CODE}\`** en el carrito y obtenga **10% de descuento** en compras de productos desde S/ 40.00.\n2. 🔥 **Descuento por volumen:** Al llevar 2 o más productos, el carrito le aplica un **10% de descuento automático**.\n\n¿Desea que le recomiende alguna combinación en combo con super ahorro?`;
+      } else if (cleanLower.includes("instalar") || cleanLower.includes("activar") || cleanLower.includes("descarga") || cleanLower.includes("como funciona")) {
+        reply = `⚡ **El proceso de compra y activación en UpClic es súper rápido:**\n\n1. **Selección:** Elige su versión de Office o Windows y completa el pago (Yape, Plin, BCP, BBVA, Interbank o Mercado Pago).\n2. **Entrega Inmediata:** Recibe su clave original de 25 caracteres y el enlace de descarga oficial de Microsoft por correo y WhatsApp.\n3. **Descarga e Instalación:** Descarga la imagen ISO/IMG oficial e ingresa su clave para activación permanente.\n4. **Garantía:** Cuenta con 6 meses a 1 año de garantía y soporte técnico incluido.\n\nSi necesita asistencia guiada, nuestro administrador está listo para ayudarle en WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
+      } else if (cleanLower.includes("office") || cleanLower.includes("word") || cleanLower.includes("excel")) {
+        reply = `💼 **Opciones de Microsoft Office recomendadas en UpClic:**\n\n• **Office 2024 Professional Plus:** La versión más moderna y rápida para Windows 10/11. Pago único permanente a solo **S/ 25.00**.\n• **Office 2021 Professional Plus:** Muy estable y completo (Word, Excel, PowerPoint, Outlook, Access). Pago único a **S/ 20.00**.\n• **Microsoft 365 Profesional (1 año):** Incluye apps completas en hasta 5 dispositivos y **100 GB en la nube** a solo **S/ 46.50**.\n• **Office 2019 / 2016:** Para computadoras con Windows 7, 8.1 o 10 desde **S/ 18.00**.\n\n¿Para qué tipo de computadora o trabajo lo necesita? Le asesoro con gusto.`;
+      } else if (cleanLower.includes("windows") || cleanLower.includes("win 11") || cleanLower.includes("win 10")) {
+        reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro (64-bit):** Máxima seguridad, velocidad y diseño moderno a solo **S/ 19.90**.\n• **Windows 10 Pro (32/64 bits):** Gran rendimiento y máxima compatibilidad a solo **S/ 18.90**.\n• **Combo Windows 11 Pro + Office 2024:** Las dos licencias oficiales juntas con super ahorro a solo **S/ 46.50**.\n\nTodas nuestras claves son de activación permanente y reinstalables en la misma máquina. 🛡️`;
+      } else {
+        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Virtual y estoy aquí para ayudarle a resolver cualquier duda sobre nuestras licencias digitales de **Microsoft Office, Windows, Visio y Project**.\n\n¿En qué le puedo colaborar hoy?\n• 🛍️ Recomendarle la mejor suite de Office o Windows.\n• ⚡ Ayuda con la descarga o activación de su licencia.\n• 🎁 Información sobre cupones de descuento.\n• 📲 Contactar con nuestro Administrador por WhatsApp.`;
+      }
+    }
+
+    // Detect mentioned products to attach rich cards
+    const matchedProducts = products.filter((p) => {
+      const pNameLower = p.name.toLowerCase();
+      const pSlugLower = p.slug.toLowerCase();
+      return (
+        reply.toLowerCase().includes(p.name.toLowerCase()) ||
+        cleanLower.includes(p.slug) ||
+        (cleanLower.includes("2024") && pSlugLower.includes("2024")) ||
+        (cleanLower.includes("365") && pSlugLower.includes("365")) ||
+        (cleanLower.includes("combo") && pSlugLower.includes("combo"))
+      );
+    }).slice(0, 3);
+
+    return res.json({
+      success: true,
+      reply,
+      suggestedProducts: matchedProducts.map((p) => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        price: p.price,
+        oldPrice: p.oldPrice,
+        imageUrl: p.fallbackImage || p.imageUrl,
+        badge: p.badge,
+      })),
+      adminWhatsAppUrl: `https://wa.me/${WHATSAPP_NUMBER}`,
+      adminWhatsAppDisplay: WHATSAPP_DISPLAY,
+    });
+  } catch (error: any) {
+    console.error("Error en endpoint /api/chat:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Error interno en el asistente virtual.",
+      reply: `Disculpe la molestia. En este momento puede contactar directamente a nuestro Administrador por WhatsApp para atención inmediata: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`,
+      adminWhatsAppUrl: `https://wa.me/${WHATSAPP_NUMBER}`,
+      adminWhatsAppDisplay: WHATSAPP_DISPLAY,
+    });
+  }
 });
 
 // --- VITE & STATIC MIDDLEWARE ---

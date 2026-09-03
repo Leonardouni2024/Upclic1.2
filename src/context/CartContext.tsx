@@ -12,9 +12,9 @@ interface ToastData {
 interface CartContextType {
   items: CartItem[];
   addItem: (product: Product, quantity?: number, selectedVariant?: 'oem' | 'retail') => void;
-  removeItem: (itemKeyOrProductId: string) => void;
-  updateQuantity: (itemKeyOrProductId: string, delta: number) => void;
-  setQuantity: (itemKeyOrProductId: string, quantity: number) => void;
+  removeItem: (itemKeyOrProductId: string, variantId?: string) => void;
+  updateQuantity: (itemKeyOrProductId: string, delta: number, variantId?: string) => void;
+  setQuantity: (itemKeyOrProductId: string, quantity: number, variantId?: string) => void;
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
@@ -274,9 +274,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const removeItem = (itemKeyOrProductId: string) => {
+  const removeItem = (itemKeyOrProductId: string, variantId?: string) => {
     setItems(prev => {
-      const target = prev.find(item => item.id === itemKeyOrProductId || item.product.id === itemKeyOrProductId);
+      const target = prev.find(item => {
+        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+        if (itemKey === itemKeyOrProductId || item.id === itemKeyOrProductId) return true;
+        if (variantId) {
+          return item.product.id === itemKeyOrProductId && item.selectedVariant === variantId;
+        }
+        return item.product.id === itemKeyOrProductId;
+      });
+
       if (target) {
         addToast({
           type: 'info',
@@ -284,18 +292,34 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           message: `${target.product.name}${target.variantName ? ` (${target.variantName})` : ''} fue retirado del carrito`
         });
       }
-      return prev.filter(item => item.id !== itemKeyOrProductId && item.product.id !== itemKeyOrProductId);
+
+      return prev.filter(item => {
+        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+        if (itemKey === itemKeyOrProductId || item.id === itemKeyOrProductId) return false;
+        if (variantId) {
+          return !(item.product.id === itemKeyOrProductId && item.selectedVariant === variantId);
+        }
+        return item.product.id !== itemKeyOrProductId;
+      });
     });
   };
 
-  const updateQuantity = (itemKeyOrProductId: string, delta: number) => {
+  const updateQuantity = (itemKeyOrProductId: string, delta: number, variantId?: string) => {
     setItems(prev => {
       const prevQty = prev.reduce((sum, item) => sum + item.quantity, 0);
       let removedName = '';
 
       const updated = prev
         .map(item => {
-          if (item.id === itemKeyOrProductId || item.product.id === itemKeyOrProductId) {
+          const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+          const isMatch =
+            itemKey === itemKeyOrProductId ||
+            item.id === itemKeyOrProductId ||
+            (variantId
+              ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
+              : item.product.id === itemKeyOrProductId);
+
+          if (isMatch) {
             const newQty = item.quantity + delta;
             if (newQty <= 0) {
               removedName = `${item.product.name}${item.variantName ? ` (${item.variantName})` : ''}`;
@@ -328,9 +352,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const setQuantity = (itemKeyOrProductId: string, quantity: number) => {
+  const setQuantity = (itemKeyOrProductId: string, quantity: number, variantId?: string) => {
     if (quantity <= 0) {
-      removeItem(itemKeyOrProductId);
+      removeItem(itemKeyOrProductId, variantId);
       return;
     }
 
@@ -338,11 +362,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setItems(prev => {
       const prevQty = prev.reduce((sum, item) => sum + item.quantity, 0);
-      const updated = prev.map(item =>
-        (item.id === itemKeyOrProductId || item.product.id === itemKeyOrProductId)
-          ? { ...item, quantity: validQty }
-          : item
-      );
+      const updated = prev.map(item => {
+        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+        const isMatch =
+          itemKey === itemKeyOrProductId ||
+          item.id === itemKeyOrProductId ||
+          (variantId
+            ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
+            : item.product.id === itemKeyOrProductId);
+
+        return isMatch ? { ...item, quantity: validQty } : item;
+      });
 
       const newTotalQty = updated.reduce((sum, item) => sum + item.quantity, 0);
       if (prevQty < 2 && newTotalQty >= 2) {

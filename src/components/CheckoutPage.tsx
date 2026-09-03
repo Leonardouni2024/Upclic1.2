@@ -219,7 +219,11 @@ export const CheckoutPage: React.FC = () => {
               <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto mb-4 pr-1">
                 {items.map(item => {
                   const itemUnitPrice = item.unitPrice ?? item.product.price;
-                  const itemKey = item.variantId ? `${item.product.id}-${item.variantId}` : item.product.id;
+                  const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
+                  const displayVariantName = item.variantName || (
+                    item.selectedVariant === 'oem' ? 'Clave tipo OEM' :
+                    item.selectedVariant === 'retail' ? 'Clave Retail' : undefined
+                  );
                   return (
                     <div key={itemKey} className="py-3 flex flex-col gap-2 text-xs">
                       <div className="flex items-start justify-between gap-2.5">
@@ -238,9 +242,9 @@ export const CheckoutPage: React.FC = () => {
                             <div className="font-bold text-slate-800 truncate" title={item.product.name}>
                               {item.product.name}
                             </div>
-                            {item.selectedVariant && (
+                            {displayVariantName && (
                               <span className="inline-block mt-0.5 text-[10px] font-bold px-1.5 py-0.2 rounded bg-blue-50 text-[#0066FF] border border-blue-200">
-                                {item.selectedVariant.name}
+                                {displayVariantName}
                               </span>
                             )}
                             <div className="text-[11px] text-slate-400 mt-0.5">
@@ -251,7 +255,7 @@ export const CheckoutPage: React.FC = () => {
 
                         <button
                           type="button"
-                          onClick={() => removeItem(item.product.id, item.variantId)}
+                          onClick={() => removeItem(itemKey)}
                           className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
                           title="Eliminar producto"
                           aria-label="Eliminar producto"
@@ -265,7 +269,7 @@ export const CheckoutPage: React.FC = () => {
                         <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5">
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, -1, item.variantId)}
+                            onClick={() => updateQuantity(itemKey, -1)}
                             className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
                             aria-label="Disminuir cantidad"
                             title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir'}
@@ -280,7 +284,7 @@ export const CheckoutPage: React.FC = () => {
                             onChange={(e) => {
                               const val = parseInt(e.target.value, 10);
                               if (!isNaN(val)) {
-                                setQuantity(item.product.id, val, item.variantId);
+                                setQuantity(itemKey, val);
                               }
                             }}
                             className="w-8 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -288,7 +292,7 @@ export const CheckoutPage: React.FC = () => {
                           />
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, 1, item.variantId)}
+                            onClick={() => updateQuantity(itemKey, 1)}
                             className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
                             aria-label="Aumentar cantidad"
                             title="Aumentar"

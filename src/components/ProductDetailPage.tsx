@@ -43,8 +43,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
   const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
-    product.variants ? product.variants[0].id : 'oem'
+    product.variants && product.variants.length > 0 ? product.variants[0].id : 'oem'
   );
+
+  // Reset selected variant only when navigating to a different product
+  useEffect(() => {
+    setImgSrc(product.imageUrl);
+    setQuantity(1);
+    if (product.variants && product.variants.length > 0) {
+      setSelectedVariantId(product.variants[0].id);
+    }
+  }, [product.id, product.slug]);
 
   const currentVariant = product.variants
     ? product.variants.find(v => v.id === selectedVariantId) || product.variants[0]
@@ -55,10 +64,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
   // Synchronize dynamic SEO title, meta description, and OpenGraph social share tags
   useEffect(() => {
-    const pageTitle = `${product.name} - S/ ${activePrice.toFixed(2)} | UpClic`;
+    const variantSuffix = currentVariant ? ` (${currentVariant.name})` : '';
+    const pageTitle = `${product.name}${variantSuffix} - S/ ${activePrice.toFixed(2)} | UpClic`;
     document.title = pageTitle;
 
-    const shortDesc = `Compra ${product.name} al mejor precio de S/ ${activePrice.toFixed(2)} en UpClic. Licencia digital original, entrega inmediata y garantía oficial.`;
+    const shortDesc = `Compra ${product.name}${variantSuffix} al mejor precio de S/ ${activePrice.toFixed(2)} en UpClic. Licencia digital original, entrega inmediata y garantía oficial.`;
     
     // Update or create helper for meta tags
     const updateMetaTag = (selector: string, attr: string, value: string) => {
@@ -88,13 +98,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     updateMetaTag('meta[name="twitter:title"]', 'content', pageTitle);
     updateMetaTag('meta[name="twitter:description"]', 'content', shortDesc);
     updateMetaTag('meta[name="twitter:image"]', 'content', fullImageUrl);
-
-    setImgSrc(product.imageUrl);
-    if (product.variants && product.variants.length > 0) {
-      setSelectedVariantId(product.variants[0].id);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [product, activePrice]);
+  }, [product.name, product.imageUrl, activePrice, currentVariant]);
 
   const handleAddToCart = () => {
     addItem(product, quantity, currentVariant ? currentVariant.id : undefined);
