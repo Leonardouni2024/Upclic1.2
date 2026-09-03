@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
@@ -23,6 +23,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
   const [isHovered, setIsHovered] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(product.imageUrl);
+  }, [product.imageUrl]);
 
   const handleImageError = () => {
     if (imgSrc !== product.fallbackImage) {

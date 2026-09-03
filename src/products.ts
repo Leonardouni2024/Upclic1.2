@@ -25,8 +25,8 @@ export const products: Product[] = [
     duration: "Permanente (2 Claves)",
     rating: 5.0,
     reviews: 164,
-    imageUrl: "/products/combo-win11-office2024.svg",
-    fallbackImage: "/products/combo-win11-office2024.svg",
+    imageUrl: "/products/combo-win11-office2024.webp",
+    fallbackImage: "/products/combo-win11-office2024.png",
     description: "Paquete definitivo 2 en 1 con super ahorro. Incluye 1 Clave oficial para Windows 11 Pro 64-bit + 1 Clave oficial para Microsoft Office Professional Plus 2024 con activación permanente de por vida.",
     features: [
       "1 Licencia original de Windows 11 Pro (32/64 bits) de activación permanente",
@@ -62,7 +62,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 142,
     imageUrl: "/products/microsoft-365.webp",
-    fallbackImage: "/products/microsoft-365.svg",
+    fallbackImage: "/products/microsoft-365.png",
     description: "Suscripción oficial a Microsoft 365 (Office 365 Profesional) por 1 año. Modalidad de acceso por cuenta oficial: este producto no se entrega mediante clave alfanumérica (key), sino mediante una cuenta oficial de Microsoft con correo electrónico y contraseña asignados a su dominio para iniciar sesión en portal.office.com y descargar las aplicaciones en hasta 5 dispositivos (PC, Mac, tablets o smartphones), con 100 GB de almacenamiento en la nube OneDrive y actualizaciones continuas durante todo el periodo.",
     cloudStorage: "100 GB en la nube",
     badge: "1 AÑO - 100 GB",
@@ -100,7 +100,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 218,
     imageUrl: "/products/office-2024.webp",
-    fallbackImage: "/products/office-2024.svg",
+    fallbackImage: "/products/office-2024.png",
     description: "La versión más moderna y completa de la suite ofimática de Microsoft. Incluye todas las aplicaciones profesionales con licencia perpetua para un equipo.",
     features: [
       "Incluye Word 2024, Excel 2024, PowerPoint 2024, Outlook 2024, Access y OneNote",
@@ -136,7 +136,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 324,
     imageUrl: "/products/office-2021.webp",
-    fallbackImage: "/products/office-2021.svg",
+    fallbackImage: "/products/office-2021.png",
     description: "La suite ofimática clásica favorita de empresas y profesionales que buscan estabilidad total, alto rendimiento y sin suscripciones recurrentes.",
     features: [
       "Suite completa: Word, Excel, PowerPoint, Outlook, Publisher y Access 2021",
@@ -172,7 +172,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 189,
     imageUrl: "/products/office-2019.webp",
-    fallbackImage: "/products/office-2019.svg",
+    fallbackImage: "/products/office-2019.png",
     description: "Suite esencial para oficina y estudio con herramientas confiables y probadas para redacción, hojas de cálculo complejas y presentaciones de alto impacto.",
     features: [
       "Word 2019, Excel 2019, PowerPoint 2019, Outlook 2019 y Access",
@@ -207,7 +207,7 @@ export const products: Product[] = [
     rating: 4.7,
     reviews: 112,
     imageUrl: "/products/office-2016.webp",
-    fallbackImage: "/products/office-2016.svg",
+    fallbackImage: "/products/office-2016.png",
     description: "Solución ofimática económica y sumamente confiable para equipos de oficina, estudiantes y computadoras de trabajo estándar.",
     features: [
       "Word 2016, Excel 2016, PowerPoint 2016, Outlook 2016 y OneNote",
@@ -241,7 +241,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviews: 87,
     imageUrl: "/products/office-2010.webp",
-    fallbackImage: "/products/office-2010.svg",
+    fallbackImage: "/products/office-2010.png",
     description: "Versión clásica y ultraligera para ordenadores con especificaciones técnicas limitadas o sistemas operativos anteriores.",
     warning: "Versión antigua. Verifica compatibilidad antes de comprar.",
     features: [
@@ -275,7 +275,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 380,
     imageUrl: "/products/windows-11-pro.webp",
-    fallbackImage: "/products/windows-11-pro.svg",
+    fallbackImage: "/products/windows-11-pro.png",
     description: "El sistema operativo más avanzado de Microsoft diseñado para profesionales, creadores y empresas que exigen máxima seguridad, virtualización y rendimiento.",
     features: [
       "Cifrado de disco BitLocker de grado militar para proteger tus archivos",
@@ -311,7 +311,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 175,
     imageUrl: "/products/windows-11-home.webp",
-    fallbackImage: "/products/windows-11-home.svg",
+    fallbackImage: "/products/windows-11-home.png",
     description: "Experiencia moderna y fluida con interfaz renovada, perfecta para el hogar, estudiantes y entusiastas de los videojuegos en PC.",
     features: [
       "Diseño estilizado con menú Inicio centrado y diseño de ventanas Snap",
@@ -346,7 +346,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 94,
     imageUrl: "/products/windows-11-enterprise.webp",
-    fallbackImage: "/products/windows-11-enterprise.svg",
+    fallbackImage: "/products/windows-11-enterprise.png",
     description: "Edición diseñada para organizaciones y corporaciones que necesitan gestión avanzada de TI, políticas de grupo y máxima protección contra ciberataques.",
     features: [
       "Windows Defender Application Guard y Credential Guard",
@@ -381,7 +381,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 410,
     imageUrl: "/products/windows-10-pro.webp",
-    fallbackImage: "/products/windows-10-pro.svg",
+    fallbackImage: "/products/windows-10-pro.png",
     description: "El sistema operativo más estable y compatible del mundo. Reconocido por su alta compatibilidad con software industrial, juegos y periféricos.",
     features: [
       "Protección de datos mediante cifrado de disco BitLocker",
@@ -416,7 +416,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 145,
     imageUrl: "/products/windows-10-home.webp",
-    fallbackImage: "/products/windows-10-home.svg",
+    fallbackImage: "/products/windows-10-home.png",
     description: "La edición confiable para uso doméstico, navegación web, trabajo escolar y entretenimiento diario.",
     features: [
       "Arranque veloz e inicio de sesión seguro con Windows Hello",
@@ -449,7 +449,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 82,
     imageUrl: "/products/windows-10-enterprise.webp",
-    fallbackImage: "/products/windows-10-enterprise.svg",
+    fallbackImage: "/products/windows-10-enterprise.png",
     description: "Edición orientada a empresas medianas y grandes que requieren estabilidad a largo plazo y máxima seguridad de red.",
     features: [
       "Gestión centralizada de dispositivos móviles y equipos",
@@ -481,7 +481,7 @@ export const products: Product[] = [
     rating: 4.5,
     reviews: 63,
     imageUrl: "/products/windows-8-1-pro.webp",
-    fallbackImage: "/products/windows-8-1-pro.svg",
+    fallbackImage: "/products/windows-8-1-pro.png",
     description: "Sistema operativo ligero optimizado para equipos de generación anterior y pantallas táctiles.",
     warning: "Versión antigua de Windows.",
     features: [
@@ -514,7 +514,7 @@ export const products: Product[] = [
     rating: 4.7,
     reviews: 130,
     imageUrl: "/products/windows-7-professional.webp",
-    fallbackImage: "/products/windows-7-professional.svg",
+    fallbackImage: "/products/windows-7-professional.png",
     description: "La edición legendaria con interfaz Aero Glass. Muy requerida para maquinaria de taller, software médico o programas que no admiten Windows 10/11.",
     warning: "Versión antigua de Windows.",
     features: [
@@ -548,7 +548,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 98,
     imageUrl: "/products/windows-7-ultimate.webp",
-    fallbackImage: "/products/windows-7-ultimate.svg",
+    fallbackImage: "/products/windows-7-ultimate.png",
     description: "La edición más completa y versátil de Windows 7. Reúne todas las herramientas de las ediciones Home Premium y Professional con soporte de 35 idiomas.",
     warning: "Versión antigua de Windows.",
     features: [
@@ -582,8 +582,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.9,
     reviews: 58,
-    imageUrl: "/products/project-2024.svg",
-    fallbackImage: "/products/project-2024.svg",
+    imageUrl: "/products/project-2024.webp",
+    fallbackImage: "/products/project-2024.png",
     description: "La herramienta líder mundial para gestión de proyectos, diagramas de Gantt, presupuestos, rutas críticas y asignación de recursos en su versión 2024 más reciente.",
     features: [
       "Diagramas de Gantt dinámicos y automatización de cronogramas",
@@ -618,8 +618,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.8,
     reviews: 72,
-    imageUrl: "/products/project-2021.svg",
-    fallbackImage: "/products/project-2021.svg",
+    imageUrl: "/products/project-2021.webp",
+    fallbackImage: "/products/project-2021.png",
     description: "Gestione plazos, presupuestos y recursos con la máxima estabilidad. La versión predilecta por directores de obra, ingenieros y líderes de proyecto.",
     features: [
       "Líneas base de control de proyectos y análisis de valor ganado",
@@ -652,8 +652,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.8,
     reviews: 64,
-    imageUrl: "/products/project-2019.svg",
-    fallbackImage: "/products/project-2019.svg",
+    imageUrl: "/products/project-2019.webp",
+    fallbackImage: "/products/project-2019.png",
     description: "Solución consolidada de gestión y cronogramas para planificación estructurada de proyectos con excelente relación costo-beneficio.",
     features: [
       "Diagramación de tareas jerárquicas y dependencias",
@@ -687,8 +687,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.9,
     reviews: 51,
-    imageUrl: "/products/visio-2024.svg",
-    fallbackImage: "/products/visio-2024.svg",
+    imageUrl: "/products/visio-2024.webp",
+    fallbackImage: "/products/visio-2024.png",
     description: "Cree diagramas de flujo avanzados, organigramas, esquemas de red, planos de planta y modelos de ingeniería con más de 250,000 formas actualizadas.",
     features: [
       "Decenas de miles de formas y plantillas modernas para diagramación",
@@ -723,8 +723,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.8,
     reviews: 67,
-    imageUrl: "/products/visio-2021.svg",
-    fallbackImage: "/products/visio-2021.svg",
+    imageUrl: "/products/visio-2021.webp",
+    fallbackImage: "/products/visio-2021.png",
     description: "Potente suite de diagramación técnica y empresarial. Diseñe mapas conceptuales, topologías de red e infraestructura IT con facilidad.",
     features: [
       "Amplia biblioteca de plantillas para redes, arquitectura y procesos",
@@ -757,8 +757,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.7,
     reviews: 43,
-    imageUrl: "/products/visio-2013.svg",
-    fallbackImage: "/products/visio-2013.svg",
+    imageUrl: "/products/visio-2013.webp",
+    fallbackImage: "/products/visio-2013.png",
     description: "Versión clásica, ágil y de muy bajo consumo de recursos de Microsoft Visio. Ideal para equipos con hardware ligero y versiones anteriores de Windows.",
     features: [
       "Diagramación de procesos, mapas conceptuales y organigramas clásicos",
