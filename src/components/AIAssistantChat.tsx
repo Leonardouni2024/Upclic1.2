@@ -138,12 +138,7 @@ export const AIAssistantChat: React.FC = () => {
         data.reply ||
         `¡Hola! Para consultas personalizadas o soporte técnico rápido, puedes contactar directamente a nuestro Administrador por WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
 
-      const checkAdminInReply =
-        data.showAdminWhatsApp ||
-        replyContent.toLowerCase().includes('whatsapp') ||
-        replyContent.toLowerCase().includes('administrador') ||
-        messageText.toLowerCase().includes('whatsapp') ||
-        messageText.toLowerCase().includes('humano');
+      const checkAdminInReply = Boolean(data.showAdminWhatsApp);
 
       const newBotMessage: ChatMessage = {
         id: `bot-${Date.now()}`,
@@ -164,7 +159,7 @@ export const AIAssistantChat: React.FC = () => {
         content: localFallback.reply,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         suggestedProducts: localFallback.suggestedProducts || [],
-        showAdminWhatsApp: true,
+        showAdminWhatsApp: Boolean(localFallback.showAdminWhatsApp),
       };
       setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
