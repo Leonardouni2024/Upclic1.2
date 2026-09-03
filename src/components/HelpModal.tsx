@@ -38,7 +38,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Qué incluye Microsoft Office 365 Profesional Cuenta?</h4>
+              <h4 className="font-bold text-slate-900 mb-1">¿Qué incluye Microsoft Office 365 Profesional Cuenta 1 año?</h4>
               <p className="text-slate-600">Incluye 1 año de suscripción oficial en modalidad de cuenta (correo y contraseña oficial asignados a su dominio) para hasta 5 dispositivos con 100 GB de almacenamiento en OneDrive.</p>
             </div>
           </div>
