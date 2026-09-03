@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CartProvider, useCart } from './context/CartContext.tsx';
 import { ReviewsProvider } from './context/ReviewsContext.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
 import { BestSellersCarousel } from './components/BestSellersCarousel.tsx';
@@ -96,10 +97,12 @@ const AppContent: React.FC = () => {
 
 export default function App() {
   return (
-    <ReviewsProvider>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
-    </ReviewsProvider>
+    <AuthProvider>
+      <ReviewsProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </ReviewsProvider>
+    </AuthProvider>
   );
 }

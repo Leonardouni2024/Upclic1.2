@@ -360,6 +360,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserModal }) => {
               <Search className="w-5 h-5" />
             </button>
 
+            {/* User Button */}
+            <button
+              onClick={onOpenUserModal}
+              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer shrink-0 border border-slate-200/60"
+              aria-label="Portal de cliente"
+              title="Mi Cuenta"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-[18px] sm:h-[18px]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
+
             {/* Cart Button: Clean icon with counter badge (No "Carrito" text) */}
             <button
               id="cart-header-btn"

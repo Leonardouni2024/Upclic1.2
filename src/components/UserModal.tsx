@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { X, User, Key, Download, HelpCircle, MessageCircle, CheckCircle2 } from 'lucide-react';
+import { X, User, Key, Mail, Lock, LogOut, MessageCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.tsx';
+import { auth, googleProvider } from '../firebase.ts';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { WHATSAPP_NUMBER } from '../products.ts';
 
 interface UserModalProps {
@@ -8,22 +11,60 @@ interface UserModalProps {
 }
 
 export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
-  const [emailQuery, setEmailQuery] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
+  const { user, logout } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setError('');
+      setLoading(true);
+      await signInWithPopup(auth, googleProvider);
+    } catch (err: any) {
+      setError(err.message || 'Error al iniciar sesión con Google.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError('Por favor, ingresa correo y contraseña.');
+      return;
+    }
+    
+    try {
+      setError('');
+      setLoading(true);
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Ocurrió un error al autenticar.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white w-full max-w-md rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200 relative">
         <div className="px-6 py-4.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0066FF] border border-blue-100 flex items-center justify-center shadow-2xs">
               <User className="w-4.5 h-4.5" />
             </div>
             <div>
-              <h3 className="font-black text-slate-900 text-base">Portal de Cliente UpClic</h3>
-              <p className="text-xs text-slate-500 font-medium">Gestión de licencias y soporte técnico</p>
+              <h3 className="font-black text-slate-900 text-base">Portal de Cliente</h3>
+              <p className="text-xs text-slate-500 font-medium">Gestión de cuenta y licencias</p>
             </div>
           </div>
           <button
@@ -35,68 +76,127 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Quick License Lookup */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Consultar tus pedidos por correo o WhatsApp:
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={emailQuery}
-                onChange={(e) => setEmailQuery(e.target.value)}
-                placeholder="Ingresa tu correo o número de celular..."
-                className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
-              />
+        <div className="p-6">
+          {user ? (
+            <div className="space-y-6">
+              <div className="flex flex-col items-center justify-center text-center py-4">
+                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-black mb-3">
+                  {user.email?.charAt(0).toUpperCase()}
+                </div>
+                <h4 className="text-lg font-bold text-slate-900">¡Hola!</h4>
+                <p className="text-sm text-slate-500">{user.email}</p>
+              </div>
+              
+              <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-4 text-sm text-blue-900">
+                <p className="font-semibold mb-1">✓ Cuenta vinculada con éxito.</p>
+                <p className="text-xs text-blue-800/80">Tus futuras compras y licencias se asociarán a este correo para que siempre tengas acceso a ellas.</p>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UpClic, requiero asistencia técnica con mi cuenta.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full mb-3 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-50 text-emerald-700 font-bold text-sm hover:bg-emerald-100 transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" /> Soporte por WhatsApp
+                </a>
+                <button
+                  onClick={() => logout()}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" /> Cerrar sesión
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div className="text-center mb-6">
+                <h4 className="text-lg font-extrabold text-slate-900">
+                  {isLogin ? 'Iniciar sesión' : 'Crear una cuenta'}
+                </h4>
+                <p className="text-xs text-slate-500 mt-1">
+                  Guarda tus licencias y accede más rápido a tus compras.
+                </p>
+              </div>
+
+              {error && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-medium border border-red-100">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleEmailAuth} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">Correo electrónico</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="tu@correo.com"
+                      className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">Contraseña</label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 bg-[#0066FF] hover:bg-[#0052cc] text-white rounded-xl font-bold text-sm shadow-md transition-colors disabled:opacity-70"
+                >
+                  {loading ? 'Cargando...' : (isLogin ? 'Ingresar' : 'Registrarse')}
+                </button>
+              </form>
+
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-slate-200"></div>
+                <span className="shrink-0 px-4 text-xs text-slate-400 font-medium">O continúa con</span>
+                <div className="flex-grow border-t border-slate-200"></div>
+              </div>
+
               <button
-                onClick={() => setHasSearched(true)}
-                className="px-4 py-2.5 rounded-xl bg-[#0066FF] text-white text-xs font-bold hover:bg-[#0052cc] shadow-xs transition-colors cursor-pointer"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm shadow-sm transition-colors cursor-pointer disabled:opacity-70"
               >
-                Buscar
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                </svg>
+                Google
               </button>
-            </div>
 
-            {hasSearched && (
-              <div className="mt-3 p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 text-xs text-slate-700 leading-relaxed">
-                <span className="font-bold block text-blue-900 mb-1">✓ Historial de pedidos digital:</span>
-                Tus claves de producto adquiridas son enviadas inmediatamente a tu correo y confirmadas en tu WhatsApp de contacto. Si necesitas reenviar o recuperar una clave anterior, puedes solicitarla directamente a nuestro equipo técnico.
-              </div>
-            )}
-          </div>
-
-          {/* Quick Resources */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UpClic, requiero asistencia técnica con mi licencia de Microsoft.')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3.5 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/70 border border-emerald-200/70 transition-all flex items-center gap-3 text-left"
-            >
-              <MessageCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-              <div>
-                <span className="text-xs font-bold text-emerald-950 block">Soporte por WhatsApp</span>
-                <span className="text-[11px] text-emerald-700 font-medium">Atención personalizada</span>
-              </div>
-            </a>
-
-            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70 flex items-center gap-3">
-              <Key className="w-5 h-5 text-[#0066FF] shrink-0" />
-              <div>
-                <span className="text-xs font-bold text-slate-900 block">Licencias 100% Originales</span>
-                <span className="text-[11px] text-slate-500 font-medium">Garantía oficial por 1 año</span>
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors"
+                >
+                  {isLogin ? '¿No tienes cuenta? Regístrate aquí' : '¿Ya tienes cuenta? Inicia sesión'}
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
-          >
-            Cerrar
-          </button>
+          )}
         </div>
       </div>
     </div>
