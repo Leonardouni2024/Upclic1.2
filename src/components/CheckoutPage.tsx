@@ -369,114 +369,23 @@ export const CheckoutPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Col 1: Instrucciones de Pago "¿Cómo comprar?" (7 cols) */}
+          {/* Col 1: Detalle de Productos en el Carrito (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-8">
-              <h2 className="text-xl font-black text-[#0f172a] mb-6 flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center border border-blue-100">
-                  <CheckCircle2 className="w-4.5 h-4.5" />
-                </div>
-                <span>¿Cómo comprar?</span>
-              </h2>
-
-              <div className="space-y-3.5">
-                {/* Paso 1 */}
-                <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-[#0066FF] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    1
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                <h2 className="text-lg font-black text-[#0f172a] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center border border-blue-100">
+                    <ShieldCheck className="w-4.5 h-4.5" />
                   </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-[#0066FF]">PASO 1: Link de pago y monto</h3>
-                    <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Haz clic en "Pagar con Mercado Pago" para ir al link de pago seguro.
-                    </p>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Digita el monto exacto de tu compra y haz clic en <strong className="text-slate-800 font-bold">"Continuar"</strong>:
-                    </p>
-                    <div className="mt-2 inline-block px-3 py-1.5 rounded-xl bg-white border border-sky-200 shadow-2xs">
-                      <span className="text-xs font-bold text-slate-500 mr-2">MONTO EXACTO A DIGITAR:</span>
-                      <span className="text-lg font-black text-[#0066FF] tabular-nums">
-                        S/ {total.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Paso 2 */}
-                <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    2
-                  </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-indigo-700">PASO 2: Opciones de pago</h3>
-                    <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Se abrirán las opciones de pago de tu preferencia:
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
-                        💳 Tarjeta de crédito o débito
-                      </span>
-                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
-                        🏦 Banca o agentes
-                      </span>
-                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
-                        🧾 PagoEfectivo
-                      </span>
-                      <span className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-bold text-indigo-900 shadow-2xs">
-                        📱 Yape
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Paso 3 */}
-                <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    3
-                  </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-emerald-700">PASO 3: Redirección a WhatsApp y Captura</h3>
-                    <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Al completar el pago, serás redireccionado automáticamente al chat de WhatsApp del proveedor.
-                    </p>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Envía la captura de tu comprobante de pago por el chat como confirmación.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Paso 4 */}
-                <div className="p-4 rounded-2xl bg-green-50/60 border border-green-100 flex gap-3.5 items-start">
-                  <div className="w-7 h-7 rounded-lg bg-green-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                    4
-                  </div>
-                  <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-wider text-green-700">PASO 4: Confirmación y Entrega</h3>
-                    <p className="text-sm font-bold text-slate-900 mt-0.5">
-                      Espera la respuesta con tu clave digital oficial y guía de instalación.
-                    </p>
-                    <div className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-green-800 bg-green-100/80 border border-green-200 px-2.5 py-1 rounded-lg w-fit">
-                      <Clock className="w-3.5 h-3.5 text-green-700 shrink-0" />
-                      <span>Tiempo estimado de atención: 10 a 20 minutos</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Col 2: Resumen de Compra & Payment Buttons (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-7 sticky top-24">
-              <h2 className="text-base font-black text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
-                <span>RESUMEN DE COMPRA</span>
-                <span className="text-xs font-bold text-slate-400">
-                  {totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'}
+                  <span>Productos en tu Pedido</span>
+                </h2>
+                <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
+                  {totalQuantity} {totalQuantity === 1 ? 'licencia' : 'licencias'}
                 </span>
-              </h2>
+              </div>
 
               {/* Products list */}
-              <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto mb-4 pr-1">
+              <div className="divide-y divide-slate-100 mb-6 pr-1">
                 {items.map(item => {
                   const itemUnitPrice = item.unitPrice ?? item.product.price;
                   const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
@@ -485,56 +394,44 @@ export const CheckoutPage: React.FC = () => {
                     item.selectedVariant === 'retail' ? 'Clave Retail' : undefined
                   );
                   return (
-                    <div key={itemKey} className="py-3 flex flex-col gap-2 text-xs">
-                      <div className="flex items-start justify-between gap-2.5">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-10 h-10 rounded-lg bg-slate-50/80 p-1 border border-slate-200/80 shrink-0 flex items-center justify-center">
-                            <img
-                              src={item.product.imageUrl}
-                              alt={item.product.name}
-                              onError={(e) => {
-                                e.currentTarget.src = item.product.fallbackImage;
-                              }}
-                              className="w-full h-full object-contain"
-                            />
+                    <div key={itemKey} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="w-14 h-14 rounded-xl bg-slate-50/90 p-1.5 border border-slate-200/80 shrink-0 flex items-center justify-center shadow-2xs">
+                          <img
+                            src={item.product.imageUrl}
+                            alt={item.product.name}
+                            onError={(e) => {
+                              e.currentTarget.src = item.product.fallbackImage;
+                            }}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-slate-900 text-sm truncate" title={item.product.name}>
+                            {item.product.name}
                           </div>
-                          <div className="min-w-0">
-                            <div className="font-bold text-slate-800 truncate" title={item.product.name}>
-                              {item.product.name}
-                            </div>
-                            {displayVariantName && (
-                              <span className="inline-block mt-0.5 text-[10px] font-bold px-1.5 py-0.2 rounded bg-blue-50 text-[#0066FF] border border-blue-200">
-                                {displayVariantName}
-                              </span>
-                            )}
-                            <div className="text-[11px] text-slate-400 mt-0.5">
-                              Unitario: S/ {itemUnitPrice.toFixed(2)}
-                            </div>
+                          {displayVariantName && (
+                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#0066FF] border border-blue-200">
+                              {displayVariantName}
+                            </span>
+                          )}
+                          <div className="text-[11px] text-slate-500 mt-0.5">
+                            Precio unitario: <strong className="text-slate-800">S/ {itemUnitPrice.toFixed(2)}</strong>
                           </div>
                         </div>
-
-                        <button
-                          type="button"
-                          onClick={() => removeItem(itemKey)}
-                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                          title="Eliminar producto"
-                          aria-label="Eliminar producto"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
                       </div>
 
-                      {/* Quantity Stepper & Subtotal row */}
-                      <div className="flex items-center justify-between pl-12">
-                        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5">
+                      <div className="flex items-center justify-between sm:justify-end gap-4">
+                        {/* Quantity Stepper */}
+                        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5">
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, -1)}
-                            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
                             aria-label="Disminuir cantidad"
                             title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir'}
                           >
-                            <Minus className="w-2.5 h-2.5" />
+                            <Minus className="w-3 h-3" />
                           </button>
                           <input
                             type="number"
@@ -547,23 +444,33 @@ export const CheckoutPage: React.FC = () => {
                                 setQuantity(itemKey, val);
                               }
                             }}
-                            className="w-8 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="w-9 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             aria-label="Editar cantidad"
                           />
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, 1)}
-                            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
                             aria-label="Aumentar cantidad"
                             title="Aumentar"
                           >
-                            <Plus className="w-2.5 h-2.5" />
+                            <Plus className="w-3 h-3" />
                           </button>
                         </div>
 
-                        <span className="font-black text-slate-900 shrink-0 tabular-nums text-sm">
+                        <span className="font-black text-slate-900 shrink-0 tabular-nums text-sm min-w-[75px] text-right">
                           S/ {(itemUnitPrice * item.quantity).toFixed(2)}
                         </span>
+
+                        <button
+                          type="button"
+                          onClick={() => removeItem(itemKey)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
+                          title="Eliminar producto"
+                          aria-label="Eliminar producto"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   );
@@ -571,11 +478,11 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Coupon input on Checkout */}
-              <div className="py-3 border-y border-slate-100 mb-3">
-                <div className="flex items-center justify-between mb-1.5">
+              <div className="pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                     <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
-                    Código promocional
+                    ¿Tienes un cupón de descuento?
                   </span>
                   {!appliedCoupon && (
                     <button
@@ -589,14 +496,14 @@ export const CheckoutPage: React.FC = () => {
                 </div>
 
                 {appliedCoupon ? (
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2 flex items-center justify-between">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       <span className="font-mono font-bold text-xs text-emerald-900">
                         {appliedCoupon}
                       </span>
-                      <span className="text-[10px] text-emerald-700">
-                        {isMultiItemDiscount ? '(10% aplicado por 2+ items)' : '(10% cupón)'}
+                      <span className="text-[11px] text-emerald-700 font-medium">
+                        {isMultiItemDiscount ? '(10% aplicado por 2+ productos)' : '(10% de descuento aplicado)'}
                       </span>
                     </div>
                     <button
@@ -613,11 +520,11 @@ export const CheckoutPage: React.FC = () => {
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
                       placeholder="Ingresa código (ej: PRIMUPCLIC)"
-                      className="flex-1 px-3 py-1.5 text-xs uppercase font-mono rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF]"
+                      className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF]"
                     />
                     <button
                       type="submit"
-                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
+                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
                     >
                       Aplicar
                     </button>
@@ -643,9 +550,54 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Garantías de UpClic */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0066FF] flex items-center justify-center shrink-0 border border-blue-100">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900">Licencias 100% Originales</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Activación permanente garantizada</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900">Entrega Inmediata</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Envío digital con guía paso a paso</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900">Soporte Técnico</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Asistencia remota personalizada</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Col 2: Resumen de Compra & Payment Buttons (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-7 sticky top-24">
+              <h2 className="text-base font-black text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
+                <span>RESUMEN DE PAGO</span>
+                <span className="text-xs font-bold text-slate-400">
+                  Total a pagar
+                </span>
+              </h2>
 
               {/* Subtotal & Discount breakdown */}
-              <div className="space-y-2 text-xs text-slate-600">
+              <div className="space-y-2.5 text-xs text-slate-600">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
                   <span className="font-bold text-slate-800 tabular-nums">S/ {subtotal.toFixed(2)}</span>
@@ -666,7 +618,7 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-[11px] text-slate-500 italic">
-                    (Lleva 2 o más productos para 10% de descuento, o ingresa PRIMUPCLIC para 10% en productos desde S/ 49.90)
+                    (Lleva 2 o más productos para 10% de descuento automático)
                   </div>
                 )}
 
@@ -697,10 +649,10 @@ export const CheckoutPage: React.FC = () => {
                   id="mercado-pago-pay-btn"
                   onClick={handleMercadoPago}
                   disabled={isCreatingPreference}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#009EE3] hover:bg-[#0089c7] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-sky-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-sky-400/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full py-4 px-4 rounded-2xl bg-[#009EE3] hover:bg-[#0089c7] text-white font-bold text-sm shadow-md hover:shadow-lg hover:shadow-sky-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-sky-400/20 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <CreditCard className="w-4.5 h-4.5" />
-                  <span>{isCreatingPreference ? 'Procesando...' : 'Pagar con Mercado Pago'}</span>
+                  <span>{isCreatingPreference ? 'Conectando con Mercado Pago...' : 'Pagar con Mercado Pago'}</span>
                   <ExternalLink className="w-3.5 h-3.5 ml-0.5 opacity-80" />
                 </button>
 
@@ -710,7 +662,7 @@ export const CheckoutPage: React.FC = () => {
                   href={whatsAppUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-green-500/20"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-green-500/20"
                 >
                   <MessageCircle className="w-4.5 h-4.5" />
                   <span>Confirmar compra por WhatsApp</span>
@@ -718,14 +670,14 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Security guarantee footnote */}
-              <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-1.5">
+              <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-2">
                 <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Transacción 100% encriptada y protegida</span>
+                  <span>Pasarela 100% segura (Tarjetas, Yape, PagoEfectivo)</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-500 font-medium">
                   <Clock className="w-4 h-4 text-blue-600" />
-                  <span>Atención inmediata y entrega rápida</span>
+                  <span>Redirección automática a WhatsApp tras pagar</span>
                 </div>
               </div>
             </div>

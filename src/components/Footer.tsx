@@ -21,14 +21,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleHowToBuy = () => {
-    if (currentPath !== '/') navigateToHome();
-    setTimeout(() => {
-      const el = document.getElementById('como-comprar-section');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
-
   return (
     <footer id="main-footer" className="bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-800/90">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,14 +114,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
               Ayuda
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
-              <li>
-                <button
-                  onClick={handleHowToBuy}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  Cómo comprar
-                </button>
-              </li>
               <li>
                 <button
                   onClick={() => onOpenHelpModal('faq')}

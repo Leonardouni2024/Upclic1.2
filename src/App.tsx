@@ -6,7 +6,6 @@ import { Hero } from './components/Hero.tsx';
 import { BestSellersCarousel } from './components/BestSellersCarousel.tsx';
 import { TopProductsSection } from './components/TopProductsSection.tsx';
 import { ProductGrid } from './components/ProductGrid.tsx';
-import { HowToBuySection } from './components/HowToBuySection.tsx';
 import { ProductDetailPage } from './components/ProductDetailPage.tsx';
 import { CheckoutPage } from './components/CheckoutPage.tsx';
 import { CartDrawer } from './components/CartDrawer.tsx';
@@ -61,9 +60,6 @@ const AppContent: React.FC = () => {
 
         {/* Complete Catalog Grid with Live Search & Category Filtering */}
         <ProductGrid />
-
-        {/* 5-Step Visual Buying Guide: ¿Cómo comprar? */}
-        <HowToBuySection />
       </main>
     );
   };

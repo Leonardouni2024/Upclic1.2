@@ -64,19 +64,6 @@ export const Header: React.FC<HeaderProps> = () => {
     }
   };
 
-  const handleHowToBuyClick = () => {
-    if (currentPath !== '/') {
-      navigateToHome();
-    }
-    setMobileMenuOpen(false);
-    setTimeout(() => {
-      const el = document.getElementById('como-comprar-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
-
   const handleTopClick = () => {
     if (currentPath !== '/') {
       navigateToHome();
@@ -229,13 +216,6 @@ export const Header: React.FC<HeaderProps> = () => {
               }`}
             >
               Ofertas
-            </button>
-            <button
-              id="nav-how-to-buy"
-              onClick={handleHowToBuyClick}
-              className="px-2 xl:px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-[#0066FF] hover:bg-slate-100/70 transition-all cursor-pointer font-medium"
-            >
-              Cómo comprar
             </button>
           </nav>
 
@@ -490,12 +470,6 @@ export const Header: React.FC<HeaderProps> = () => {
               className="w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-slate-100 text-slate-800"
             >
               Ofertas
-            </button>
-            <button
-              onClick={handleHowToBuyClick}
-              className="w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-slate-100 text-slate-800"
-            >
-              Cómo comprar
             </button>
           </div>
         )}
