@@ -522,18 +522,38 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       };
     });
 
-    const appUrl = process.env.APP_URL || 'http://localhost:3000';
+    // Derive real public URL from APP_URL env, request origin/referer, or default to production domain
+    const originHeader = req.get('origin') || req.get('referer');
+    let appUrl = process.env.APP_URL;
+    if (!appUrl && originHeader) {
+      try {
+        const parsed = new URL(originHeader);
+        appUrl = `${parsed.protocol}//${parsed.host}`;
+      } catch (e) {
+        // ignore
+      }
+    }
+    if (!appUrl || appUrl.includes('localhost')) {
+      appUrl = 'https://upclic.store';
+    }
+    appUrl = appUrl.replace(/\/$/, '');
+
+    const preferenceBody: any = {
+      items: mpItems,
+      back_urls: {
+        success: `${appUrl}/checkout?status=success`,
+        failure: `${appUrl}/checkout?status=failure`,
+        pending: `${appUrl}/checkout?status=pending`,
+      },
+    };
+
+    // Mercado Pago requires back_urls to be HTTPS for auto_return
+    if (appUrl.startsWith('https://')) {
+      preferenceBody.auto_return = 'approved';
+    }
 
     const response = await preference.create({
-      body: {
-        items: mpItems,
-        back_urls: {
-          success: `${appUrl}/checkout/success`,
-          failure: `${appUrl}/checkout/failure`,
-          pending: `${appUrl}/checkout/pending`,
-        },
-        auto_return: "approved",
-      }
+      body: preferenceBody
     });
 
     res.json({ id: response.id, init_point: response.init_point });
