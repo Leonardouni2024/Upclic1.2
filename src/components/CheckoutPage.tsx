@@ -46,6 +46,42 @@ export const CheckoutPage: React.FC = () => {
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
+  const [isCreatingPreference, setIsCreatingPreference] = useState(false);
+
+  const handleMercadoPago = async () => {
+    if (items.length === 0) return;
+    
+    try {
+      setIsCreatingPreference(true);
+      const response = await fetch('/api/create_preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items,
+          discountAmount,
+          discountReason,
+          total
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al conectar con Mercado Pago');
+      }
+      
+      if (data.init_point) {
+        // Redirect to Mercado Pago checkout
+        window.location.href = data.init_point;
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error.message || 'Error al iniciar pago seguro con Mercado Pago. Verifica que MERCADOPAGO_ACCESS_TOKEN esté configurado.');
+    } finally {
+      setIsCreatingPreference(false);
+    }
+  };
+
 
   useEffect(() => {
     document.title = 'Checkout y Pago | UpClic';
@@ -420,17 +456,16 @@ export const CheckoutPage: React.FC = () => {
 
               {/* Action 1: Pagar con Mercado Pago */}
               <div className="mt-6 space-y-3">
-                <a
+                <button
                   id="mercado-pago-pay-btn"
-                  href={MERCADO_PAGO_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#009EE3] hover:bg-[#0089c7] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-sky-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-sky-400/20"
+                  onClick={handleMercadoPago}
+                  disabled={isCreatingPreference}
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#009EE3] hover:bg-[#0089c7] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-sky-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-sky-400/20 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <CreditCard className="w-4.5 h-4.5" />
-                  <span>Pagar con Mercado Pago</span>
+                  <span>{isCreatingPreference ? 'Procesando...' : 'Pagar con Mercado Pago'}</span>
                   <ExternalLink className="w-3.5 h-3.5 ml-0.5 opacity-80" />
-                </a>
+                </button>
 
                 {/* Action 2: Confirmar compra por WhatsApp */}
                 <a
