@@ -8,6 +8,15 @@ export const FloatingTestimonials: React.FC = () => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Auto-dismiss the floating widget after 1 minute (60,000 ms)
+  useEffect(() => {
+    const autoDismissTimer = setTimeout(() => {
+      setIsVisible(false);
+    }, 60000);
+
+    return () => clearTimeout(autoDismissTimer);
+  }, []);
+
   // Rotate every 7 seconds unless paused
   useEffect(() => {
     if (!isVisible || isPaused || isMinimized) return;

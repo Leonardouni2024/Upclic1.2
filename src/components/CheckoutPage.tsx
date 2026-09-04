@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext.tsx';
 import {
   MERCADO_PAGO_URL,
   PROMO_COUPON_CODE,
+  MIN_PRICE_FOR_COUPON,
   WHATSAPP_NUMBER,
   WHATSAPP_DISPLAY
 } from '../products.ts';
@@ -52,6 +53,14 @@ export const CheckoutPage: React.FC = () => {
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
+
+  // Only recommend coupon if the cart meets the requirements:
+  // Not already applied, no multi-item 10% discount already active, and has at least 1 product >= S/ 40.00
+  const isEligibleForCoupon =
+    !appliedCoupon &&
+    !isMultiItemDiscount &&
+    items.some(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
+
   const [isCreatingPreference, setIsCreatingPreference] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
@@ -620,7 +629,7 @@ export const CheckoutPage: React.FC = () => {
                     <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
                     ¿Tienes un cupón de descuento?
                   </span>
-                  {!appliedCoupon && (
+                  {isEligibleForCoupon && (
                     <button
                       type="button"
                       onClick={() => applyCoupon(PROMO_COUPON_CODE)}
@@ -655,7 +664,7 @@ export const CheckoutPage: React.FC = () => {
                       type="text"
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
-                      placeholder="Ingresa código (ej: PRIMUPCLIC)"
+                      placeholder="Ingresa tu cupón"
                       className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF]"
                     />
                     <button

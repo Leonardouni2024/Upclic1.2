@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { X, Trash2, Plus, Minus, ArrowRight, Sparkles, ShoppingBag, ShieldCheck, Tag, CheckCircle2, AlertCircle } from 'lucide-react';
-import { PROMO_COUPON_CODE } from '../products.ts';
+import { PROMO_COUPON_CODE, MIN_PRICE_FOR_COUPON } from '../products.ts';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -29,6 +29,13 @@ export const CartDrawer: React.FC = () => {
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
+
+  // Only recommend coupon if the cart meets the requirements:
+  // Not already applied, no multi-item 10% discount already active, and has at least 1 product >= S/ 40.00
+  const isEligibleForCoupon =
+    !appliedCoupon &&
+    !isMultiItemDiscount &&
+    items.some(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
 
   if (!isCartOpen) return null;
 
@@ -109,7 +116,7 @@ export const CartDrawer: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="text-[11px] leading-tight">
                     <span className="font-extrabold">Lleva 2 o más productos para 10% OFF</span>
-                    <span className="block text-[10px] text-slate-500 font-normal">O cupón PRIMUPCLIC para 10% OFF (desde S/ 40.00)</span>
+                    <span className="block text-[10px] text-slate-500 font-normal">O cupón para 10% OFF (en productos desde S/ 40.00)</span>
                   </div>
                   <span className="font-black text-[10px] bg-white px-2 py-0.5 rounded-full border border-blue-200 text-[#0066FF] uppercase shrink-0">
                     Hasta 10% OFF
@@ -267,7 +274,7 @@ export const CartDrawer: React.FC = () => {
                     <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
                     ¿Tienes un cupón promocional?
                   </span>
-                  {!appliedCoupon && (
+                  {isEligibleForCoupon && (
                     <button
                       type="button"
                       onClick={() => applyCoupon(PROMO_COUPON_CODE)}
@@ -306,7 +313,7 @@ export const CartDrawer: React.FC = () => {
                       type="text"
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
-                      placeholder="Ej: PRIMUPCLIC"
+                      placeholder="Ingresa tu cupón"
                       className="flex-1 px-3 py-1.5 text-xs uppercase font-mono rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-[#0066FF]"
                     />
                     <button
