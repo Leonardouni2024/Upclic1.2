@@ -936,12 +936,12 @@ app.get("/api/admin/email_status", (_req, res) => {
 app.post("/api/admin/send_test_email", async (_req, res) => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
-    const sender = process.env.SMTP_USER || "leoch5829@gmail.com";
+    const fromEmail = process.env.FROM_EMAIL || "upclic@upclic.store";
 
     const result = await sendEmailWithFallback({
-      from: `"UpClic Store" <${sender}>`,
+      from: `"UpClic Store" <${fromEmail}>`,
       to: adminEmail,
-      replyTo: sender,
+      replyTo: adminEmail,
       subject: "UpClic - Verificacion de conexion de correo",
       text: `Hola Leo,
 

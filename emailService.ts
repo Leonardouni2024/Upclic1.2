@@ -91,7 +91,8 @@ export async function sendEmailWithFallback(options: EmailSendOptions): Promise<
   // Strategy 0: Resend REST API (over HTTPS Port 443 - cannot be blocked by host firewalls)
   if (resendApiKey) {
     try {
-      const fromAddress = options.from.includes("<") ? options.from : `UpClic Store <${options.from}>`;
+      const cleanFrom = options.from.replace(/"/g, "").trim();
+      const fromAddress = cleanFrom.includes("<") ? cleanFrom : `UpClic Store <${cleanFrom}>`;
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -574,7 +575,7 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
   reason?: string;
 }> {
   const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
-  const senderAddress = process.env.SMTP_USER || "leoch5829@gmail.com";
+  const fromEmail = process.env.FROM_EMAIL || "upclic@upclic.store";
   const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
 
   let customerSent = false;
@@ -583,9 +584,9 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
   // 1. Send confirmation email to customer
   if (order.customerEmail && order.customerEmail.includes("@")) {
     const custResult = await sendEmailWithFallback({
-      from: `"UpClic Store" <${senderAddress}>`,
+      from: `"UpClic Store" <${fromEmail}>`,
       to: order.customerEmail,
-      replyTo: `"UpClic Soporte" <${senderAddress}>`,
+      replyTo: `"UpClic Soporte" <${adminEmail}>`,
       subject: isPaid
         ? `Comprobante de compra UpClic Store (Pedido ${order.orderId})`
         : `Detalles de tu pedido en UpClic Store (Pedido ${order.orderId})`,
@@ -596,7 +597,7 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
         "X-Priority": "3",
         "X-MSMail-Priority": "Normal",
         "Importance": "Normal",
-        "List-Unsubscribe": `<mailto:${senderAddress}?subject=desuscribir>`,
+        "List-Unsubscribe": `<mailto:${adminEmail}?subject=desuscribir>`,
       },
     });
 
@@ -611,7 +612,7 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
   // 2. Send notification email to admin
   if (adminEmail && adminEmail.includes("@")) {
     const adminResult = await sendEmailWithFallback({
-      from: `"UpClic Notificaciones" <${senderAddress}>`,
+      from: `"UpClic Notificaciones" <${fromEmail}>`,
       to: adminEmail,
       replyTo: order.customerEmail,
       subject: isPaid
