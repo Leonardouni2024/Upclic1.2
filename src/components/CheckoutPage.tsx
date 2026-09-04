@@ -55,7 +55,12 @@ export const CheckoutPage: React.FC = () => {
     
     try {
       setIsCreatingPreference(true);
-      const response = await fetch('/api/create_preference', {
+      const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
+        (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
+          ? 'https://upclic12-rypnq.sevalla.app'
+          : '');
+
+      const response = await fetch(`${apiBase}/api/create_preference`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -74,8 +79,11 @@ export const CheckoutPage: React.FC = () => {
       try {
         data = JSON.parse(text);
       } catch (e) {
+        if (text.toLowerCase().includes('502 bad gateway') || response.status === 502) {
+          throw new Error('El servidor de Sevalla está temporalmente apagado (502 Bad Gateway). Por favor revisa los Logs en Sevalla o coordina tu compra por WhatsApp.');
+        }
         if (text.toLowerCase().includes('<!html') || text.toLowerCase().includes('<html')) {
-          throw new Error('El servidor devolvió una página HTML en lugar de JSON. Si tu proyecto está alojado en GitHub Pages o un servidor estático, la API del servidor Express (Mercado Pago) debe estar corriendo en un backend como Cloud Run. También puedes pulsar el botón de WhatsApp abajo para concretar tu compra directamente.');
+          throw new Error('El servidor devolvió una página HTML en lugar de JSON. Por favor revisa los Logs en Sevalla o coordina tu compra directamente por WhatsApp.');
         }
         throw new Error('El servidor devolvió una respuesta no válida al crear la preferencia de pago.');
       }
