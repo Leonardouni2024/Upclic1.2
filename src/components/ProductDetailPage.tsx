@@ -120,8 +120,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         ? '¿Cómo recibiré mi acceso a Office 365 Profesional?'
         : '¿Cómo y cuándo recibiré mi licencia de software?',
       a: product.isAccountAccess
-        ? 'Al completar tu pago y enviar la captura por WhatsApp, validamos la transacción y te enviamos tus credenciales oficiales de acceso en un lapso de 10 a 20 minutos.'
-        : 'Al completar tu pago y enviar tu captura de comprobante por WhatsApp, validamos tu compra y te entregamos tu clave digital original de 25 caracteres y guía oficial en un lapso estimado de 10 a 20 minutos.'
+        ? 'Al completar tu pago en línea con Mercado Pago, el sistema te redirige de forma automática a nuestro WhatsApp oficial con tu orden en estado PAGADO y tu número de transacción. Validamos tu compra y te enviamos tus credenciales oficiales de acceso y guía paso a paso en 5 a 15 minutos.'
+        : 'Al completar tu pago en línea con Mercado Pago, el sistema te redirige de forma automática a nuestro WhatsApp oficial con tu pedido en estado PAGADO y tu número de transacción. Te entregamos tu clave original de 25 caracteres, enlaces de descarga oficial de Microsoft y guía de instalación en 5 a 15 minutos.'
+    },
+    {
+      q: '¿Cómo se realiza el pago?',
+      a: 'El proceso está 100% automatizado: agregas tu producto, vas al checkout y presionas "Pagar con Mercado Pago". Puedes abonar de forma segura con Tarjeta de crédito/débito, Yape, PagoEfectivo o banca por internet. El monto se calcula de inmediato sin tener que digitar nada manualmente.'
     },
     {
       q: '¿La licencia es original y permanente?',
@@ -133,13 +137,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     },
     {
       q: '¿Qué garantía tengo al comprar en UpClic?',
-      a: 'Cuentas con garantía de 6 meses si presentas algún inconveniente durante o después de la instalación. Nuestro equipo de soporte técnico te asiste en tiempo real vía WhatsApp.'
+      a: 'Cuentas con 6 meses de garantía directa. Ante cualquier error técnico durante la descarga, instalación o activación, nuestro equipo de soporte técnico te asiste en tiempo real vía WhatsApp o te brinda una clave de reemplazo inmediato.'
     },
     {
       q: '¿Puedo reinstalar el software si formateo mi PC?',
       a: product.isAccountAccess
-        ? 'Sí, solo debes volver a iniciar sesión con tu cuenta en portal.office.com y reinstalar las aplicaciones en tu equipo.'
-        : 'Solo para las licencias Windows están disponibles, ya que estas licencias se vinculan directamente en placa de su dispositivo PC/laptop.'
+        ? 'Sí, solo debes volver a iniciar sesión con tu cuenta oficial en portal.office.com y volver a descargar e instalar las aplicaciones en tu equipo.'
+        : product.category === 'windows'
+        ? 'Sí, las licencias Windows OEM se asocian permanentemente a la placa madre de tu PC/laptop, por lo que puedes formatear y reinstalar todas las veces que desees sin perder tu activación.'
+        : 'Para licencias permanentes de Office, la activación se asocia a tu equipo. Si necesitas reinstalar por cambio de disco o formateo, nuestro soporte técnico te asiste para reactivarla sin costo.'
     }
   ];
 

@@ -175,7 +175,7 @@ export function generateLocalChatReply(message: string, history?: Array<{ role: 
     norm.includes('interbank')
   ) {
     return {
-      reply: `En **UpClic** cuentas con los métodos de pago más cómodos y seguros de Perú: 💳\n\n• 📱 **Billeteras Digitales:** Yape y Plin (confirmación rápida y sin comisiones).\n• 🏦 **Transferencias Bancarias:** BCP, BBVA, Interbank y Scotiabank (pago directo vía banca móvil).\n• 💳 **Tarjetas de Débito y Crédito:** Visa, Mastercard, American Express y Diners a través de la pasarela segura de Mercado Pago.\n\n⚡ **Entrega:** La entrega es **100% digital e inmediata**. Una vez verificado tu comprobante o pago en línea, te enviamos tu clave original, los enlaces de descarga directa de Microsoft y el instructivo por WhatsApp y correo electrónico.\n\n¿Tienes listo el producto que deseas adquirir?`,
+      reply: `En **UpClic** el proceso de pago está 100% automatizado con la pasarela oficial de **Mercado Pago**: 💳🔒\n\n• 💳 **Tarjetas de Débito y Crédito:** Visa, Mastercard, American Express y Diners con acreditación instantánea.\n• 📱 **Billeteras Digitales y Efectivo:** Yape, PagoEfectivo y banca móvil.\n• ⚡ **Proceso sin complicaciones:** Seleccionas tus licencias, presionas "Pagar con Mercado Pago" y al finalizar el pago eres redirigido automáticamente a nuestro WhatsApp con tu pedido en estado **PAGADO** y tu número de transacción.\n\n⏱️ **Entrega Digital (5 a 15 min):** Te entregamos de inmediato tu clave original de 25 caracteres, enlaces oficiales de descarga de Microsoft y guía de instalación.\n\n¿Tienes listo el producto que deseas adquirir?`,
       suggestedProducts: [],
       showAdminWhatsApp: false,
     };

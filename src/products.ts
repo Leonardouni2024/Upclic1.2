@@ -970,10 +970,17 @@ export function calculateCartTotals(
   };
 }
 
+export interface CustomerCheckoutInfo {
+  email?: string;
+  name?: string;
+  phone?: string;
+}
+
 // Generate the exact WhatsApp confirmation message requested
 export function buildWhatsAppMessage(
   items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
-  appliedCoupon?: string
+  appliedCoupon?: string,
+  customerInfo?: CustomerCheckoutInfo
 ) {
   const { totalQuantity, subtotal, hasDiscount, discountRate, discountAmount, total, discountReason } = calculateCartTotals(items, appliedCoupon);
   
@@ -984,6 +991,15 @@ export function buildWhatsAppMessage(
       return `• ${item.product.name}${variantSuffix} x${item.quantity} - S/ ${(price * item.quantity).toFixed(2)}`;
     })
     .join('\n');
+
+  let customerBlock = '';
+  if (customerInfo?.email || customerInfo?.name || customerInfo?.phone) {
+    const lines: string[] = [];
+    if (customerInfo.email) lines.push(`• 📧 Correo de Entrega: ${customerInfo.email}`);
+    if (customerInfo.name) lines.push(`• 👤 Nombre / Razón Social: ${customerInfo.name}`);
+    if (customerInfo.phone) lines.push(`• 📱 Teléfono: ${customerInfo.phone}`);
+    customerBlock = `\n👤 *DATOS DEL CLIENTE PARA ENTREGA:*\n${lines.join('\n')}\n`;
+  }
 
   let discountBlock = '';
   if (hasDiscount) {
@@ -991,24 +1007,24 @@ export function buildWhatsAppMessage(
   }
 
   return `Hola UpClic, deseo confirmar mi compra.
-
-Productos:
+${customerBlock}
+📦 *Productos:*
 ${productLines}
 
-Cantidad total:
-${totalQuantity}${discountBlock}
-Monto total a pagar:
-S/ ${total.toFixed(2)}
+📊 *Resumen:*
+• Cantidad total: ${totalQuantity}${discountBlock}
+• Monto total a pagar: S/ ${total.toFixed(2)}
 
-He realizado el pago y adjunto mi comprobante para la activación de mis licencias.`;
+He seleccionado mi pedido y deseo coordinar la entrega de mis licencias digitales a mi correo electrónico.`;
 }
 
 // Generate WhatsApp direct URL with encoded text
 export function getWhatsAppConfirmationUrl(
   items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
-  appliedCoupon?: string
+  appliedCoupon?: string,
+  customerInfo?: CustomerCheckoutInfo
 ) {
-  const message = buildWhatsAppMessage(items, appliedCoupon);
+  const message = buildWhatsAppMessage(items, appliedCoupon, customerInfo);
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
@@ -1016,7 +1032,7 @@ export function getWhatsAppConfirmationUrl(
 export function buildWhatsAppPaidMessage(
   items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
   appliedCoupon?: string,
-  paymentDetails?: { paymentId?: string; status?: string }
+  paymentDetails?: { paymentId?: string; status?: string; customerInfo?: CustomerCheckoutInfo }
 ) {
   const { totalQuantity, subtotal, hasDiscount, discountRate, discountAmount, total, discountReason } = calculateCartTotals(items, appliedCoupon);
   
@@ -1027,6 +1043,16 @@ export function buildWhatsAppPaidMessage(
       return `• ${item.product.name}${variantSuffix} x${item.quantity} - S/ ${(price * item.quantity).toFixed(2)}`;
     })
     .join('\n');
+
+  let customerBlock = '';
+  const cInfo = paymentDetails?.customerInfo;
+  if (cInfo?.email || cInfo?.name || cInfo?.phone) {
+    const lines: string[] = [];
+    if (cInfo.email) lines.push(`• 📧 Correo de Entrega: ${cInfo.email}`);
+    if (cInfo.name) lines.push(`• 👤 Nombre / Razón Social: ${cInfo.name}`);
+    if (cInfo.phone) lines.push(`• 📱 Teléfono: ${cInfo.phone}`);
+    customerBlock = `\n👤 *DATOS DEL CLIENTE PARA ENTREGA:*\n${lines.join('\n')}\n`;
+  }
 
   let discountBlock = '';
   if (hasDiscount) {
@@ -1038,7 +1064,7 @@ export function buildWhatsAppPaidMessage(
   return `✅ *¡PEDIDO PAGADO CON ÉXITO EN UPCLIC!*
 
 Hola UpClic, acabo de realizar mi pago a través de Mercado Pago y solicito la entrega de mis licencias:
-
+${customerBlock}
 📦 *Detalle del Pedido:*
 ${productLines}
 
@@ -1047,13 +1073,13 @@ ${productLines}
 • Monto Total: S/ ${total.toFixed(2)}
 • Estado de Pago: *PAGADO* (Aprobado en Mercado Pago)${paymentIdStr}
 
-Por favor, envíenme las claves de activación originales y las guías de instalación. ¡Muchas gracias!`;
+Por favor, envíenme las claves de activación originales y las guías de instalación a mi correo y por este medio. ¡Muchas gracias!`;
 }
 
 export function getWhatsAppPaidConfirmationUrl(
   items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
   appliedCoupon?: string,
-  paymentDetails?: { paymentId?: string; status?: string }
+  paymentDetails?: { paymentId?: string; status?: string; customerInfo?: CustomerCheckoutInfo }
 ) {
   const message = buildWhatsAppPaidMessage(items, appliedCoupon, paymentDetails);
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;

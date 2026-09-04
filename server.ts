@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import fs from "fs";
@@ -7,6 +8,7 @@ import { MercadoPagoConfig, Preference } from "mercadopago";
 import { GoogleGenAI } from "@google/genai";
 import { initialReviews } from "./src/initialReviews.ts";
 import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE } from "./src/products.ts";
+import { sendOrderEmails, getTransporter } from "./emailService.ts";
 
 const app = express();
 const PORT = 3000;
@@ -78,10 +80,47 @@ app.use(express.json());
 // Persistent storage setup
 const DATA_DIR = path.join(process.cwd(), "data");
 const REVIEWS_FILE = path.join(DATA_DIR, "reviews.json");
+const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
 
 function ensureDataDirectory() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+}
+
+function loadStoredOrders(): any[] {
+  ensureDataDirectory();
+  try {
+    if (fs.existsSync(ORDERS_FILE)) {
+      const data = fs.readFileSync(ORDERS_FILE, "utf-8");
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error("Error reading orders.json:", err);
+  }
+  return [];
+}
+
+function saveOrderNotification(orderData: any) {
+  ensureDataDirectory();
+  try {
+    const orders = loadStoredOrders();
+    const newRecord = {
+      id: orderData.id || `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: new Date().toISOString(),
+      ...orderData
+    };
+    orders.unshift(newRecord);
+    // Keep the most recent 250 orders/intents
+    const trimmed = orders.slice(0, 250);
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(trimmed, null, 2), "utf-8");
+    return newRecord;
+  } catch (err) {
+    console.error("Error saving order notification to orders.json:", err);
+    return orderData;
   }
 }
 
@@ -463,10 +502,22 @@ app.post("/api/chat", async (req, res) => {
 });
 
 
-// --- MERCADO PAGO INTEGRATION ---
+// --- MERCADO PAGO INTEGRATION & ORDER NOTIFICATIONS ---
 app.post("/api/create_preference", express.json(), async (req, res) => {
   try {
-    const { items, discountAmount, discountReason, total } = req.body;
+    const { items, discountAmount, discountReason, total, customerEmail, customerName, customerPhone } = req.body;
+    
+    // Validate required customer email
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      return res.status(400).json({
+        error: "Por favor ingresa un correo electrónico válido para recibir tu licencia y comprobante."
+      });
+    }
+
+    const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
+    const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
+
     const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
     
     if (!accessToken || accessToken === "YOUR_MERCADOPAGO_ACCESS_TOKEN" || accessToken.trim() === "") {
@@ -540,6 +591,18 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
 
     const preferenceBody: any = {
       items: mpItems,
+      payer: {
+        email: trimmedEmail,
+        ...(trimmedName ? { name: trimmedName } : {}),
+        ...(trimmedPhone ? { phone: { number: trimmedPhone } } : {})
+      },
+      metadata: {
+        customer_email: trimmedEmail,
+        customer_name: trimmedName,
+        customer_phone: trimmedPhone,
+        total_pen: finalTotal,
+        items_count: items.length
+      },
       back_urls: {
         success: `${appUrl}/checkout?status=success`,
         failure: `${appUrl}/checkout?status=failure`,
@@ -556,7 +619,60 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       body: preferenceBody
     });
 
-    res.json({ id: response.id, init_point: response.init_point });
+    // Save order notification to persistent storage
+    const recordedOrder = saveOrderNotification({
+      preferenceId: response.id,
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: finalTotal,
+      items: items.map((it: any) => ({
+        name: it.product?.name || it.name || 'Licencia',
+        variantName: it.variantName || null,
+        quantity: it.quantity || 1,
+        unitPrice: it.unitPrice || it.product?.price || it.price || 0,
+      })),
+      discountAmount: discountAmount || 0,
+      discountReason: discountReason || null,
+      status: "intent_mercadopago",
+      channel: "mercado_pago"
+    });
+
+    // Real-time server notification in logs for administrator
+    console.log("\n=======================================================");
+    console.log("🔔 [NOTIFICACIÓN UPCLIC] NUEVA INTENCIÓN DE COMPRA REGISTRADA");
+    console.log(`📧 Correo del Cliente: ${trimmedEmail}`);
+    if (trimmedName) console.log(`👤 Nombre/Razón Social: ${trimmedName}`);
+    if (trimmedPhone) console.log(`📱 Teléfono: ${trimmedPhone}`);
+    console.log(`💰 Monto a Pagar: S/ ${finalTotal.toFixed(2)}`);
+    console.log(`📦 Licencias: ${items.map((it: any) => `${it.product?.name || it.name} (x${it.quantity || 1})`).join(', ')}`);
+    console.log(`🆔 Preference Mercado Pago: ${response.id}`);
+    console.log(`⏰ Fecha: ${new Date().toISOString()}`);
+    console.log("=======================================================\n");
+
+    // Trigger automated email notification (customer confirmation + admin alert)
+    sendOrderEmails({
+      orderId: recordedOrder.id,
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: finalTotal,
+      items: recordedOrder.items,
+      channel: "mercado_pago",
+      status: "intent_mercadopago",
+      paymentUrl: response.init_point,
+      isPaid: false,
+      discountAmount: discountAmount || 0,
+      discountReason: discountReason || null,
+      createdAt: recordedOrder.createdAt
+    }).catch(err => console.error("Error al despachar correos:", err));
+
+    res.json({
+      id: response.id,
+      init_point: response.init_point,
+      orderId: recordedOrder.id,
+      customerEmail: trimmedEmail
+    });
   } catch (error: any) {
     console.error("Error MercadoPago completo:", error);
     let detailedMsg = "Error al conectar con Mercado Pago.";
@@ -569,6 +685,316 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       detailedMsg = error.cause.description;
     }
     res.status(500).json({ error: `Error Mercado Pago: ${detailedMsg}` });
+  }
+});
+
+// Endpoint to notify administrator when customer proceeds via WhatsApp
+app.post("/api/notify_checkout_intent", express.json(), (req, res) => {
+  try {
+    const { customerEmail, customerName, customerPhone, items, total, channel } = req.body;
+    
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      return res.status(400).json({ error: "Correo electrónico no válido." });
+    }
+
+    const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
+    const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
+
+    const recorded = saveOrderNotification({
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: Number(total || 0),
+      items: Array.isArray(items) ? items.map((it: any) => ({
+        name: it.product?.name || it.name || 'Licencia',
+        variantName: it.variantName || null,
+        quantity: it.quantity || 1,
+        unitPrice: it.unitPrice || it.product?.price || it.price || 0,
+      })) : [],
+      status: "intent_whatsapp",
+      channel: channel || "whatsapp"
+    });
+
+    console.log("\n=======================================================");
+    console.log(`🔔 [NOTIFICACIÓN UPCLIC] CLIENTE AVANZÓ A COMPRA VÍA WHATSAPP`);
+    console.log(`📧 Correo del Cliente: ${trimmedEmail}`);
+    if (trimmedName) console.log(`👤 Nombre: ${trimmedName}`);
+    if (trimmedPhone) console.log(`📱 Teléfono: ${trimmedPhone}`);
+    console.log(`💰 Total: S/ ${Number(total || 0).toFixed(2)}`);
+    console.log(`⏰ Fecha: ${new Date().toISOString()}`);
+    console.log("=======================================================\n");
+
+    // Trigger automated email notification (customer confirmation + admin alert)
+    sendOrderEmails({
+      orderId: recorded.id,
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: recorded.total,
+      items: recorded.items,
+      channel: "whatsapp",
+      status: "intent_whatsapp",
+      createdAt: recorded.createdAt
+    }).catch(err => console.error("Error al despachar correos:", err));
+
+    return res.json({ success: true, order: recorded });
+  } catch (err: any) {
+    console.error("Error en /api/notify_checkout_intent:", err);
+    return res.status(500).json({ error: "Error al registrar notificación de checkout." });
+  }
+});
+
+// Endpoint to register order details and immediately send confirmation email to customer
+app.post("/api/register_customer_order", express.json(), async (req, res) => {
+  try {
+    const { customerEmail, customerName, customerPhone, items, total, discountAmount, discountReason, channel } = req.body;
+    
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      return res.status(400).json({ error: "Correo electrónico no válido." });
+    }
+
+    const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
+    const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
+
+    const recorded = saveOrderNotification({
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: Number(total || 0),
+      items: Array.isArray(items) ? items.map((it: any) => ({
+        name: it.product?.name || it.name || 'Licencia Digital',
+        variantName: it.variantName || null,
+        quantity: it.quantity || 1,
+        unitPrice: it.unitPrice || it.product?.price || it.price || 0,
+      })) : [],
+      discountAmount: Number(discountAmount || 0),
+      discountReason: discountReason || null,
+      status: "order_registered",
+      channel: channel || "email_registration"
+    });
+
+    console.log("\n=======================================================");
+    console.log(`📩 [REGISTRO DIRECTO] CLIENTE REGISTRÓ SU CORREO EN CHECKOUT`);
+    console.log(`📧 Correo del Cliente: ${trimmedEmail}`);
+    if (trimmedName) console.log(`👤 Nombre: ${trimmedName}`);
+    if (trimmedPhone) console.log(`📱 Teléfono: ${trimmedPhone}`);
+    console.log(`💰 Total: S/ ${Number(total || 0).toFixed(2)}`);
+    console.log(`⏰ Fecha: ${new Date().toISOString()}`);
+    console.log("=======================================================\n");
+
+    // Send email to customer and notification to admin
+    const emailResult = await sendOrderEmails({
+      orderId: recorded.id,
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: recorded.total,
+      items: recorded.items,
+      channel: channel || "email_registration",
+      status: "order_registered",
+      discountAmount: recorded.discountAmount,
+      discountReason: recorded.discountReason,
+      createdAt: recorded.createdAt
+    });
+
+    return res.json({
+      success: true,
+      order: recorded,
+      emailSentToCustomer: emailResult.customerSent,
+      emailSentToAdmin: emailResult.adminSent
+    });
+  } catch (err: any) {
+    console.error("Error en /api/register_customer_order:", err);
+    return res.status(500).json({ error: "Error al procesar registro de correo." });
+  }
+});
+
+// Endpoint called when Mercado Pago redirects with status=approved/success
+app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
+  try {
+    const { orderId, paymentId, customerEmail, customerName, customerPhone, items, total } = req.body;
+
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      return res.status(400).json({ error: "Correo electrónico no válido." });
+    }
+
+    const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
+    const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
+    const cleanPaymentId = paymentId ? String(paymentId) : "";
+    const finalOrderId = orderId || `ORD-${Date.now()}`;
+
+    // Update existing order in orders.json or record newly confirmed order
+    const orders = loadStoredOrders();
+    const existingIndex = orders.findIndex((o: any) => o.id === finalOrderId || (cleanPaymentId && o.paymentId === cleanPaymentId));
+
+    let recorded: any;
+    if (existingIndex >= 0) {
+      orders[existingIndex].status = "paid";
+      orders[existingIndex].isPaid = true;
+      orders[existingIndex].paymentId = cleanPaymentId || orders[existingIndex].paymentId;
+      orders[existingIndex].paidAt = new Date().toISOString();
+      if (!orders[existingIndex].customerEmail && trimmedEmail) {
+        orders[existingIndex].customerEmail = trimmedEmail;
+      }
+      recorded = orders[existingIndex];
+      fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), "utf-8");
+    } else {
+      recorded = saveOrderNotification({
+        id: finalOrderId,
+        customerEmail: trimmedEmail,
+        customerName: trimmedName || null,
+        customerPhone: trimmedPhone || null,
+        total: Number(total || 0),
+        items: Array.isArray(items) ? items.map((it: any) => ({
+          name: it.product?.name || it.name || 'Licencia Digital',
+          variantName: it.variantName || null,
+          quantity: it.quantity || 1,
+          unitPrice: it.unitPrice || it.product?.price || it.price || 0,
+        })) : [],
+        paymentId: cleanPaymentId || null,
+        status: "paid",
+        isPaid: true,
+        channel: "mercado_pago"
+      });
+    }
+
+    console.log("\n=======================================================");
+    console.log(`🎉 [PAGO CONFIRMADO MERCADO PAGO] PAGO APROBADO EXITOSAMENTE`);
+    console.log(`🆔 ID Pedido: ${recorded.id}`);
+    if (cleanPaymentId) console.log(`💳 Payment ID MP: #${cleanPaymentId}`);
+    console.log(`📧 Correo Cliente: ${trimmedEmail}`);
+    if (trimmedName) console.log(`👤 Nombre: ${trimmedName}`);
+    if (trimmedPhone) console.log(`📱 Teléfono: ${trimmedPhone}`);
+    console.log(`💰 Total Pagado: S/ ${Number(recorded.total || 0).toFixed(2)}`);
+    console.log(`⏰ Fecha: ${new Date().toISOString()}`);
+    console.log("=======================================================\n");
+
+    // Send confirmation email to customer (with 10-30 min notice & Contact button) + admin alert
+    const emailResult = await sendOrderEmails({
+      orderId: recorded.id,
+      customerEmail: trimmedEmail,
+      customerName: trimmedName || null,
+      customerPhone: trimmedPhone || null,
+      total: recorded.total,
+      items: recorded.items,
+      channel: "mercado_pago",
+      status: "paid",
+      isPaid: true,
+      paymentId: cleanPaymentId,
+      createdAt: recorded.createdAt
+    });
+
+    return res.json({
+      success: true,
+      order: recorded,
+      emailSentToCustomer: emailResult.customerSent,
+      emailSentToAdmin: emailResult.adminSent
+    });
+  } catch (err: any) {
+    console.error("Error en /api/confirm_payment_success:", err);
+    return res.status(500).json({ error: "Error al confirmar pago de orden." });
+  }
+});
+
+// Endpoint to view captured customer orders & emails (for administrator)
+app.get("/api/orders", (_req, res) => {
+  const orders = loadStoredOrders();
+  res.json({
+    success: true,
+    count: orders.length,
+    orders
+  });
+});
+
+// Endpoint to check SMTP / Email readiness
+app.get("/api/admin/email_status", (_req, res) => {
+  const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
+  const smtpUser = process.env.SMTP_USER || "leoch5829@gmail.com";
+  const smtpPass = (process.env.SMTP_PASS || "bwnqzjkjjwbvrtym").replace(/\s+/g, "");
+  const isConfigured = Boolean(
+    smtpUser &&
+    smtpPass &&
+    !smtpUser.includes("tu-correo") &&
+    !smtpPass.includes("tu-contrasena")
+  );
+
+  res.json({
+    isConfigured,
+    adminEmail,
+    smtpHost: process.env.SMTP_HOST || "smtp.gmail.com",
+    smtpUserConfigured: Boolean(smtpUser),
+    message: isConfigured
+      ? "Servicio de correo SMTP activo y listo para despachar correos automáticamente."
+      : "SMTP no configurado en variables de entorno. Para enviar correos automáticos a clientes y a tu correo de admin, agrega SMTP_USER y SMTP_PASS (Contraseña de aplicación de Google)."
+  });
+});
+
+// Endpoint to send a direct test email to leoch5829@gmail.com
+app.post("/api/admin/send_test_email", async (_req, res) => {
+  try {
+    const transporter = getTransporter();
+    const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
+    const sender = process.env.SMTP_USER || "leoch5829@gmail.com";
+
+    if (!transporter) {
+      return res.status(400).json({
+        success: false,
+        error: "No se pudo inicializar el transportador SMTP de Gmail. Verifica tus credenciales."
+      });
+    }
+
+    const info = await transporter.sendMail({
+      from: `"UpClic Store" <${sender}>`,
+      to: adminEmail,
+      replyTo: sender,
+      subject: "UpClic - Verificacion de conexion de correo",
+      text: `Hola Leo,
+
+Este es un mensaje de confirmacion de envio desde tu servidor web de UpClic Store.
+
+La conexion con Google Gmail SMTP se encuentra activa y autenticada correctamente.
+
+Fecha: ${new Date().toLocaleString("es-PE")}
+UpClic Store - Lima, Peru`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 540px; margin: 0 auto; padding: 24px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+          <h2 style="color: #0066FF; margin-top: 0;">Conexión de Correo Verificada</h2>
+          <p style="font-size: 14px; color: #334155;">
+            Hola Leo, este es un mensaje de confirmación enviado desde el servidor de <strong>UpClic Store</strong>.
+          </p>
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin: 0; color: #166534; font-size: 13px; font-weight: bold;">
+              Servidor conectado correctamente a Google Gmail.
+            </p>
+            <p style="margin: 6px 0 0; color: #15803d; font-size: 12px;">
+              Los pedidos registrados se despachan con formato multipart (texto y HTML) y encabezados transaccionales.
+            </p>
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-top: 20px;">
+            Enviado: ${new Date().toLocaleString("es-PE")} • UpClic Store
+          </p>
+        </div>
+      `,
+      headers: {
+        "Auto-Submitted": "auto-generated",
+      }
+    });
+
+    console.log("✅ [TEST EMAIL] Correo de prueba enviado con éxito:", info.messageId);
+    return res.json({
+      success: true,
+      messageId: info.messageId,
+      recipient: adminEmail
+    });
+  } catch (err: any) {
+    console.error("❌ [TEST EMAIL] Error al enviar correo de prueba:", err);
+    return res.status(500).json({
+      success: false,
+      error: err.message || "Error al autenticar con el servidor de Google."
+    });
   }
 });
 

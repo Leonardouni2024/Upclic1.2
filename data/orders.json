@@ -1,0 +1,259 @@
+[
+  {
+    "id": "ORD-1788555926478-606",
+    "createdAt": "2026-09-04T21:05:26.478Z",
+    "customerEmail": "pedrito2728@gmail.com",
+    "customerName": "Pedro Prueba",
+    "customerPhone": "987654321",
+    "total": 25,
+    "items": [
+      {
+        "name": "Office 2024 Professional Plus",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 25
+      }
+    ],
+    "discountAmount": 0,
+    "discountReason": null,
+    "status": "order_registered",
+    "channel": "web_registration"
+  },
+  {
+    "id": "ORD-1788555669108-338",
+    "createdAt": "2026-09-04T21:01:09.108Z",
+    "customerEmail": "pedrito2728@gmail.com",
+    "customerName": "Pedro Prueba",
+    "customerPhone": "987654321",
+    "total": 25,
+    "items": [
+      {
+        "name": "Office 2024 Professional Plus",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 25
+      }
+    ],
+    "discountAmount": 0,
+    "discountReason": null,
+    "status": "order_registered",
+    "channel": "web_registration"
+  },
+  {
+    "id": "ORD-1788555462930-265",
+    "createdAt": "2026-09-04T20:57:42.930Z",
+    "customerEmail": "premierpe2025@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 150.3,
+    "items": [
+      {
+        "name": "Microsoft Office Professional Plus 2021",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 24
+      },
+      {
+        "name": "Microsoft Office Professional Plus 2024",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 25
+      },
+      {
+        "name": "Microsoft Office 365 Profesional Cuenta 1 año",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 46.5
+      }
+    ],
+    "discountAmount": 16.7,
+    "discountReason": "10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)",
+    "status": "order_registered",
+    "channel": "email_registration"
+  },
+  {
+    "id": "ORD-1788555462568-522",
+    "createdAt": "2026-09-04T20:57:42.568Z",
+    "customerEmail": "premierpe2025@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 150.3,
+    "items": [
+      {
+        "name": "Microsoft Office Professional Plus 2021",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 24
+      },
+      {
+        "name": "Microsoft Office Professional Plus 2024",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 25
+      },
+      {
+        "name": "Microsoft Office 365 Profesional Cuenta 1 año",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 46.5
+      }
+    ],
+    "discountAmount": 16.7,
+    "discountReason": "10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)",
+    "status": "order_registered",
+    "channel": "email_registration"
+  },
+  {
+    "id": "ORD-1788555384381-211",
+    "createdAt": "2026-09-04T20:56:24.381Z",
+    "customerEmail": "copernico7890@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 150.3,
+    "items": [
+      {
+        "name": "Microsoft Office Professional Plus 2021",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 24
+      },
+      {
+        "name": "Microsoft Office Professional Plus 2024",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 25
+      },
+      {
+        "name": "Microsoft Office 365 Profesional Cuenta 1 año",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 46.5
+      }
+    ],
+    "discountAmount": 16.7,
+    "discountReason": "10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)",
+    "status": "order_registered",
+    "channel": "email_registration"
+  },
+  {
+    "id": "ORD-1788555384216-472",
+    "createdAt": "2026-09-04T20:56:24.216Z",
+    "customerEmail": "copernico7890@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 150.3,
+    "items": [
+      {
+        "name": "Microsoft Office Professional Plus 2021",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 24
+      },
+      {
+        "name": "Microsoft Office Professional Plus 2024",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 25
+      },
+      {
+        "name": "Microsoft Office 365 Profesional Cuenta 1 año",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 46.5
+      }
+    ],
+    "discountAmount": 16.7,
+    "discountReason": "10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)",
+    "status": "order_registered",
+    "channel": "email_registration"
+  },
+  {
+    "id": "ORD-1788555296957-722",
+    "createdAt": "2026-09-04T20:54:56.957Z",
+    "customerEmail": "pedrito2728@gmail.com",
+    "customerName": "Pedro Prueba",
+    "customerPhone": "987654321",
+    "total": 25,
+    "items": [
+      {
+        "name": "Office 2024 Professional Plus",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 25
+      }
+    ],
+    "discountAmount": 0,
+    "discountReason": null,
+    "status": "order_registered",
+    "channel": "web_registration"
+  },
+  {
+    "id": "ORD-1788555183255-615",
+    "createdAt": "2026-09-04T20:53:03.255Z",
+    "customerEmail": "pedrito2728@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 108.45,
+    "items": [
+      {
+        "name": "Office 2024 Pro Plus",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 25
+      }
+    ],
+    "status": "intent_whatsapp",
+    "channel": "whatsapp"
+  },
+  {
+    "id": "ORD-1788554879610-503",
+    "createdAt": "2026-09-04T20:47:59.610Z",
+    "customerEmail": "leoch5829@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 24,
+    "items": [
+      {
+        "name": "Microsoft Office 2021 Pro Plus",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 24
+      }
+    ],
+    "status": "intent_whatsapp",
+    "channel": "mercado_pago"
+  },
+  {
+    "id": "ORD-1788553786885-555",
+    "createdAt": "2026-09-04T20:29:46.885Z",
+    "preferenceId": "466914599-55156b59-9edd-492d-843a-e38c01371e1c",
+    "customerEmail": "pedrito2728@gmail.com",
+    "customerName": null,
+    "customerPhone": null,
+    "total": 108.45,
+    "items": [
+      {
+        "name": "Microsoft Office Professional Plus 2021",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 24
+      },
+      {
+        "name": "Microsoft Office Professional Plus 2024",
+        "variantName": null,
+        "quantity": 2,
+        "unitPrice": 25
+      },
+      {
+        "name": "Microsoft Office 365 Profesional Cuenta 1 año",
+        "variantName": null,
+        "quantity": 1,
+        "unitPrice": 46.5
+      }
+    ],
+    "discountAmount": 12.05,
+    "discountReason": "10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)",
+    "status": "intent_mercadopago",
+    "channel": "mercado_pago"
+  }
+]
