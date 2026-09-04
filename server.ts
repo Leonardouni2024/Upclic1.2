@@ -457,42 +457,86 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
     const { items, discountAmount, discountReason, total } = req.body;
     const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
     
-    if (!accessToken) {
-      return res.status(500).json({ error: "MERCADOPAGO_ACCESS_TOKEN no configurado en el servidor." });
+    if (!accessToken || accessToken === "YOUR_MERCADOPAGO_ACCESS_TOKEN" || accessToken.trim() === "") {
+      return res.status(400).json({ 
+        error: "MERCADOPAGO_ACCESS_TOKEN no está configurado en los Secretos. Por favor agrega tu Access Token de Mercado Pago en la sección de Secretos." 
+      });
     }
 
     const client = new MercadoPagoConfig({ accessToken });
     const preference = new Preference(client);
 
-    // Calculate total original price
-    const originalTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discountRatio = discountAmount > 0 ? (originalTotal - discountAmount) / originalTotal : 1;
+    // Calculate total original price from items (handling both CartItem and direct product formats)
+    const originalTotal = items.reduce((sum: number, item: any) => {
+      const price = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
+      const qty = Number(item.quantity) || 1;
+      return sum + (price * qty);
+    }, 0);
 
-    const mpItems = items.map(item => ({
-      id: item.slug || item.id,
-      title: item.name,
-      description: item.name,
-      unit_price: Number((item.price * discountRatio).toFixed(2)),
-      quantity: Number(item.quantity),
-      currency_id: 'PEN',
-    }));
+    const finalTotal = typeof total === 'number' && total > 0 ? total : Math.max(0, originalTotal - (discountAmount || 0));
+    const discountRatio = (originalTotal > 0) ? finalTotal / originalTotal : 1;
+
+    let accumulatedSum = 0;
+    const mpItems = items.map((item: any, index: number) => {
+      const basePrice = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
+      const qty = Math.max(1, Math.round(Number(item.quantity) || 1));
+      
+      const rawTitle = item.product?.name 
+        ? (item.variantName ? `${item.product.name} (${item.variantName})` : item.product.name)
+        : (item.name || 'Licencia Digital UpClic');
+      
+      const slug = item.product?.slug || item.slug || item.id || 'licencia-digital';
+
+      let unitPrice = Number((basePrice * discountRatio).toFixed(2));
+      if (unitPrice <= 0) unitPrice = 0.01;
+
+      // Adjust rounding difference on the last item so the total matches finalTotal exactly
+      if (index === items.length - 1 && items.length > 1) {
+        const remainingNeeded = Number((finalTotal - accumulatedSum).toFixed(2));
+        if (remainingNeeded > 0) {
+          unitPrice = Number((remainingNeeded / qty).toFixed(2));
+        }
+      }
+
+      accumulatedSum += unitPrice * qty;
+
+      return {
+        id: String(slug).substring(0, 256),
+        title: String(rawTitle).substring(0, 256),
+        description: String(rawTitle).substring(0, 256),
+        unit_price: unitPrice,
+        quantity: qty,
+        currency_id: 'PEN',
+      };
+    });
+
+    const appUrl = process.env.APP_URL || 'http://localhost:3000';
 
     const response = await preference.create({
       body: {
         items: mpItems,
         back_urls: {
-          success: `${process.env.APP_URL || 'http://localhost:3000'}/checkout/success`,
-          failure: `${process.env.APP_URL || 'http://localhost:3000'}/checkout/failure`,
-          pending: `${process.env.APP_URL || 'http://localhost:3000'}/checkout/pending`,
+          success: `${appUrl}/checkout/success`,
+          failure: `${appUrl}/checkout/failure`,
+          pending: `${appUrl}/checkout/pending`,
         },
         auto_return: "approved",
       }
     });
 
     res.json({ id: response.id, init_point: response.init_point });
-  } catch (error) {
-    console.error("Error MercadoPago:", error);
-    res.status(500).json({ error: "Error al crear la preferencia de pago" });
+  } catch (error: any) {
+    console.error("Error MercadoPago completo:", error);
+    let detailedMsg = "Error al conectar con Mercado Pago.";
+    if (error?.message) {
+      detailedMsg = error.message;
+    }
+    if (Array.isArray(error?.cause) && error.cause.length > 0) {
+      detailedMsg = error.cause.map((c: any) => c.description || c.code || JSON.stringify(c)).join('; ');
+    } else if (error?.cause?.description) {
+      detailedMsg = error.cause.description;
+    }
+    res.status(500).json({ error: `Error Mercado Pago: ${detailedMsg}` });
   }
 });
 

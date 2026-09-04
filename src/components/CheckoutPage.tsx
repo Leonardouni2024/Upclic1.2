@@ -47,15 +47,20 @@ export const CheckoutPage: React.FC = () => {
 
   const [inputCoupon, setInputCoupon] = useState('');
   const [isCreatingPreference, setIsCreatingPreference] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const handleMercadoPago = async () => {
     if (items.length === 0) return;
+    setPaymentError(null);
     
     try {
       setIsCreatingPreference(true);
       const response = await fetch('/api/create_preference', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
           items,
           discountAmount,
@@ -64,19 +69,29 @@ export const CheckoutPage: React.FC = () => {
         })
       });
       
-      const data = await response.json();
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error('El servidor no devolvió una respuesta JSON válida.');
+      }
       
       if (!response.ok) {
         throw new Error(data.error || 'Error al conectar con Mercado Pago');
       }
       
       if (data.init_point) {
-        // Redirect to Mercado Pago checkout
-        window.location.href = data.init_point;
+        const newWindow = window.open(data.init_point, '_blank');
+        if (!newWindow) {
+          window.location.href = data.init_point;
+        }
+      } else {
+        throw new Error('No se obtuvo la URL de pago de Mercado Pago.');
       }
-    } catch (error) {
-      console.error(error);
-      alert(error.message || 'Error al iniciar pago seguro con Mercado Pago. Verifica que MERCADOPAGO_ACCESS_TOKEN esté configurado.');
+    } catch (error: any) {
+      console.error("Error Mercado Pago:", error);
+      setPaymentError(error.message || 'Error al iniciar pago seguro con Mercado Pago. Verifica que MERCADOPAGO_ACCESS_TOKEN esté configurado.');
     } finally {
       setIsCreatingPreference(false);
     }
@@ -456,6 +471,19 @@ export const CheckoutPage: React.FC = () => {
 
               {/* Action 1: Pagar con Mercado Pago */}
               <div className="mt-6 space-y-3">
+                {paymentError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold">Error al procesar el pago:</p>
+                      <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
+                      <p className="mt-1 text-[10px] text-red-600 font-medium">
+                        Si el problema persiste, puedes usar el botón de WhatsApp abajo para coordinar tu pago directamente.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   id="mercado-pago-pay-btn"
                   onClick={handleMercadoPago}
