@@ -191,6 +191,18 @@ function injectOpenGraphTags(html: string, req: express.Request): string {
 
 // --- API ROUTES ---
 
+// Enable CORS and JSON parsing for all API endpoints
+app.use("/api", (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+app.use("/api", express.json());
+
 // Health check
 app.get("/api/health", (_req, res) => {
   res.json({
@@ -538,6 +550,21 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
     }
     res.status(500).json({ error: `Error Mercado Pago: ${detailedMsg}` });
   }
+});
+
+// Catch-all 404 handler for unmatched /api routes to prevent HTML responses
+app.use("/api/*", (_req, res) => {
+  res.status(404).json({
+    error: "Ruta de API no encontrada. Si estás usando un hosting estático (como GitHub Pages), las funciones de servidor como Mercado Pago requieren que el backend Express esté activo."
+  });
+});
+
+// Global API error middleware
+app.use("/api", (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("API Error caught:", err);
+  res.status(err?.status || 500).json({
+    error: err?.message || "Error interno en el servidor Express."
+  });
 });
 
 // --- VITE & STATIC MIDDLEWARE ---

@@ -74,7 +74,10 @@ export const CheckoutPage: React.FC = () => {
       try {
         data = JSON.parse(text);
       } catch (e) {
-        throw new Error('El servidor no devolvió una respuesta JSON válida.');
+        if (text.toLowerCase().includes('<!html') || text.toLowerCase().includes('<html')) {
+          throw new Error('El servidor devolvió una página HTML en lugar de JSON. Si tu proyecto está alojado en GitHub Pages o un servidor estático, la API del servidor Express (Mercado Pago) debe estar corriendo en un backend como Cloud Run. También puedes pulsar el botón de WhatsApp abajo para concretar tu compra directamente.');
+        }
+        throw new Error('El servidor devolvió una respuesta no válida al crear la preferencia de pago.');
       }
       
       if (!response.ok) {
