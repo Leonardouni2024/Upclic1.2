@@ -1012,6 +1012,53 @@ export function getWhatsAppConfirmationUrl(
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
+// Generate the exact WhatsApp confirmation message for PAID Mercado Pago orders
+export function buildWhatsAppPaidMessage(
+  items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
+  appliedCoupon?: string,
+  paymentDetails?: { paymentId?: string; status?: string }
+) {
+  const { totalQuantity, subtotal, hasDiscount, discountRate, discountAmount, total, discountReason } = calculateCartTotals(items, appliedCoupon);
+  
+  const productLines = items
+    .map(item => {
+      const price = item.unitPrice ?? item.product.price;
+      const variantSuffix = item.variantName ? ` (${item.variantName})` : '';
+      return `• ${item.product.name}${variantSuffix} x${item.quantity} - S/ ${(price * item.quantity).toFixed(2)}`;
+    })
+    .join('\n');
+
+  let discountBlock = '';
+  if (hasDiscount) {
+    discountBlock = `\nSubtotal: S/ ${subtotal.toFixed(2)}\nDescuento (${(discountRate * 100).toFixed(0)}%): -S/ ${discountAmount.toFixed(2)} (${discountReason})\n`;
+  }
+
+  const paymentIdStr = paymentDetails?.paymentId ? `\n• N° de Pago Mercado Pago: #${paymentDetails.paymentId}` : '';
+
+  return `✅ *¡PEDIDO PAGADO CON ÉXITO EN UPCLIC!*
+
+Hola UpClic, acabo de realizar mi pago a través de Mercado Pago y solicito la entrega de mis licencias:
+
+📦 *Detalle del Pedido:*
+${productLines}
+
+📊 *Resumen de Compra:*
+• Cantidad de licencias: ${totalQuantity}${discountBlock}
+• Monto Total: S/ ${total.toFixed(2)}
+• Estado de Pago: *PAGADO* (Aprobado en Mercado Pago)${paymentIdStr}
+
+Por favor, envíenme las claves de activación originales y las guías de instalación. ¡Muchas gracias!`;
+}
+
+export function getWhatsAppPaidConfirmationUrl(
+  items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
+  appliedCoupon?: string,
+  paymentDetails?: { paymentId?: string; status?: string }
+) {
+  const message = buildWhatsAppPaidMessage(items, appliedCoupon, paymentDetails);
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
 // Find product by slug or id
 export function getProductBySlug(slug: string): Product | undefined {
   if (!slug) return undefined;

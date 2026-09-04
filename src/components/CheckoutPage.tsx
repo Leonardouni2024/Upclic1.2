@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import {
   MERCADO_PAGO_URL,
   getWhatsAppConfirmationUrl,
+  getWhatsAppPaidConfirmationUrl,
   buildWhatsAppMessage,
+  buildWhatsAppPaidMessage,
   PROMO_COUPON_CODE
 } from '../products.ts';
 import {
@@ -20,7 +22,8 @@ import {
   AlertCircle,
   Trash2,
   Plus,
-  Minus
+  Minus,
+  Loader2
 } from 'lucide-react';
 
 export const CheckoutPage: React.FC = () => {
@@ -42,6 +45,7 @@ export const CheckoutPage: React.FC = () => {
     removeItem,
     updateQuantity,
     setQuantity,
+    clearCart,
     navigateToHome
   } = useCart();
 
@@ -49,12 +53,104 @@ export const CheckoutPage: React.FC = () => {
   const [isCreatingPreference, setIsCreatingPreference] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
+  // Check URL params for Mercado Pago return (success, approved, payment_id)
+  const [paymentResult, setPaymentResult] = useState<{
+    isSuccess: boolean;
+    paymentId?: string | null;
+    status?: string | null;
+  } | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hash = window.location.hash || '';
+      const hashParams = hash.includes('?') ? new URLSearchParams(hash.substring(hash.indexOf('?'))) : null;
+
+      const status = searchParams.get('status') || searchParams.get('collection_status') || hashParams?.get('status') || hashParams?.get('collection_status');
+      const paymentId = searchParams.get('payment_id') || searchParams.get('collection_id') || hashParams?.get('payment_id') || hashParams?.get('collection_id');
+
+      if (status === 'success' || status === 'approved' || searchParams.get('collection_status') === 'approved') {
+        return { isSuccess: true, paymentId, status };
+      }
+    } catch (e) {
+      console.error('Error parsing payment status:', e);
+    }
+    return null;
+  });
+
+  const [countdown, setCountdown] = useState(3);
+  const hasRedirectedRef = useRef(false);
+
+  // Retrieve last order details saved before redirecting to Mercado Pago
+  const lastOrderSnapshot = (() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = localStorage.getItem('upclic_last_order');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return null;
+  })();
+
+  const paidOrderItems = (lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0)
+    ? lastOrderSnapshot.items
+    : items;
+  const paidCoupon = lastOrderSnapshot?.appliedCoupon || appliedCoupon;
+  const paidTotal = lastOrderSnapshot?.total ?? total;
+
+  const whatsAppPaidUrl = getWhatsAppPaidConfirmationUrl(paidOrderItems, paidCoupon, {
+    paymentId: paymentResult?.paymentId || undefined,
+    status: 'approved'
+  });
+
+  // Handle automatic redirect to WhatsApp if payment was approved
+  useEffect(() => {
+    if (!paymentResult?.isSuccess) return;
+
+    // Clear cart so items are not duplicated
+    clearCart();
+
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          if (!hasRedirectedRef.current) {
+            hasRedirectedRef.current = true;
+            window.location.href = whatsAppPaidUrl;
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [paymentResult?.isSuccess, whatsAppPaidUrl, clearCart]);
+
   const handleMercadoPago = async () => {
     if (items.length === 0) return;
     setPaymentError(null);
     
     try {
       setIsCreatingPreference(true);
+
+      // Save order snapshot in localStorage so when the user returns after paying, we have full details
+      try {
+        localStorage.setItem('upclic_last_order', JSON.stringify({
+          items: items.map(it => ({
+            product: it.product,
+            quantity: it.quantity,
+            unitPrice: it.unitPrice,
+            variantName: it.variantName
+          })),
+          appliedCoupon,
+          total,
+          discountAmount,
+          discountReason,
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.error('Error saving last order to localStorage', e);
+      }
+
       const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
         (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
           ? 'https://upclic12-rypnq.sevalla.app'
@@ -123,6 +219,108 @@ export const CheckoutPage: React.FC = () => {
 
   const whatsAppUrl = getWhatsAppConfirmationUrl(items, appliedCoupon);
   const rawMessage = buildWhatsAppMessage(items, appliedCoupon);
+
+  if (paymentResult?.isSuccess) {
+    return (
+      <div id="checkout-success-view" className="py-12 sm:py-16 bg-slate-50/80 min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-xl w-full bg-white rounded-3xl border border-emerald-100 shadow-xl p-6 sm:p-10 text-center relative overflow-hidden">
+          {/* Top decorative gradient glow */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-600" />
+
+          {/* Success Icon */}
+          <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-6 border-4 border-emerald-100/80 shadow-sm animate-pulse">
+            <CheckCircle2 className="w-10 h-10" />
+          </div>
+
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 mb-3">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Pago Aprobado con Mercado Pago
+          </span>
+
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            ¡Pago Realizado con Éxito!
+          </h1>
+
+          <p className="text-sm text-slate-600 mt-2.5 leading-relaxed">
+            Hemos verificado tu transacción en Mercado Pago. Para entregarte tus licencias digitales oficiales y guías de activación de inmediato, te estamos conectando con el <strong>WhatsApp Oficial del Administrador</strong>.
+          </p>
+
+          {/* Auto redirect banner */}
+          <div className="mt-6 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-center gap-3">
+            <Loader2 className="w-5 h-5 text-emerald-600 animate-spin shrink-0" />
+            <span className="text-sm font-bold text-emerald-900">
+              Redireccionando a WhatsApp en <span className="text-emerald-700 text-base font-black tabular-nums">{countdown}s</span>...
+            </span>
+          </div>
+
+          {/* Order summary box */}
+          <div className="mt-6 text-left rounded-2xl bg-slate-50 border border-slate-200/80 p-5 space-y-3">
+            <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
+              <span>ESTADO DEL PEDIDO</span>
+              <span className="font-bold text-emerald-700 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200 text-[11px] tracking-wide">
+                PAGADO
+              </span>
+            </div>
+
+            {paymentResult.paymentId && (
+              <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
+                <span>N° DE TRANSACCIÓN</span>
+                <span className="font-mono font-bold text-slate-700">
+                  #{paymentResult.paymentId}
+                </span>
+              </div>
+            )}
+
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Productos comprados:</span>
+              {paidOrderItems.map((item: any, idx: number) => {
+                const name = item.product?.name || item.name || 'Licencia Microsoft';
+                const price = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
+                const qty = Number(item.quantity) || 1;
+                return (
+                  <div key={idx} className="flex justify-between items-center text-xs text-slate-700 font-medium">
+                    <span className="truncate pr-2">• {name} {item.variantName ? `(${item.variantName})` : ''} x{qty}</span>
+                    <span className="shrink-0 font-bold">S/ {(price * qty).toFixed(2)}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-sm font-black text-slate-900">
+              <span>Total Pagado:</span>
+              <span className="text-emerald-700 font-black text-base">S/ {paidTotal.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {/* Direct action buttons */}
+          <div className="mt-6 space-y-3">
+            <a
+              href={whatsAppPaidUrl}
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-base shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
+            >
+              <MessageCircle className="w-5 h-5 fill-current" />
+              <span>Abrir WhatsApp y recibir mis licencias ahora</span>
+            </a>
+
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  const url = new URL(window.location.href);
+                  url.search = '';
+                  window.history.replaceState({}, '', url.pathname);
+                }
+                navigateToHome();
+              }}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-transparent hover:bg-slate-100 text-slate-600 text-xs font-bold transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Volver a la tienda</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
