@@ -1,4 +1,4 @@
-import { Product, CartTotals } from './types.ts';
+import type { Product, CartTotals } from './types.ts';
 
 // Variable de atención UpClic para WhatsApp oficial
 export const WHATSAPP_NUMBER = "51983204384";

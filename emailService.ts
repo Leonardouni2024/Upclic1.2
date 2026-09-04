@@ -1,6 +1,9 @@
 import "dotenv/config";
 import nodemailer, { Transporter } from "nodemailer";
-import { WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from "./src/products.ts";
+
+// Variable de atención UpClic para WhatsApp oficial (autónomo para evitar dependencias cruzadas con el cliente)
+export const WHATSAPP_NUMBER = "51983204384";
+export const WHATSAPP_DISPLAY = "+51 983 204 384";
 
 export interface OrderItemPayload {
   name: string;
@@ -26,10 +29,20 @@ export interface OrderEmailPayload {
   isPaid?: boolean;
 }
 
-// Helper to create the transporter safely
+export interface EmailSendOptions {
+  from: string;
+  to: string;
+  replyTo?: string;
+  subject: string;
+  text?: string;
+  html: string;
+  headers?: Record<string, string>;
+}
+
+// Helper to create the default transporter (Defaults to port 587 with STARTTLS for maximum cloud compatibility)
 export function getTransporter(): Transporter | null {
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
-  const port = Number(process.env.SMTP_PORT || 465);
+  const port = Number(process.env.SMTP_PORT || 587);
   const user = process.env.SMTP_USER || "leoch5829@gmail.com";
   const rawPass = process.env.SMTP_PASS || "bwnqzjkjjwbvrtym";
   const pass = rawPass.replace(/\s+/g, "");
@@ -46,7 +59,228 @@ export function getTransporter(): Transporter | null {
       user,
       pass,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    tls: {
+      rejectUnauthorized: false,
+      minVersion: "TLSv1.2",
+    },
   });
+}
+
+/**
+ * Robust multi-strategy email dispatcher.
+ * Handles cloud environments (like Sevalla, AWS, Kinsta) where port 465 or certain SMTP ports may be blocked or reset:
+ * 1. Resend REST API (HTTPS port 443 - zero block risk, if RESEND_API_KEY is configured)
+ * 2. Port 587 with STARTTLS (official submission port RFC 6409)
+ * 3. Nodemailer service: 'gmail'
+ * 4. Port 465 with direct SSL
+ */
+export async function sendEmailWithFallback(options: EmailSendOptions): Promise<{
+  success: boolean;
+  strategyUsed?: string;
+  error?: string;
+}> {
+  const user = process.env.SMTP_USER || "leoch5829@gmail.com";
+  const rawPass = process.env.SMTP_PASS || "bwnqzjkjjwbvrtym";
+  const pass = rawPass.replace(/\s+/g, "");
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
+
+  // Strategy 0: Resend REST API (over HTTPS Port 443 - cannot be blocked by host firewalls)
+  if (resendApiKey) {
+    try {
+      const fromAddress = options.from.includes("<") ? options.from : `UpClic Store <${options.from}>`;
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromAddress,
+          to: [options.to],
+          reply_to: options.replyTo,
+          subject: options.subject,
+          html: options.html,
+          text: options.text,
+        }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as any;
+        console.log(`✅ [EMAIL] Correo enviado exitosamente vía Resend REST API (HTTPS): ${data.id}`);
+        return { success: true, strategyUsed: "resend_api" };
+      } else {
+        const errText = await res.text();
+        console.warn(`⚠️ [EMAIL] Resend API respondió con error (${res.status}): ${errText}. Intentando SMTP...`);
+      }
+    } catch (err: any) {
+      console.warn(`⚠️ [EMAIL] Falló llamada a Resend API: ${err?.message || err}. Probando SMTP...`);
+    }
+  }
+
+  // Strategy chain for SMTP
+  const strategies = [
+    {
+      name: "smtp_587_starttls",
+      create: () =>
+        nodemailer.createTransport({
+          host,
+          port: 587,
+          secure: false, // Standard STARTTLS
+          requireTLS: true,
+          auth: { user, pass },
+          connectionTimeout: 8000,
+          greetingTimeout: 8000,
+          socketTimeout: 12000,
+          tls: {
+            rejectUnauthorized: false,
+            minVersion: "TLSv1.2",
+          },
+        }),
+    },
+    {
+      name: "smtp_service_gmail",
+      create: () =>
+        nodemailer.createTransport({
+          service: "gmail",
+          auth: { user, pass },
+          connectionTimeout: 8000,
+          greetingTimeout: 8000,
+          socketTimeout: 12000,
+          tls: {
+            rejectUnauthorized: false,
+          },
+        }),
+    },
+    {
+      name: "smtp_465_ssl",
+      create: () =>
+        nodemailer.createTransport({
+          host,
+          port: 465,
+          secure: true,
+          auth: { user, pass },
+          connectionTimeout: 8000,
+          greetingTimeout: 8000,
+          socketTimeout: 12000,
+          tls: {
+            rejectUnauthorized: false,
+          },
+        }),
+    },
+  ];
+
+  let lastError = "";
+
+  for (const s of strategies) {
+    try {
+      const transporter = s.create();
+      await transporter.sendMail({
+        from: options.from,
+        to: options.to,
+        replyTo: options.replyTo,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+        headers: options.headers,
+      });
+      console.log(`✅ [EMAIL] Despachado con éxito usando estrategia: ${s.name}`);
+      return { success: true, strategyUsed: s.name };
+    } catch (err: any) {
+      lastError = err?.message || String(err);
+      console.warn(`⚠️ [EMAIL] Estrategia ${s.name} falló: ${lastError}. Probando siguiente método...`);
+    }
+  }
+
+  return { success: false, error: lastError };
+}
+
+/**
+ * Diagnostic tool to check which email strategies work in the current hosting environment
+ */
+export async function diagnoseEmailStrategies(): Promise<Record<string, { ok: boolean; message: string }>> {
+  const user = process.env.SMTP_USER || "leoch5829@gmail.com";
+  const rawPass = process.env.SMTP_PASS || "bwnqzjkjjwbvrtym";
+  const pass = rawPass.replace(/\s+/g, "");
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
+
+  const results: Record<string, { ok: boolean; message: string }> = {};
+
+  // Test Resend API
+  if (resendApiKey) {
+    try {
+      const res = await fetch("https://api.resend.com/api-keys", {
+        headers: { Authorization: `Bearer ${resendApiKey}` },
+      });
+      results["resend_api"] = {
+        ok: res.ok,
+        message: res.ok ? "Resend API Key válida y conectada vía HTTPS (Port 443)." : `Error status ${res.status}`,
+      };
+    } catch (e: any) {
+      results["resend_api"] = { ok: false, message: e.message };
+    }
+  } else {
+    results["resend_api"] = { ok: false, message: "No configurada (opcional: RESEND_API_KEY)" };
+  }
+
+  // Test Port 587
+  try {
+    const t587 = nodemailer.createTransport({
+      host,
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: { user, pass },
+      connectionTimeout: 7000,
+      greetingTimeout: 7000,
+      socketTimeout: 10000,
+      tls: { rejectUnauthorized: false },
+    });
+    await t587.verify();
+    results["smtp_port_587"] = { ok: true, message: "Conexión exitosa a smtp.gmail.com:587 con STARTTLS." };
+  } catch (e: any) {
+    results["smtp_port_587"] = { ok: false, message: e.message };
+  }
+
+  // Test service: gmail
+  try {
+    const tService = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass },
+      connectionTimeout: 7000,
+      greetingTimeout: 7000,
+      socketTimeout: 10000,
+      tls: { rejectUnauthorized: false },
+    });
+    await tService.verify();
+    results["smtp_service_gmail"] = { ok: true, message: "Conexión exitosa usando nodemailer service: 'gmail'." };
+  } catch (e: any) {
+    results["smtp_service_gmail"] = { ok: false, message: e.message };
+  }
+
+  // Test Port 465
+  try {
+    const t465 = nodemailer.createTransport({
+      host,
+      port: 465,
+      secure: true,
+      auth: { user, pass },
+      connectionTimeout: 7000,
+      greetingTimeout: 7000,
+      socketTimeout: 10000,
+      tls: { rejectUnauthorized: false },
+    });
+    await t465.verify();
+    results["smtp_port_465"] = { ok: true, message: "Conexión exitosa a smtp.gmail.com:465 con SSL." };
+  } catch (e: any) {
+    results["smtp_port_465"] = { ok: false, message: e.message };
+  }
+
+  return results;
 }
 
 // Generate styled HTML receipt for customer (Deliverability & anti-spam optimized)
@@ -339,64 +573,51 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
   adminSent: boolean;
   reason?: string;
 }> {
-  const transporter = getTransporter();
   const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
-
-  if (!transporter) {
-    console.log(
-      `ℹ️ [EMAIL] SMTP no configurado en variables de entorno (SMTP_USER/SMTP_PASS).`
-    );
-    return {
-      customerSent: false,
-      adminSent: false,
-      reason: "smtp_not_configured",
-    };
-  }
+  const senderAddress = process.env.SMTP_USER || "leoch5829@gmail.com";
+  const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
 
   let customerSent = false;
   let adminSent = false;
 
-  const senderAddress = process.env.SMTP_USER || "leoch5829@gmail.com";
-  const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
-
   // 1. Send confirmation email to customer
-  try {
-    if (order.customerEmail && order.customerEmail.includes("@")) {
-      await transporter.sendMail({
-        from: `"UpClic Store" <${senderAddress}>`,
-        to: order.customerEmail,
-        replyTo: `"UpClic Soporte" <${senderAddress}>`,
-        subject: isPaid
-          ? `Comprobante de compra UpClic Store (Pedido ${order.orderId})`
-          : `Detalles de tu pedido en UpClic Store (Pedido ${order.orderId})`,
-        text: generateCustomerEmailText(order),
-        html: generateCustomerEmailHtml(order),
-        headers: {
-          "X-Entity-Ref-ID": order.orderId,
-          "X-Priority": "3",
-          "X-MSMail-Priority": "Normal",
-          "Importance": "Normal",
-          "List-Unsubscribe": `<mailto:${senderAddress}?subject=desuscribir>`,
-        },
-      });
+  if (order.customerEmail && order.customerEmail.includes("@")) {
+    const custResult = await sendEmailWithFallback({
+      from: `"UpClic Store" <${senderAddress}>`,
+      to: order.customerEmail,
+      replyTo: `"UpClic Soporte" <${senderAddress}>`,
+      subject: isPaid
+        ? `Comprobante de compra UpClic Store (Pedido ${order.orderId})`
+        : `Detalles de tu pedido en UpClic Store (Pedido ${order.orderId})`,
+      text: generateCustomerEmailText(order),
+      html: generateCustomerEmailHtml(order),
+      headers: {
+        "X-Entity-Ref-ID": order.orderId,
+        "X-Priority": "3",
+        "X-MSMail-Priority": "Normal",
+        "Importance": "Normal",
+        "List-Unsubscribe": `<mailto:${senderAddress}?subject=desuscribir>`,
+      },
+    });
+
+    if (custResult.success) {
       customerSent = true;
-      console.log(`✅ [EMAIL] Correo enviado exitosamente al cliente (${isPaid ? 'PAGADO' : 'PENDIENTE'}): ${order.customerEmail}`);
+      console.log(`✅ [EMAIL] Correo enviado exitosamente al cliente (${isPaid ? 'PAGADO' : 'PENDIENTE'} vía ${custResult.strategyUsed}): ${order.customerEmail}`);
+    } else {
+      console.error(`❌ [EMAIL] Error al enviar correo al cliente (${order.customerEmail}):`, custResult.error);
     }
-  } catch (err: any) {
-    console.error(`❌ [EMAIL] Error al enviar correo al cliente (${order.customerEmail}):`, err?.message || err);
   }
 
   // 2. Send notification email to admin
-  try {
-    if (adminEmail && adminEmail.includes("@")) {
-      await transporter.sendMail({
-        from: `"UpClic Notificaciones" <${senderAddress}>`,
-        to: adminEmail,
-        replyTo: order.customerEmail,
-        subject: isPaid
-          ? `[UpClic Pagado] ${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`
-          : `[UpClic Pedido] ${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`,
-        text: `Nuevo evento registrado en UpClic:
+  if (adminEmail && adminEmail.includes("@")) {
+    const adminResult = await sendEmailWithFallback({
+      from: `"UpClic Notificaciones" <${senderAddress}>`,
+      to: adminEmail,
+      replyTo: order.customerEmail,
+      subject: isPaid
+        ? `[UpClic Pagado] ${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`
+        : `[UpClic Pedido] ${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`,
+      text: `Nuevo evento registrado en UpClic:
 Estado: ${isPaid ? "PAGADO" : "PENDIENTE"}
 Pedido: ${order.orderId}
 Cliente: ${order.customerName || "No especificado"}
@@ -405,17 +626,19 @@ Telefono: ${order.customerPhone || "No especificado"}
 Monto: S/ ${order.total.toFixed(2)}
 Canal: ${order.channel}
 ${order.paymentId ? `Payment ID: ${order.paymentId}\n` : ''}`,
-        html: generateAdminEmailHtml(order),
-        headers: {
-          "X-Entity-Ref-ID": order.orderId,
-          "X-Priority": "3",
-        },
-      });
+      html: generateAdminEmailHtml(order),
+      headers: {
+        "X-Entity-Ref-ID": order.orderId,
+        "X-Priority": "3",
+      },
+    });
+
+    if (adminResult.success) {
       adminSent = true;
-      console.log(`✅ [EMAIL] Alerta enviada al administrador: ${adminEmail}`);
+      console.log(`✅ [EMAIL] Alerta enviada al administrador vía ${adminResult.strategyUsed}: ${adminEmail}`);
+    } else {
+      console.error(`❌ [EMAIL] Error al enviar alerta al admin (${adminEmail}):`, adminResult.error);
     }
-  } catch (err: any) {
-    console.error(`❌ [EMAIL] Error al enviar alerta al admin (${adminEmail}):`, err?.message || err);
   }
 
   return { customerSent, adminSent };

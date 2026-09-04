@@ -8,7 +8,7 @@ import { MercadoPagoConfig, Preference } from "mercadopago";
 import { GoogleGenAI } from "@google/genai";
 import { initialReviews } from "./src/initialReviews.ts";
 import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE } from "./src/products.ts";
-import { sendOrderEmails, getTransporter } from "./emailService.ts";
+import { sendOrderEmails, getTransporter, sendEmailWithFallback, diagnoseEmailStrategies } from "./emailService.ts";
 
 const app = express();
 const PORT = 3000;
@@ -932,21 +932,13 @@ app.get("/api/admin/email_status", (_req, res) => {
   });
 });
 
-// Endpoint to send a direct test email to leoch5829@gmail.com
+// Endpoint to send a direct test email to leoch5829@gmail.com with multi-strategy fallback
 app.post("/api/admin/send_test_email", async (_req, res) => {
   try {
-    const transporter = getTransporter();
     const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
     const sender = process.env.SMTP_USER || "leoch5829@gmail.com";
 
-    if (!transporter) {
-      return res.status(400).json({
-        success: false,
-        error: "No se pudo inicializar el transportador SMTP de Gmail. Verifica tus credenciales."
-      });
-    }
-
-    const info = await transporter.sendMail({
+    const result = await sendEmailWithFallback({
       from: `"UpClic Store" <${sender}>`,
       to: adminEmail,
       replyTo: sender,
@@ -955,7 +947,7 @@ app.post("/api/admin/send_test_email", async (_req, res) => {
 
 Este es un mensaje de confirmacion de envio desde tu servidor web de UpClic Store.
 
-La conexion con Google Gmail SMTP se encuentra activa y autenticada correctamente.
+El despacho de correo se encuentra activo y autenticado correctamente.
 
 Fecha: ${new Date().toLocaleString("es-PE")}
 UpClic Store - Lima, Peru`,
@@ -967,7 +959,7 @@ UpClic Store - Lima, Peru`,
           </p>
           <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 8px; margin: 16px 0;">
             <p style="margin: 0; color: #166534; font-size: 13px; font-weight: bold;">
-              Servidor conectado correctamente a Google Gmail.
+              Servidor conectado correctamente para el despacho de correos.
             </p>
             <p style="margin: 6px 0 0; color: #15803d; font-size: 12px;">
               Los pedidos registrados se despachan con formato multipart (texto y HTML) y encabezados transaccionales.
@@ -979,22 +971,47 @@ UpClic Store - Lima, Peru`,
         </div>
       `,
       headers: {
-        "Auto-Submitted": "auto-generated",
+        "X-Priority": "3",
       }
     });
 
-    console.log("✅ [TEST EMAIL] Correo de prueba enviado con éxito:", info.messageId);
-    return res.json({
-      success: true,
-      messageId: info.messageId,
-      recipient: adminEmail
-    });
+    if (result.success) {
+      console.log("✅ [TEST EMAIL] Correo de prueba enviado con éxito vía:", result.strategyUsed);
+      return res.json({
+        success: true,
+        strategyUsed: result.strategyUsed,
+        recipient: adminEmail,
+        message: `Correo de prueba enviado con éxito usando: ${result.strategyUsed}`
+      });
+    } else {
+      console.error("❌ [TEST EMAIL] Falló envío en todas las estrategias:", result.error);
+      return res.status(500).json({
+        success: false,
+        error: result.error || "No se pudo conectar a ningún transportador SMTP."
+      });
+    }
   } catch (err: any) {
     console.error("❌ [TEST EMAIL] Error al enviar correo de prueba:", err);
     return res.status(500).json({
       success: false,
-      error: err.message || "Error al autenticar con el servidor de Google."
+      error: err.message || "Error al autenticar con el servidor de correo."
     });
+  }
+});
+
+// Endpoint to run full network/SMTP diagnostics on the active host (useful for Sevalla/Cloud)
+app.get("/api/admin/diagnose_email", async (_req, res) => {
+  try {
+    const results = await diagnoseEmailStrategies();
+    return res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      user: process.env.SMTP_USER || "leoch5829@gmail.com",
+      strategies: results
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 
