@@ -163,6 +163,41 @@ export const products: Product[] = [
     ]
   },
   {
+    id: "prod-office-standard-2021",
+    slug: "office-standard-2021",
+    name: "Microsoft Office Standard 2021",
+    category: "office",
+    price: 35.00,
+    oldPrice: 65.00,
+    duration: "Permanente",
+    rating: 4.8,
+    reviews: 48,
+    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0_4z2mpYnvBlBYijtn2iVm_1B70SlBl9Mkr7hszPYnVy9rj6QqEeyBf-4&s=10",
+    fallbackImage: "/products/office-2021-standard.jpg",
+    description: "Edición estándar y confiable de la suite ofimática de Microsoft. Incluye las aplicaciones fundamentales para productividad de oficina con licencia permanente para 1 PC.",
+    features: [
+      "Incluye Word 2021, Excel 2021, PowerPoint 2021, Outlook 2021, Publisher y OneNote",
+      "Licencia permanente de por vida (un solo pago, sin mensualidades ni renovaciones)",
+      "Activación oficial directa en 1 PC con clave digital original de 25 caracteres",
+      "Garantía de activación de 1 año con soporte técnico",
+      "Reinstalable en el mismo equipo ante formateos"
+    ],
+    compatibility: "Compatible exclusivamente con Windows 10 y Windows 11",
+    badge: "STANDARD",
+    bestSeller: false,
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2021Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Office 2021 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el instalador .IMG oficial mediante el botón de descarga.",
+      "Paso 2: Monte el archivo .IMG descargado haciendo doble clic en Windows.",
+      "Paso 3: Ejecute 'Setup.exe' y espere a que finalice la instalación.",
+      "Paso 4: Abra Word o Excel.",
+      "Paso 5: Escriba su clave de 25 caracteres provista para la activación permanente."
+    ]
+  },
+  {
     id: "prod-office-2019",
     slug: "office-professional-plus-2019",
     name: "Microsoft Office Professional Plus 2019",
@@ -697,8 +732,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.9,
     reviews: 58,
-    imageUrl: "/products/project-2024.webp",
-    fallbackImage: "/products/project-2024.png",
+    imageUrl: "https://aussiesoftwareoutlet.com/wp-content/uploads/2024/10/project-2024-menu.jpg",
+    fallbackImage: "/products/project-2024.webp",
     description: "La herramienta líder mundial para gestión de proyectos, diagramas de Gantt, presupuestos, rutas críticas y asignación de recursos en su versión 2024 con garantía oficial por 1 año.",
     features: [
       "Diagramas de Gantt dinámicos y automatización de cronogramas",
@@ -733,8 +768,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.8,
     reviews: 72,
-    imageUrl: "/products/project-2021.webp",
-    fallbackImage: "/products/project-2021.png",
+    imageUrl: "https://coolboxpe.vtexassets.com/arquivos/ids/469685/image-5e660cd3b6c84b3e85c23135151b222d.jpg?v=638876062996170000",
+    fallbackImage: "/products/project-2021.jpg",
     description: "Gestione plazos, presupuestos y recursos con la máxima estabilidad. La versión predilecta por directores de obra, ingenieros y líderes de proyecto.",
     features: [
       "Líneas base de control de proyectos y análisis de valor ganado",
@@ -767,7 +802,7 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.8,
     reviews: 64,
-    imageUrl: "/products/project-2019.webp",
+    imageUrl: "https://3clics.pe/images/stories/virtuemart/product/project.png",
     fallbackImage: "/products/project-2019.png",
     description: "Solución consolidada de gestión y cronogramas para planificación estructurada de proyectos con excelente relación costo-beneficio.",
     features: [
@@ -790,8 +825,42 @@ export const products: Product[] = [
       "Paso 3: Al concluir la instalación, inicie Project 2019 e ingrese la clave de activación provista."
     ]
   },
+  {
+    id: "prod-project-2016",
+    slug: "project-professional-2016",
+    name: "Microsoft Project Professional 2016",
+    category: "project-visio",
+    price: 32.00,
+    oldPrice: 55.00,
+    duration: "Permanente",
+    rating: 4.8,
+    reviews: 52,
+    imageUrl: "https://www.3clics.pe/images/stories/virtuemart/product/project-professional-2016.jpg",
+    fallbackImage: "/products/project-2016.jpg",
+    description: "Herramienta comprobada para planificación y control de proyectos, diagramación de Gantt y gestión de recursos con alta compatibilidad y mínimo consumo de recursos.",
+    features: [
+      "Diagramas de Gantt dinámicos, cronogramas y rutas críticas",
+      "Gestión de costos, recursos de personal y materiales de proyecto",
+      "Compatible con Windows 7, Windows 8.1, Windows 10 y Windows 11",
+      "Licencia permanente para 1 computadora con clave oficial",
+      "Garantía de activación de 1 año y entrega digital"
+    ],
+    compatibility: "Compatible con Windows 7, 8.1, 10 y 11 (32 y 64 bits)",
+    badge: "PROYECTOS 2016",
+    bestSeller: false,
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2019Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Project 2016 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el archivo de instalación .IMG mediante el botón de descarga.",
+      "Paso 2: Monte la imagen con doble clic o extráigala con su explorador.",
+      "Paso 3: Ejecute 'Setup.exe' y complete el asistente de instalación.",
+      "Paso 4: Inicie Project 2016 e ingrese su clave de activación permanente de 25 caracteres."
+    ]
+  },
 
-  // MICROSOFT VISIO PROFESSIONAL (2024, 2021, 2013)
+  // MICROSOFT VISIO PROFESSIONAL (2024, 2021, 2016, 2013)
   {
     id: "prod-visio-2024",
     slug: "visio-professional-2024",
@@ -802,8 +871,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.9,
     reviews: 51,
-    imageUrl: "/products/visio-2024.webp",
-    fallbackImage: "/products/visio-2024.png",
+    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqwkRv3F75ECPbyHQzXmRlXVLw7YwclHnb04KJKlFsmA&s=10",
+    fallbackImage: "/products/visio-2024.jpg",
     description: "Cree diagramas de flujo avanzados, organigramas, esquemas de red, planos de planta y modelos de ingeniería con más de 250,000 formas actualizadas.",
     features: [
       "Decenas de miles de formas y plantillas modernas para diagramación",
@@ -838,7 +907,7 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.8,
     reviews: 67,
-    imageUrl: "/products/visio-2021.webp",
+    imageUrl: "https://www.3clics.pe/images/stories/virtuemart/product/VISIO2021.png",
     fallbackImage: "/products/visio-2021.png",
     description: "Potente suite de diagramación técnica y empresarial. Diseñe mapas conceptuales, topologías de red e infraestructura IT con facilidad.",
     features: [
@@ -863,6 +932,40 @@ export const products: Product[] = [
     ]
   },
   {
+    id: "prod-visio-2016",
+    slug: "visio-professional-2016",
+    name: "Microsoft Visio Professional 2016",
+    category: "project-visio",
+    price: 35.00,
+    oldPrice: 59.90,
+    duration: "Permanente",
+    rating: 4.8,
+    reviews: 49,
+    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ_tsosgggozfh8YbnUNd7ddWKXXKn6ZfrwtfICOsY8daXI_gPrtAeaac&s=10",
+    fallbackImage: "/products/visio-2016.jpg",
+    description: "Cree diagramas técnicos, mapas conceptuales, organigramas corporativos y planos de planta con facilidad. Excelente rendimiento en equipos de especificaciones moderadas.",
+    features: [
+      "Plantillas especializadas para diagramación técnica y empresarial",
+      "Validación de procesos y diagramas de flujo según estándares de la industria",
+      "Compatible con Windows 7, Windows 8.1, Windows 10 y Windows 11",
+      "Licencia permanente de por vida para 1 PC",
+      "Activación oficial garantizada por 1 año con soporte técnico"
+    ],
+    compatibility: "Compatible con Windows 7, 8.1, 10 y 11 (32 y 64 bits)",
+    badge: "DIAGRAMAS 2016",
+    bestSeller: false,
+    featured: false,
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioPro2019Retail.img",
+    downloadLabel: "Descargar Imagen Oficial Visio 2016 (.IMG)",
+    isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
+    installationSteps: [
+      "Paso 1: Descargue el instalador .IMG oficial mediante el botón de descarga.",
+      "Paso 2: Monte el archivo .IMG con doble clic en Windows.",
+      "Paso 3: Abra 'Setup.exe' y permita que la instalación finalice.",
+      "Paso 4: Abra Visio 2016 e introduzca su clave de 25 caracteres para activar permanentemente."
+    ]
+  },
+  {
     id: "prod-visio-2013",
     slug: "visio-professional-2013",
     name: "Microsoft Visio Professional 2013",
@@ -872,8 +975,8 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.7,
     reviews: 43,
-    imageUrl: "/products/visio-2013.webp",
-    fallbackImage: "/products/visio-2013.png",
+    imageUrl: "https://www.3clics.pe/images/stories/virtuemart/product/61nZj+4OjqL._SL1500_.jpg",
+    fallbackImage: "/products/visio-2013.jpg",
     description: "Versión clásica, ágil y de muy bajo consumo de recursos de Microsoft Visio. Ideal para equipos con hardware ligero y versiones anteriores de Windows.",
     features: [
       "Diagramación de procesos, mapas conceptuales y organigramas clásicos",

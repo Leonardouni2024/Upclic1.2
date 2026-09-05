@@ -483,5 +483,41 @@ export const initialReviews: Review[] = [
     comment: 'Ideal para computadoras de bajo rendimiento en planta. Cumple perfectamente con su función y activa de por vida.',
     date: '05/08/2026',
     verifiedPurchase: true
+  },
+
+  // Office Standard 2021 (prod-office-standard-2021)
+  {
+    id: 'rev-std21-1',
+    productId: 'prod-office-standard-2021',
+    author: 'Daniela Salazar',
+    city: 'Lima',
+    rating: 5,
+    comment: 'Compré Office Standard 2021 para las computadoras de mi consultora. Activó a la primera y las apps funcionan a la perfección.',
+    date: '20/08/2026',
+    verifiedPurchase: true
+  },
+
+  // Project Professional 2016 (prod-project-2016)
+  {
+    id: 'rev-proj16-1',
+    productId: 'prod-project-2016',
+    author: 'Ing. Rodrigo Mendoza',
+    city: 'Arequipa',
+    rating: 5,
+    comment: 'Project 2016 es súper liviano y tiene todo lo necesario para diagramas de Gantt y control de obras. Clave 100% original.',
+    date: '17/08/2026',
+    verifiedPurchase: true
+  },
+
+  // Visio Professional 2016 (prod-visio-2016)
+  {
+    id: 'rev-vis16-1',
+    productId: 'prod-visio-2016',
+    author: 'Claudia Morales',
+    city: 'Trujillo',
+    rating: 5,
+    comment: 'Muy buena herramienta para diagramas de flujo y mapas de procesos. Activación inmediata y permanente.',
+    date: '22/08/2026',
+    verifiedPurchase: true
   }
 ];
