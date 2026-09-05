@@ -871,7 +871,7 @@ export const products: Product[] = [
     duration: "Permanente",
     rating: 4.9,
     reviews: 51,
-    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqwkRv3F75ECPbyHQzXmRlXVLw7YwclHnb04KJKlFsmA&s=10",
+    imageUrl: "/products/visio-2024.webp",
     fallbackImage: "/products/visio-2024.jpg",
     description: "Cree diagramas de flujo avanzados, organigramas, esquemas de red, planos de planta y modelos de ingeniería con más de 250,000 formas actualizadas.",
     features: [
