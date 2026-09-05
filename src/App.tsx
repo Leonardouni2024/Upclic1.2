@@ -11,6 +11,7 @@ import { CheckoutPage } from './components/CheckoutPage.tsx';
 import { CartDrawer } from './components/CartDrawer.tsx';
 import { FloatingMobileCart } from './components/FloatingMobileCart.tsx';
 import { LiveNotifications } from './components/LiveNotifications.tsx';
+import { WhatsAppButton } from './components/WhatsAppButton.tsx';
 import { ToastContainer } from './components/Toast.tsx';
 import { Footer } from './components/Footer.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
@@ -92,6 +93,7 @@ const AppContent: React.FC = () => {
 
       {/* 5-Second Auto-Rotating Demonstrative Testimonial Widget */}
       <LiveNotifications />
+        <WhatsAppButton />
 
       {/* Cart Reminder Notification */}
       <CartReminder />
