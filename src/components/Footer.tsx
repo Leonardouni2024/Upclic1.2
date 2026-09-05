@@ -191,17 +191,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
           <div className="flex flex-wrap items-center gap-3">
             <p>© {new Date().getFullYear()} UpClic. Todos los derechos reservados.</p>
-            {onOpenAdminOrders && (
-              <>
-                <span className="text-slate-700">•</span>
-                <button
-                  onClick={onOpenAdminOrders}
-                  className="text-slate-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1 font-bold text-[11px] bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800"
-                >
-                  <span>📋 Panel de Pedidos & Notificaciones</span>
-                </button>
-              </>
-            )}
           </div>
           <p className="flex items-center gap-1 text-slate-400">
             <span>Microsoft, Windows y Office son marcas registradas de Microsoft Corporation.</span>

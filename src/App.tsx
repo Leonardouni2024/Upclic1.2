@@ -16,13 +16,11 @@ import { Footer } from './components/Footer.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
 
 import { CartReminder } from './components/CartReminder.tsx';
-import { AdminOrdersModal } from './components/AdminOrdersModal.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug } = useCart();
   const [helpTopic, setHelpTopic] = useState<string | null>(null);
-  const [showAdminOrders, setShowAdminOrders] = useState(false);
   const [isUserOrdersModalOpen, setIsUserOrdersModalOpen] = useState(false);
 
   // Render main view based on current path
@@ -81,7 +79,6 @@ const AppContent: React.FC = () => {
       {/* Footer with UpClic branding, navigation links and payment badges */}
       <Footer
         onOpenHelpModal={(topic) => setHelpTopic(topic)}
-        onOpenAdminOrders={() => setShowAdminOrders(true)}
       />
 
       {/* Shopping Cart Drawer */}
@@ -102,8 +99,6 @@ const AppContent: React.FC = () => {
       {/* Help, FAQs & Legal Modal */}
       <HelpModal topic={helpTopic} onClose={() => setHelpTopic(null)} />
 
-      {/* Admin Orders & Email Notifications Modal */}
-      <AdminOrdersModal isOpen={showAdminOrders} onClose={() => setShowAdminOrders(false)} />
         <UserOrdersModal isOpen={isUserOrdersModalOpen} onClose={() => setIsUserOrdersModalOpen(false)} />
 
       {/* Intelligent AI Support & Recommendation Chatbot */}
