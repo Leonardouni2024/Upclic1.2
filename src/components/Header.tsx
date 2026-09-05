@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory, Product } from '../types.ts';
 import { searchProducts } from '../products.ts';
-import { Search, Menu, X, Star, ArrowRight, Sparkles, Layers, ShoppingCart } from 'lucide-react';
+import { Search, Menu, X, Star, ArrowRight, Sparkles, Layers, ShoppingCart, User } from 'lucide-react';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
-interface HeaderProps {}
+interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: boolean) => void; setIsHelpModalOpen?: (open: boolean) => void; }
 
-export const Header: React.FC<HeaderProps> = () => {
+export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
   const {
     totalQuantity,
     setIsCartOpen,
@@ -339,6 +339,15 @@ export const Header: React.FC<HeaderProps> = () => {
             </button>
 
             {/* Cart Button: Clean icon with counter badge (No "Carrito" text) */}
+            {/* User Orders Button */}
+            <button
+              onClick={() => onOpenUserOrders && onOpenUserOrders()}
+              className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-[#0066FF] transition-colors cursor-pointer hidden sm:block"
+              title="Mis Pedidos"
+            >
+              <User className="w-5 h-5" />
+            </button>
+
             <button
               id="cart-header-btn"
               onClick={() => setIsCartOpen(true)}

@@ -151,7 +151,7 @@ export const products: Product[] = [
     badge: "MÁS VENDIDO",
     bestSeller: true,
     featured: true,
-    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2021Retail.img",
+    downloadUrl: "https://archive.org/download/microsoft-office-ltsc-2021-professional-plus-standard-visio-project-16.0.14332.20416/Microsoft%20Office%20LTSC%202021%20Professional%20Plus%20_%20Standard%20%2B%20Visio%20%2B%20Project%2016.0.14332.20416.iso",
     downloadLabel: "Descargar Imagen Oficial Office 2021 (.IMG)",
     isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
     installationSteps: [
@@ -255,7 +255,7 @@ export const products: Product[] = [
     badge: undefined,
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://officecdn.microsoft.com/pr/39168D7E-077B-48E7-8728-0E25E0E51512/media/es-es/ProPlusRetail.img",
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlusRetail.img",
     downloadLabel: "Descargar Imagen Oficial Office 2016 (.IMG)",
     isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
     installationSteps: [
@@ -849,7 +849,7 @@ export const products: Product[] = [
     badge: "PROYECTOS 2016",
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2019Retail.img",
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectProRetail.img",
     downloadLabel: "Descargar Imagen Oficial Project 2016 (.IMG)",
     isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
     installationSteps: [
@@ -955,7 +955,7 @@ export const products: Product[] = [
     badge: "DIAGRAMAS 2016",
     bestSeller: false,
     featured: false,
-    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioPro2019Retail.img",
+    downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioProRetail.img",
     downloadLabel: "Descargar Imagen Oficial Visio 2016 (.IMG)",
     isoFormat: "Imagen de Disco (.IMG) Oficial Microsoft CDN en Español",
     installationSteps: [

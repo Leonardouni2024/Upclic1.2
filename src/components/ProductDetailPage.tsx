@@ -59,8 +59,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     ? product.variants.find(v => v.id === selectedVariantId) || product.variants[0]
     : undefined;
 
+  
   const activePrice = currentVariant ? currentVariant.price : product.price;
   const activeOldPrice = currentVariant ? currentVariant.oldPrice : product.oldPrice;
+  const discountPercent = activeOldPrice && activeOldPrice > activePrice 
+    ? Math.round(((activeOldPrice - activePrice) / activeOldPrice) * 100) 
+    : 0;
+
 
   // Synchronize dynamic SEO title, meta description, and OpenGraph social share tags
   useEffect(() => {

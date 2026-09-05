@@ -34,8 +34,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? product.variants.find(v => v.id === selectedVariantId) || product.variants[0]
     : undefined;
 
+  
   const activePrice = currentVariant ? currentVariant.price : product.price;
   const activeOldPrice = currentVariant ? currentVariant.oldPrice : product.oldPrice;
+  const discountPercent = activeOldPrice && activeOldPrice > activePrice 
+    ? Math.round(((activeOldPrice - activePrice) / activeOldPrice) * 100) 
+    : 0;
+
 
   const handleImageError = () => {
     if (imgSrc !== product.fallbackImage) {
@@ -71,6 +76,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           ) : (
             <div></div>
+          )}
+          
+          {/* Discount Badge */}
+          {discountPercent > 0 && (
+            <span className="px-2 py-1 bg-red-500 text-white text-[10px] font-black rounded-lg shadow-2xs border border-white/20">
+              -{discountPercent}%
+            </span>
           )}
 
           {product.cloudStorage && (

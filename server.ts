@@ -900,6 +900,31 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
 });
 
 // Endpoint to view captured customer orders & emails (for administrator)
+
+// Endpoint for users to lookup their orders
+app.get("/api/orders/lookup", (req, res) => {
+  const email = req.query.email?.toString().toLowerCase().trim();
+  const orderId = req.query.id?.toString().trim();
+  
+  if (!email && !orderId) {
+    return res.status(400).json({ success: false, message: "Provide email or order ID" });
+  }
+
+  const orders = loadStoredOrders();
+  const matchedOrders = orders.filter(o => {
+    let match = false;
+    if (email && o.customerEmail && o.customerEmail.toLowerCase() === email) match = true;
+    if (orderId && o.id === orderId) match = true;
+    if (orderId && o.paymentId === orderId) match = true;
+    return match;
+  });
+
+  res.json({
+    success: true,
+    orders: matchedOrders
+  });
+});
+
 app.get("/api/orders", (_req, res) => {
   const orders = loadStoredOrders();
   res.json({

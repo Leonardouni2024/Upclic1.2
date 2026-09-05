@@ -37,18 +37,18 @@ export const Hero: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto">
           {/* Título Principal */}
           <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#0f172a] tracking-tight leading-tight sm:leading-tight">
-            Licencias Microsoft <br className="hidden sm:inline" />
+            Software Original y Seguro <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-[#0066FF] via-[#0284c7] to-[#0047BA]">
-              para tu PC
+              para Profesionales
             </span>
           </h1>
 
           {/* Subtítulo */}
           <p className="mt-3 sm:mt-5 text-sm xs:text-base sm:text-lg md:text-xl text-slate-600 font-medium max-w-2xl mx-auto leading-relaxed">
-            Office y Windows con entrega digital y atención personalizada.
+            Windows, Office, Project, Visio y más. Entrega digital inmediata y garantía total.
           </p>
 
-          {/* Action Buttons: Ver Office / Ver Windows */}
+          {/* Action Buttons: Ver Catálogo Microsoft / Explorar Software */}
           <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
             <button
               id="btn-hero-office"

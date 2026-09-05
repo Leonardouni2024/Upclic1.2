@@ -10,18 +10,20 @@ import { ProductDetailPage } from './components/ProductDetailPage.tsx';
 import { CheckoutPage } from './components/CheckoutPage.tsx';
 import { CartDrawer } from './components/CartDrawer.tsx';
 import { FloatingMobileCart } from './components/FloatingMobileCart.tsx';
-import { FloatingTestimonials } from './components/FloatingTestimonials.tsx';
+import { LiveNotifications } from './components/LiveNotifications.tsx';
 import { ToastContainer } from './components/Toast.tsx';
 import { Footer } from './components/Footer.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
 import { AIAssistantChat } from './components/AIAssistantChat.tsx';
 import { CartReminder } from './components/CartReminder.tsx';
 import { AdminOrdersModal } from './components/AdminOrdersModal.tsx';
+import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug } = useCart();
   const [helpTopic, setHelpTopic] = useState<string | null>(null);
   const [showAdminOrders, setShowAdminOrders] = useState(false);
+  const [isUserOrdersModalOpen, setIsUserOrdersModalOpen] = useState(false);
 
   // Render main view based on current path
   const renderMainContent = () => {
@@ -69,7 +71,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] text-[#0f172a] font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Sticky Header with Navigation, Live Search and Cart Counter */}
-      <Header />
+      <Header onOpenUserOrders={() => setIsUserOrdersModalOpen(true)} />
 
       {/* Dynamic View Content */}
       <div className="flex-1">
@@ -89,7 +91,7 @@ const AppContent: React.FC = () => {
       <FloatingMobileCart />
 
       {/* 5-Second Auto-Rotating Demonstrative Testimonial Widget */}
-      <FloatingTestimonials />
+      <LiveNotifications />
 
       {/* Cart Reminder Notification */}
       <CartReminder />
@@ -102,6 +104,7 @@ const AppContent: React.FC = () => {
 
       {/* Admin Orders & Email Notifications Modal */}
       <AdminOrdersModal isOpen={showAdminOrders} onClose={() => setShowAdminOrders(false)} />
+        <UserOrdersModal isOpen={isUserOrdersModalOpen} onClose={() => setIsUserOrdersModalOpen(false)} />
 
       {/* Intelligent AI Support & Recommendation Chatbot */}
       <AIAssistantChat />
