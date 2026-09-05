@@ -45,6 +45,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
     product.variants && product.variants.length > 0 ? product.variants[0].id : 'oem'
   );
+  
+  const [showScarcity, setShowScarcity] = useState<{ show: boolean, count: number }>({ show: false, count: 0 });
+
+  useEffect(() => {
+    // Generate scarcity badge after 15-20 seconds on the page
+    const timer = setTimeout(() => {
+      // Random count between 2 and 6
+      const randomCount = Math.floor(Math.random() * 5) + 2;
+      setShowScarcity({ show: true, count: randomCount });
+    }, 15000);
+    return () => clearTimeout(timer);
+  }, [product.id]);
 
   // Reset selected variant only when navigating to a different product
   useEffect(() => {
@@ -433,10 +445,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                   {/* Scarcity & Trust Indicators */}
                   <div className="flex flex-col gap-3 my-4">
-                    <div className="flex items-center gap-2 text-sm font-bold text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100">
-                      <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
-                      ¡Date prisa! Quedan solo 3 licencias a este precio.
-                    </div>
+                    {showScarcity.show && (
+                      <div className="flex items-center gap-2 text-sm font-bold text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 animate-in fade-in slide-in-from-top-2 duration-500">
+                        <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
+                        ¡Date prisa! Quedan solo {showScarcity.count} licencias a este precio.
+                      </div>
+                    )}
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600 mt-2">
                       <div className="flex items-center gap-1.5">

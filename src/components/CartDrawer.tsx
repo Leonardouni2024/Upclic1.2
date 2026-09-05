@@ -267,7 +267,35 @@ export const CartDrawer: React.FC = () => {
           {/* Drawer Footer with Promo Code, Totals and Checkout CTA */}
           {items.length > 0 && (
             <div className="p-5 sm:p-6 bg-slate-50/90 border-t border-slate-200/80">
-              {/* Promo Code Section */}
+              {/* Dynamic Coupon Banner */}
+          {(() => {
+            try {
+              const dyn = localStorage.getItem('upclic_dynamic_coupon');
+              if (dyn && !isCouponApplied && totalQuantity < 2) {
+                const parsed = JSON.parse(dyn);
+                if (parsed.expiresAt > Date.now()) {
+                  const mins = Math.ceil((parsed.expiresAt - Date.now()) / 60000);
+                  return (
+                    <div className="mx-6 mb-4 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-bold text-blue-800">Tienes un cupón de {parsed.discountPercent}% OFF</p>
+                        <p className="text-[10px] text-blue-600">Código: <span className="font-bold">{parsed.code}</span> (Expira en {mins} min)</p>
+                      </div>
+                      <button 
+                        onClick={() => applyCoupon(parsed.code)}
+                        className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Aplicar
+                      </button>
+                    </div>
+                  );
+                }
+              }
+            } catch(e) {}
+            return null;
+          })()}
+
+          {/* Promo Code Section */}
               <div className="mb-4 pb-4 border-b border-slate-200">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">

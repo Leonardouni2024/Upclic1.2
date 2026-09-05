@@ -1008,15 +1008,24 @@ export const products: Product[] = [
 export const MIN_PRICE_FOR_COUPON = 40.00;
 export const MIN_PRICE_FOR_30_COUPON = 40.00; // Alias para compatibilidad
 
+export interface DynamicCoupon {
+  code: string;
+  discountPercent: number; // e.g. 5 for 5%
+  expiresAt: number; // timestamp
+}
+
 export function calculateCartTotals(
   items: { product: Product; quantity: number; unitPrice?: number; variantName?: string }[],
-  appliedCoupon?: string
+  appliedCoupon?: string,
+  dynamicCoupon?: DynamicCoupon | null
 ): CartTotals {
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + (item.unitPrice ?? item.product.price) * item.quantity, 0);
 
   const cleanCoupon = appliedCoupon ? appliedCoupon.trim().toUpperCase() : '';
   const isCouponValid = cleanCoupon === PROMO_COUPON_CODE;
+  const isDynamicCouponValid = dynamicCoupon && cleanCoupon === dynamicCoupon.code.toUpperCase() && dynamicCoupon.expiresAt > Date.now();
+  
   const isMultiItem = totalQuantity >= 2;
 
   let discountRate = 0;
@@ -1035,6 +1044,9 @@ export function calculateCartTotals(
     if (isCouponValid) {
       isCouponApplied = true;
       discountReason = '10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)';
+    } else if (isDynamicCouponValid) {
+      isCouponApplied = true;
+      discountReason = `10% de descuento por llevar 2 o más productos (Cupón ${dynamicCoupon.code} activo - descuentos no acumulables)`;
     } else {
       discountReason = '10% de descuento por llevar 2 o más productos';
     }
@@ -1056,6 +1068,12 @@ export function calculateCartTotals(
       isCouponApplied = false;
       discountReason = 'El cupón del 10% solo aplica a productos con precio desde S/ 40.00 (no aplicable a productos de menor precio)';
     }
+  } else if (isDynamicCouponValid) {
+    hasDiscount = true;
+    discountRate = dynamicCoupon.discountPercent / 100;
+    isCouponApplied = true;
+    discountAmount = Number((subtotal * discountRate).toFixed(2));
+    discountReason = `Cupón ${dynamicCoupon.code}: ${dynamicCoupon.discountPercent}% de descuento especial`;
   }
 
   const total = Number(Math.max(0, subtotal - discountAmount).toFixed(2));

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals } from '../types.ts';
-import { calculateCartTotals, PROMO_COUPON_CODE, PROMO_COUPON_EXPIRATION_DAYS, MIN_PRICE_FOR_COUPON } from '../products.ts';
+import { calculateCartTotals, PROMO_COUPON_CODE, DynamicCoupon, PROMO_COUPON_EXPIRATION_DAYS, MIN_PRICE_FOR_COUPON } from '../products.ts';
 
 interface ToastData {
   id: string;
@@ -73,6 +73,47 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
+  const [dynamicCoupon, setDynamicCoupon] = useState<DynamicCoupon | null>(() => {
+    try {
+      const saved = localStorage.getItem('upclic_dynamic_coupon');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.expiresAt > Date.now()) {
+          return parsed;
+        } else {
+          localStorage.removeItem('upclic_dynamic_coupon');
+        }
+      }
+    } catch(e) {}
+    return null;
+  });
+
+  // Dynamic Coupon generation logic
+  useEffect(() => {
+    if (items.length > 0 && !dynamicCoupon) {
+      const timer = setTimeout(() => {
+        // Only if they haven't applied a better multi-item discount
+        const qty = items.reduce((sum, item) => sum + item.quantity, 0);
+        if (qty < 2) {
+          const discountPercent = Math.floor(Math.random() * 4) + 3; // 3, 4, 5, or 6
+          const code = `FLASH${Math.floor(Math.random() * 1000)}X`;
+          const expiresAt = Date.now() + 30 * 60 * 1000;
+          const newCoupon = { code, discountPercent, expiresAt };
+          
+          setDynamicCoupon(newCoupon);
+          localStorage.setItem('upclic_dynamic_coupon', JSON.stringify(newCoupon));
+          
+          addToast({
+            type: 'discount',
+            title: '🎁 Cupón Especial Activo',
+            message: `¡Usa el código ${code} en tu carrito y obtén ${discountPercent}% extra! Válido por 30 min.`
+          });
+        }
+      }, 20000); // 20 seconds after having an item in cart
+      
+      return () => clearTimeout(timer);
+    }
+  }, [items, dynamicCoupon]);
   const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastData[]>([]);
@@ -405,7 +446,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems([]);
   };
 
-  const totals: CartTotals = calculateCartTotals(items, appliedCoupon);
+  const totals: CartTotals = calculateCartTotals(items, appliedCoupon, dynamicCoupon);
 
   const navigateToProduct = (slug: string) => {
     const target = `/producto/${slug}`;
