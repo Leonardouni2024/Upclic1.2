@@ -120,14 +120,14 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                     
                     <div className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0 ${
                       order.status === 'paid' ? 'bg-green-50 text-green-700 border border-green-200' :
-                      order.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                      ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                       'bg-slate-50 text-slate-700 border border-slate-200'
                     }`}>
                       {order.status === 'paid' ? <CheckCircle2 className="w-3.5 h-3.5" /> : 
-                       order.status === 'pending' ? <Clock className="w-3.5 h-3.5" /> : 
+                       ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? <Clock className="w-3.5 h-3.5" /> : 
                        <AlertCircle className="w-3.5 h-3.5" />}
                       {order.status === 'paid' ? 'PAGADO Y ENTREGADO' : 
-                       order.status === 'pending' ? 'PENDIENTE DE PAGO' : 'CANCELADO'}
+                       ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? 'PENDIENTE DE PAGO' : 'CANCELADO'}
                     </div>
                   </div>
 
