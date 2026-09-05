@@ -70,14 +70,14 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Ingresa tu correo electrónico o ID de transacción..."
-                className="w-full pl-12 pr-32 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
+                placeholder="Ingresa tu correo o ID de transacción..."
+                className="w-full pl-10 pr-[88px] sm:pl-12 sm:pr-32 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
               />
-              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-4" />
+              <Search className="w-5 h-5 text-slate-400 absolute left-3 sm:left-4 top-3 sm:top-4" />
               <button
                 type="submit"
                 disabled={loading || !searchTerm.trim()}
-                className="absolute right-2 top-2 bottom-2 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
+                className="absolute right-1.5 sm:right-2 top-1.5 sm:top-2 bottom-1.5 sm:bottom-2 px-4 sm:px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
               >
                 {loading ? 'Buscando...' : 'Buscar'}
               </button>

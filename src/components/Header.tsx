@@ -342,10 +342,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             {/* User Orders Button */}
             <button
               onClick={() => onOpenUserOrders && onOpenUserOrders()}
-              className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-[#0066FF] transition-colors cursor-pointer hidden sm:block"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-[#0066FF] transition-colors cursor-pointer"
               title="Mis Pedidos"
             >
-              <User className="w-5 h-5" />
+              <User className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
             </button>
 
             <button
