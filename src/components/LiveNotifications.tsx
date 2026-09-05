@@ -71,7 +71,7 @@ export const LiveNotifications: React.FC = () => {
           if (product && product.price > 20) {
             setOfferNotif({
               title: 'Oferta Especial para ti 🎁',
-              message: `Lleva ${product.name} con 10% adicional usando el cupón PRIMUPCLIC.`,
+              message: `Lleva ${product.name} con un 10% de descuento al agregar otro producto a tu carrito.`,
               productName: product.name
             });
             playNotificationSound();

@@ -7,7 +7,7 @@ import { createServer as createViteServer } from "vite";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { GoogleGenAI } from "@google/genai";
 import { initialReviews } from "./src/initialReviews.ts";
-import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE } from "./src/products.ts";
+import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from "./src/products.ts";
 import { sendOrderEmails, getTransporter, sendEmailWithFallback, diagnoseEmailStrategies } from "./emailService.ts";
 
 const app = express();
@@ -67,7 +67,6 @@ DETALLES TÉCNICOS Y DE COMPRA QUE DEBES EXPLICAR DIRECTAMENTE:
 - Microsoft 365: Cuenta oficial con usuario y contraseña (hasta 5 dispositivos + 100 GB en OneDrive).
 - Medios de pago: Yape, Plin, transferencias (BCP, BBVA, Interbank) y tarjetas con Mercado Pago.
 - Promociones:
-  * Cupón "${PROMO_COUPON_CODE}": 10% de descuento en compras desde S/ 40.00.
   * 10% de descuento automático al llevar 2 o más productos.
 - Garantía: 6 meses a 1 año de garantía oficial.
 
@@ -449,7 +448,7 @@ app.post("/api/chat", async (req, res) => {
       } else if (asksForAdmin) {
         reply = `¡Con mucho gusto! Puede comunicarse directamente con nuestro **Administrador Oficial y Soporte Técnico** por WhatsApp para atención personalizada, cotizaciones corporativas con RUC o asistencia remota:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Atención rápida:** Lunes a Domingo de 8:00 AM a 11:00 PM.`;
       } else if (cleanLower.includes("cupón") || cleanLower.includes("descuento") || cleanLower.includes("promocion") || cleanLower.includes("oferta")) {
-        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n1. 🎁 **Cupón especial:** Aplique el código **\`${PROMO_COUPON_CODE}\`** en el carrito y obtenga **10% de descuento** en compras de productos desde S/ 40.00.\n2. 🔥 **Descuento por volumen:** Al llevar 2 o más productos, el carrito le aplica un **10% de descuento automático**.\n\n¿Desea que le recomiende alguna combinación en combo con super ahorro?`;
+        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n🔥 **Descuento por volumen automático:** Al llevar 2 o más licencias, el carrito le aplicará un **10% de descuento automático**.\n🎁 **Cupones Flash sorpresa:** Navegue por nuestra tienda o agregue un producto al carrito, y podría recibir un cupón aleatorio con un descuento especial.\n\n¿Desea que le recomiende alguna combinación de licencias?`;
       } else if (cleanLower.includes("instalar") || cleanLower.includes("activar") || cleanLower.includes("descarga") || cleanLower.includes("como funciona")) {
         reply = `⚡ **El proceso de compra y activación en UpClic es súper rápido:**\n\n1. **Selección:** Elige su versión de Office o Windows y completa el pago (Yape, Plin, BCP, BBVA, Interbank o Mercado Pago).\n2. **Entrega Inmediata:** Recibe su clave original de 25 caracteres y el enlace de descarga oficial de Microsoft por correo y WhatsApp.\n3. **Descarga e Instalación:** Descarga la imagen ISO/IMG oficial e ingresa su clave para activación permanente.\n4. **Garantía:** Cuenta con 6 meses a 1 año de garantía y soporte técnico incluido.\n\nSi necesita asistencia guiada, nuestro administrador está listo para ayudarle en WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
       } else if (cleanLower.includes("office") || cleanLower.includes("word") || cleanLower.includes("excel")) {

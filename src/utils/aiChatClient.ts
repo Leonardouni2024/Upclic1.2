@@ -1,4 +1,4 @@
-import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, PROMO_COUPON_CODE, MERCADO_PAGO_URL } from '../products.ts';
+import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY, MERCADO_PAGO_URL } from '../products.ts';
 import { Product } from '../types.ts';
 
 export interface LocalChatResponse {
@@ -192,7 +192,7 @@ export function generateLocalChatReply(message: string, history?: Array<{ role: 
     norm.includes('precio')
   ) {
     return {
-      reply: `¡Tenemos promociones imperdibles para que compres al mejor precio! 🎉\n\n🎁 **Cupón especial de apertura:** Aplica el código **\`${PROMO_COUPON_CODE}\`** en tu carrito de compras y obtén un **10% de descuento** en compras a partir de S/ 40.00.\n🔥 **Descuento automático por volumen:** Al llevar 2 o más licencias en tu carrito, el sistema te aplica un **10% de descuento adicional automático**.\n💥 **Combos ahorro:** Nuestros combos de Windows + Office ya tienen un ahorro de más de S/ 40.00 incluido.\n\n¿Qué software necesitas para tu equipo?`,
+      reply: `¡Tenemos promociones imperdibles para que compres al mejor precio! 🎉\n\n🔥 **Descuento automático por volumen:** Al llevar 2 o más licencias en tu carrito, el sistema te aplica un **10% de descuento adicional automático**.\n💥 **Combos ahorro:** Nuestros combos de Windows + Office ya tienen un ahorro de más de S/ 40.00 incluido.\n\n¿Qué software necesitas para tu equipo?`,
       suggestedProducts: products.filter(p => p.featured || p.bestSeller).slice(0, 3).map(p => ({
         id: p.id,
         slug: p.slug,

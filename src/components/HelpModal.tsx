@@ -52,7 +52,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los descuentos?</h4>
               <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
                 <p>• <strong className="text-emerald-700">10% automático por volumen:</strong> Aplica directo al tener 2 o más productos en el carrito.</p>
-                <p>• <strong className="text-[#0066FF]">Cupón PRIMUPCLIC:</strong> 10% de descuento en productos con precio desde S/ 40.00.</p>
+                
                 <p className="text-[11px] text-slate-500 italic">Los descuentos no son acumulables entre sí; se aplica el mayor beneficio disponible.</p>
               </div>
             </div>

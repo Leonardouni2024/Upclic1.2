@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { X, Trash2, Plus, Minus, ArrowRight, Sparkles, ShoppingBag, ShieldCheck, Tag, CheckCircle2, AlertCircle } from 'lucide-react';
-import { PROMO_COUPON_CODE, MIN_PRICE_FOR_COUPON } from '../products.ts';
+
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -35,7 +35,7 @@ export const CartDrawer: React.FC = () => {
   const isEligibleForCoupon =
     !appliedCoupon &&
     !isMultiItemDiscount &&
-    items.some(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
+    true;
 
   if (!isCartOpen) return null;
 
@@ -105,7 +105,7 @@ export const CartDrawer: React.FC = () => {
                     <div className="font-extrabold text-[12px] leading-tight">
                       {isMultiItemDiscount
                         ? '¡10% de descuento aplicado por llevar 2 o más productos!'
-                        : '¡10% de descuento aplicado con cupón PRIMUPCLIC!'}
+                        : 'Descuento aplicado'}
                     </div>
                     <div className="text-[10px] font-normal text-slate-600 mt-0.5">
                       {discountReason} • <span className="font-semibold">Descuentos no combinables</span>
@@ -302,15 +302,7 @@ export const CartDrawer: React.FC = () => {
                     <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
                     ¿Tienes un cupón promocional?
                   </span>
-                  {isEligibleForCoupon && (
-                    <button
-                      type="button"
-                      onClick={() => applyCoupon(PROMO_COUPON_CODE)}
-                      className="text-[10px] font-bold text-[#0066FF] hover:underline cursor-pointer bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
-                    >
-                      Usar {PROMO_COUPON_CODE} (-10%)
-                    </button>
-                  )}
+
                 </div>
 
                 {appliedCoupon ? (

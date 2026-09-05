@@ -391,7 +391,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-linear-to-r from-blue-50/90 to-sky-50/80 border border-blue-200 text-[11px] sm:text-xs font-bold text-[#0066FF] flex items-center gap-2 shadow-2xs">
                   <span className="text-base shrink-0">🔥</span>
                   <span className="leading-snug">
-                    ¡Lleva 2 o más productos y obtén <span className="text-emerald-700 underline font-black">10% de descuento</span>! O usa el cupón <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 text-[#0066FF] font-mono">PRIMUPCLIC</code> para 10% de descuento (en productos desde S/ 40.00).
+                    ¡Lleva 2 o más productos y obtén <span className="text-emerald-700 underline font-black">10% de descuento</span> automáticamente en todo tu carrito!
                   </span>
                 </div>
 

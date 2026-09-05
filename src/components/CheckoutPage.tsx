@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import {
   MERCADO_PAGO_URL,
-  PROMO_COUPON_CODE,
-  MIN_PRICE_FOR_COUPON,
+
   WHATSAPP_NUMBER,
   WHATSAPP_DISPLAY
 } from '../products.ts';
@@ -59,7 +58,7 @@ export const CheckoutPage: React.FC = () => {
   const isEligibleForCoupon =
     !appliedCoupon &&
     !isMultiItemDiscount &&
-    items.some(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
+    true;
 
   const [isCreatingPreference, setIsCreatingPreference] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -629,15 +628,7 @@ export const CheckoutPage: React.FC = () => {
                     <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
                     ¿Tienes un cupón de descuento?
                   </span>
-                  {isEligibleForCoupon && (
-                    <button
-                      type="button"
-                      onClick={() => applyCoupon(PROMO_COUPON_CODE)}
-                      className="text-[10px] font-bold text-[#0066FF] hover:underline cursor-pointer bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
-                    >
-                      Usar {PROMO_COUPON_CODE} (-10%)
-                    </button>
-                  )}
+
                 </div>
 
                 {appliedCoupon ? (

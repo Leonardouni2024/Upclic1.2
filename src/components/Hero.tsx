@@ -30,7 +30,7 @@ export const Hero: React.FC = () => {
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-linear-to-r from-[#0066FF] to-[#0047BA] text-white text-[10px] xs:text-[11px] sm:text-xs font-black shadow-xs shadow-blue-500/20 border border-blue-400/30 uppercase tracking-wider text-center"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0" />
-            <span>🔥 10% OFF llevando 2 o más • Cupón 10% (desde S/ 40.00): PRIMUPCLIC</span>
+            <span>🔥 10% OFF automático llevando 2 o más productos</span>
           </div>
         </div>
 

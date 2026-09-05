@@ -5,10 +5,7 @@ export const WHATSAPP_NUMBER = "51983204384";
 export const WHATSAPP_DISPLAY = "+51 983 204 384";
 
 // Código promocional oficial de apertura (10% de descuento en productos desde S/ 40.00, 30 días de vigencia)
-export const PROMO_COUPON_CODE = "PRIMUPCLIC";
-export const PROMO_COUPON_DISCOUNT = 0.10; // 10%
 export const MULTI_ITEM_DISCOUNT = 0.10; // 10% si lleva 2 o más productos
-export const PROMO_COUPON_EXPIRATION_DAYS = 30;
 
 // Enlace oficial e inalterable de Mercado Pago según requerimiento
 export const MERCADO_PAGO_URL = "https://link.mercadopago.com.pe/iptvfuxionpago";
@@ -1005,8 +1002,6 @@ export const products: Product[] = [
 // - Si lleva 2 o más productos: descuento del 10% (no combinable)
 // - Código promocional 'PRIMUPCLIC': 10% de descuento (expiración 30 días por apertura)
 // - REGLA OBLIGATORIA: El descuento de cupón del 10% solo aplica a productos desde S/ 40.00
-export const MIN_PRICE_FOR_COUPON = 40.00;
-export const MIN_PRICE_FOR_30_COUPON = 40.00; // Alias para compatibilidad
 
 export interface DynamicCoupon {
   code: string;
@@ -1023,7 +1018,6 @@ export function calculateCartTotals(
   const subtotal = items.reduce((sum, item) => sum + (item.unitPrice ?? item.product.price) * item.quantity, 0);
 
   const cleanCoupon = appliedCoupon ? appliedCoupon.trim().toUpperCase() : '';
-  const isCouponValid = cleanCoupon === PROMO_COUPON_CODE;
   const isDynamicCouponValid = dynamicCoupon && cleanCoupon === dynamicCoupon.code.toUpperCase() && dynamicCoupon.expiresAt > Date.now();
   
   const isMultiItem = totalQuantity >= 2;
@@ -1036,39 +1030,20 @@ export function calculateCartTotals(
   let discountAmount = 0;
 
   if (isMultiItem) {
-    // 2 o más productos: 10% de descuento
+    // 2 o más productos: 10% de descuento automático
     hasDiscount = true;
-    discountRate = MULTI_ITEM_DISCOUNT; // 0.10
+    discountRate = 0.10;
     isMultiItemDiscount = true;
     discountAmount = Number((subtotal * discountRate).toFixed(2));
-    if (isCouponValid) {
-      isCouponApplied = true;
-      discountReason = '10% de descuento por llevar 2 o más productos (Cupón PRIMUPCLIC activo - descuentos no acumulables)';
-    } else if (isDynamicCouponValid) {
+    
+    if (isDynamicCouponValid) {
       isCouponApplied = true;
       discountReason = `10% de descuento por llevar 2 o más productos (Cupón ${dynamicCoupon.code} activo - descuentos no acumulables)`;
     } else {
-      discountReason = '10% de descuento por llevar 2 o más productos';
-    }
-  } else if (isCouponValid) {
-    // Cupón PRIMUPCLIC 10%: solo aplica a productos con precio >= S/ 40.00
-    const eligibleItems = items.filter(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
-    const eligibleSubtotal = eligibleItems.reduce((sum, item) => sum + (item.unitPrice ?? item.product.price) * item.quantity, 0);
-
-    if (eligibleItems.length > 0) {
-      hasDiscount = true;
-      discountRate = PROMO_COUPON_DISCOUNT; // 0.10
-      isCouponApplied = true;
-      discountAmount = Number((eligibleSubtotal * discountRate).toFixed(2));
-      discountReason = 'Cupón PRIMUPCLIC: 10% de descuento en productos desde S/ 40.00';
-    } else {
-      hasDiscount = false;
-      discountRate = 0;
-      discountAmount = 0;
-      isCouponApplied = false;
-      discountReason = 'El cupón del 10% solo aplica a productos con precio desde S/ 40.00 (no aplicable a productos de menor precio)';
+      discountReason = '10% de descuento automático por llevar 2 o más productos';
     }
   } else if (isDynamicCouponValid) {
+    // Solo aplica el cupón dinámico
     hasDiscount = true;
     discountRate = dynamicCoupon.discountPercent / 100;
     isCouponApplied = true;

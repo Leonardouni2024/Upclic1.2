@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals } from '../types.ts';
-import { calculateCartTotals, PROMO_COUPON_CODE, DynamicCoupon, PROMO_COUPON_EXPIRATION_DAYS, MIN_PRICE_FOR_COUPON } from '../products.ts';
+import { calculateCartTotals, DynamicCoupon } from '../products.ts';
 
 interface ToastData {
   id: string;
@@ -211,46 +211,29 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCouponFeedback({ type: 'error', message: msg });
       return { success: false, message: msg };
     }
-
-    if (clean === PROMO_COUPON_CODE) {
-      setAppliedCoupon(PROMO_COUPON_CODE);
-      const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
-
-      let msg = '';
-      if (totalQty >= 2) {
-        msg = 'Código PRIMUPCLIC activado. ¡Por llevar 2 o más productos tienes el 10% de descuento aplicado! (Los descuentos no son combinables)';
-        setCouponFeedback({ type: 'info', message: msg });
-        addToast({
-          type: 'coupon',
-          title: '✓ Código PRIMUPCLIC reconocido',
-          message: 'Descuento del 10% aplicado por 2 o más productos (No combinable).'
-        });
+    
+    // Check if it's the dynamic coupon
+    if (dynamicCoupon && clean === dynamicCoupon.code.toUpperCase()) {
+      if (dynamicCoupon.expiresAt > Date.now()) {
+        setAppliedCoupon(clean);
+        try {
+          localStorage.setItem(COUPON_STORAGE_KEY, clean);
+        } catch {}
+        
+        const msg = `¡Cupón de ${dynamicCoupon.discountPercent}% aplicado correctamente!`;
+        setCouponFeedback({ type: 'success', message: msg });
+        addToast({ type: 'discount', title: '🎉 ¡Cupón aplicado!', message: msg });
+        return { success: true, message: msg };
       } else {
-        const eligibleItems = items.filter(item => (item.unitPrice ?? item.product.price) >= MIN_PRICE_FOR_COUPON);
-        if (items.length > 0 && eligibleItems.length === 0) {
-          msg = `Cupón PRIMUPCLIC reconocido, pero solo aplica a productos con precio desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)}.`;
-          setCouponFeedback({ type: 'error', message: msg });
-          addToast({
-            type: 'info',
-            title: 'Aviso de Cupón',
-            message: `El 10% de descuento solo aplica a productos desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)}.`
-          });
-        } else {
-          msg = `¡Código PRIMUPCLIC aplicado! 10% de descuento en productos desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)} (válido por ${PROMO_COUPON_EXPIRATION_DAYS} días).`;
-          setCouponFeedback({ type: 'success', message: msg });
-          addToast({
-            type: 'coupon',
-            title: '🎉 ¡Cupón PRIMUPCLIC aplicado!',
-            message: `10% de descuento en productos desde S/ ${MIN_PRICE_FOR_COUPON.toFixed(2)}.`
-          });
-        }
+        const msg = 'El cupón especial ha expirado.';
+        setCouponFeedback({ type: 'error', message: msg });
+        return { success: false, message: msg };
       }
-      return { success: true, message: msg };
-    } else {
-      const msg = `El código "${code}" no es válido. Prueba con el cupón de apertura: PRIMUPCLIC`;
-      setCouponFeedback({ type: 'error', message: msg });
-      return { success: false, message: msg };
     }
+    
+    const msg = `El código "${code}" no es válido o ha expirado.`;
+    setCouponFeedback({ type: 'error', message: msg });
+    return { success: false, message: msg };
   };
 
   const removeCoupon = () => {
