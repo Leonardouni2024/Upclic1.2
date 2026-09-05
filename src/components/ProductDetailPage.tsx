@@ -120,32 +120,32 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         ? '¿Cómo recibiré mi acceso a Office 365 Profesional?'
         : '¿Cómo y cuándo recibiré mi licencia de software?',
       a: product.isAccountAccess
-        ? 'Al completar tu pago en línea con Mercado Pago, el sistema te redirige de forma automática a nuestro WhatsApp oficial con tu orden en estado PAGADO y tu número de transacción. Validamos tu compra y te enviamos tus credenciales oficiales de acceso y guía paso a paso en 5 a 15 minutos.'
-        : 'Al completar tu pago en línea con Mercado Pago, el sistema te redirige de forma automática a nuestro WhatsApp oficial con tu pedido en estado PAGADO y tu número de transacción. Te entregamos tu clave original de 25 caracteres, enlaces de descarga oficial de Microsoft y guía de instalación en 5 a 15 minutos.'
+        ? 'Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con sus credenciales oficiales de acceso y la guía paso a paso.'
+        : 'Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con su clave original de 25 caracteres, enlaces de descarga oficial de Microsoft y guía de instalación.'
     },
     {
       q: '¿Cómo se realiza el pago?',
-      a: 'El proceso está 100% automatizado: agregas tu producto, vas al checkout y presionas "Pagar con Mercado Pago". Puedes abonar de forma segura con Tarjeta de crédito/débito, Yape, PagoEfectivo o banca por internet. El monto se calcula de inmediato sin tener que digitar nada manualmente.'
+      a: 'Seleccionas "Comprar ahora" o agregas al carrito, completas tus datos de entrega y pagas a través de Mercado Pago (tarjeta de crédito/débito, Yape, PagoEfectivo o banca por internet). La confirmación es instantánea.'
     },
     {
       q: '¿La licencia es original y permanente?',
       a: product.duration === '1 año'
-        ? 'Es una suscripción original garantizada por 1 año con 100 GB de almacenamiento OneDrive y soporte continuo de Microsoft.'
+        ? 'Es una suscripción original garantizada por 1 año con 100 GB de almacenamiento en OneDrive y soporte continuo de Microsoft.'
         : product.isAccountAccess
         ? 'Es una cuenta oficial corporativa con acceso completo a las aplicaciones de Office (Word, Excel, PowerPoint, Outlook) con actualizaciones continuas.'
         : 'Sí, es una licencia 100% original, perpetua y de por vida para 1 computadora. No tiene costos mensuales ni renovaciones.'
     },
     {
       q: '¿Qué garantía tengo al comprar en UpClic?',
-      a: 'Cuentas con 6 meses de garantía directa. Ante cualquier error técnico durante la descarga, instalación o activación, nuestro equipo de soporte técnico te asiste en tiempo real vía WhatsApp o te brinda una clave de reemplazo inmediato.'
+      a: 'Cuentas con garantía oficial de activación de 1 año. Ante cualquier inconveniente técnico durante la descarga, instalación o activación, te asistimos de inmediato o te proporcionamos una clave de reemplazo.'
     },
     {
       q: '¿Puedo reinstalar el software si formateo mi PC?',
       a: product.isAccountAccess
         ? 'Sí, solo debes volver a iniciar sesión con tu cuenta oficial en portal.office.com y volver a descargar e instalar las aplicaciones en tu equipo.'
         : product.category === 'windows'
-        ? 'Sí, las licencias Windows OEM se asocian permanentemente a la placa madre de tu PC/laptop, por lo que puedes formatear y reinstalar todas las veces que desees sin perder tu activación.'
-        : 'Para licencias permanentes de Office, la activación se asocia a tu equipo. Si necesitas reinstalar por cambio de disco o formateo, nuestro soporte técnico te asiste para reactivarla sin costo.'
+        ? 'Sí, las licencias Windows OEM se asocian permanentemente a la placa madre de tu equipo, por lo que puedes formatear y reinstalar todas las veces que desees sin perder la activación.'
+        : 'Para licencias permanentes de Office, la activación se asocia a tu equipo. Si necesitas reinstalar por cambio de disco o formateo, te asistimos para reactivarla sin costo.'
     }
   ];
 

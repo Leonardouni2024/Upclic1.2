@@ -292,16 +292,11 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
       )}
 
       {/* Summary recommendation */}
-      <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 text-slate-700">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-          <span>
-            <strong>Garantía UpClic Perú:</strong> Todas nuestras licencias de 1 PC incluyen activación permanente con garantía oficial por 1 año y soporte en línea.
-          </span>
-        </div>
-        <div className="text-slate-500 text-[11px] font-medium">
-          ¿Dudas sobre su equipo? Escríbanos por WhatsApp al +51 924 934 949
-        </div>
+      <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-2 text-xs text-slate-700">
+        <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+        <span>
+          <strong>Garantía UpClic Perú:</strong> Todas nuestras licencias de 1 PC incluyen activación permanente con garantía oficial por 1 año y soporte en línea.
+        </span>
       </div>
     </section>
   );
