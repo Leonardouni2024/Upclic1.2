@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageCircle } from 'lucide-react';
 
 export const WhatsAppButton: React.FC = () => {
-  const phoneNumber = "51999999999"; // Can be replaced later by the user
+  const phoneNumber = "51983204384";
   const message = "Hola, estoy interesado en comprar una licencia en UpClic y tengo una consulta.";
   
   return (

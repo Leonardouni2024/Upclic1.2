@@ -15,7 +15,7 @@ import { WhatsAppButton } from './components/WhatsAppButton.tsx';
 import { ToastContainer } from './components/Toast.tsx';
 import { Footer } from './components/Footer.tsx';
 import { HelpModal } from './components/HelpModal.tsx';
-import { AIAssistantChat } from './components/AIAssistantChat.tsx';
+
 import { CartReminder } from './components/CartReminder.tsx';
 import { AdminOrdersModal } from './components/AdminOrdersModal.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
@@ -109,7 +109,7 @@ const AppContent: React.FC = () => {
         <UserOrdersModal isOpen={isUserOrdersModalOpen} onClose={() => setIsUserOrdersModalOpen(false)} />
 
       {/* Intelligent AI Support & Recommendation Chatbot */}
-      <AIAssistantChat />
+
     </div>
   );
 };
