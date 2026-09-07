@@ -26,7 +26,8 @@ export const CartDrawer: React.FC = () => {
     applyCoupon,
     removeCoupon,
     couponFeedback,
-    navigateToCheckout
+    navigateToCheckout,
+    t
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
@@ -64,7 +65,7 @@ export const CartDrawer: React.FC = () => {
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                Mi Pedido <span className="text-slate-400 font-semibold text-sm">({totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'})</span>
+                {t('myOrder')} <span className="text-slate-400 font-semibold text-sm">({totalQuantity} {totalQuantity === 1 ? t('item') : t('items')})</span>
               </h2>
             </div>
             <div className="flex items-center gap-2">
@@ -73,9 +74,9 @@ export const CartDrawer: React.FC = () => {
                   type="button"
                   onClick={clearCart}
                   className="text-[11px] font-bold text-slate-400 hover:text-red-600 transition-colors cursor-pointer px-2 py-1 rounded-md hover:bg-red-50"
-                  title="Vaciar todos los productos"
+                  title={t('clear')}
                 >
-                  Vaciar
+                  {t('clear')}
                 </button>
               )}
               <button
@@ -105,22 +106,21 @@ export const CartDrawer: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="font-extrabold text-[12px] leading-tight">
                       {isMultiItemDiscount
-                        ? '¡10% de descuento aplicado por llevar 2 o más productos!'
-                        : 'Descuento aplicado'}
+                        ? t('discountApplied')
+                        : t('couponApplied')}
                     </div>
                     <div className="text-[10px] font-normal text-slate-600 mt-0.5">
-                      {discountReason} • <span className="font-semibold">Descuentos no combinables</span>
+                      {discountReason} • <span className="font-semibold">{t('nonCombinable')}</span>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
                   <div className="text-[11px] leading-tight">
-                    <span className="font-extrabold">Lleva 2 o más productos para 10% OFF</span>
-                    <span className="block text-[10px] text-slate-500 font-normal">O cupón para 10% OFF (en productos desde S/ 40.00)</span>
+                    <span className="font-extrabold">{t('multiItemDiscountNotice')}</span>
                   </div>
                   <span className="font-black text-[10px] bg-white px-2 py-0.5 rounded-full border border-blue-200 text-[#0066FF] uppercase shrink-0">
-                    Hasta 10% OFF
+                    10% OFF
                   </span>
                 </div>
               )}
@@ -134,15 +134,15 @@ export const CartDrawer: React.FC = () => {
                 <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-4">
                   <ShoppingBag className="w-8 h-8 stroke-[1.5]" />
                 </div>
-                <h3 className="font-bold text-slate-800 text-base">Tu carrito está vacío</h3>
+                <h3 className="font-bold text-slate-800 text-base">{t('emptyCartTitle')}</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-xs leading-relaxed">
-                  Explora nuestro catálogo de licencias Microsoft Office, Windows, Project, Visio y Combos con entrega inmediata.
+                  {t('emptyCartSub')}
                 </p>
                 <button
                   onClick={() => setIsCartOpen(false)}
                   className="mt-5 px-5 py-2.5 rounded-xl bg-[#0066FF] text-white text-xs font-bold hover:bg-[#0052cc] shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20"
                 >
-                  Explorar catálogo
+                  {t('exploreProductsBtn')}
                 </button>
               </div>
             ) : (
@@ -151,8 +151,8 @@ export const CartDrawer: React.FC = () => {
                 const itemSubtotal = itemUnitPrice * item.quantity;
                 const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
                 const displayVariantName = item.variantName || (
-                  item.selectedVariant === 'oem' ? 'Clave tipo OEM' :
-                  item.selectedVariant === 'retail' ? 'Clave Retail' : undefined
+                  item.selectedVariant === 'oem' ? t('licenseTypeOEM') || 'OEM Key' :
+                  item.selectedVariant === 'retail' ? t('licenseTypeRetail') || 'Retail Key' : undefined
                 );
                 return (
                   <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
@@ -185,8 +185,8 @@ export const CartDrawer: React.FC = () => {
                           type="button"
                           onClick={() => removeItem(itemKey)}
                           className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                          title="Eliminar producto"
-                          aria-label="Eliminar producto"
+                          title={t('removeProduct') || 'Remove product'}
+                          aria-label={t('removeProduct') || 'Remove product'}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -204,8 +204,8 @@ export const CartDrawer: React.FC = () => {
                             type="button"
                             onClick={() => updateQuantity(itemKey, -1)}
                             className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
-                            aria-label="Disminuir cantidad"
-                            title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir cantidad'}
+                            aria-label={t('decrease') || 'Decrease'}
+                            title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
                           >
                             <Minus className="w-3 h-3" />
                           </button>
@@ -221,15 +221,15 @@ export const CartDrawer: React.FC = () => {
                               }
                             }}
                             className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            aria-label="Editar cantidad"
-                            title="Haz clic para escribir o editar la cantidad"
+                            aria-label={t('editQuantity') || 'Edit quantity'}
+                            title={t('clickToEdit') || 'Click to edit quantity'}
                           />
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, 1)}
                             className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
-                            aria-label="Aumentar cantidad"
-                            title="Aumentar cantidad"
+                            aria-label={t('increase') || 'Increase'}
+                            title={t('increase') || 'Increase'}
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -315,14 +315,14 @@ export const CartDrawer: React.FC = () => {
                           {appliedCoupon}
                         </span>
                         <span className="text-[11px] text-emerald-700 ml-1.5 font-medium">
-                          {isMultiItemDiscount ? 'Activo (Aplica 10% por 2+ items)' : '10% descuento cupón'}
+                          {isMultiItemDiscount ? t('activeMultiItemDiscount') || 'Active (10% off for 2+ items)' : t('activeCoupon10') || '10% discount coupon'}
                         </span>
                       </div>
                     </div>
                     <button
                       onClick={removeCoupon}
                       className="text-xs text-slate-400 hover:text-red-600 font-bold p-1 cursor-pointer"
-                      title="Quitar cupón"
+                      title={t('removeCoupon') || 'Remove coupon'}
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -334,7 +334,7 @@ export const CartDrawer: React.FC = () => {
                       type="text"
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
-                      placeholder="Ingresa tu cupón"
+                      placeholder={t('couponCode')}
                       className="flex-1 px-3 py-1.5 text-xs uppercase font-mono rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-[#0066FF]"
                     />
                     <button
@@ -370,7 +370,7 @@ export const CartDrawer: React.FC = () => {
               {/* Totals Breakdown */}
               <div className="space-y-2 text-xs font-medium text-slate-600 mb-4">
                 <div className="flex justify-between items-baseline py-0.5">
-                  <span className="font-semibold text-slate-600">Subtotal:</span>
+                  <span className="font-semibold text-slate-600">{t('subtotal')}:</span>
                   <span className="font-bold text-slate-800 tabular-nums text-sm">{formatPrice(subtotal)}</span>
                 </div>
 
@@ -379,12 +379,9 @@ export const CartDrawer: React.FC = () => {
                     <div className="flex justify-between items-center text-emerald-700 font-bold bg-emerald-100/70 px-2.5 py-1.5 rounded-lg border border-emerald-200/60">
                       <span className="flex items-center gap-1 text-xs">
                         <Sparkles className="w-3.5 h-3.5" />
-                        Descuento {Math.round(discountRate * 100)}%:
+                        {t('discount')} {Math.round(discountRate * 100)}%:
                       </span>
                       <span className="tabular-nums font-black text-sm">-{formatPrice(discountAmount)}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 italic text-right">
-                      * Descuentos no combinables
                     </div>
                   </div>
                 )}
@@ -401,7 +398,7 @@ export const CartDrawer: React.FC = () => {
                 onClick={navigateToCheckout}
                 className="w-full py-3 px-4 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
               >
-                <span>Proceder al pago</span>
+                <span>{t('proceedToCheckout')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 

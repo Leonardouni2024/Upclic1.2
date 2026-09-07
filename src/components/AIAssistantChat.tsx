@@ -37,12 +37,20 @@ interface ChatMessage {
   showAdminWhatsApp?: boolean;
 }
 
-const QUICK_PROMPTS = [
+const QUICK_PROMPTS_ES = [
   { label: '¿Cuál Office me conviene?', prompt: '¿Cuál es la diferencia entre Office 2024, 2021 y Microsoft 365? ¿Cuál me recomiendas?' },
   { label: '¿Windows 11 o Windows 10?', prompt: '¿Qué versión de Windows me recomiendas entre Windows 11 Pro y Windows 10 Pro?' },
   { label: '¿Cómo es la entrega y activación?', prompt: '¿Cómo es el proceso de entrega de la licencia y cómo se activa en mi computadora?' },
   { label: 'Cupones y Descuentos', prompt: '¿Qué descuentos o cupones de promoción tienen disponibles hoy en UpClic?' },
   { label: 'Hablar con Soporte Técnico', prompt: 'Deseo comunicarme directamente con el administrador por WhatsApp para una consulta.' },
+];
+
+const QUICK_PROMPTS_EN = [
+  { label: 'Which Office is best for me?', prompt: 'What is the difference between Office 2024, 2021, and Microsoft 365? Which do you recommend?' },
+  { label: 'Windows 11 or Windows 10?', prompt: 'Which Windows version do you recommend between Windows 11 Pro and Windows 10 Pro?' },
+  { label: 'How does delivery work?', prompt: 'How is the license delivered and how is it activated on my computer?' },
+  { label: 'Coupons & Discounts', prompt: 'What promotional discounts or coupons are available today on UpClic?' },
+  { label: 'Contact Technical Support', prompt: 'I want to contact the administrator directly on WhatsApp for an inquiry.' },
 ];
 
 export const AIAssistantChat: React.FC = () => {
@@ -51,14 +59,19 @@ export const AIAssistantChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasUnreadNotice, setHasUnreadNotice] = useState(true);
 
-  const { navigateToProduct, addItem  } = useCart();
+  const { navigateToProduct, addItem, language } = useCart();
+
+  const isEn = language === 'EN';
+  const quickPrompts = isEn ? QUICK_PROMPTS_EN : QUICK_PROMPTS_ES;
 
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     return [
       {
         id: 'msg-welcome',
         role: 'model',
-        content: `Bienvenido al **Centro de Soporte y Licenciamiento UpClic**.\n\nLe brindamos asesoría técnica sobre licencias originales de **Microsoft Office, Windows, Visio y Project**, compatibilidad de hardware y facturación.\n\n¿En qué podemos asistirle hoy?`,
+        content: isEn
+          ? `Welcome to the **UpClic Support & Licensing Center**.\n\nWe provide technical advice on official licenses for **Microsoft Office, Windows, Visio, and Project**, hardware compatibility, and billing.\n\nHow can we assist you today?`
+          : `Bienvenido al **Centro de Soporte y Licenciamiento UpClic**.\n\nLe brindamos asesoría técnica sobre licencias originales de **Microsoft Office, Windows, Visio y Project**, compatibilidad de hardware y facturación.\n\n¿En qué podemos asistirle hoy?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ];
@@ -492,7 +505,7 @@ export const AIAssistantChat: React.FC = () => {
                     />
                   </div>
                   <span className="text-[11px] font-medium text-slate-600">
-                    Asistente UpClic está respondiendo...
+                    {isEn ? 'UpClic Assistant is typing...' : 'Asistente UpClic está respondiendo...'}
                   </span>
                 </div>
               </div>
@@ -503,7 +516,7 @@ export const AIAssistantChat: React.FC = () => {
 
           {/* Quick Prompts Chips */}
           <div className="px-3 py-2 bg-white border-t border-slate-100 overflow-x-auto no-scrollbar flex items-center gap-1.5 shrink-0">
-            {QUICK_PROMPTS.map((qp, index) => (
+            {quickPrompts.map((qp, index) => (
               <button
                 key={index}
                 type="button"
@@ -529,7 +542,7 @@ export const AIAssistantChat: React.FC = () => {
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Escribe tu consulta sobre Office, Windows..."
+              placeholder={isEn ? 'Type your question about Office, Windows...' : 'Escribe tu consulta sobre Office, Windows...'}
               disabled={isLoading}
               className="flex-1 bg-slate-100 hover:bg-slate-50 focus:bg-white text-slate-900 placeholder:text-slate-400 text-xs px-3.5 py-2.5 rounded-2xl border border-transparent focus:border-[#0066FF] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
             />

@@ -11,7 +11,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrders }) => {
-  const { setActiveCategory, navigateToHome, currentPath } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, t } = useCart();
 
   const handleCategory = (category: ProductCategory) => {
     setActiveCategory(category);
@@ -33,17 +33,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             </div>
 
             <p className="text-sm font-bold text-white max-w-sm">
-              Licencias y productos digitales
+              {t('digitalLicensesSubtitle')}
             </p>
 
             <p className="text-xs text-purple-200 leading-relaxed max-w-sm font-medium">
-              Especialistas en software original de Microsoft Office y sistemas operativos Windows para uso personal, profesional y empresarial con entrega digital inmediata y soporte técnico dedicado.
+              {t('footerDesc')}
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-purple-200">
               <span className="flex items-center gap-1.5 text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Garantía de activación
+                {t('activationGuaranteeBadge')}
               </span>
               <span className="flex items-center gap-1.5 text-[#facc15] font-bold bg-amber-400/10 px-2.5 py-1 rounded-lg border border-amber-400/20">
                 <Lock className="w-3.5 h-3.5" />
@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
           {/* Col 1: Productos */}
           <div>
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
-              Productos
+              {t('categories')}
             </h4>
             <ul className="space-y-2.5 text-xs text-purple-200 font-medium">
               <li>
@@ -63,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => handleCategory('combos')}
                   className="hover:text-[#facc15] transition-colors cursor-pointer text-[#facc15] font-bold"
                 >
-                  Combos 2 en 1
+                  {t('combos')}
                 </button>
               </li>
               <li>
@@ -71,7 +71,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => handleCategory('office')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Office
+                  {t('office')}
                 </button>
               </li>
               <li>
@@ -79,7 +79,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => handleCategory('windows')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Windows
+                  {t('windows')}
                 </button>
               </li>
               <li>
@@ -87,7 +87,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => handleCategory('project-visio')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Project & Visio
+                  {t('projectVisio')}
                 </button>
               </li>
               <li>
@@ -95,7 +95,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => handleCategory('bestsellers')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Más vendidos
+                  {t('bestSellers')}
                 </button>
               </li>
               <li>
@@ -103,7 +103,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => handleCategory('offers')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Ofertas
+                  {t('deals')}
                 </button>
               </li>
             </ul>
@@ -112,7 +112,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
           {/* Col 2: Ayuda */}
           <div>
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
-              Ayuda
+              {t('helpSection')}
             </h4>
             <ul className="space-y-2.5 text-xs text-purple-200 font-medium">
               <li>
@@ -120,7 +120,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => onOpenHelpModal('faq')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Preguntas frecuentes
+                  {t('faq')}
                 </button>
               </li>
               <li>
@@ -128,7 +128,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => onOpenHelpModal('contact')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Contacto
+                  {t('contact')}
                 </button>
               </li>
               <li>
@@ -148,7 +148,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
           {/* Col 3: Legal & Método de pago */}
           <div>
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
-              Legal
+              {t('legalSection')}
             </h4>
             <ul className="space-y-2.5 text-xs text-purple-200 font-medium mb-6">
               <li>
@@ -156,7 +156,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => onOpenHelpModal('terms')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Términos
+                  {t('terms')}
                 </button>
               </li>
               <li>
@@ -164,7 +164,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => onOpenHelpModal('privacy')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Privacidad
+                  {t('privacy')}
                 </button>
               </li>
               <li>
@@ -172,13 +172,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   onClick={() => onOpenHelpModal('sales_terms')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Condiciones de venta
+                  {t('salesTerms')}
                 </button>
               </li>
             </ul>
 
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-2">
-              Método de pago:
+              {t('paymentMethodLabel')}
             </h4>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-xs font-bold text-[#facc15]">
               <span className="w-2 h-2 rounded-full bg-[#facc15]"></span>
@@ -190,10 +190,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-purple-300 font-medium">
           <div className="flex flex-wrap items-center gap-3">
-            <p>© {new Date().getFullYear()} UpClic. Todos los derechos reservados.</p>
+            <p>© {new Date().getFullYear()} UpClic. {t('allRightsReserved')}</p>
           </div>
           <p className="flex items-center gap-1 text-purple-300">
-            <span>Microsoft, Windows y Office son marcas registradas de Microsoft Corporation.</span>
+            <span>{t('legalNotice')}</span>
           </p>
         </div>
       </div>

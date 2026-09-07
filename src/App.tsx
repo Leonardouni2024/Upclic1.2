@@ -17,6 +17,7 @@ import { HelpModal } from './components/HelpModal.tsx';
 
 import { CartReminder } from './components/CartReminder.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
+import { RegionLanguageModal } from './components/RegionLanguageModal.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug } = useCart();
@@ -100,6 +101,7 @@ const AppContent: React.FC = () => {
       <HelpModal topic={helpTopic} onClose={() => setHelpTopic(null)} />
 
         <UserOrdersModal isOpen={isUserOrdersModalOpen} onClose={() => setIsUserOrdersModalOpen(false)} />
+        <RegionLanguageModal />
 
       {/* Intelligent AI Support & Recommendation Chatbot */}
 

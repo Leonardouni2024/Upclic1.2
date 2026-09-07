@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory, Product } from '../types.ts';
 import { searchProducts } from '../products.ts';
-import { Search, Menu, X, Star, ArrowRight, Sparkles, Layers, ShoppingCart, User } from 'lucide-react';
+import { Search, Menu, X, Star, ArrowRight, Sparkles, Layers, ShoppingCart, User, Globe, ChevronDown, Check } from 'lucide-react';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
 interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: boolean) => void; setIsHelpModalOpen?: (open: boolean) => void; }
@@ -17,19 +17,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
     setSearchQuery,
     navigateToProduct,
     navigateToHome,
-    currentPath
+    currentPath,
+    currency,
+    language,
+    setCurrency,
+    setLanguage,
+    t
   } = useCart();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [regionDropdownOpen, setRegionDropdownOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const regionDropdownRef = useRef<HTMLDivElement>(null);
 
   // Live matching products using the prefix/token search engine
   const liveResults: Product[] = searchQuery.trim() ? searchProducts(searchQuery).slice(0, 5) : [];
 
-  // Close search dropdown on click outside
+  // Close search and region dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -39,6 +46,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
         !mobileSearchRef.current.contains(event.target as Node)
       ) {
         setIsSearchFocused(false);
+      }
+      if (
+        regionDropdownRef.current &&
+        !regionDropdownRef.current.contains(event.target as Node)
+      ) {
+        setRegionDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -137,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                     setIsSearchFocused(true);
                     if (currentPath !== '/') navigateToHome();
                   }}
-                  placeholder="Busca licencias, software, office, windows..."
+                  placeholder={t('searchPlaceholder')}
                   className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-medium rounded-lg bg-[#2b0c61] hover:bg-[#320f70] focus:bg-[#230852] border border-[#642bbd] focus:border-[#facc15] text-white placeholder-purple-200/60 focus:outline-none transition-all shadow-inner"
                 />
                 <Search className="w-4 h-4 text-purple-300 absolute left-3.5 top-3 pointer-events-none" />
@@ -158,15 +171,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               {isSearchFocused && searchQuery.trim().length > 0 && (
                 <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-4 py-2.5 bg-purple-950 text-white flex items-center justify-between text-xs font-bold">
-                    <span>Resultados de búsqueda para "{searchQuery}"</span>
-                    <span className="text-[#facc15]">{liveResults.length} encontrados</span>
+                    <span>{t('searchResultsFor')} "{searchQuery}"</span>
+                    <span className="text-[#facc15]">{liveResults.length} {language === 'EN' ? 'found' : 'encontrados'}</span>
                   </div>
 
                   {liveResults.length === 0 ? (
                     <div className="p-4 text-center text-xs text-slate-500">
-                      <p className="font-semibold text-slate-700">No se encontraron licencias con ese término</p>
+                      <p className="font-semibold text-slate-700">{t('noProductsMatch')}</p>
                       <p className="text-[11px] text-slate-400 mt-1">
-                        Sugerencias: <span className="font-semibold text-purple-700">Windows 11, Office 2024, Combo, Visio</span>
+                        {t('searchSuggestionsText')}
                       </p>
                     </div>
                   ) : (
@@ -223,7 +236,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                           }}
                           className="text-xs font-bold text-purple-700 hover:underline flex items-center justify-center gap-1 w-full cursor-pointer py-1"
                         >
-                          <span>Ver todos los productos en catálogo</span>
+                          <span>{t('viewAllCatalogProducts')}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -235,9 +248,113 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
             {/* Right Controls (Eneba Style: Language/Currency | Cart | Account) */}
             <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-              {/* Language / Currency Tag (Eneba Style) */}
-              <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2b0c61] text-purple-200 text-xs font-semibold border border-[#5923aa]/60">
-                <span>PE | Español (S/)</span>
+              {/* Inline Region & Currency Selector Dropdown */}
+              <div ref={regionDropdownRef} className="relative hidden sm:block">
+                <button
+                  onClick={() => setRegionDropdownOpen(!regionDropdownOpen)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2b0c61] hover:bg-[#38117d] text-purple-200 hover:text-white text-xs font-bold border border-[#5923aa]/80 transition-all cursor-pointer shadow-sm active:scale-95"
+                  title={t("changeRegionCurrency")}
+                >
+                  <Globe className="w-3.5 h-3.5 text-[#facc15]" />
+                  <span>
+                    {currency === 'PEN' && 'PE | Español (S/)'}
+                    {currency === 'COP' && 'CO | Español ($ COP)'}
+                    {currency === 'MXN' && 'MX | Español ($ MXN)'}
+                    {currency === 'USD' && 'US | English ($ USD)'}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-purple-300 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {regionDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-60 bg-[#1f0945] rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10">
+                    <div className="px-3 py-2 text-[11px] font-bold text-purple-300 uppercase tracking-wider">
+                      {t('regionCurrencyLangLabel')}
+                    </div>
+
+                    <div className="py-1 space-y-1">
+                      {/* Option 1: Perú */}
+                      <button
+                        onClick={() => {
+                          setCurrency('PEN');
+                          setLanguage('ES');
+                          setRegionDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          currency === 'PEN'
+                            ? 'bg-[#facc15] text-slate-950 shadow-md'
+                            : 'text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🇵🇪</span>
+                          <span>PE | Español (S/)</span>
+                        </div>
+                        {currency === 'PEN' && <Check className="w-4 h-4 stroke-[3]" />}
+                      </button>
+
+                      {/* Option 2: Colombia */}
+                      <button
+                        onClick={() => {
+                          setCurrency('COP');
+                          setLanguage('ES');
+                          setRegionDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          currency === 'COP'
+                            ? 'bg-[#facc15] text-slate-950 shadow-md'
+                            : 'text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🇨🇴</span>
+                          <span>CO | Español ($ COP)</span>
+                        </div>
+                        {currency === 'COP' && <Check className="w-4 h-4 stroke-[3]" />}
+                      </button>
+
+                      {/* Option 3: México */}
+                      <button
+                        onClick={() => {
+                          setCurrency('MXN');
+                          setLanguage('ES');
+                          setRegionDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          currency === 'MXN'
+                            ? 'bg-[#facc15] text-slate-950 shadow-md'
+                            : 'text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🇲🇽</span>
+                          <span>MX | Español ($ MXN)</span>
+                        </div>
+                        {currency === 'MXN' && <Check className="w-4 h-4 stroke-[3]" />}
+                      </button>
+
+                      {/* Option 4: USA / Global */}
+                      <button
+                        onClick={() => {
+                          setCurrency('USD');
+                          setLanguage('EN');
+                          setRegionDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          currency === 'USD'
+                            ? 'bg-[#facc15] text-slate-950 shadow-md'
+                            : 'text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🇺🇸</span>
+                          <span>US | English ($ USD)</span>
+                        </div>
+                        {currency === 'USD' && <Check className="w-4 h-4 stroke-[3]" />}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Mobile Search Icon Toggle */}
@@ -266,14 +383,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 )}
               </button>
 
-              {/* User Account / Orders Button (Eneba Style) */}
+              {/* User Account / Orders Button */}
               <button
                 onClick={() => onOpenUserOrders && onOpenUserOrders()}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer border border-white/15 shrink-0"
-                title="Mis Pedidos"
+                title={t('myOrders')}
               >
                 <User className="w-4 h-4 text-purple-200" />
-                <span className="hidden md:inline">Mis Pedidos</span>
+                <span className="hidden md:inline">{t('myOrders')}</span>
               </button>
             </div>
           </div>
@@ -293,7 +410,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             }`}
           >
             <Menu className="w-4 h-4" />
-            <span>Categorías</span>
+            <span>{t('categories')}</span>
           </button>
 
           {/* Category Chips */}
@@ -305,7 +422,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            Windows
+            {t('windows')}
           </button>
 
           <button
@@ -316,7 +433,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            Office
+            {t('office')}
           </button>
 
           <button
@@ -327,9 +444,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            <span>Combos</span>
+            <span>{t('combos')}</span>
             <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
-              OFERTA
+              {t('saleBadge')}
             </span>
           </button>
 
@@ -342,7 +459,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Project & Visio</span>
+            <span>{t('projectVisio')}</span>
           </button>
 
           <button
@@ -353,7 +470,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            Top Licencias
+            {t('topLicenses')}
           </button>
 
           <button
@@ -364,7 +481,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            Más vendidos
+            {t('bestSellers')}
           </button>
 
           <button
@@ -375,7 +492,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            Ofertas
+            {t('deals')}
           </button>
         </div>
       </div>
@@ -393,7 +510,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 setSearchQuery(e.target.value);
                 if (currentPath !== '/') navigateToHome();
               }}
-              placeholder="Busca Windows, Office, Visio..."
+              placeholder={t("searchPlaceholderMobile")}
               className="w-full pl-9 pr-9 py-2 text-sm rounded-lg bg-[#1e0742] border border-white/20 text-white placeholder-purple-200/60 focus:outline-none"
             />
             <Search className="w-4 h-4 text-purple-300 absolute left-3 top-3 pointer-events-none" />
@@ -451,52 +568,88 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             }}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
           >
-            Inicio
+            {t('home')}
           </button>
           <button
             onClick={() => handleCategoryClick('combos')}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white flex items-center justify-between"
           >
-            <span>Combos 2 en 1</span>
-            <span className="text-[10px] bg-[#facc15] text-slate-950 font-bold px-2 py-0.5 rounded">OFERTA</span>
+            <span>{t('combos')}</span>
+            <span className="text-[10px] bg-[#facc15] text-slate-950 font-bold px-2 py-0.5 rounded">{t('saleBadge')}</span>
           </button>
           <button
             onClick={() => handleCategoryClick('office')}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
           >
-            Office
+            {t('office')}
           </button>
           <button
             onClick={() => handleCategoryClick('windows')}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
           >
-            Windows
+            {t('windows')}
           </button>
           <button
             onClick={() => handleCategoryClick('project-visio')}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white flex items-center justify-between"
           >
-            <span>Project & Visio</span>
-            <span className="text-[10px] bg-emerald-400 text-slate-950 font-bold px-2 py-0.5 rounded">NUEVO</span>
+            <span>{t('projectVisio')}</span>
+            <span className="text-[10px] bg-emerald-400 text-slate-950 font-bold px-2 py-0.5 rounded">{t('newBadge')}</span>
           </button>
           <button
             onClick={handleTopClick}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
           >
-            Top Licencias
+            {t('topLicenses')}
           </button>
           <button
             onClick={handleBestSellersClick}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
           >
-            Más vendidos
+            {t('bestSellers')}
           </button>
           <button
             onClick={() => handleCategoryClick('offers')}
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
           >
-            Ofertas
+            {t('deals')}
           </button>
+          <div className="border-t border-white/10 mt-2 pt-3 space-y-1">
+            <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5 text-[#facc15]" />
+              <span>{t('regionCurrencyLabel')}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                onClick={() => { setCurrency('PEN'); setLanguage('ES'); setMobileMenuOpen(false); }}
+                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'PEN' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
+              >
+                <span>🇵🇪 PE (S/)</span>
+                {currency === 'PEN' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+              </button>
+              <button
+                onClick={() => { setCurrency('COP'); setLanguage('ES'); setMobileMenuOpen(false); }}
+                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'COP' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
+              >
+                <span>🇨🇴 CO (COP)</span>
+                {currency === 'COP' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+              </button>
+              <button
+                onClick={() => { setCurrency('MXN'); setLanguage('ES'); setMobileMenuOpen(false); }}
+                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'MXN' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
+              >
+                <span>🇲🇽 MX (MXN)</span>
+                {currency === 'MXN' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+              </button>
+              <button
+                onClick={() => { setCurrency('USD'); setLanguage('EN'); setMobileMenuOpen(false); }}
+                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'USD' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
+              >
+                <span>🇺🇸 US ($ USD)</span>
+                {currency === 'USD' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </header>

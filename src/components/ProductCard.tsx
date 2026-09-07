@@ -15,7 +15,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addItem, navigateToProduct, navigateToCheckout } = useCart();
+  const { addItem, navigateToProduct, navigateToCheckout, t } = useCart();
   const { getProductStats } = useReviews();
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
@@ -222,16 +222,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200 cursor-pointer border border-white/15"
                 >
                   <ShoppingCart className="w-3.5 h-3.5 text-purple-200" />
-                  <span className="truncate">Carrito</span>
+                  <span className="truncate">{t('cart')}</span>
                 </button>
 
-                {/* Botón Principal: Comprar Ahora (Fast Buy) */}
+                {/* Botón Principal: Comprar Ahora */}
                 <button
                   id={`view-product-${product.id}`}
                   onClick={handleBuyNow}
                   className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md hover:shadow-amber-500/20 transition-all duration-200 cursor-pointer border border-amber-300"
                 >
-                  <span className="truncate">Comprar</span>
+                  <span className="truncate">{t('buyNow')}</span>
                 </button>
               </div>
             </div>

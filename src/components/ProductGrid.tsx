@@ -6,7 +6,7 @@ import { ProductCategory } from '../types.ts';
 import { Sparkles, SearchX } from 'lucide-react';
 
 export const ProductGrid: React.FC = () => {
-  const { activeCategory, setActiveCategory, searchQuery, setSearchQuery } = useCart();
+  const { activeCategory, setActiveCategory, searchQuery, setSearchQuery, t } = useCart();
 
   // Filter products by category and tokenized search engine
   const filteredProducts = useMemo(() => {
@@ -34,14 +34,14 @@ export const ProductGrid: React.FC = () => {
   }, [activeCategory, searchQuery]);
 
   const categories: { key: ProductCategory; label: string; count?: number }[] = [
-    { key: 'all', label: 'Todos los productos' },
-    { key: 'combos', label: 'COMBOS 2 EN 1' },
-    { key: 'office', label: 'OFFICE' },
-    { key: 'windows', label: 'WINDOWS' },
-    { key: 'project-visio', label: 'PROJECT & VISIO' },
-    { key: 'top', label: 'TOP' },
-    { key: 'bestsellers', label: 'MÁS VENDIDOS' },
-    { key: 'offers', label: 'OFERTAS' }
+    { key: 'all', label: t('allProducts') },
+    { key: 'combos', label: t('combos').toUpperCase() },
+    { key: 'office', label: t('office').toUpperCase() },
+    { key: 'windows', label: t('windows').toUpperCase() },
+    { key: 'project-visio', label: t('projectVisio').toUpperCase() },
+    { key: 'top', label: t('topLicenses').toUpperCase() },
+    { key: 'bestsellers', label: t('bestSellers').toUpperCase() },
+    { key: 'offers', label: t('deals').toUpperCase() }
   ];
 
   return (
@@ -51,13 +51,13 @@ export const ProductGrid: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#facc15]/15 text-[#facc15] text-xs font-bold uppercase tracking-wider mb-2.5 border border-[#facc15]/30 shadow-md">
-              <span>Catálogo Completo</span>
+              <span>{t('catalogBadge')}</span>
             </div>
             <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-              Software Microsoft Original
+              {t('catalogTitle')}
             </h2>
             <p className="text-xs sm:text-sm text-purple-200 mt-1 sm:mt-1.5 font-medium">
-              Licencias digitales con entrega inmediata y activación 100% garantizada
+              {t('catalogSubtitle')}
             </p>
           </div>
 

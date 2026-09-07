@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product, CartItem, ProductCategory, CartTotals } from '../types.ts';
+import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
 import { calculateCartTotals, DynamicCoupon } from '../products.ts';
+import { getTranslation, translations } from '../utils/i18n.ts';
 
 interface ToastData {
   id: string;
@@ -45,6 +46,17 @@ interface CartContextType {
   navigateToCheckout: () => void;
   currentPath: string;
   currentProductSlug?: string;
+  // Region, Currency & Language System
+  currency: Currency;
+  setCurrency: (currency: Currency) => void;
+  language: 'ES' | 'EN';
+  setLanguage: (language: 'ES' | 'EN') => void;
+  exchangeRate: number;
+  setExchangeRate: (rate: number) => void;
+  isRegionModalOpen: boolean;
+  setIsRegionModalOpen: (open: boolean) => void;
+  formatPrice: (priceInPEN: number) => string;
+  t: (key: keyof typeof translations['ES']) => string;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -88,6 +100,94 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return null;
   });
 
+  // Region, Language & Currency State
+  const [currency, setCurrencyState] = useState<Currency>(() => {
+    if (typeof window !== 'undefined') {
+      const c = localStorage.getItem('upclic_currency') as Currency;
+      if (['PEN', 'USD', 'COP', 'MXN'].includes(c)) return c;
+    }
+    return 'PEN';
+  });
+
+  const [language, setLanguageState] = useState<'ES' | 'EN'>(() => {
+    if (typeof window !== 'undefined') {
+      const l = localStorage.getItem('upclic_language');
+      if (l === 'EN' || l === 'ES') return l;
+    }
+    return 'ES';
+  });
+
+  const [exchangeRate, setExchangeRateState] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const r = localStorage.getItem('upclic_exchange_rate');
+      if (r) {
+        const parsed = parseFloat(r);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    }
+    return 3.75;
+  });
+
+  const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
+
+  const setCurrency = (c: Currency) => {
+    setCurrencyState(c);
+    const targetLang = c === 'USD' ? 'EN' : 'ES';
+    setLanguageState(targetLang);
+    try {
+      localStorage.setItem('upclic_currency', c);
+      localStorage.setItem('upclic_language', targetLang);
+    } catch {}
+  };
+
+  const setLanguage = (l: 'ES' | 'EN') => {
+    setLanguageState(l);
+    try {
+      localStorage.setItem('upclic_language', l);
+    } catch {}
+  };
+
+  const setExchangeRate = (r: number) => {
+    setExchangeRateState(r);
+    try {
+      localStorage.setItem('upclic_exchange_rate', r.toString());
+    } catch {}
+  };
+
+  // Fetch real-time PEN to USD exchange rate from free API
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchLiveRate() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.rates && data.rates.PEN) {
+            const penRate = parseFloat(data.rates.PEN);
+            if (!isNaN(penRate) && penRate > 0 && isMounted) {
+              setExchangeRateState(penRate);
+              try {
+                localStorage.setItem('upclic_exchange_rate', penRate.toString());
+              } catch {}
+            }
+          }
+        }
+      } catch {
+        // Fallback silently
+      }
+    }
+    fetchLiveRate();
+    return () => { isMounted = false; };
+  }, []);
+
+  const formatPriceLocal = (priceInPEN: number): string => {
+    if (currency === 'USD') {
+      const usdPrice = priceInPEN / (exchangeRate || 3.75);
+      return `$ ${usdPrice.toFixed(2)}`;
+    }
+    return `S/ ${priceInPEN.toFixed(2)}`;
+  };
+
   // Dynamic Coupon generation logic
   useEffect(() => {
     if (items.length > 0 && !dynamicCoupon) {
@@ -102,12 +202,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           setDynamicCoupon(newCoupon);
           localStorage.setItem('upclic_dynamic_coupon', JSON.stringify(newCoupon));
-          
-          addToast({
-            type: 'discount',
-            title: 'Cupón Especial Activo',
-            message: `¡Usa el código ${code} en tu carrito y obtén ${discountPercent}% extra! Válido por 30 min.`
-          });
         }
       }, 20000); // 20 seconds after having an item in cart
       
@@ -222,7 +316,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         const msg = `¡Cupón de ${dynamicCoupon.discountPercent}% aplicado correctamente!`;
         setCouponFeedback({ type: 'success', message: msg });
-        addToast({ type: 'discount', title: 'Cupón aplicado', message: msg });
         return { success: true, message: msg };
       } else {
         const msg = 'El cupón especial ha expirado.';
@@ -239,11 +332,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const removeCoupon = () => {
     setAppliedCoupon('');
     setCouponFeedback(null);
-    addToast({
-      type: 'info',
-      title: 'Cupón removido',
-      message: 'Se ha quitado el código promocional.'
-    });
   };
 
   const getItemKey = (productId: string, variantId?: string) => {
@@ -290,24 +378,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ];
       }
 
-      // Add success toast
-      addToast({
-        type: 'added',
-        title: 'Producto agregado al carrito',
-        message: `${product.name}${variantName ? ` (${variantName})` : ''} (${quantity > 1 ? `${quantity} uds.` : '1 ud.'})`
-      });
-
-      // If user crossed from 1 to >= 2, celebrate 10% discount!
-      if (prevQty < 2 && newTotalQty >= 2) {
-        setTimeout(() => {
-          addToast({
-            type: 'discount',
-            title: 'Descuento del 10% Aplicado',
-            message: 'Ahorras 10% automáticamente por llevar 2 o más productos (descuentos no combinables)'
-          });
-        }, 300);
-      }
-
       return updated;
     });
   };
@@ -322,14 +392,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         return item.product.id === itemKeyOrProductId;
       });
-
-      if (target) {
-        addToast({
-          type: 'info',
-          title: 'Producto eliminado',
-          message: `${target.product.name}${target.variantName ? ` (${target.variantName})` : ''} fue retirado del carrito`
-        });
-      }
 
       return prev.filter(item => {
         const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
@@ -369,23 +431,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         })
         .filter(Boolean) as CartItem[];
 
-      if (removedName) {
-        addToast({
-          type: 'info',
-          title: 'Producto eliminado',
-          message: `${removedName} fue retirado del carrito`
-        });
-      }
-
-      const newTotalQty = updated.reduce((sum, item) => sum + item.quantity, 0);
-      if (prevQty < 2 && newTotalQty >= 2) {
-        addToast({
-          type: 'discount',
-          title: 'Descuento del 10% Aplicado',
-          message: 'Ahorras 10% automáticamente por llevar 2 o más productos'
-        });
-      }
-
       return updated;
     });
   };
@@ -412,15 +457,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return isMatch ? { ...item, quantity: validQty } : item;
       });
 
-      const newTotalQty = updated.reduce((sum, item) => sum + item.quantity, 0);
-      if (prevQty < 2 && newTotalQty >= 2) {
-        addToast({
-          type: 'discount',
-          title: 'Descuento del 10% Aplicado',
-          message: 'Ahorras 10% automáticamente por llevar 2 o más productos'
-        });
-      }
-
       return updated;
     });
   };
@@ -429,7 +465,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems([]);
   };
 
-  const totals: CartTotals = calculateCartTotals(items, appliedCoupon, dynamicCoupon);
+  const totals: CartTotals = calculateCartTotals(items, appliedCoupon || dynamicCoupon?.code);
 
   const navigateToProduct = (slug: string) => {
     const target = `/producto/${slug}`;
@@ -505,7 +541,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigateToHome,
         navigateToCheckout,
         currentPath,
-        currentProductSlug
+        currentProductSlug,
+        currency,
+        setCurrency,
+        language,
+        setLanguage,
+        exchangeRate,
+        setExchangeRate,
+        isRegionModalOpen,
+        setIsRegionModalOpen,
+        formatPrice: formatPriceLocal,
+        t: (key: keyof typeof translations['ES']) => getTranslation(language, key)
       }}
     >
       {children}

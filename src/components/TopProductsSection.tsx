@@ -6,7 +6,7 @@ import { useReviews } from '../context/ReviewsContext.tsx';
 import { Trophy, Star, Check, ShoppingCart, ArrowRight } from 'lucide-react';
 
 export const TopProductsSection: React.FC = () => {
-  const { addItem, navigateToProduct } = useCart();
+  const { addItem, navigateToProduct, t } = useCart();
   const { getProductStats } = useReviews();
 
   // Highlight top 2 products: Office Professional Plus 2024 and Windows 11 Pro
@@ -20,13 +20,13 @@ export const TopProductsSection: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 text-xs font-bold uppercase tracking-wider mb-2.5 border border-amber-400/30 shadow-md">
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
-            <span>Destacados UpClic</span>
+            <span>{t('topSectionBadge')}</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Los más buscados
+            {t('topSectionTitle')}
           </h2>
           <p className="text-sm sm:text-base text-purple-200 mt-2 font-medium">
-            Las soluciones insignia recomendadas para usuarios exigentes, empresas y estudiantes
+            {t('topSectionSubtitle')}
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export const TopProductsSection: React.FC = () => {
               {/* Top badge */}
               <div className="absolute top-4 left-4 z-10">
                 <span className="px-3 py-1 text-xs font-black rounded-lg bg-[#facc15] text-slate-950 uppercase tracking-wider shadow-md border border-amber-300">
-                  {item.badge || 'TOP DESTACADO'}
+                  {item.badge || t('topFeatured') || 'TOP DESTACADO'}
                 </span>
               </div>
 
@@ -127,7 +127,7 @@ export const TopProductsSection: React.FC = () => {
                       className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 border border-white/20"
                     >
                       <ShoppingCart className="w-4 h-4 text-purple-200" />
-                      <span>Carrito</span>
+                      <span>{t('cart')}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -136,7 +136,7 @@ export const TopProductsSection: React.FC = () => {
                       }}
                       className="px-3.5 py-2.5 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm shadow-md hover:shadow-amber-500/20 transition-all flex items-center gap-1.5 cursor-pointer border border-amber-300"
                     >
-                      <span>Comprar</span>
+                      <span>{t('buyNow')}</span>
                       <ArrowRight className="w-4 h-4 text-slate-950 stroke-[3]" />
                     </button>
                   </div>

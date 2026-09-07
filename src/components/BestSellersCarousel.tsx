@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { products } from '../products.ts';
 import { ProductCard } from './ProductCard.tsx';
+import { useCart } from '../context/CartContext.tsx';
 import { Flame, ChevronLeft, ChevronRight, Play, Pause, Sparkles } from 'lucide-react';
 
 export const BestSellersCarousel: React.FC = () => {
+  const { t } = useCart();
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -86,10 +88,10 @@ export const BestSellersCarousel: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
-                Más Vendidos
+                {t('bestSellersTitle')}
               </h2>
               <p className="text-xs sm:text-sm text-purple-200 font-medium mt-0.5">
-                Licencias oficiales con mayor demanda actualizadas en tiempo real
+                {t('bestSellersSubtitle')}
               </p>
             </div>
           </div>

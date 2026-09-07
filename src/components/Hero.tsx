@@ -4,7 +4,7 @@ import { products, formatPrice } from '../products.ts';
 import { Sparkles, ArrowRight, ShieldCheck, Zap, Laptop, FileSpreadsheet, Layers, BarChart3, Cloud, CheckCircle2 } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { setActiveCategory, navigateToHome, currentPath, setSelectedProduct } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, setSelectedProduct, t } = useCart();
 
   const office2024 = products.find(p => p.id === 'prod-office-2024');
   const win11Pro = products.find(p => p.id === 'prod-win11-pro');
@@ -49,35 +49,35 @@ export const Hero: React.FC = () => {
 
             <div className="relative z-10 max-w-xl">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#facc15] text-slate-950 text-[11px] font-black uppercase tracking-wider mb-4 shadow-md">
-                <span>Licencias Digitales Originales</span>
+                <span>{t('heroBadge')}</span>
               </div>
 
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
-                Software Corporativo <br />
+                {t('heroTitleLine1')} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] via-amber-300 to-yellow-400">
-                  y Residencial Microsoft
+                  {t('heroTitleLine2')}
                 </span>
               </h1>
 
               <p className="mt-3 text-sm sm:text-base text-purple-100 font-medium leading-relaxed max-w-lg">
-                Garantía técnica de activación permanente. Descarga directa oficial y soporte personalizado 24/7.
+                {t('heroSubtitle')}
               </p>
             </div>
 
             <div className="relative z-10 mt-6 sm:mt-8 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => handleFilter('office')}
-                className="px-6 py-3 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer flex items-center gap-2 border border-amber-300"
+                className="px-6 py-3 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer flex items-center gap-2 border border-amber-300 uppercase"
               >
-                <span>EXPLORAR CATÁLOGO</span>
+                <span>{t('heroExploreCatalog')}</span>
                 <ArrowRight className="w-4 h-4 text-slate-950 stroke-[3]" />
               </button>
 
               <button
                 onClick={() => handleFilter('combos')}
-                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 shadow-md transition-all cursor-pointer flex items-center gap-2"
+                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 shadow-md transition-all cursor-pointer flex items-center gap-2 uppercase"
               >
-                <span>VER COMBOS 2 EN 1</span>
+                <span>{t('combos')}</span>
               </button>
             </div>
           </div>

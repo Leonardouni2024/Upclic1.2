@@ -32,7 +32,7 @@ interface ProductDetailPageProps {
 }
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
-  const { addItem, navigateToHome, navigateToCheckout } = useCart();
+  const { addItem, navigateToHome, navigateToCheckout, t, currency } = useCart();
   const { getProductStats } = useReviews();
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -134,35 +134,35 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const faqs = [
     {
       q: product.isAccountAccess
-        ? '¿Cómo recibiré mi acceso a Office 365 Profesional?'
-        : '¿Cómo y cuándo recibiré mi licencia de software?',
+        ? t('productFaqTitle1')
+        : t('productFaqTitle1'),
       a: product.isAccountAccess
-        ? 'Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con sus credenciales oficiales de acceso y la guía paso a paso.'
-        : 'Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con su clave original de 25 caracteres, enlaces de descarga oficial de Microsoft y guía de instalación.'
+        ? t('productFaqAns1M365')
+        : t('productFaqAns1Default')
     },
     {
-      q: '¿Cómo se realiza el pago?',
-      a: 'Seleccionas "Comprar ahora" o agregas al carrito, completas tus datos de entrega y pagas a través de Mercado Pago (tarjeta de crédito/débito, Yape, PagoEfectivo o banca por internet). La confirmación es instantánea.'
+      q: t('productFaqTitle2'),
+      a: t('productFaqAns2')
     },
     {
       q: '¿La licencia es original y permanente?',
       a: product.duration === '1 año'
-        ? 'Es una suscripción original garantizada por 1 año con 100 GB de almacenamiento en OneDrive y soporte continuo de Microsoft.'
+        ? t('productFaqAns3M365')
         : product.isAccountAccess
-        ? 'Es una cuenta oficial corporativa con acceso completo a las aplicaciones de Office (Word, Excel, PowerPoint, Outlook) con actualizaciones continuas.'
-        : 'Sí, es una licencia 100% original, perpetua y de por vida para 1 computadora. No tiene costos mensuales ni renovaciones.'
+        ? t('productFaqAns3M365Corp')
+        : t('productFaqAns3Default')
     },
     {
       q: '¿Qué garantía tengo al comprar en UpClic?',
-      a: 'Cuentas con garantía oficial de activación de 1 año. Ante cualquier inconveniente técnico durante la descarga, instalación o activación, te asistimos de inmediato o te proporcionamos una clave de reemplazo.'
+      a: t('productFaqAns4')
     },
     {
       q: '¿Puedo reinstalar el software si formateo mi PC?',
       a: product.isAccountAccess
-        ? 'Sí, solo debes volver a iniciar sesión con tu cuenta oficial en portal.office.com y volver a descargar e instalar las aplicaciones en tu equipo.'
+        ? t('productFaqAns5M365')
         : product.category === 'windows'
-        ? 'Sí, las licencias Windows OEM se asocian permanentemente a la placa madre de tu equipo, por lo que puedes formatear y reinstalar todas las veces que desees sin perder la activación.'
-        : 'Para licencias permanentes de Office, la activación se asocia a tu equipo. Si necesitas reinstalar por cambio de disco o formateo, te asistimos para reactivarla sin costo.'
+        ? t('productFaqAns5Windows')
+        : t('productFaqAns5Default')
     }
   ];
 
@@ -209,8 +209,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   type="button"
                   onClick={() => setShowShareModal(true)}
                   className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-md"
-                  title="Compartir producto en redes sociales"
-                  aria-label="Compartir en redes sociales"
+                  title={t('productShareTitle')}
+                  aria-label={t('productShareTitle')}
                 >
                   <Share2 className="w-3.5 h-3.5 text-[#facc15]" />
                   <span className="text-[11px] sm:text-xs font-bold">Compartir</span>
@@ -259,7 +259,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="flex items-center gap-2 mb-2 cursor-pointer group w-fit"
-                  title="Ver opiniones y reseñas de clientes"
+                  title={t('productReviewsTitle')}
                 >
                   <div className="flex text-amber-400">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -277,7 +277,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     {stats.averageRating.toFixed(1)} / 5.0
                   </span>
                   <span className="text-xs text-purple-300 group-hover:text-[#facc15] underline underline-offset-2 transition-colors">
-                    ({stats.totalReviews} {stats.totalReviews === 1 ? 'calificación verificada' : 'calificaciones verificadas'})
+                    ({stats.totalReviews} {t('productVerifiedRatings')})
                   </span>
                 </div>
 
@@ -380,16 +380,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       {formatPrice(activeOldPrice)}
                     </span>
                   )}
-                  <span className="text-[11px] sm:text-xs font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-                    Precio final en soles
-                  </span>
                 </div>
 
                 {/* 10% Auto Discount or 10% Coupon reminder */}
                 <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-amber-400/10 border border-amber-400/30 text-[11px] sm:text-xs font-bold text-amber-200 flex items-center gap-2 shadow-md">
                   <Zap className="w-4 h-4 text-[#facc15] shrink-0" />
                   <span className="leading-snug">
-                    ¡Lleva 2 o más productos y obtén <span className="text-[#facc15] font-black">10% de descuento</span> automáticamente en todo tu carrito!
+                    {t('multiItemPromoBanner')}
                   </span>
                 </div>
 
@@ -402,7 +399,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
-                      aria-label="Disminuir"
+                      aria-label={t('decrease') || 'Decrease'}
                     >
                       -
                     </button>
@@ -412,7 +409,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
-                      aria-label="Aumentar"
+                      aria-label={t('increase') || 'Increase'}
                     >
                       +
                     </button>
@@ -428,7 +425,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       className="py-3.5 px-6 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-white/20"
                     >
                       <ShoppingCart className="w-4 h-4 text-purple-200" />
-                      <span>Agregar al carrito</span>
+                      <span>{t('addToCart')}</span>
                     </button>
 
                     <button
@@ -437,7 +434,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       className="py-3.5 px-6 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-sm shadow-lg hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
                     >
                       <Zap className="w-4 h-4 text-slate-950 fill-slate-950" />
-                      <span>Comprar ahora</span>
+                      <span>{t('buyNow')}</span>
                     </button>
                   </div>
 
@@ -526,8 +523,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   </span>
                   <span>
                     {product.id === 'prod-m365'
-                      ? 'Credenciales oficiales directas (correo y contraseña asignados a su dominio)'
-                      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft)'}
+                      ? t('productLicenseKeyDescM365')
+                      : t('productLicenseKeyDescDefault')}
                   </span>
                 </div>
               </div>

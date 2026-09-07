@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useReviews } from '../context/ReviewsContext.tsx';
 import { Product } from '../types.ts';
+import { useCart } from '../context/CartContext.tsx';
 import {
   Star,
   MessageSquarePlus,
@@ -40,11 +41,11 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
 
   const ratingDescriptions: Record<number, string> = {
-    1: 'Malo - No cumplió expectativas',
-    2: 'Regular - Podría mejorar',
-    3: 'Bueno - Cumple lo esperado',
-    4: 'Muy bueno - Satisfecho con el software',
-    5: 'Excelente - Totalmente recomendado'
+    1: t('reviewsRatingLabels.1'),
+    2: t('reviewsRatingLabels.2'),
+    3: t('reviewsRatingLabels.3'),
+    4: t('reviewsRatingLabels.4'),
+    5: t('reviewsRatingLabels.5')
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,17 +53,17 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
     setFormError(null);
 
     if (rating < 1 || rating > 5) {
-      setFormError('Por favor selecciona una calificación de 1 a 5 estrellas.');
+      setFormError(t('reviewsErrorRating'));
       return;
     }
 
     if (!author.trim()) {
-      setFormError('Por favor ingresa tu nombre.');
+      setFormError(t('reviewsErrorName'));
       return;
     }
 
     if (comment.trim().length < 8) {
-      setFormError('Tu opinión debe tener al menos 8 caracteres para ser de ayuda a otros compradores.');
+      setFormError(t('reviewsErrorLength'));
       return;
     }
 
@@ -111,7 +112,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/90 text-[#0066FF] text-xs font-bold uppercase tracking-wider border border-blue-100 shadow-2xs">
               <Star className="w-3.5 h-3.5 fill-[#0066FF]" />
-              <span>Opiniones Verificadas</span>
+              <span>{t('reviewsTitle')}</span>
             </div>
 
             {/* Database Connection Status Badge */}
@@ -123,15 +124,15 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                   ? 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse'
                   : 'bg-slate-100 text-slate-600 border-slate-200'
               }`}
-              title="Estado de conexión con la base de datos de reseñas"
+              title={t('reviewsSyncDBTitle')}
             >
               <Database className="w-3 h-3" />
               <span>
                 {connectionStatus === 'connected'
-                  ? 'Conexión activa a base de datos'
+                  ? t('reviewsConnectionActive')
                   : connectionStatus === 'syncing'
-                  ? 'Sincronizando reseñas...'
-                  : 'Guardado local sincronizado'}
+                  ? t('reviewsSyncing')
+                  : t('reviewsLocalSync')}
               </span>
             </div>
           </div>
@@ -147,9 +148,9 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={() => syncWithServer()}
-            title="Sincronizar reseñas con la base de datos"
+            title={t('reviewsSyncDBTitle')}
             className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-[#0066FF] hover:bg-slate-50 transition-colors cursor-pointer"
-            aria-label="Sincronizar base de datos"
+            aria-label={t('reviewsSyncDBTitle')}
           >
             <RefreshCw className={`w-4 h-4 ${connectionStatus === 'syncing' ? 'animate-spin' : ''}`} />
           </button>
@@ -163,7 +164,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all cursor-pointer active:scale-98 border border-blue-500/20"
           >
             <MessageSquarePlus className="w-4 h-4" />
-            <span>{showForm ? 'Ocultar formulario' : 'Escribir una opinión'}</span>
+            <span>{showForm ? t('reviewsHideForm') : t('reviewsWriteReview')}</span>
           </button>
         </div>
       </div>
@@ -311,7 +312,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                     type="text"
                     value={author}
                     onChange={e => setAuthor(e.target.value)}
-                    placeholder="Ej: Roberto M. / Ing. Carlos"
+                    placeholder={t('reviewsFormNamePlaceholder')}
                     required
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
                   />
@@ -325,7 +326,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                     type="text"
                     value={city}
                     onChange={e => setCity(e.target.value)}
-                    placeholder="Ej: Lima, Arequipa, Trujillo"
+                    placeholder={t('reviewsFormCityPlaceholder')}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
                   />
                 </div>
@@ -334,12 +335,12 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               {/* Written Review Textarea */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Tu Opinión / Comentario: *
+                  {t('reviewsFormTextLabel')} *
                 </label>
                 <textarea
                   value={comment}
                   onChange={e => setComment(e.target.value)}
-                  placeholder="Cuéntanos tu experiencia: ¿cómo fue la compra, la atención de soporte, la velocidad de entrega y la activación de la clave?"
+                  placeholder={t('reviewsFormTextPlaceholder')}
                   rows={4}
                   required
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all leading-relaxed"
@@ -427,15 +428,15 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         {/* Sort selector */}
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
-          <span>Ordenar por:</span>
+          <span>{t('reviewsSortLabel')}</span>
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as 'recent' | 'highest' | 'lowest')}
             className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF] cursor-pointer"
           >
-            <option value="recent">Más recientes</option>
-            <option value="highest">Mayor calificación</option>
-            <option value="lowest">Menor calificación</option>
+            <option value="recent">{t('reviewsSortRecent')}</option>
+            <option value="highest">{t('reviewsSortHighest')}</option>
+            <option value="lowest">{t('reviewsSortLowest')}</option>
           </select>
         </div>
       </div>

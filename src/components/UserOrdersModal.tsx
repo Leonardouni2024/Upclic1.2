@@ -9,7 +9,7 @@ interface UserOrdersModalProps {
 }
 
 export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClose }) => {
-  const { currency } = useCart();
+  const { currency, t } = useCart();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,8 +55,8 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
               <ShoppingBag className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">Mis Pedidos</h2>
-              <p className="text-xs text-slate-500 font-medium">Consulta el estado de tus compras anteriores</p>
+              <h2 className="text-xl font-bold text-slate-800">{t('myOrdersTitle')}</h2>
+              <p className="text-xs text-slate-500 font-medium">{t('myOrdersSubtitle')}</p>
             </div>
           </div>
           <button
@@ -74,7 +74,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Ingresa tu correo o ID de transacción..."
+                placeholder={t('searchOrdersPlaceholder')}
                 className="w-full pl-10 pr-[88px] sm:pl-12 sm:pr-32 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
               />
               <Search className="w-5 h-5 text-slate-400 absolute left-3 sm:left-4 top-3 sm:top-4" />
@@ -83,7 +83,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                 disabled={loading || !searchTerm.trim()}
                 className="absolute right-1.5 sm:right-2 top-1.5 sm:top-2 bottom-1.5 sm:bottom-2 px-4 sm:px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
               >
-                {loading ? 'Buscando...' : 'Buscar'}
+                {loading ? t('searchingOrders') : t('searchBtn')}
               </button>
             </div>
           </form>
@@ -91,9 +91,9 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
           {hasSearched && !loading && orders.length === 0 && (
             <div className="text-center py-12 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
               <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-slate-700 mb-1">No encontramos pedidos</h3>
+              <h3 className="text-base font-bold text-slate-700 mb-1">{t('noOrdersFoundTitle')}</h3>
               <p className="text-sm text-slate-500">
-                Verifica que el correo o ID de transacción sea correcto e intenta nuevamente.
+                {t('noOrdersFoundSub')}
               </p>
             </div>
           )}
@@ -102,7 +102,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
             <div className="space-y-4">
               <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-green-500" />
-                Se encontraron {orders.length} pedido(s)
+                {t('foundOrdersCount').replace('{{count}}', orders.length.toString())}
               </h3>
               
               {orders.map((order, idx) => (
@@ -110,7 +110,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Orden:</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('orderLabel')}</span>
                         <span className="text-sm font-mono font-bold text-slate-700">{order.id}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-xs text-slate-500">
@@ -130,8 +130,8 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                       {order.status === 'paid' ? <CheckCircle2 className="w-3.5 h-3.5" /> : 
                        ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? <Clock className="w-3.5 h-3.5" /> : 
                        <AlertCircle className="w-3.5 h-3.5" />}
-                      {order.status === 'paid' ? 'PAGADO Y ENTREGADO' : 
-                       ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? 'PENDIENTE DE PAGO' : 'CANCELADO'}
+                      {order.status === 'paid' ? t('paidAndDeliveredStatus') : 
+                       ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? t('pendingPaymentStatus') : t('cancelledStatus')}
                     </div>
                   </div>
 
@@ -145,7 +145,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                           <div>
                             <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
                             <p className="text-xs font-medium text-slate-500">
-                              Cant: {item.quantity} {item.variantName ? `• ${item.variantName}` : ''}
+                              {t('quantityLabel')} {item.quantity} {item.variantName ? `• ${item.variantName}` : ''}
                             </p>
                           </div>
                         </div>
@@ -157,7 +157,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                   </div>
 
                   <div className="bg-slate-50 rounded-xl p-3 flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">TOTAL</span>
+                    <span className="text-xs font-bold text-slate-500">{t('orderTotalLabel')}</span>
                     <span className="text-lg font-black text-[#0066FF]">{formatPrice(order.total ?? 0)}</span>
                   </div>
                 </div>

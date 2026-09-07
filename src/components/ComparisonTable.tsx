@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Check, X, Sparkles, ShieldCheck, Laptop, HelpCircle, ArrowRight } from 'lucide-react';
 import { Product } from '../types.ts';
+import { useCart } from '../context/CartContext.tsx';
 
 interface ComparisonTableProps {
   currentCategory?: 'windows' | 'office' | 'combos' | 'project-visio';
@@ -11,118 +12,119 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
   currentCategory = 'windows',
   onSelectProduct
 }) => {
+  const { t } = useCart();
   const [activeTab, setActiveTab] = useState<'windows' | 'office'>(
     currentCategory === 'office' ? 'office' : 'windows'
   );
 
   const windowsFeatures = [
     {
-      name: 'Licencia para 1 PC (Permanente)',
+      name: t('ctWindows1Title'),
       home: true,
       pro: true,
       enterprise: true,
-      tooltip: 'Activación digital permanente de por vida en un equipo'
+      tooltip: t('ctWindows1Desc')
     },
     {
-      name: 'Menú de Inicio y Rendimiento DirectStorage',
+      name: t('ctWindows2Title'),
       home: true,
       pro: true,
       enterprise: true,
-      tooltip: 'Carga ultrarrápida para juegos y multitarea fluida'
+      tooltip: t('ctWindows2Desc')
     },
     {
-      name: 'Cifrado de Unidad BitLocker',
+      name: t('ctWindows3Title'),
       home: false,
       pro: true,
       enterprise: true,
-      tooltip: 'Protección de datos y discos duros mediante cifrado de grado militar'
+      tooltip: t('ctWindows3Desc')
     },
     {
-      name: 'Escritorio Remoto (Remote Desktop Host)',
+      name: t('ctWindows4Title'),
       home: false,
       pro: true,
       enterprise: true,
-      tooltip: 'Conéctese a su equipo de forma remota desde cualquier lugar'
+      tooltip: t('ctWindows4Desc')
     },
     {
-      name: 'Virtualización Hyper-V y Windows Sandbox',
+      name: t('ctWindows5Title'),
       home: false,
       pro: true,
       enterprise: true,
-      tooltip: 'Entorno aislado y seguro para probar software y máquinas virtuales'
+      tooltip: t('ctWindows5Desc')
     },
     {
-      name: 'Unión a Dominios / Active Directory y Azure AD',
+      name: t('ctWindows6Title'),
       home: false,
       pro: true,
       enterprise: true,
-      tooltip: 'Ideal para redes corporativas, oficinas y universidades'
+      tooltip: t('ctWindows6Desc')
     },
     {
-      name: 'Windows Defender Application Guard (WDAG)',
+      name: t('ctWindows7Title'),
       home: false,
       pro: false,
       enterprise: true,
-      tooltip: 'Máxima seguridad avanzada para infraestructuras empresariales'
+      tooltip: t('ctWindows7Desc')
     },
     {
-      name: 'DirectAccess y BranchCache',
+      name: t('ctWindows8Title'),
       home: false,
       pro: false,
       enterprise: true,
-      tooltip: 'Optimización de redes corporativas globales sin necesidad de VPN'
+      tooltip: t('ctWindows8Desc')
     }
   ];
 
   const officeFeatures = [
     {
-      name: 'Tipo de Licencia',
-      m365: 'Cuenta Anual (5 Disp.)',
-      off24: 'Permanente (1 PC)',
-      off21: 'Permanente (1 PC)',
-      tooltip: 'Modalidad de pago y asignación de equipos'
+      name: t('ctOffice1Title'),
+      m365: t('ctOffice1M365'),
+      off24: t('ctOffice1Off24'),
+      off21: t('ctOffice1Off21'),
+      tooltip: t('ctOffice1Desc')
     },
     {
-      name: 'Word, Excel, PowerPoint, OneNote',
+      name: t('ctOffice2Title'),
       m365: true,
       off24: true,
       off21: true,
-      tooltip: 'Suite base esencial para productividad'
+      tooltip: t('ctOffice2Desc')
     },
     {
-      name: 'Outlook, Access y Publisher (Para PC)',
+      name: t('ctOffice3Title'),
       m365: true,
       off24: true,
       off21: true,
-      tooltip: 'Gestión de correo corporativo y bases de datos'
+      tooltip: t('ctOffice3Desc')
     },
     {
-      name: 'Nuevas Fórmulas de Texto y Matrices Dinámicas',
+      name: t('ctOffice4Title'),
       m365: true,
       off24: true,
-      off21: 'Parcial',
-      tooltip: 'Funciones TEXTBEFORE, TEXTAFTER, ARRAYTOTEXT y optimizaciones 2024'
+      off21: t('ctOffice4Off21'),
+      tooltip: t('ctOffice4Desc')
     },
     {
-      name: 'Almacenamiento en la Nube (OneDrive)',
+      name: t('ctOffice5Title'),
       m365: '100 GB Cloud',
-      off24: 'Local / Básico',
-      off21: 'Local / Básico',
-      tooltip: 'Espacio en la nube para sincronizar fotos, archivos y copias de seguridad'
+      off24: t('ctOffice5Off24'),
+      off21: t('ctOffice5Off21'),
+      tooltip: t('ctOffice5Desc')
     },
     {
-      name: 'Integración Copilot AI y Herramientas Web',
+      name: t('ctOffice6Title'),
       m365: true,
       off24: false,
       off21: false,
-      tooltip: 'Asistente de inteligencia artificial en aplicaciones Microsoft'
+      tooltip: t('ctOffice6Desc')
     },
     {
-      name: 'Sin Pagos Mensuales ni Renovaciones Forzosas',
+      name: t('ctOffice7Title'),
       m365: false,
       off24: true,
       off21: true,
-      tooltip: 'Pague una sola vez y use la licencia para siempre'
+      tooltip: t('ctOffice7Desc')
     }
   ];
 

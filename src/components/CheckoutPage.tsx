@@ -50,7 +50,8 @@ export const CheckoutPage: React.FC = () => {
     updateQuantity,
     setQuantity,
     clearCart,
-    navigateToHome
+    navigateToHome,
+    t
  } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
@@ -373,15 +374,15 @@ export const CheckoutPage: React.FC = () => {
           {/* Order summary box */}
           <div className="mt-6 text-left rounded-2xl bg-slate-50 border border-slate-200/80 p-5 space-y-3">
             <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-              <span>ESTADO DEL PEDIDO</span>
+              <span>{t('orderStatusLabel')}</span>
               <span className="font-bold text-emerald-700 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200 text-[11px] tracking-wide">
-                PAGADO Y CONFIRMADO
+                {t('paidConfirmedStatus')}
               </span>
             </div>
 
             {lastOrderSnapshot?.orderId && (
               <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>N° DE PEDIDO</span>
+                <span>{t('orderNumberLabel')}</span>
                 <span className="font-mono font-bold text-slate-800 text-xs">
                   {lastOrderSnapshot.orderId}
                 </span>
@@ -390,7 +391,7 @@ export const CheckoutPage: React.FC = () => {
 
             {paidCustomerEmail && (
               <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>CORREO DE ENTREGA</span>
+                <span>{t('deliveryEmailLabel')}</span>
                 <span className="font-mono font-bold text-emerald-900 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200 break-all text-[11px]">
                   {paidCustomerEmail}
                 </span>
@@ -399,7 +400,7 @@ export const CheckoutPage: React.FC = () => {
 
             {paidCustomerName && (
               <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>TITULAR</span>
+                <span>{t('cardHolderLabel')}</span>
                 <span className="font-bold text-slate-800 text-xs">
                   {paidCustomerName}
                 </span>
@@ -408,7 +409,7 @@ export const CheckoutPage: React.FC = () => {
 
             {paymentResult.paymentId && (
               <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>N° DE TRANSACCIÓN MP</span>
+                <span>{t('mpTxLabel')}</span>
                 <span className="font-mono font-bold text-slate-700">
                   #{paymentResult.paymentId}
                 </span>
@@ -416,7 +417,7 @@ export const CheckoutPage: React.FC = () => {
             )}
 
             <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Productos comprados:</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{t('purchasedProductsLabel')}</span>
               {paidOrderItems.map((item: any, idx: number) => {
                 const name = item.product?.name || item.name || 'Licencia Microsoft';
                 const price = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
@@ -431,7 +432,7 @@ export const CheckoutPage: React.FC = () => {
             </div>
 
             <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-sm font-black text-slate-900">
-              <span>Total Pagado:</span>
+              <span>{t('totalPaidLabel')}</span>
               <span className="text-emerald-700 font-black text-base">{formatPrice(paidTotal)}</span>
             </div>
           </div>
@@ -445,7 +446,7 @@ export const CheckoutPage: React.FC = () => {
               className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
             >
               <MessageCircle className="w-5 h-5 fill-current" />
-              <span>Contactar soporte</span>
+              <span>{t('contactSupport')}</span>
             </a>
 
             <button
@@ -460,7 +461,7 @@ export const CheckoutPage: React.FC = () => {
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Volver a la tienda</span>
+              <span>{t('backToStore')}</span>
             </button>
           </div>
         </div>
@@ -498,18 +499,18 @@ export const CheckoutPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs sm:text-sm font-bold text-white transition-all cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 text-[#facc15]" />
-            <span>Volver a la tienda</span>
+            <span>{t('backToCatalog')}</span>
           </button>
         </div>
 
         <div className="text-center max-w-2xl mx-auto mb-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
             <span className="bg-gradient-to-r from-[#facc15] via-amber-300 to-yellow-400 bg-clip-text text-transparent">
-              Finalizar Compra
+              {t('checkoutTitle')}
             </span>
           </h1>
           <p className="text-sm sm:text-base text-purple-200 mt-2 font-medium">
-            Completa tus datos de entrega digital y procesa tu pedido de forma rápida y segura
+            {t('checkoutSubtitle')}
           </p>
         </div>
 
@@ -522,10 +523,10 @@ export const CheckoutPage: React.FC = () => {
                   <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-[#facc15] flex items-center justify-center border border-amber-400/30">
                     <ShieldCheck className="w-4.5 h-4.5" />
                   </div>
-                  <span>Productos en tu Pedido</span>
+                  <span>{t('productsInOrder')}</span>
                 </h2>
                 <span className="text-xs font-bold text-purple-200 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
-                  {totalQuantity} {totalQuantity === 1 ? 'licencia' : 'licencias'}
+                  {totalQuantity} {totalQuantity === 1 ? t('item') : t('items')}
                 </span>
               </div>
 
@@ -535,8 +536,8 @@ export const CheckoutPage: React.FC = () => {
                   const itemUnitPrice = item.unitPrice ?? item.product.price;
                   const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
                   const displayVariantName = item.variantName || (
-                    item.selectedVariant === 'oem' ? 'Clave tipo OEM' :
-                    item.selectedVariant === 'retail' ? 'Clave Retail' : undefined
+                    item.selectedVariant === 'oem' ? t('licenseTypeOEM') || 'OEM Key' :
+                    item.selectedVariant === 'retail' ? t('licenseTypeRetail') || 'Retail Key' : undefined
                   );
                   return (
                     <div key={itemKey} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
@@ -573,8 +574,8 @@ export const CheckoutPage: React.FC = () => {
                             type="button"
                             onClick={() => updateQuantity(itemKey, -1)}
                             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold"
-                            aria-label="Disminuir cantidad"
-                            title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir'}
+                            aria-label={t('decrease') || 'Decrease'}
+                            title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
                           >
                             <Minus className="w-3 h-3" />
                           </button>
@@ -590,14 +591,14 @@ export const CheckoutPage: React.FC = () => {
                               }
                             }}
                             className="w-9 text-center text-xs font-bold text-white bg-transparent focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            aria-label="Editar cantidad"
+                            aria-label={t('editQuantity') || 'Edit quantity'}
                           />
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, 1)}
                             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold"
-                            aria-label="Aumentar cantidad"
-                            title="Aumentar"
+                            aria-label={t('increase') || 'Increase'}
+                            title={t('increase') || 'Increase'}
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -611,8 +612,8 @@ export const CheckoutPage: React.FC = () => {
                           type="button"
                           onClick={() => removeItem(itemKey)}
                           className="p-1.5 text-purple-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors cursor-pointer shrink-0"
-                          title="Eliminar producto"
-                          aria-label="Eliminar producto"
+                          title={t('removeProduct') || 'Remove product'}
+                          aria-label={t('removeProduct') || 'Remove product'}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -655,7 +656,7 @@ export const CheckoutPage: React.FC = () => {
                       type="text"
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
-                      placeholder="Ingresa tu cupón"
+                      placeholder={t('couponCode')}
                       className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-xl border border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:outline-none focus:border-[#facc15]"
                     />
                     <button
@@ -697,13 +698,13 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                   <div>
                     <h2 className="text-base font-black text-white tracking-tight flex items-center gap-2">
-                      <span>DATOS DE ENTREGA DIGITAL</span>
+                      <span>{t('digitalDeliveryData')}</span>
                       <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 tracking-wider">
-                        Requerido
+                        {t('requiredLabel')}
                       </span>
                     </h2>
                     <p className="text-xs text-purple-200 mt-0.5">
-                      Ingresa tu correo para enviarte de inmediato tu clave de activación oficial, comprobante y guía.
+                      {t('digitalDeliverySubtitle')}
                     </p>
                   </div>
                 </div>
@@ -714,12 +715,12 @@ export const CheckoutPage: React.FC = () => {
                 <label htmlFor="customer-email-input" className="block text-xs font-bold text-purple-200 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Mail className="w-3.5 h-3.5 text-[#facc15]" />
-                    Correo electrónico del cliente <span className="text-red-400 font-black">*</span>
+                    {t('customerEmailLabel')} <span className="text-red-400 font-black">*</span>
                   </span>
                   {customerEmail && isValidEmail(customerEmail) && (
                     <span className="text-[11px] font-bold text-emerald-300 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      Correo verificado para entrega
+                      {t('emailVerifiedForDelivery')}
                     </span>
                   )}
                 </label>
@@ -734,14 +735,14 @@ export const CheckoutPage: React.FC = () => {
                     onBlur={() => {
                       setEmailTouched(true);
                       if (!customerEmail.trim()) {
-                        setEmailError('El correo electrónico es obligatorio para recibir tu licencia digital.');
+                        setEmailError(t('emailRequiredError'));
                       } else if (!isValidEmail(customerEmail)) {
-                        setEmailError('Por favor ingresa un correo válido (ej: nombre@gmail.com).');
+                        setEmailError(t('validEmailError'));
                       } else {
                         setEmailError(null);
                       }
                     }}
-                    placeholder="ejemplo: tu-correo@gmail.com"
+                    placeholder="ej: nombre@gmail.com"
                     className={`w-full pl-10 pr-4 py-3 rounded-2xl text-sm border font-medium transition-all focus:outline-none ${
                       emailError
                         ? 'border-red-400 bg-red-500/20 text-white placeholder-red-200 focus:ring-2 focus:ring-red-400'
@@ -762,7 +763,7 @@ export const CheckoutPage: React.FC = () => {
                 ) : (
                   <p className="text-[11px] text-purple-300 leading-normal flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span><strong>Entrega digital inmediata:</strong> A este correo te enviaremos la clave oficial original de 25 caracteres y el enlace oficial de Microsoft.</span>
+                    <span><strong>{t('instantDigitalDeliveryLabel')}</strong> {t('instantDigitalDeliveryDesc')}</span>
                   </p>
                 )}
               </div>
@@ -772,7 +773,7 @@ export const CheckoutPage: React.FC = () => {
                 <div className="space-y-1.5">
                   <label htmlFor="customer-name-input" className="block text-xs font-bold text-purple-200 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-purple-300" />
-                    Nombre o Razón Social <span className="text-purple-400 font-normal">(Opcional)</span>
+                    {t('customerNameLabel')} <span className="text-purple-400 font-normal">{t('optionalLabel')}</span>
                   </label>
                   <div className="relative">
                     <input
@@ -781,7 +782,7 @@ export const CheckoutPage: React.FC = () => {
                       autoComplete="name"
                       value={customerName}
                       onChange={e => handleNameChange(e.target.value)}
-                      placeholder="ej: Juan Pérez o Empresa SAC"
+                      placeholder="ej: Roberto M. / IT Dept"
                       className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:outline-none focus:border-[#facc15]"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
@@ -803,7 +804,7 @@ export const CheckoutPage: React.FC = () => {
                       autoComplete="tel"
                       value={customerPhone}
                       onChange={e => handlePhoneChange(e.target.value)}
-                      placeholder="ej: 987 654 321"
+                      placeholder="ej: 555-0123"
                       className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:outline-none focus:border-[#facc15]"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
@@ -869,16 +870,13 @@ export const CheckoutPage: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#180e38] rounded-3xl border border-white/10 shadow-xl p-6 sm:p-7 sticky top-24 text-white">
               <h2 className="text-base font-black text-white mb-4 pb-3 border-b border-white/10 flex items-center justify-between">
-                <span>RESUMEN DE PAGO</span>
-                <span className="text-xs font-bold text-purple-300">
-                  Total a pagar
-                </span>
+                <span>{t('paymentSummaryLabel')}</span>
               </h2>
 
               {/* Subtotal & Discount breakdown */}
               <div className="space-y-2.5 text-xs text-purple-200">
                 <div className="flex justify-between">
-                  <span>Subtotal:</span>
+                  <span>{t('subtotalLabel')}</span>
                   <span className="font-bold text-white tabular-nums">{formatPrice(subtotal)}</span>
                 </div>
 
@@ -892,72 +890,21 @@ export const CheckoutPage: React.FC = () => {
                       <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
                     </div>
                     <div className="text-[10px] text-purple-300 italic text-right">
-                      {discountReason} • <span className="font-semibold">Descuentos no combinables</span>
+                      {discountReason}
                     </div>
                   </div>
                 ) : (
                   <div className="text-[11px] text-purple-300 italic">
-                    (Lleva 2 o más productos para 10% de descuento automático)
+                    {t('multiItemPromoBanner')}
                   </div>
                 )}
 
                 <div className="flex justify-between items-baseline text-base font-black text-white pt-3 border-t border-white/10">
-                  <span>TOTAL:</span>
+                  <span>{t('totalLabel')}</span>
                   <span className="text-[#facc15] text-2xl sm:text-3xl font-black tabular-nums">
                     {formatPrice(total)}
                   </span>
                 </div>
-              </div>
-
-              {/* Customer Email status card */}
-              <div className="mt-5">
-                {customerEmail && isValidEmail(customerEmail) ? (
-                  <div className="p-3.5 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl flex items-center justify-between text-xs text-emerald-200 shadow-md">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-xl bg-emerald-500/30 text-emerald-300 flex items-center justify-center shrink-0">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="block text-[10px] uppercase font-bold text-emerald-300 tracking-wider">
-                          Entrega digital para:
-                        </span>
-                        <span className="font-bold text-xs truncate block text-white font-mono">
-                          {customerEmail}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        emailInputRef.current?.focus();
-                      }}
-                      className="text-[11px] font-bold text-amber-300 hover:text-white hover:underline shrink-0 ml-2 cursor-pointer bg-white/10 px-2.5 py-1 rounded-lg border border-white/20"
-                    >
-                      Editar
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => {
-                      emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      emailInputRef.current?.focus();
-                    }}
-                    className="p-3.5 bg-amber-400/10 border border-amber-400/30 rounded-2xl flex items-center gap-3 text-xs text-amber-200 cursor-pointer hover:bg-amber-400/20 transition-colors shadow-md"
-                  >
-                    <div className="w-7 h-7 rounded-xl bg-amber-400/20 text-[#facc15] flex items-center justify-center shrink-0">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="block text-xs font-black text-white">
-                        Ingresa tu correo para continuar
-                      </span>
-                      <span className="block text-[11px] text-purple-200 leading-tight">
-                        Necesario para enviarte tus licencias y comprobante
-                      </span>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Action 1: Pagar con Mercado Pago */}
@@ -966,7 +913,7 @@ export const CheckoutPage: React.FC = () => {
                   <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-xs text-red-200 flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">Dato obligatorio requerido:</p>
+                      <p className="font-bold">{t('requiredFieldNotice')}</p>
                       <p className="mt-0.5 text-[11px] leading-relaxed">{emailError}</p>
                     </div>
                   </div>
@@ -976,10 +923,10 @@ export const CheckoutPage: React.FC = () => {
                   <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-xs text-red-200 flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">Error al procesar el pago:</p>
+                      <p className="font-bold">{t('paymentErrorNotice')}</p>
                       <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
                       <p className="mt-1 text-[10px] text-red-300 font-medium">
-                        Si el problema persiste, puedes comunicarte con nuestro equipo de soporte.
+                        {t('contactSupportIfPersists')}
                       </p>
                     </div>
                   </div>
@@ -992,7 +939,7 @@ export const CheckoutPage: React.FC = () => {
                   className="w-full py-4 px-5 rounded-2xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-base shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <CreditCard className="w-5 h-5 text-slate-950" />
-                  <span className="tracking-tight">{isCreatingPreference ? 'Conectando...' : 'Finalizar Compra con Mercado Pago'}</span>
+                  <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
                   <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
                 </button>
               </div>
@@ -1001,13 +948,13 @@ export const CheckoutPage: React.FC = () => {
               <div className="mt-4 p-3.5 bg-[#110928] border border-white/10 rounded-2xl text-[11px] text-purple-200 space-y-2">
                 <p className="font-bold text-white flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Entrega digital y garantía oficial:</span>
+                  <span>{t('digitalDeliveryAndWarrantyLabel')}</span>
                 </p>
                 <p className="leading-relaxed">
-                  • <strong>Mercado Pago:</strong> Procesa tu pago seguro con tarjeta (crédito/débito) o métodos locales. Se emite tu comprobante de inmediato.
+                  • {t('mercadoPagoInfoDesc')}
                 </p>
                 <p className="leading-relaxed">
-                  • <strong>Entrega a tu correo:</strong> Tu licencia de software y guía de activación se enviarán a tu correo dentro de 10 a 30 minutos.
+                  • {t('emailDeliveryTimeDesc')}
                 </p>
               </div>
 
@@ -1015,11 +962,11 @@ export const CheckoutPage: React.FC = () => {
               <div className="mt-5 pt-4 border-t border-white/10 text-[11px] text-purple-300 space-y-2">
                 <div className="flex items-center gap-1.5 text-white font-semibold">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Pago 100% seguro con Mercado Pago</span>
+                  <span>{t('securePaymentMercadoPago')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-purple-300 font-medium">
                   <Clock className="w-4 h-4 text-amber-400" />
-                  <span>Entrega de tu licencia a tu correo en 10 a 30 minutos</span>
+                  <span>{t('deliveryTimeNotice')}</span>
                 </div>
               </div>
             </div>

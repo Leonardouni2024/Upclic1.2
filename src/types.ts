@@ -1,4 +1,5 @@
 export type ProductCategory = 'all' | 'office' | 'windows' | 'combos' | 'project-visio' | 'top' | 'bestsellers' | 'offers';
+export type Currency = 'PEN' | 'USD' | 'COP' | 'MXN';
 
 export interface ProductVariant {
   id: 'oem' | 'retail';

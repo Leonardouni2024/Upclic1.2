@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext.tsx';
 import { ShoppingCart, Sparkles, ChevronRight } from 'lucide-react';
 
 export const FloatingMobileCart: React.FC = () => {
-  const { totalQuantity, total, hasDiscount, setIsCartOpen, currentPath } = useCart();
+  const { totalQuantity, total, hasDiscount, setIsCartOpen, currentPath, t } = useCart();
 
   // Show only if there is at least 1 item and not already in /checkout
   if (totalQuantity === 0 || currentPath === '/checkout') return null;
@@ -25,20 +25,20 @@ export const FloatingMobileCart: React.FC = () => {
           </div>
           <div className="text-left">
             <div className="text-xs font-black tracking-wide flex items-center gap-1.5">
-              <span>{totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'}</span>
+              <span>{totalQuantity} {totalQuantity === 1 ? t('item') : t('items')}</span>
               <span className="text-slate-500">|</span>
               <span className="text-[#60CDFF] text-sm">{formatPrice(total)}</span>
             </div>
             {hasDiscount && (
               <div className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
-                <span>10% de descuento aplicado</span>
+                <span>{t('discountApplied')}</span>
               </div>
             )}
           </div>
         </div>
 
         <div className="flex items-center gap-1 text-xs font-extrabold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl text-white transition-colors">
-          <span>Ver carrito</span>
+          <span>{t('cart')}</span>
           <ChevronRight className="w-4 h-4 text-blue-300" />
         </div>
       </button>

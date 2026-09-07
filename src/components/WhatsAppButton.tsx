@@ -1,9 +1,11 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
+import { useCart } from '../context/CartContext.tsx';
 
 export const WhatsAppButton: React.FC = () => {
+  const { t } = useCart();
   const phoneNumber = "51983204384";
-  const message = "Hola, estoy interesado en comprar una licencia en UpClic y tengo una consulta.";
+  const message = t('whatsappMessage');
   
   return (
     <a

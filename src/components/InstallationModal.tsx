@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../types.ts';
 import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from '../products.ts';
+import { useCart } from '../context/CartContext.tsx';
 import {
   X,
   Download,
@@ -9,8 +10,7 @@ import {
   ShieldCheck,
   Headphones,
   Copy,
-  Check,
-  BookOpen
+  Check
 } from 'lucide-react';
 
 interface InstallationModalProps {
@@ -24,6 +24,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const { t } = useCart();
   const [copied, setCopied] = React.useState(false);
 
   if (!isOpen) return null;
@@ -50,7 +51,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
             </div>
             <div>
               <h3 className="font-black text-white text-base sm:text-lg leading-tight">
-                Instalación y Descarga Oficial
+                {t('installationModalTitle')}
               </h3>
               <p className="text-xs text-purple-200 font-medium truncate max-w-[200px] sm:max-w-md">
                 {product.name}
@@ -74,10 +75,10 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-[11px] font-bold text-[#facc15] uppercase tracking-wider block mb-1">
-                  {product.isoFormat || 'Descarga Oficial Directa de Microsoft'}
+                  {product.isoFormat || t('directMicrosoftDownload')}
                 </span>
                 <p className="text-xs text-purple-200 font-medium leading-relaxed">
-                  Servidores oficiales de Microsoft. Descarga segura, directa, sin intermediarios ni publicidad.
+                  {t('microsoftServerDesc')}
                 </p>
               </div>
 
@@ -90,7 +91,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
                   className="py-2.5 px-4 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer border border-amber-300"
                 >
                   <Download className="w-4 h-4 text-slate-950" />
-                  <span>Descargar instalador</span>
+                  <span>{t('downloadInstaller')}</span>
                   <ExternalLink className="w-3 h-3 opacity-80" />
                 </a>
 
@@ -113,12 +114,12 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
           <div>
             <h4 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider mb-3.5 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Resumen Rápido de Instalación</span>
+              <span>{t('quickInstallSummary')}</span>
             </h4>
 
             <div className="space-y-2.5">
               {product.installationSteps.map((rawStep, idx) => {
-                const cleanText = rawStep.replace(/^Paso\s*\d+\s*:\s*/i, '');
+                const cleanText = rawStep.replace(/^Paso\s*\d+\s*:\s*/i, '').replace(/^Step\s*\d+\s*:\s*/i, '');
                 return (
                   <div
                     key={idx}
@@ -128,7 +129,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
                       {idx + 1}
                     </span>
                     <p className="text-xs sm:text-sm text-purple-100 leading-relaxed font-medium">
-                      <span className="font-bold text-white mr-1.5">Paso {idx + 1}:</span>
+                      <span className="font-bold text-white mr-1.5">{t('stepLabel')} {idx + 1}:</span>
                       {cleanText}
                     </p>
                   </div>
@@ -141,7 +142,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
           <div className="p-4 rounded-xl bg-[#110928] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 text-purple-200 font-semibold">
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>Garantía de activación oficial con asistencia técnica directa</span>
+              <span>{t('guaranteeSupportMsg')}</span>
             </div>
 
             <a
@@ -164,7 +165,7 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors cursor-pointer border border-white/15"
           >
-            Entendido, cerrar
+            {t('gotItClose')}
           </button>
         </div>
       </div>
