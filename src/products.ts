@@ -68,12 +68,14 @@ export interface DynamicCoupon {
   discountPercent: number;
   minItems?: number;
   description: string;
+  expiresAt?: number;
 }
 
 export const DYNAMIC_COUPONS: DynamicCoupon[] = [
   { code: 'UPCLIC10', discountPercent: 10, description: '10% de descuento de bienvenida' },
   { code: 'COMBO15', discountPercent: 15, minItems: 2, description: '15% de descuento por llevar 2 o más productos' },
-  { code: 'VIP20', discountPercent: 20, description: '20% de descuento especial clientes VIP' }
+  { code: 'VIP20', discountPercent: 20, description: '20% de descuento especial clientes VIP' },
+  { code: 'PRICLIC1', discountPercent: 10, description: '10% de descuento (Cupón Secreto)', expiresAt: 1791417599000 } // Expires around 2026-10-07
 ];
 
 export function calculateCartTotals(
@@ -89,7 +91,8 @@ export function calculateCartTotals(
   if (couponCode) {
     const matched = DYNAMIC_COUPONS.find(c => c.code.toUpperCase() === couponCode.trim().toUpperCase());
     if (matched) {
-      if (!matched.minItems || totalQuantity >= matched.minItems) {
+      const isNotExpired = !matched.expiresAt || Date.now() <= matched.expiresAt;
+      if (isNotExpired && (!matched.minItems || totalQuantity >= matched.minItems)) {
         discountRate = matched.discountPercent / 100;
         appliedCoupon = matched;
       }
