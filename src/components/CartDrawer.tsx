@@ -110,7 +110,7 @@ export const CartDrawer: React.FC = () => {
                         : t('couponApplied')}
                     </div>
                     <div className="text-[10px] font-normal text-slate-600 mt-0.5">
-                      {discountReason} • <span className="font-semibold">{t('nonCombinable')}</span>
+                      -{Math.round(discountRate * 100)}%
                     </div>
                   </div>
                 </div>
@@ -315,7 +315,7 @@ export const CartDrawer: React.FC = () => {
                           {appliedCoupon}
                         </span>
                         <span className="text-[11px] text-emerald-700 ml-1.5 font-medium">
-                          {isMultiItemDiscount ? t('activeMultiItemDiscount') || 'Active (10% off for 2+ items)' : t('activeCoupon10') || '10% discount coupon'}
+                          -{Math.round(discountRate * 100)}%
                         </span>
                       </div>
                     </div>
@@ -335,7 +335,7 @@ export const CartDrawer: React.FC = () => {
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
                       placeholder={t('couponCode')}
-                      className="flex-1 px-3 py-1.5 text-xs uppercase font-mono rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-[#0066FF]"
+                      className="flex-1 px-3 py-1.5 text-xs uppercase font-mono rounded-lg border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-[#0066FF]"
                     />
                     <button
                       type="submit"

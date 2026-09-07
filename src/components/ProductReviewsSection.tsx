@@ -23,6 +23,7 @@ interface ProductReviewsSectionProps {
 export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ product }) => {
   const { getProductReviews, getProductStats, addReview, connectionStatus, isSaving, syncWithServer } = useReviews();
 
+  const { t } = useCart();
   const reviews = getProductReviews(product.id);
   const stats = getProductStats(product.id);
 

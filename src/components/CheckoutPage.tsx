@@ -890,7 +890,7 @@ export const CheckoutPage: React.FC = () => {
                       <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
                     </div>
                     <div className="text-[10px] text-purple-300 italic text-right">
-                      {discountReason}
+                      -{Math.round(discountRate * 100)}%
                     </div>
                   </div>
                 ) : (

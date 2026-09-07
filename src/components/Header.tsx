@@ -249,25 +249,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             {/* Right Controls (Eneba Style: Language/Currency | Cart | Account) */}
             <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               {/* Inline Region & Currency Selector Dropdown */}
-              <div ref={regionDropdownRef} className="relative hidden sm:block">
+              <div ref={regionDropdownRef} className="relative">
                 <button
                   onClick={() => setRegionDropdownOpen(!regionDropdownOpen)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2b0c61] hover:bg-[#38117d] text-purple-200 hover:text-white text-xs font-bold border border-[#5923aa]/80 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-[#2b0c61] hover:bg-[#38117d] text-purple-200 hover:text-white text-xs font-bold border border-[#5923aa]/80 transition-all cursor-pointer shadow-sm active:scale-95"
                   title={t("changeRegionCurrency")}
                 >
                   <Globe className="w-3.5 h-3.5 text-[#facc15]" />
-                  <span>
+                  <span className="hidden sm:inline">
                     {currency === 'PEN' && 'PE | Español (S/)'}
                     {currency === 'COP' && 'CO | Español ($ COP)'}
                     {currency === 'MXN' && 'MX | Español ($ MXN)'}
                     {currency === 'USD' && 'US | English ($ USD)'}
+                  </span>
+                  <span className="sm:hidden">
+                    {currency === 'PEN' && 'PE'}
+                    {currency === 'COP' && 'CO'}
+                    {currency === 'MXN' && 'MX'}
+                    {currency === 'USD' && 'US'}
                   </span>
                   <ChevronDown className={`w-3.5 h-3.5 text-purple-300 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Dropdown Menu */}
                 {regionDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-60 bg-[#1f0945] rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10">
+                  <div className="absolute right-[-60px] sm:right-0 top-full mt-2 w-[240px] sm:w-60 bg-[#1f0945] rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10">
                     <div className="px-3 py-2 text-[11px] font-bold text-purple-300 uppercase tracking-wider">
                       {t('regionCurrencyLangLabel')}
                     </div>
@@ -614,42 +620,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
           >
             {t('deals')}
           </button>
-          <div className="border-t border-white/10 mt-2 pt-3 space-y-1">
-            <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5 text-[#facc15]" />
-              <span>{t('regionCurrencyLabel')}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5">
-              <button
-                onClick={() => { setCurrency('PEN'); setLanguage('ES'); setMobileMenuOpen(false); }}
-                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'PEN' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
-              >
-                <span>🇵🇪 PE (S/)</span>
-                {currency === 'PEN' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-              </button>
-              <button
-                onClick={() => { setCurrency('COP'); setLanguage('ES'); setMobileMenuOpen(false); }}
-                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'COP' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
-              >
-                <span>🇨🇴 CO (COP)</span>
-                {currency === 'COP' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-              </button>
-              <button
-                onClick={() => { setCurrency('MXN'); setLanguage('ES'); setMobileMenuOpen(false); }}
-                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'MXN' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
-              >
-                <span>🇲🇽 MX (MXN)</span>
-                {currency === 'MXN' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-              </button>
-              <button
-                onClick={() => { setCurrency('USD'); setLanguage('EN'); setMobileMenuOpen(false); }}
-                className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition-colors ${currency === 'USD' ? 'bg-[#facc15] text-slate-950' : 'bg-white/5 text-white'}`}
-              >
-                <span>🇺🇸 US ($ USD)</span>
-                {currency === 'USD' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </header>
