@@ -329,11 +329,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (matchedStatic) {
       const isNotExpired = !matchedStatic.expiresAt || Date.now() <= matchedStatic.expiresAt;
       if (isNotExpired) {
+        const currentTotalQty = items.reduce((sum, item) => sum + item.quantity, 0);
+        if (matchedStatic.minItems && currentTotalQty < matchedStatic.minItems) {
+          const msg = `Este cupón requiere al menos ${matchedStatic.minItems} productos en el carrito.`;
+          setCouponFeedback({ type: 'error', message: msg });
+          return { success: false, message: msg };
+        }
         setAppliedCoupon(clean);
         try {
           localStorage.setItem(COUPON_STORAGE_KEY, clean);
         } catch {}
-        const msg = `¡Cupón ${clean} aplicado correctamente!`;
+        const msg = `¡Cupón ${clean} (${matchedStatic.discountPercent}% OFF) aplicado correctamente!`;
         setCouponFeedback({ type: 'success', message: msg });
         return { success: true, message: msg };
       } else {
@@ -350,6 +356,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeCoupon = () => {
     setAppliedCoupon('');
+    try {
+      localStorage.removeItem(COUPON_STORAGE_KEY);
+    } catch {}
     setCouponFeedback(null);
   };
 

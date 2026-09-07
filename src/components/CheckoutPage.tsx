@@ -627,12 +627,14 @@ export const CheckoutPage: React.FC = () => {
                         {appliedCoupon}
                       </span>
                       <span className="text-[11px] text-emerald-300 font-medium">
-                        {isMultiItemDiscount ? '(10% aplicado por 2+ productos)' : '(10% de descuento aplicado)'}
+                        ({Math.round(discountRate * 100)}% de descuento aplicado)
                       </span>
                     </div>
                     <button
+                      type="button"
                       onClick={removeCoupon}
-                      className="text-xs text-purple-300 hover:text-red-400 font-bold px-1"
+                      className="text-xs text-purple-300 hover:text-red-400 font-bold px-1 transition-colors cursor-pointer"
+                      title="Quitar cupón"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -769,6 +771,8 @@ export const CheckoutPage: React.FC = () => {
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                       <User className="w-4 h-4" />
+                    </div>
+                  </div>
                   <p className="text-[10px] text-purple-400">Para personalizar tu comprobante de compra</p>
                 </div>
 
@@ -789,6 +793,8 @@ export const CheckoutPage: React.FC = () => {
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                       <Phone className="w-4 h-4" />
+                    </div>
+                  </div>
                   <p className="text-[10px] text-purple-400">Para darte soporte directo en la activación</p>
                 </div>
               </div>
@@ -913,6 +919,16 @@ export const CheckoutPage: React.FC = () => {
                   <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
                   <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
                 </button>
+
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20deseo%20pagar%20mi%20pedido%20por%20un%20total%20de%20${encodeURIComponent(formatPrice(total))}${appliedCoupon ? `%20con%20cup%C3%B3n%20${appliedCoupon}` : ''}%20(Correo:%20${encodeURIComponent(customerEmail || 'no especificado')}).`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 text-center"
+                >
+                  <MessageCircle className="w-4 h-4 text-emerald-400" />
+                  <span>Pagar por WhatsApp (Yape / Plin / Transferencia)</span>
+                </a>
               </div>
 
               {/* Delivery info clarification */}
@@ -943,10 +959,6 @@ export const CheckoutPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
-      </div>
-      </div>
-      </div>
       </div>
     </div>
   );
