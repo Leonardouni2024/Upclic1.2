@@ -156,9 +156,9 @@ export const translations = {
     multiItemPromoBanner: "¡Lleva 2 o más productos y obtén 10% de descuento automáticamente en todo tu carrito!",
 
     // Installation Modal
-    installationModalTitle: "Instalación y Descarga Oficial",
-    directMicrosoftDownload: "Descarga Oficial Directa de Microsoft",
-    microsoftServerDesc: "Servidores oficiales de Microsoft. Descarga segura, directa, sin intermediarios ni publicidad.",
+    installationModalTitle: "Instalación y Descarga",
+    directMicrosoftDownload: "Descargar instalador",
+    microsoftServerDesc: "Enlace directo para descargar el instalador en tu equipo.",
     downloadInstaller: "Descargar instalador",
     quickInstallSummary: "Resumen Rápido de Instalación",
     stepLabel: "Paso",
@@ -475,9 +475,9 @@ export const translations = {
     multiItemPromoBanner: "Buy 2 or more products and get an automatic 10% discount on your entire cart!",
 
     // Installation Modal
-    installationModalTitle: "Official Installation & Download",
-    directMicrosoftDownload: "Official Direct Microsoft Download",
-    microsoftServerDesc: "Official Microsoft servers. Safe, direct download with no intermediaries or ads.",
+    installationModalTitle: "Installation & Download",
+    directMicrosoftDownload: "Download installer",
+    microsoftServerDesc: "Direct download link to install on your computer.",
     downloadInstaller: "Download installer",
     quickInstallSummary: "Quick Installation Summary",
     stepLabel: "Step",

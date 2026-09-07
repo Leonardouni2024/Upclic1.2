@@ -11,6 +11,15 @@ export interface ProductVariant {
   shortDesc: string;
 }
 
+export interface ProductDownloadOption {
+  id: string;
+  name: string;
+  url: string;
+  badge?: string;
+  description?: string;
+  isPrimary?: boolean;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -35,6 +44,7 @@ export interface Product {
   accountNotice?: string;
   downloadUrl: string;
   downloadLabel?: string;
+  downloadOptions?: ProductDownloadOption[];
   isoFormat?: string;
   installationSteps: string[];
   variants?: ProductVariant[];

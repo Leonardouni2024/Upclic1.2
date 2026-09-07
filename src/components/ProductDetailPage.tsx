@@ -25,6 +25,8 @@ import {
   BookOpen,
   CreditCard,
   Send,
+  Download,
+  ExternalLink,
 } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -452,15 +454,70 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     </div>
                   </div>
 
-                  {/* Botón Guía de instalación (Única ubicación limpia) */}
-                  <button
-                    id="detail-guide-btn"
-                    onClick={() => setShowInstallModal(true)}
-                    className="w-full py-3 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 font-bold text-xs sm:text-sm border border-purple-400/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98"
-                  >
-                    <BookOpen className="w-4 h-4 text-[#facc15]" />
-                    <span>Guía e Instalador Oficial</span>
-                  </button>
+                  {/* Sección de Descarga Directa (Fuentes Externas) */}
+                  <div className="pt-3 border-t border-white/10 space-y-2.5 my-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#facc15] flex items-center gap-1.5">
+                        <Download className="w-4 h-4" />
+                        <span>
+                          {product.downloadOptions && product.downloadOptions.length > 1
+                            ? `Enlaces de Descarga Directa (${product.downloadOptions.length} fuentes externas):`
+                            : 'Descarga Directa (Fuente Oficial / Externa):'}
+                        </span>
+                      </span>
+                    </div>
+
+                    {product.downloadOptions && product.downloadOptions.length > 0 ? (
+                      <div className="grid grid-cols-1 gap-2">
+                        {product.downloadOptions.map((opt) => (
+                          <a
+                            key={opt.id}
+                            href={opt.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full py-2.5 px-3.5 rounded-xl bg-purple-900/50 hover:bg-purple-800/70 border border-purple-400/40 text-white font-bold text-xs flex items-center justify-between transition-all group cursor-pointer shadow-md hover:border-amber-400/60"
+                            title={`Descargar desde fuente externa: ${opt.name}`}
+                          >
+                            <div className="flex items-center gap-2.5 truncate">
+                              <Download className="w-4 h-4 text-[#facc15] shrink-0 group-hover:scale-110 transition-transform" />
+                              <div className="flex flex-col text-left truncate">
+                                <span className="truncate text-white font-bold">{opt.name}</span>
+                                {opt.badge && (
+                                  <span className="text-[10px] text-amber-300 font-medium truncate">
+                                    {opt.badge}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <ExternalLink className="w-3.5 h-3.5 text-purple-300 group-hover:text-amber-300 shrink-0 ml-1.5" />
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <a
+                        href={product.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-2.5 px-3.5 rounded-xl bg-purple-900/50 hover:bg-purple-800/70 border border-purple-400/40 text-white font-bold text-xs flex items-center justify-between transition-all group cursor-pointer shadow-md hover:border-amber-400/60"
+                        title={product.downloadLabel || 'Descargar instalador'}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <Download className="w-4 h-4 text-[#facc15] shrink-0 group-hover:scale-110 transition-transform" />
+                          <span className="truncate">{product.downloadLabel || 'Descargar instalador directo'}</span>
+                        </div>
+                        <ExternalLink className="w-3.5 h-3.5 text-purple-300 group-hover:text-amber-300 shrink-0 ml-1.5" />
+                      </a>
+                    )}
+
+                    <button
+                      id="detail-guide-btn"
+                      onClick={() => setShowInstallModal(true)}
+                      className="w-full py-2.5 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 font-bold text-xs border border-purple-400/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98 mt-1"
+                    >
+                      <BookOpen className="w-4 h-4 text-[#facc15]" />
+                      <span>Ver Guía de Instalación Paso a Paso</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

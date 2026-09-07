@@ -1,7 +1,7 @@
 import type { Product, CartTotals, Currency } from './types.ts';
 
-export const WHATSAPP_NUMBER = '51920038890';
-export const WHATSAPP_DISPLAY = '+51 920 038 890';
+export const WHATSAPP_NUMBER = '51983204384';
+export const WHATSAPP_DISPLAY = '+51 983 204 384';
 export const MERCADO_PAGO_URL = 'https://www.mercadopago.com.pe';
 
 export function getStoredCurrency(): Currency {
@@ -147,6 +147,47 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find(p => p.slug === slug || p.id === slug);
 }
 
+export const OFFICE_STANDARD_STEPS = [
+  'Descargar instalador: Haz clic en el botón de descarga directa para bajar el archivo de instalación oficial en tu computadora.',
+  'Ejecutar el archivo exe: Abre la descarga o monta la imagen y haz doble clic en el instalador (.exe) para iniciar la instalación.',
+  'Esperar a que finalice la instalación automática de todas las aplicaciones en tu equipo.',
+  'Abrir cualquier aplicación (ej. Word o Excel), dirigirse a Cuenta > Cambiar clave de producto (o Activar) e ingresar la clave oficial de 25 caracteres recibida en tu compra.'
+];
+
+export const WINDOWS_STANDARD_STEPS = [
+  'Descargar el archivo ISO de instalación de Windows mediante el enlace directo y descargar la herramienta gratuita Rufus (rufus.ie).',
+  'Conectar una memoria USB de al menos 8 GB a tu computadora (se formateará durante el proceso, asegúrate de respaldar tus archivos importantes).',
+  'Abrir Rufus en tu equipo y en la opción "Dispositivo" seleccionar tu memoria USB conectada.',
+  'En "Elección de arranque", hacer clic en "Seleccionar" y escoger el archivo ISO de Windows descargado.',
+  'En "Esquema de partición", seleccionar "GPT" (recomendado para equipos modernos con UEFI) o "MBR" (para equipos antiguos con BIOS heredado). Dejar el sistema de archivos en NTFS.',
+  'Hacer clic en "Empezar" en Rufus, confirmar las advertencias y esperar a que la barra llegue al 100% (creación de USB booteable lista).',
+  'Conectar el USB booteable en la PC donde instalarás Windows, reiniciar el equipo y presionar repetidamente la tecla del menú de booteo (F12, F11, F9 o ESC según la placa madre) para iniciar desde el USB.',
+  'Seguir las instrucciones del instalador en pantalla, seleccionar tu partición o disco y esperar a que concluya la instalación de Windows.',
+  'Una vez dentro de Windows, ingresar a Configuración > Sistema > Activación (o Actualización y seguridad > Activación), presionar "Cambiar clave de producto" e ingresar la clave oficial de 25 caracteres.'
+];
+
+export const OFFICE_365_PRO_STEPS = [
+  'Descargar instalador: Haz clic en el botón de descarga directa para obtener el archivo instalador oficial (OfficeSetup.exe).',
+  'Instalarlo: Ejecuta el archivo descargado para iniciar la instalación completa de las aplicaciones de Office en tu equipo.',
+  'Iniciar sesión: Abre cualquier aplicación (como Word o Excel), haz clic en "Iniciar sesión" en la esquina superior derecha y accede con el correo y contraseña que se te proporcionaron en tu orden de compra.',
+  'Crear nueva contraseña: A continuación, el sistema te solicitará obligatoriamente cambiar la contraseña temporal y crear una nueva contraseña personal y segura.',
+  'Guardar contraseña: Guarda muy bien tu nueva contraseña personal para que puedas iniciar sesión y entrar en tus otros dispositivos (PC, Mac, tablet o smartphone).'
+];
+
+export const COMBO_WIN11_OFFICE2024_STEPS = [
+  'Windows: Conectar un USB de al menos 8 GB, abrir Rufus, seleccionar la ISO de Windows 11, elegir esquema GPT/MBR y presionar Empezar. Reiniciar la PC con la tecla de booteo (F12/F11/F9) para iniciar desde el USB e instalar Windows.',
+  'Activar Windows: Ir a Configuración > Sistema > Activación, presionar en "Cambiar la clave de producto" e ingresar tu clave de 25 caracteres de Windows 11 Pro.',
+  'Office: Descargar el instalador directo de Office 2024 Pro Plus y ejecutar el archivo exe para instalar las aplicaciones en tu PC.',
+  'Activar Office: Abrir Word o Excel, entrar a Cuenta > Activar producto e introducir tu clave de 25 caracteres de Office 2024 Pro Plus.'
+];
+
+export const COMBO_WIN10_OFFICE2021_STEPS = [
+  'Windows: Conectar un USB de al menos 8 GB, abrir Rufus, seleccionar la ISO de Windows 10, elegir esquema GPT/MBR y presionar Empezar. Reiniciar la PC con la tecla de booteo (F12/F11/F9) para iniciar desde el USB e instalar Windows.',
+  'Activar Windows: Ir a Configuración > Actualización y seguridad > Activación e ingresar tu clave de 25 caracteres de Windows 10 Pro.',
+  'Office: Descargar el instalador directo de Office 2021 Pro Plus y ejecutar el archivo exe para instalar las aplicaciones en tu PC.',
+  'Activar Office: Abrir Word o Excel, entrar a Cuenta > Activar producto e ingresar tu clave de 25 caracteres de Office 2021 Pro Plus.'
+];
+
 export const products: Product[] = [
   // --- OFFICE ---
   {
@@ -172,14 +213,25 @@ export const products: Product[] = [
       'Multilenguaje y soporte oficial permanente'
     ],
     compatibility: 'Windows 10 / Windows 11 (32 & 64 Bit)',
-    downloadUrl: 'https://setup.office.com',
-    downloadLabel: 'Descargar e instalar desde setup.office.com',
-    installationSteps: [
-      'Ingresa a setup.office.com e inicia sesión con tu cuenta de Microsoft.',
-      'Introduce la clave de 25 dígitos entregada en tu pedido.',
-      'Descarga el instalador oficial y ejecútalo en tu equipo.',
-      'Abre Word o Excel para verificar la activación permanente.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2024 (.exe)',
+    downloadOptions: [
+      {
+        id: 'office-2024-exe',
+        name: 'Descargar Instalador Directo Office 2024 (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Descarga inmediata del ejecutable oficial OfficeSetup.exe en español.'
+      },
+      {
+        id: 'office-2024-img',
+        name: 'Descargar Imagen Offline Completa Office 2024 (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2024Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN para instalación offline sin internet.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-office-2021',
@@ -201,12 +253,25 @@ export const products: Product[] = [
       'Garantía de activación inmediata'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Ingresa a setup.office.com con tu cuenta Microsoft.',
-      'Escribe tu clave de 25 caracteres y descarga el instalador.',
-      'Ejecuta el asistente y abre Word para finalizar.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2021 Pro Plus (.exe)',
+    downloadOptions: [
+      {
+        id: 'office-2021-exe',
+        name: 'Descargar Instalador Directo Office 2021 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para instalación rápida online.'
+      },
+      {
+        id: 'office-2021-img',
+        name: 'Descargar Imagen Offline Office 2021 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2021Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG de Microsoft CDN para instalar sin conexión.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-office-2021-std',
@@ -227,12 +292,25 @@ export const products: Product[] = [
       'Soporte corporativo y claves por volumen de activación'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Accede a setup.office.com con tu cuenta.',
-      'Introduce tu código de 25 caracteres.',
-      'Descarga e instala en tu equipo.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=Standard2021Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2021 Standard (.exe)',
+    downloadOptions: [
+      {
+        id: 'office-2021-std-exe',
+        name: 'Descargar Instalador Directo Office 2021 Standard (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=Standard2021Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe de la versión Standard.'
+      },
+      {
+        id: 'office-2021-std-img',
+        name: 'Descargar Imagen Offline Office 2021 Standard (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/Standard2021Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de la versión Standard.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-office-2019',
@@ -250,15 +328,28 @@ export const products: Product[] = [
     features: [
       'Word 2019, Excel 2019, PowerPoint 2019, Outlook 2019',
       'Licencia permanente para 1 PC',
-      'Activación directa en setup.office.com'
+      'Activación directa en tu equipo'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Ve a setup.office.com.',
-      'Ingresa la clave de 25 dígitos.',
-      'Descarga e instala.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2019Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2019 Pro Plus (.exe)',
+    downloadOptions: [
+      {
+        id: 'office-2019-exe',
+        name: 'Descargar Instalador Directo Office 2019 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2019Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Office 2019.'
+      },
+      {
+        id: 'office-2019-img',
+        name: 'Descargar Imagen Offline Office 2019 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2019Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-office-2016',
@@ -278,16 +369,31 @@ export const products: Product[] = [
       'Excelente compatibilidad con versiones anteriores de Windows'
     ],
     compatibility: 'Windows 7 / 8.1 / 10 / 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Ingresa a setup.office.com e instala en tu PC.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlusRetail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2016 Pro Plus (.exe)',
+    downloadOptions: [
+      {
+        id: 'office-2016-exe',
+        name: 'Descargar Instalador Directo Office 2016 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlusRetail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Office 2016.'
+      },
+      {
+        id: 'office-2016-img',
+        name: 'Descargar Imagen Offline Office 2016 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlusRetail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN para Office 2016.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-office-2013',
     slug: 'office-2013-pro-plus',
     name: 'Microsoft Office 2013 Professional Plus',
-    description: 'Versión ligera y ligera para computadoras con recursos moderados.',
+    description: 'Versión ligera para computadoras con recursos moderados.',
     price: 29.00,
     oldPrice: 55.00,
     duration: 'Permanente (De por vida)',
@@ -301,8 +407,18 @@ export const products: Product[] = [
       'Bajo consumo de recursos'
     ],
     compatibility: 'Windows 7 / 8 / 10 / 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: ['Activa con tu clave oficial en setup.office.com']
+    downloadUrl: 'https://archive.org/download/office-2013-pro-plus-sp-1-spanish-x-64-x-86/Office2013ProPlusSP1_Spanish.iso',
+    downloadLabel: 'Descargar instalador Office 2013 Pro Plus',
+    downloadOptions: [
+      {
+        id: 'office-2013-iso',
+        name: 'Descargar ISO Directa Office 2013 Pro Plus (Español)',
+        url: 'https://archive.org/download/office-2013-pro-plus-sp-1-spanish-x-64-x-86/Office2013ProPlusSP1_Spanish.iso',
+        badge: 'Archive.org Servidor Directo (.iso)',
+        description: 'Imagen ISO oficial completa en español con SP1.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-office-2010',
@@ -319,8 +435,18 @@ export const products: Product[] = [
     reviews: 74,
     features: ['Word 2010, Excel 2010 y suite básica de Office'],
     compatibility: 'Windows XP / Vista / 7 / 8 / 10',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: ['Instala con el ejecutable y activa online.']
+    downloadUrl: 'https://archive.org/download/office-2010-professional-plus-sp-2-spanish/Office2010ProPlusSP2_Spanish.iso',
+    downloadLabel: 'Descargar instalador Office 2010 Pro Plus',
+    downloadOptions: [
+      {
+        id: 'office-2010-iso',
+        name: 'Descargar ISO Directa Office 2010 Pro Plus (Español)',
+        url: 'https://archive.org/download/office-2010-professional-plus-sp-2-spanish/Office2010ProPlusSP2_Spanish.iso',
+        badge: 'Archive.org Servidor Directo (.iso)',
+        description: 'Imagen ISO oficial en español con Service Pack 2.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-microsoft-365',
@@ -343,12 +469,25 @@ export const products: Product[] = [
       'Funciona en PC, Mac, iPad, iPhone y Android'
     ],
     compatibility: 'Windows, macOS, iOS, Android',
-    downloadUrl: 'https://www.office.com',
-    installationSteps: [
-      'Inicia sesión en www.office.com con la cuenta proporcionada.',
-      'Puedes vincular la cuenta a tu propio dominio.',
-      'Descarga e instala Microsoft 365 en tus dispositivos.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=O365ProPlusRetail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 365 (.exe)',
+    downloadOptions: [
+      {
+        id: 'm365-installer',
+        name: 'Descargar instalador Office 365 (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=O365ProPlusRetail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Instalador Click-to-Run (.exe)',
+        description: 'Descarga directa del instalador oficial ejecutable OfficeSetup.exe de aplicaciones de Microsoft 365.'
+      },
+      {
+        id: 'm365-portal',
+        name: 'Portal oficial Office.com',
+        url: 'https://www.office.com',
+        badge: 'Portal de acceso',
+        description: 'Acceso directo con el usuario y contraseña asignados para gestionar tus apps y dispositivos.'
+      }
+    ],
+    installationSteps: OFFICE_365_PRO_STEPS
   },
 
   // --- WINDOWS ---
@@ -394,14 +533,32 @@ export const products: Product[] = [
       'Actualizaciones continuas por Microsoft Update'
     ],
     compatibility: 'PC con soporte para Windows 11 (64 Bit)',
-    downloadUrl: 'https://www.microsoft.com/software-download/windows11',
-    downloadLabel: 'Descargar desde el sitio oficial de Microsoft',
-    installationSteps: [
-      'Ve a Inicio > Configuración > Sistema > Activación.',
-      'Haz clic en "Cambiar la clave de producto".',
-      'Ingresa la clave de 25 caracteres recibida por correo.',
-      'Haz clic en Activar para completar el proceso.'
-    ]
+    downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+    downloadLabel: 'Descargar Media Creation Tool Windows 11 (.exe)',
+    downloadOptions: [
+      {
+        id: 'win11-tool',
+        name: 'Descargar Media Creation Tool Windows 11 (.exe)',
+        url: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+        badge: 'Herramienta oficial (.exe)',
+        description: 'Herramienta oficial de Microsoft para descargar la imagen ISO de Windows 11 o crear un USB booteable con Rufus.'
+      },
+      {
+        id: 'win11-iso',
+        name: 'Descargar ISO directa Windows 11 (64 Bit Español)',
+        url: 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_x64FRE_es-es.iso',
+        badge: 'ISO Oficial Directa',
+        description: 'Enlace de descarga directa oficial de la imagen ISO de Windows 11 para usar con Rufus.'
+      },
+      {
+        id: 'win11-web',
+        name: 'Portal oficial de descargas Microsoft Windows 11',
+        url: 'https://www.microsoft.com/es-es/software-download/windows11',
+        badge: 'Web oficial Microsoft',
+        description: 'Página oficial de Microsoft para descargar asistentes o ISO de Windows 11.'
+      }
+    ],
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win11-home',
@@ -425,8 +582,25 @@ export const products: Product[] = [
       { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 34.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 11 (64 Bit)',
-    downloadUrl: 'https://www.microsoft.com/software-download/windows11',
-    installationSteps: ['Ingresa en Configuración > Sistema > Activación']
+    downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+    downloadLabel: 'Descargar Media Creation Tool Windows 11 (.exe)',
+    downloadOptions: [
+      {
+        id: 'win11-home-tool',
+        name: 'Descargar Media Creation Tool Windows 11 (.exe)',
+        url: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+        badge: 'Herramienta oficial (.exe)',
+        description: 'Herramienta oficial para preparar tu USB booteable con Rufus o descargar la ISO de Windows 11.'
+      },
+      {
+        id: 'win11-home-iso',
+        name: 'Descargar ISO directa Windows 11 (64 Bit Español)',
+        url: 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_x64FRE_es-es.iso',
+        badge: 'ISO Oficial Directa',
+        description: 'Enlace de descarga directa oficial de la imagen ISO de Windows 11.'
+      }
+    ],
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win11-enterprise',
@@ -443,8 +617,18 @@ export const products: Product[] = [
     reviews: 135,
     features: ['DirectAccess, AppLocker y virtualización corporativa'],
     compatibility: 'Windows 11 (64 Bit)',
-    downloadUrl: 'https://www.microsoft.com/software-download/windows11',
-    installationSteps: ['Activar mediante clave de producto oficial.']
+    downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+    downloadLabel: 'Descargar Media Creation Tool Windows 11 (.exe)',
+    downloadOptions: [
+      {
+        id: 'win11-ent-tool',
+        name: 'Descargar Media Creation Tool Windows 11 (.exe)',
+        url: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+        badge: 'Herramienta oficial (.exe)',
+        description: 'Herramienta oficial de Microsoft para preparar tu medio booteable.'
+      }
+    ],
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win10-pro',
@@ -469,12 +653,25 @@ export const products: Product[] = [
       { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 25.90, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
-    downloadUrl: 'https://www.microsoft.com/software-download/windows10',
-    installationSteps: [
-      'Ve a Configuración > Actualización y seguridad > Activación.',
-      'Introduce la clave enviada a tu correo.',
-      'Haz clic en Activar.'
-    ]
+    downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+    downloadLabel: 'Descargar Media Creation Tool Windows 10 (.exe)',
+    downloadOptions: [
+      {
+        id: 'win10-tool',
+        name: 'Descargar Media Creation Tool 22H2 (.exe)',
+        url: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+        badge: 'Herramienta oficial (.exe)',
+        description: 'Herramienta oficial Media Creation Tool 22H2 de Microsoft para descargar la ISO de Windows 10 o crear tu USB booteable.'
+      },
+      {
+        id: 'win10-web',
+        name: 'Portal oficial de descargas Microsoft Windows 10',
+        url: 'https://www.microsoft.com/es-es/software-download/windows10',
+        badge: 'Web oficial Microsoft',
+        description: 'Página oficial de Microsoft para descargar la imagen ISO o asistente de actualización de Windows 10.'
+      }
+    ],
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win10-home',
@@ -495,8 +692,9 @@ export const products: Product[] = [
       { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 30.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 10 (32/64 Bit)',
-    downloadUrl: 'https://www.microsoft.com/software-download/windows10',
-    installationSteps: ['Activa directamente desde la configuración de Windows.']
+    downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+    downloadLabel: 'Descargar Media Creation Tool Windows 10 (.exe)',
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win10-enterprise',
@@ -513,8 +711,9 @@ export const products: Product[] = [
     reviews: 142,
     features: ['Long Term Servicing Channel (LTSC) para la máxima estabilidad'],
     compatibility: 'Windows 10 Enterprise LTSC',
-    downloadUrl: 'https://www.microsoft.com/evalcenter',
-    installationSteps: ['Ingresa la clave en Panel de control o CMD slmgr.']
+    downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+    downloadLabel: 'Descargar Media Creation Tool Windows 10 LTSC (.exe)',
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win81-pro',
@@ -531,8 +730,9 @@ export const products: Product[] = [
     reviews: 65,
     features: ['Soporte para pantalla táctil y escritorio clásico'],
     compatibility: 'Windows 8.1 (32/64 Bit)',
-    downloadUrl: 'https://www.microsoft.com/software-download/windows81',
-    installationSteps: ['Activa con tu clave de 25 caracteres.']
+    downloadUrl: 'https://archive.org/download/Win8.1ProSpanishx64/Win8.1_Spanish_x64.iso',
+    downloadLabel: 'Descargar ISO Windows 8.1 Pro (64 Bit)',
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win7-pro',
@@ -549,8 +749,9 @@ export const products: Product[] = [
     reviews: 128,
     features: ['Aero Glass, Windows XP Mode y compatibilidad retro'],
     compatibility: 'Windows 7 (32/64 Bit)',
-    downloadUrl: 'https://www.microsoft.com',
-    installationSteps: ['Activar en el menú Inicio > Propiedades del equipo.']
+    downloadUrl: 'https://archive.org/download/windows-7-professional-sp1-spanish-x64/Win7_Pro_SP1_Spanish_x64.iso',
+    downloadLabel: 'Descargar ISO Windows 7 Pro (SP1 64 Bit)',
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
   {
     id: 'prod-win7-ultimate',
@@ -567,8 +768,9 @@ export const products: Product[] = [
     reviews: 64,
     features: ['BitLocker, Aero Glass y soporte multilenguaje completo'],
     compatibility: 'Windows 7 (32/64 Bit)',
-    downloadUrl: 'https://www.microsoft.com',
-    installationSteps: ['Activar en el menú Inicio > Propiedades del equipo.']
+    downloadUrl: 'https://archive.org/download/windows-7-ultimate-sp1-spanish-x64/Win7_Ult_SP1_Spanish_x64.iso',
+    downloadLabel: 'Descargar ISO Windows 7 Ultimate (SP1 64 Bit)',
+    installationSteps: WINDOWS_STANDARD_STEPS
   },
 
   // --- COMBOS ---
@@ -594,13 +796,32 @@ export const products: Product[] = [
       'Garantía técnica y soporte de instalación prioritario'
     ],
     compatibility: 'Windows 10 y 11 (32 y 64 Bit)',
-    downloadUrl: 'https://setup.office.com',
-    downloadLabel: 'Descargadores oficiales de Microsoft',
-    installationSteps: [
-      'Activa primero Windows 11 Pro en la sección Configuración > Activación.',
-      'Ingresa a setup.office.com para asociar y descargar Office 2024 Pro Plus.',
-      'Disfruta de ambos programas oficialmente activados de por vida.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instaladores de Windows 11 Pro y Office 2024 Pro',
+    downloadOptions: [
+      {
+        id: 'combo-win11-pro',
+        name: 'Descargar Windows 11 Pro (Media Creation Tool .exe)',
+        url: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+        badge: 'Herramienta Windows (.exe)',
+        description: 'Herramienta oficial de Microsoft (Media Creation Tool) para descargar la ISO de Windows 11 o preparar tu USB booteable con Rufus.'
+      },
+      {
+        id: 'combo-win11-iso',
+        name: 'Descargar ISO directa Windows 11 (64 Bit Español)',
+        url: 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_x64FRE_es-es.iso',
+        badge: 'ISO Oficial Directa',
+        description: 'Descarga directa oficial de la imagen ISO de Windows 11 en español para grabar en tu USB con Rufus.'
+      },
+      {
+        id: 'combo-office-2024-pro',
+        name: 'Descargar Office 2024 Professional Plus (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Instalador Office (.exe)',
+        description: 'Descarga directa del instalador ejecutable oficial de Office 2024 Pro Plus (OfficeSetup.exe) en español.'
+      }
+    ],
+    installationSteps: COMBO_WIN11_OFFICE2024_STEPS
   },
   {
     id: 'prod-combo-win10-office2021',
@@ -621,11 +842,25 @@ export const products: Product[] = [
       'Ahorro del 45%'
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Activa Windows 10 Pro en Configuración > Activación.',
-      'Registra Office 2021 en setup.office.com e instálalo.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instaladores de Windows 10 Pro y Office 2021 Pro',
+    downloadOptions: [
+      {
+        id: 'combo-win10-pro',
+        name: 'Descargar Windows 10 Pro (Media Creation Tool .exe)',
+        url: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+        badge: 'Herramienta Windows (.exe)',
+        description: 'Herramienta oficial Media Creation Tool 22H2 para descargar la ISO de Windows 10 o crear el USB booteable con Rufus.'
+      },
+      {
+        id: 'combo-office-2021-pro',
+        name: 'Descargar Office 2021 Professional Plus (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Instalador Office (.exe)',
+        description: 'Descarga directa del instalador ejecutable oficial de Office 2021 Pro Plus (OfficeSetup.exe) en español.'
+      }
+    ],
+    installationSteps: COMBO_WIN10_OFFICE2021_STEPS
   },
 
   // --- PROJECT & VISIO ---
@@ -649,12 +884,25 @@ export const products: Product[] = [
       'Clave oficial permanente'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Inicia sesión en setup.office.com.',
-      'Ingresa la clave de Project 2024.',
-      'Descarga e instala el software oficial.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Project 2024 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'project-2024-exe',
+        name: 'Descargar Instalador Directo Project 2024 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Descarga inmediata del ejecutable oficial OfficeSetup.exe para Project 2024.'
+      },
+      {
+        id: 'project-2024-img',
+        name: 'Descargar Imagen Offline Project 2024 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2024Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN para instalar sin internet.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-visio-2024',
@@ -675,12 +923,25 @@ export const products: Product[] = [
       'Licencia permanente para 1 equipo'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Visita setup.office.com.',
-      'Introduce tu clave de Visio 2024.',
-      'Descarga e instala la aplicación.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Visio 2024 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'visio-2024-exe',
+        name: 'Descargar Instalador Directo Visio 2024 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Descarga inmediata del ejecutable oficial OfficeSetup.exe para Visio 2024.'
+      },
+      {
+        id: 'visio-2024-img',
+        name: 'Descargar Imagen Offline Visio 2024 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioPro2024Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN para instalar sin internet.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-project-2021',
@@ -700,10 +961,25 @@ export const products: Product[] = [
       'Licencia oficial de por vida'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Activa en setup.office.com e instala en tu equipo.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2021Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Project 2021 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'project-2021-exe',
+        name: 'Descargar Instalador Directo Project 2021 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2021Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Project 2021.'
+      },
+      {
+        id: 'project-2021-img',
+        name: 'Descargar Imagen Offline Project 2021 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2021Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-project-2019',
@@ -720,8 +996,25 @@ export const products: Product[] = [
     reviews: 54,
     features: ['Diagramas de Gantt y control de entregables'],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: ['Activa con tu clave de 25 dígitos.']
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2019Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Project 2019 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'project-2019-exe',
+        name: 'Descargar Instalador Directo Project 2019 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2019Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Project 2019.'
+      },
+      {
+        id: 'project-2019-img',
+        name: 'Descargar Imagen Offline Project 2019 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectPro2019Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-project-2016',
@@ -738,8 +1031,25 @@ export const products: Product[] = [
     reviews: 48,
     features: ['Planificación e informes de proyectos'],
     compatibility: 'Windows 7 / 8 / 10 / 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: ['Instalación mediante setup.office.com']
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectProRetail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Project 2016 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'project-2016-exe',
+        name: 'Descargar Instalador Directo Project 2016 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectProRetail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Project 2016.'
+      },
+      {
+        id: 'project-2016-img',
+        name: 'Descargar Imagen Offline Project 2016 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProjectProRetail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-visio-2021',
@@ -759,10 +1069,25 @@ export const products: Product[] = [
       'Licencia permanente de por vida'
     ],
     compatibility: 'Windows 10 / Windows 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: [
-      'Activa en setup.office.com e instala en tu equipo.'
-    ]
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2021Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Visio 2021 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'visio-2021-exe',
+        name: 'Descargar Instalador Directo Visio 2021 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2021Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Visio 2021.'
+      },
+      {
+        id: 'visio-2021-img',
+        name: 'Descargar Imagen Offline Visio 2021 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioPro2021Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-visio-2016',
@@ -779,8 +1104,25 @@ export const products: Product[] = [
     reviews: 42,
     features: ['Diagramas de arquitectura de red y flujogramas'],
     compatibility: 'Windows 7 / 8 / 10 / 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: ['Descargar e instalar desde setup.office.com']
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioProRetail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Visio 2016 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'visio-2016-exe',
+        name: 'Descargar Instalador Directo Visio 2016 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioProRetail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Visio 2016.'
+      },
+      {
+        id: 'visio-2016-img',
+        name: 'Descargar Imagen Offline Visio 2016 Pro (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/VisioProRetail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial de Microsoft CDN.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   },
   {
     id: 'prod-visio-2013',
@@ -797,7 +1139,17 @@ export const products: Product[] = [
     reviews: 35,
     features: ['Modelado básico de procesos'],
     compatibility: 'Windows 7 / 8 / 10 / 11',
-    downloadUrl: 'https://setup.office.com',
-    installationSteps: ['Activar con tu clave oficial.']
+    downloadUrl: 'https://archive.org/download/visio-professional-2013-sp1-spanish/VisioPro2013SP1_Spanish.iso',
+    downloadLabel: 'Descargar instalador Visio 2013 Pro',
+    downloadOptions: [
+      {
+        id: 'visio-2013-iso',
+        name: 'Descargar ISO Directa Visio 2013 Pro (Español)',
+        url: 'https://archive.org/download/visio-professional-2013-sp1-spanish/VisioPro2013SP1_Spanish.iso',
+        badge: 'Archive.org Servidor Directo (.iso)',
+        description: 'Imagen ISO oficial completa de Visio 2013 SP1 en español.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
   }
 ];

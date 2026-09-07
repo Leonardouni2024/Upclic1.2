@@ -25,17 +25,19 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
   onClose
 }) => {
   const { t } = useCart();
-  const [copied, setCopied] = React.useState(false);
+  const [copiedId, setCopiedId] = React.useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleCopyLink = () => {
+  const handleCopyLink = (url: string, id: string = 'primary') => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(product.downloadUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      navigator.clipboard.writeText(url);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
     }
   };
+
+  const hasMultipleDownloads = Boolean(product.downloadOptions && product.downloadOptions.length > 1);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
@@ -70,45 +72,152 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-5">
-          {/* Download Action Box */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#110928] border border-white/10 shadow-md">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-[11px] font-bold text-[#facc15] uppercase tracking-wider block mb-1">
-                  {product.isoFormat || t('directMicrosoftDownload')}
+          {/* Download Action Section */}
+          {hasMultipleDownloads && product.downloadOptions ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                  <Download className="w-4 h-4" />
+                  Enlaces de Descarga Directa ({product.downloadOptions.length})
                 </span>
-                <p className="text-xs text-purple-200 font-medium leading-relaxed">
-                  {t('microsoftServerDesc')}
-                </p>
+                <span className="text-[11px] text-purple-300 font-medium hidden sm:inline">
+                  Descarga los instaladores de ambos productos
+                </span>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <a
-                  id={`modal-exclusive-download-${product.id}`}
-                  href={product.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2.5 px-4 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer border border-amber-300"
-                >
-                  <Download className="w-4 h-4 text-slate-950" />
-                  <span>{t('downloadInstaller')}</span>
-                  <ExternalLink className="w-3 h-3 opacity-80" />
-                </a>
+              <div className="space-y-3">
+                {product.downloadOptions.map((opt, idx) => (
+                  <div
+                    key={opt.id || idx}
+                    className="p-4 rounded-2xl bg-[#110928] border border-white/10 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-black px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-400/20">
+                          #{idx + 1}
+                        </span>
+                        <span className="text-sm font-bold text-white">
+                          {opt.name}
+                        </span>
+                        {opt.badge && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
+                            {opt.badge}
+                          </span>
+                        )}
+                      </div>
+                      {opt.description && (
+                        <p className="text-xs text-purple-200 leading-relaxed">
+                          {opt.description}
+                        </p>
+                      )}
+                    </div>
 
-                <button
-                  onClick={handleCopyLink}
-                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-colors cursor-pointer"
-                  title="Copiar enlace de descarga directa"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-emerald-400" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-purple-200" />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        id={`modal-exclusive-download-${opt.id}`}
+                        href={opt.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2.5 px-4 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer border border-amber-300"
+                      >
+                        <Download className="w-4 h-4 text-slate-950" />
+                        <span>Descargar</span>
+                        <ExternalLink className="w-3 h-3 opacity-80" />
+                      </a>
+
+                      <button
+                        onClick={() => handleCopyLink(opt.url, opt.id)}
+                        className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-colors cursor-pointer"
+                        title="Copiar enlace de descarga directa"
+                      >
+                        {copiedId === opt.id ? (
+                          <Check className="w-4 h-4 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-4 h-4 text-purple-200" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {(product.category === 'windows' || product.category === 'combos') && (
+                <div className="p-3.5 rounded-2xl bg-purple-900/30 border border-purple-400/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-purple-600/40 text-purple-200 flex items-center justify-center shrink-0">
+                      <Download className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-white block">Herramienta Booteable recomendada: Rufus</span>
+                      <span className="text-[11px] text-purple-200">Software gratuito y seguro para grabar la ISO de Windows en un USB de 8 GB.</span>
+                    </div>
+                  </div>
+                  <a
+                    href="https://rufus.ie/es/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-3.5 rounded-xl bg-purple-600/40 hover:bg-purple-600/60 text-purple-200 font-bold text-xs flex items-center justify-center gap-1.5 border border-purple-400/30 transition-all shrink-0 cursor-pointer"
+                    title="Descargar Rufus oficial para crear el USB booteable"
+                  >
+                    <span>Descargar Rufus</span>
+                    <ExternalLink className="w-3 h-3 opacity-80" />
+                  </a>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#110928] border border-white/10 shadow-md">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-sm font-bold text-white block mb-0.5">
+                    {product.downloadLabel || t('downloadInstaller')}
+                  </span>
+                  <p className="text-xs text-purple-200 font-medium leading-relaxed">
+                    Descarga directa del archivo de instalación para tu equipo.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <a
+                    id={`modal-exclusive-download-${product.id}`}
+                    href={product.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2.5 px-4 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer border border-amber-300"
+                  >
+                    <Download className="w-4 h-4 text-slate-950" />
+                    <span>{t('downloadInstaller')}</span>
+                    <ExternalLink className="w-3 h-3 opacity-80" />
+                  </a>
+
+                  {(product.category === 'windows' || product.category === 'combos') && (
+                    <a
+                      href="https://rufus.ie/es/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2.5 px-3.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 border border-purple-400/30 transition-all cursor-pointer"
+                      title="Descargar Rufus oficial para crear el USB booteable"
+                    >
+                      <span>Descargar Rufus</span>
+                      <ExternalLink className="w-3 h-3 opacity-80" />
+                    </a>
                   )}
-                </button>
+
+                  <button
+                    onClick={() => handleCopyLink(product.downloadUrl, 'single')}
+                    className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-colors cursor-pointer"
+                    title="Copiar enlace de descarga directa"
+                  >
+                    {copiedId === 'single' ? (
+                      <Check className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-purple-200" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Step-by-Step Installation Instructions */}
           <div>
