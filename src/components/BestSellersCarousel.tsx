@@ -76,34 +76,34 @@ export const BestSellersCarousel: React.FC = () => {
   };
 
   return (
-    <section id="mas-vendidos-section" className="py-14 bg-slate-50/50 border-b border-slate-200/80 overflow-hidden">
+    <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-[#250953] to-[#170c36] text-white border-b border-white/10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Title and Reel Controls */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20">
-              <Flame className="w-6 h-6 fill-white" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-300">
+              <Flame className="w-6 h-6 fill-slate-950" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0f172a] tracking-tight">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
                 Más Vendidos
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-                Nuestras licencias oficiales con mayor demanda actualizadas en tiempo real
+              <p className="text-xs sm:text-sm text-purple-200 font-medium mt-0.5">
+                Licencias oficiales con mayor demanda actualizadas en tiempo real
               </p>
             </div>
           </div>
 
           {/* Controls: Play/Pause, Indicators, Arrows */}
-          <div className="flex items-center gap-2.5 self-start sm:self-auto bg-white p-1.5 rounded-2xl border border-slate-200 shadow-2xs">
+          <div className="flex items-center gap-2.5 self-start sm:self-auto bg-white/10 p-1.5 rounded-2xl border border-white/15 backdrop-blur-md">
             {/* Play/Pause Button */}
             <button
               id="reel-play-pause-btn"
               onClick={() => setIsPlaying(prev => !prev)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 isPlaying
-                  ? 'bg-orange-50 text-orange-700 hover:bg-orange-100/80 border border-orange-200/70'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                  ? 'bg-amber-400 text-slate-950 hover:bg-amber-300 border border-amber-300'
+                  : 'bg-white/15 text-white hover:bg-white/25 border border-white/20'
               }`}
               title={isPlaying ? 'Pausar animación del carrete' : 'Reanudar animación del carrete'}
             >
@@ -120,13 +120,13 @@ export const BestSellersCarousel: React.FC = () => {
               )}
             </button>
 
-            <div className="h-5 w-px bg-slate-200 mx-0.5" />
+            <div className="h-5 w-px bg-white/20 mx-0.5" />
 
             {/* Previous Arrow */}
             <button
               id="reel-prev-btn"
               onClick={handlePrev}
-              className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/90 shadow-2xs transition-all cursor-pointer active:scale-95"
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-sm transition-all cursor-pointer active:scale-95"
               aria-label="Producto anterior"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -136,7 +136,7 @@ export const BestSellersCarousel: React.FC = () => {
             <button
               id="reel-next-btn"
               onClick={handleNext}
-              className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/90 shadow-2xs transition-all cursor-pointer active:scale-95"
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-sm transition-all cursor-pointer active:scale-95"
               aria-label="Siguiente producto"
             >
               <ChevronRight className="w-4 h-4" />
@@ -163,8 +163,8 @@ export const BestSellersCarousel: React.FC = () => {
                 key={product.id}
                 className={`w-[270px] sm:w-[290px] lg:w-[305px] shrink-0 snap-center transition-all duration-300 ${
                   currentIndex === idx
-                    ? 'scale-[1.02] ring-2 ring-orange-400/40 rounded-3xl'
-                    : 'opacity-95'
+                    ? 'scale-[1.02] ring-2 ring-[#facc15] rounded-2xl shadow-xl shadow-purple-950/80'
+                    : 'opacity-90 hover:opacity-100'
                 }`}
               >
                 <ProductCard product={product} />
@@ -180,8 +180,8 @@ export const BestSellersCarousel: React.FC = () => {
                 onClick={() => scrollToIndex(idx)}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   currentIndex === idx
-                    ? 'w-7 bg-orange-500 shadow-2xs shadow-orange-500/30'
-                    : 'w-2 bg-slate-300 hover:bg-slate-400'
+                    ? 'w-7 bg-[#facc15] shadow-md shadow-amber-500/50'
+                    : 'w-2 bg-white/30 hover:bg-white/50'
                 }`}
                 aria-label={`Ir al producto ${idx + 1}`}
               />

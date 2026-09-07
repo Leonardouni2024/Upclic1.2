@@ -1,3 +1,5 @@
+import { useCart } from '../context/CartContext.tsx';
+import { formatPrice } from '../products.ts';
 import React, { useState } from 'react';
 import { Product, ProductVariant } from '../types.ts';
 import {
@@ -23,13 +25,15 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { currency } = useCart();
+
   const [copied, setCopied] = useState(false);
   const [imgSrc, setImgSrc] = useState(product.fallbackImage || product.imageUrl);
 
   if (!isOpen) return null;
 
   const productName = currentVariant ? `${product.name} (${currentVariant.name})` : product.name;
-  const productPriceFormatted = `S/ ${activePrice.toFixed(2)}`;
+  const productPriceFormatted = `${formatPrice(activePrice)}`;
   
   // Enlace oficial de upclic.store
   const productStoreUrl = `https://upclic.store/producto/${product.slug}`;
@@ -115,7 +119,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                 </span>
                 {product.oldPrice && (
                   <span className="text-[10px] text-slate-400 line-through tabular-nums">
-                    S/ {product.oldPrice.toFixed(2)}
+                    {formatPrice(product.oldPrice)}
                   </span>
                 )}
               </div>

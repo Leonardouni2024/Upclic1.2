@@ -1,3 +1,4 @@
+import { formatPrice } from '../products.ts';
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
@@ -14,7 +15,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addItem, navigateToProduct } = useCart();
+  const { addItem, navigateToProduct, navigateToCheckout } = useCart();
   const { getProductStats } = useReviews();
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
@@ -52,11 +53,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     addItem(product, 1, currentVariant ? currentVariant.id : undefined);
   };
 
+  const handleBuyNow = () => {
+    addItem(product, 1, currentVariant ? currentVariant.id : undefined);
+    navigateToCheckout();
+  };
+
   return (
     <>
       <article
         id={`product-card-${product.id}`}
-        className="group bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:shadow-slate-200/60 hover:border-blue-300/80 hover:-translate-y-1 transition-all duration-200 ease-out flex flex-col justify-between overflow-hidden relative h-full"
+        className="group bg-[#1b1236] rounded-2xl border border-white/12 shadow-xl hover:shadow-2xl hover:shadow-purple-950/80 hover:border-[#facc15]/80 hover:-translate-y-1 transition-all duration-200 ease-out flex flex-col justify-between overflow-hidden relative h-full text-white"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -64,12 +70,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none">
           {product.badge ? (
             <span
-              className={`px-2.5 py-1 text-[10px] sm:text-[11px] font-black rounded-lg uppercase tracking-wide shadow-2xs border border-white/20 ${
+              className={`px-2.5 py-1 text-[10px] sm:text-[11px] font-black rounded-lg uppercase tracking-wide shadow-md border border-white/20 ${
                 product.badge.includes('TOP') || product.badge.includes('MÁS VENDIDO')
-                  ? 'bg-[#0066FF] text-white'
+                  ? 'bg-amber-400 text-slate-950'
                   : product.badge.includes('1 AÑO')
                   ? 'bg-purple-600 text-white'
-                  : 'bg-amber-500 text-white'
+                  : 'bg-emerald-400 text-slate-950'
               }`}
             >
               {product.badge}
@@ -80,13 +86,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           
           {/* Discount Badge */}
           {discountPercent > 0 && (
-            <span className="px-2 py-1 bg-red-500 text-white text-[10px] font-black rounded-lg shadow-2xs border border-white/20">
+            <span className="px-2 py-1 bg-[#facc15] text-slate-950 text-[11px] font-black rounded-lg shadow-md border border-amber-300">
               -{discountPercent}%
             </span>
           )}
 
           {product.cloudStorage && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-50/90 text-[#0066FF] border border-blue-200/70 shadow-2xs">
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-500/20 text-cyan-300 border border-cyan-400/30 backdrop-blur-md">
               {product.cloudStorage}
             </span>
           )}
@@ -95,7 +101,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Product Image Section (occupies ~55-60% of card) */}
         <div
           onClick={() => navigateToProduct(product.slug)}
-          className="relative w-full aspect-square p-5 sm:p-6 bg-linear-to-b from-slate-50/50 via-white to-white flex items-center justify-center cursor-pointer overflow-hidden border-b border-slate-100"
+          className="relative w-full aspect-square p-5 sm:p-6 bg-gradient-to-b from-[#140b2b] via-[#160d30] to-[#1b1236] flex items-center justify-center cursor-pointer overflow-hidden border-b border-white/10"
         >
           <img
             src={imgSrc}
@@ -106,21 +112,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
 
           {/* Quick View Overlay on Hover */}
-          <div className="absolute inset-0 bg-slate-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-            <span className="px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md text-xs font-bold text-slate-800 shadow-md border border-slate-200/80 flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200">
-              <Eye className="w-3.5 h-3.5 text-[#0066FF]" />
+          <div className="absolute inset-0 bg-purple-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <span className="px-3 py-1.5 rounded-xl bg-slate-900/90 backdrop-blur-md text-xs font-bold text-white shadow-lg border border-white/20 flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200">
+              <Eye className="w-3.5 h-3.5 text-[#facc15]" />
               <span>Ver detalles</span>
             </span>
           </div>
         </div>
 
         {/* Card Body Details */}
-        <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between bg-white">
+        <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between bg-[#1b1236]">
           <div className="flex-1 flex flex-col">
             {/* Warning notice if legacy software */}
             {product.warning ? (
-              <div className="mb-2 flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-lg border border-amber-200/60">
-                <AlertCircle className="w-3 h-3 shrink-0 text-amber-600" />
+              <div className="mb-2 flex items-center gap-1 text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-400/30">
+                <AlertCircle className="w-3 h-3 shrink-0 text-amber-400" />
                 <span className="truncate">{product.warning}</span>
               </div>
             ) : null}
@@ -128,7 +134,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Product Name */}
             <h3
               onClick={() => navigateToProduct(product.slug)}
-              className="font-bold text-slate-900 text-xs sm:text-[13.5px] md:text-sm line-clamp-2 hover:text-[#0066FF] transition-colors cursor-pointer leading-snug min-h-[2.4rem] sm:min-h-[2.5rem]"
+              className="font-bold text-white text-xs sm:text-[13.5px] md:text-sm line-clamp-2 group-hover:text-[#facc15] transition-colors cursor-pointer leading-snug min-h-[2.4rem] sm:min-h-[2.5rem]"
               title={product.name}
             >
               {product.name}
@@ -136,7 +142,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             {/* Stars Rating and Duration */}
             <div className="mt-2.5 mb-2 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1 text-amber-500">
+              <div className="flex items-center gap-1 text-amber-400">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
@@ -144,28 +150,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       className={`w-3 h-3 ${
                         star <= Math.round(stats.averageRating)
                           ? 'fill-amber-400 text-amber-400'
-                          : 'text-slate-200'
+                          : 'text-white/20'
                       }`}
                     />
                   ))}
                 </div>
-                <span className="font-bold text-slate-700 text-[10.5px] sm:text-[11px] tabular-nums">
+                <span className="font-bold text-purple-200 text-[10.5px] sm:text-[11px] tabular-nums">
                   {stats.averageRating.toFixed(1)}
                 </span>
-                <span className="text-[9.5px] sm:text-[10px] text-slate-400">({stats.totalReviews})</span>
+                <span className="text-[9.5px] sm:text-[10px] text-purple-300">({stats.totalReviews})</span>
               </div>
 
-              <span className="text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/60">
+              <span className="text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md bg-white/10 text-purple-200 border border-white/10">
                 {product.duration}
               </span>
             </div>
           </div>
 
           {/* Pricing & Buttons - Anchored to bottom with fixed height price line */}
-          <div className="pt-2.5 sm:pt-3 border-t border-slate-100 mt-auto">
+          <div className="pt-2.5 sm:pt-3 border-t border-white/10 mt-auto">
             {/* Variant selector chips if product has OEM/Retail variants */}
             {product.variants && product.variants.length > 0 && (
-              <div className="mb-2 flex items-center gap-1.5 p-1 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div className="mb-2 flex items-center gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
                 {product.variants.map((v) => {
                   const isSelected = selectedVariantId === v.id;
                   return (
@@ -178,12 +184,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       }}
                       className={`flex-1 py-1 px-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-center leading-tight flex items-center justify-center gap-1 ${
                         isSelected
-                          ? 'bg-white text-[#0066FF] shadow-2xs border border-blue-200'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                          ? 'bg-[#facc15] text-slate-950 shadow-md border border-amber-300'
+                          : 'text-purple-200 hover:text-white hover:bg-white/10'
                       }`}
                       title={v.name}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#0066FF]' : 'bg-slate-300'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-slate-950' : 'bg-purple-300'}`} />
                       <span>{v.type || v.name}</span>
                     </button>
                   );
@@ -192,17 +198,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             )}
 
             <div className="min-h-[1.75rem] sm:min-h-[2rem] flex items-baseline gap-1.5 mb-2.5 sm:mb-3">
-              <span className="text-xs sm:text-sm font-bold text-slate-500">S/</span>
-              <span className="text-lg sm:text-xl font-black text-[#0f172a] tracking-tight tabular-nums leading-none">
-                {activePrice.toFixed(2)}
+              <span className="text-lg sm:text-xl font-black text-[#facc15]">
+                {formatPrice(activePrice)}
               </span>
               {activeOldPrice && (
-                <span className="text-[11px] sm:text-xs text-slate-400 line-through tabular-nums ml-1">
-                  S/ {activeOldPrice.toFixed(2)}
+                <span className="text-[11px] sm:text-xs text-purple-300 line-through tabular-nums ml-1">
+                  {formatPrice(activeOldPrice)}
                 </span>
               )}
               {currentVariant && (
-                <span className="text-[10px] font-bold text-blue-600 ml-auto bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+                <span className="text-[10px] font-bold text-amber-300 ml-auto bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/30">
                   {currentVariant.name}
                 </span>
               )}
@@ -210,23 +215,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             <div className="flex flex-col gap-1.5">
               <div className="grid grid-cols-2 gap-2">
-                {/* Botón Principal: Agregar al carrito */}
+                {/* Botón: Agregar al carrito */}
                 <button
                   id={`add-to-cart-${product.id}`}
                   onClick={handleAddToCart}
-                  className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs transition-all duration-200 cursor-pointer border border-slate-200"
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200 cursor-pointer border border-white/15"
                 >
-                  <ShoppingCart className="w-3.5 h-3.5" />
-                  <span className="truncate">Al carrito</span>
+                  <ShoppingCart className="w-3.5 h-3.5 text-purple-200" />
+                  <span className="truncate">Carrito</span>
                 </button>
 
-                {/* Botón Secundario: Comprar (Ver producto) */}
+                {/* Botón Principal: Comprar Ahora (Fast Buy) */}
                 <button
                   id={`view-product-${product.id}`}
-                  onClick={() => navigateToProduct(product.slug)}
-                  className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 cursor-pointer border border-blue-500/20"
+                  onClick={handleBuyNow}
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md hover:shadow-amber-500/20 transition-all duration-200 cursor-pointer border border-amber-300"
                 >
-                  <Eye className="w-3.5 h-3.5 shrink-0" />
                   <span className="truncate">Comprar</span>
                 </button>
               </div>

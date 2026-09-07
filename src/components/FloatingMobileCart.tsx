@@ -1,3 +1,4 @@
+import { formatPrice } from '../products.ts';
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ShoppingCart, Sparkles, ChevronRight } from 'lucide-react';
@@ -26,7 +27,7 @@ export const FloatingMobileCart: React.FC = () => {
             <div className="text-xs font-black tracking-wide flex items-center gap-1.5">
               <span>{totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'}</span>
               <span className="text-slate-500">|</span>
-              <span className="text-[#60CDFF] text-sm">S/ {total.toFixed(2)}</span>
+              <span className="text-[#60CDFF] text-sm">{formatPrice(total)}</span>
             </div>
             {hasDiscount && (
               <div className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">

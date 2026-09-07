@@ -2,88 +2,33 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      (function() {
-        try {
-          var originalFetch = window.fetch ? window.fetch.bind(window) : null;
-          var customFetch = originalFetch;
-          Object.defineProperty(window, 'fetch', {
-            configurable: true,
-            enumerable: true,
-            get: function() {
-              return customFetch || originalFetch;
-            },
-            set: function(fn) {
-              customFetch = fn;
-            }
-          });
-        } catch (e) {
-          try {
-            var proto = Object.getPrototypeOf(window);
-            if (proto) {
-              var origFetch = proto.fetch ? proto.fetch.bind(window) : null;
-              var cFetch = origFetch;
-              Object.defineProperty(proto, 'fetch', {
-                configurable: true,
-                enumerable: true,
-                get: function() {
-                  return cFetch || origFetch;
-                },
-                set: function(fn) {
-                  cFetch = fn;
-                }
-              });
-            }
-          } catch (err) {}
-        }
-        window.addEventListener('error', function(e) {
-          if (e && e.message && e.message.indexOf('Cannot set property fetch') !== -1) {
-            e.preventDefault();
-            if (e.stopImmediatePropagation) {
-              e.stopImmediatePropagation();
-            }
-          }
-        }, true);
-      })();
-    </script>
-    <script>
-      // Single Page Apps for GitHub Pages redirect decoder
-      (function(l) {
-        if (l.search && l.search[1] === '/') {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location));
-    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UpClic - Licencias Microsoft Office y Windows Originales</title>
-    <meta name="description" content="Tienda especializada en licencias digitales originales de Microsoft Office y Windows con entrega inmediata y soporte personalizado." />
+    <title>UpClic | Licencias Digitales de Software Microsoft Original</title>
+    <meta name="description" content="Tienda oficial de licencias digitales de Microsoft Office, Windows y Visio con activación inmediata, garantía permanente y soporte técnico." />
+    
+    <!-- UpClic Browser Tab Favicon Logo -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'><rect width='100' height='100' rx='24' fill='%232a0b5c'/><path d='M50 15L22 55h24l-6 30 28-40H44l6-30z' fill='%23facc15'/></svg>" />
+    <link rel="alternate icon" type="image/png" href="/products/microsoft-365.png" />
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:site_name" content="UpClic Licencias" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="UpClic - Licencias Microsoft Office y Windows Originales" />
-    <meta property="og:description" content="Licencias digitales 100% originales con activación inmediata, garantía de 6 meses y soporte técnico." />
+    <meta property="og:title" content="UpClic | Licencias Digitales de Software Microsoft" />
+    <meta property="og:description" content="Licencias digitales 100% originales con activación inmediata, garantía de 1 año y soporte técnico." />
     <meta property="og:image" content="/products/microsoft-365.png" />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="600" />
-    <meta property="og:image:height" content="600" />
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="UpClic - Licencias Microsoft Office y Windows Originales" />
-    <meta name="twitter:description" content="Licencias digitales 100% originales con activación inmediata, garantía de 6 meses y soporte técnico." />
+    <meta name="twitter:title" content="UpClic | Licencias Digitales de Software Microsoft" />
+    <meta name="twitter:description" content="Licencias digitales 100% originales con activación inmediata, garantía de 1 año y soporte técnico." />
     <meta name="twitter:image" content="/products/microsoft-365.png" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#f8fafc] text-[#0f172a] font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-[#0066FF] selection:text-white">
+  <body class="bg-[#100c22] text-white font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-[#facc15] selection:text-slate-950 overflow-x-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,3 +1,4 @@
+import { formatPrice } from '../products.ts';
 import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import {
@@ -49,7 +50,7 @@ export const CheckoutPage: React.FC = () => {
     setQuantity,
     clearCart,
     navigateToHome
-  } = useCart();
+ } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
 
@@ -422,7 +423,7 @@ export const CheckoutPage: React.FC = () => {
                 return (
                   <div key={idx} className="flex justify-between items-center text-xs text-slate-700 font-medium">
                     <span className="truncate pr-2">• {name} {item.variantName ? `(${item.variantName})` : ''} x{qty}</span>
-                    <span className="shrink-0 font-bold">S/ {(price * qty).toFixed(2)}</span>
+                    <span className="shrink-0 font-bold">{formatPrice((price * qty))}</span>
                   </div>
                 );
               })}
@@ -430,7 +431,7 @@ export const CheckoutPage: React.FC = () => {
 
             <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-sm font-black text-slate-900">
               <span>Total Pagado:</span>
-              <span className="text-emerald-700 font-black text-base">S/ {paidTotal.toFixed(2)}</span>
+              <span className="text-emerald-700 font-black text-base">{formatPrice(paidTotal)}</span>
             </div>
           </div>
 
@@ -560,7 +561,7 @@ export const CheckoutPage: React.FC = () => {
                             </span>
                           )}
                           <div className="text-[11px] text-slate-500 mt-0.5">
-                            Precio unitario: <strong className="text-slate-800">S/ {itemUnitPrice.toFixed(2)}</strong>
+                            Precio unitario: <strong className="text-slate-800">{formatPrice(itemUnitPrice)}</strong>
                           </div>
                         </div>
                       </div>
@@ -603,7 +604,7 @@ export const CheckoutPage: React.FC = () => {
                         </div>
 
                         <span className="font-black text-slate-900 shrink-0 tabular-nums text-sm min-w-[75px] text-right">
-                          S/ {(itemUnitPrice * item.quantity).toFixed(2)}
+                          {formatPrice((itemUnitPrice * item.quantity))}
                         </span>
 
                         <button
@@ -878,7 +879,7 @@ export const CheckoutPage: React.FC = () => {
               <div className="space-y-2.5 text-xs text-slate-600">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span className="font-bold text-slate-800 tabular-nums">S/ {subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-slate-800 tabular-nums">{formatPrice(subtotal)}</span>
                 </div>
 
                 {hasDiscount ? (
@@ -888,7 +889,7 @@ export const CheckoutPage: React.FC = () => {
                         <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                         Descuento {Math.round(discountRate * 100)}%:
                       </span>
-                      <span className="tabular-nums">-S/ {discountAmount.toFixed(2)}</span>
+                      <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
                     </div>
                     <div className="text-[10px] text-slate-500 italic text-right">
                       {discountReason} • <span className="font-semibold">Descuentos no combinables</span>
@@ -903,7 +904,7 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex justify-between items-baseline text-base font-black text-slate-950 pt-3 border-t border-slate-200">
                   <span>TOTAL:</span>
                   <span className="text-[#0066FF] text-2xl font-black tabular-nums">
-                    S/ {total.toFixed(2)}
+                    {formatPrice(total)}
                   </span>
                 </div>
               </div>
@@ -1003,7 +1004,7 @@ export const CheckoutPage: React.FC = () => {
                   <span>Entrega digital y garantía oficial:</span>
                 </p>
                 <p className="leading-relaxed">
-                  • <strong>Mercado Pago:</strong> Procesa tu pago seguro con tarjeta (crédito/débito), Yape o efectivo. Se emite tu comprobante de inmediato.
+                  • <strong>Mercado Pago:</strong> Procesa tu pago seguro con tarjeta (crédito/débito) o métodos locales. Se emite tu comprobante de inmediato.
                 </p>
                 <p className="leading-relaxed">
                   • <strong>Entrega a tu correo:</strong> Tu licencia de software y guía de activación se enviarán a tu correo dentro de 10 a 30 minutos.
@@ -1014,7 +1015,7 @@ export const CheckoutPage: React.FC = () => {
               <div className="mt-5 pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-2">
                 <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Pasarela 100% segura (Tarjetas, Yape, PagoEfectivo)</span>
+                  <span>Pasarela 100% segura (Tarjetas y métodos locales)</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-500 font-medium">
                   <Clock className="w-4 h-4 text-blue-600" />

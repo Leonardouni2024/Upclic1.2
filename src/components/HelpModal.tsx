@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCart } from '../context/CartContext.tsx';
 import { X, HelpCircle, FileText, Shield, Mail, Phone, CheckCircle2 } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../products.ts';
 
@@ -8,6 +9,7 @@ interface HelpModalProps {
 }
 
 export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
+  const { currency } = useCart();
   if (!topic) return null;
 
   const renderContent = () => {
@@ -18,7 +20,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo realizo el pago?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Directamente en la tienda a través de Mercado Pago. Puedes pagar con tarjeta de débito o crédito, Yape, PagoEfectivo o banca por internet. El cobro es en soles (S/) y la confirmación se procesa en tiempo real.
+                Directamente en la tienda a través de Mercado Pago. Puedes pagar con tarjeta de débito o crédito, o efectivo. El cobro se procesará en tu moneda local y la confirmación es en tiempo real.
               </p>
             </div>
             <div>

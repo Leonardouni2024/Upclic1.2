@@ -1,3 +1,5 @@
+import { useCart } from '../context/CartContext.tsx';
+import { formatPrice } from '../products.ts';
 import React, { useState } from 'react';
 import { X, Search, Package, Clock, CheckCircle2, AlertCircle, ShoppingBag } from 'lucide-react';
 
@@ -7,6 +9,8 @@ interface UserOrdersModalProps {
 }
 
 export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClose }) => {
+  const { currency } = useCart();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
@@ -146,7 +150,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                           </div>
                         </div>
                         <div className="text-sm font-bold text-slate-700 shrink-0">
-                          S/ {(item.unitPrice * item.quantity).toFixed(2)}
+                          {formatPrice((item.unitPrice * item.quantity))}
                         </div>
                       </div>
                     ))}
@@ -154,7 +158,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
 
                   <div className="bg-slate-50 rounded-xl p-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-500">TOTAL</span>
-                    <span className="text-lg font-black text-[#0066FF]">S/ {order.total?.toFixed(2)}</span>
+                    <span className="text-lg font-black text-[#0066FF]">{formatPrice(order.total ?? 0)}</span>
                   </div>
                 </div>
               ))}

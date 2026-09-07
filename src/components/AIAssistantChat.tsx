@@ -1,3 +1,4 @@
+import { formatPrice } from '../products.ts';
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Bot,
@@ -37,11 +38,11 @@ interface ChatMessage {
 }
 
 const QUICK_PROMPTS = [
-  { label: '💼 ¿Cuál Office me conviene?', prompt: '¿Cuál es la diferencia entre Office 2024, 2021 y Microsoft 365? ¿Cuál me recomiendas?' },
-  { label: '💻 ¿Windows 11 o Windows 10?', prompt: '¿Qué versión de Windows me recomiendas entre Windows 11 Pro y Windows 10 Pro?' },
-  { label: '⚡ ¿Cómo es la entrega y activación?', prompt: '¿Cómo es el proceso de entrega de la licencia y cómo se activa en mi computadora?' },
-  { label: '🎁 Cupones y Descuentos', prompt: '¿Qué descuentos o cupones de promoción tienen disponibles hoy en UpClic?' },
-  { label: '👨‍💻 Hablar con Administrador', prompt: 'Deseo comunicarme directamente con el administrador por WhatsApp para una consulta.' },
+  { label: '¿Cuál Office me conviene?', prompt: '¿Cuál es la diferencia entre Office 2024, 2021 y Microsoft 365? ¿Cuál me recomiendas?' },
+  { label: '¿Windows 11 o Windows 10?', prompt: '¿Qué versión de Windows me recomiendas entre Windows 11 Pro y Windows 10 Pro?' },
+  { label: '¿Cómo es la entrega y activación?', prompt: '¿Cómo es el proceso de entrega de la licencia y cómo se activa en mi computadora?' },
+  { label: 'Cupones y Descuentos', prompt: '¿Qué descuentos o cupones de promoción tienen disponibles hoy en UpClic?' },
+  { label: 'Hablar con Soporte Técnico', prompt: 'Deseo comunicarme directamente con el administrador por WhatsApp para una consulta.' },
 ];
 
 export const AIAssistantChat: React.FC = () => {
@@ -50,14 +51,14 @@ export const AIAssistantChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasUnreadNotice, setHasUnreadNotice] = useState(true);
 
-  const { navigateToProduct, addItem } = useCart();
+  const { navigateToProduct, addItem  } = useCart();
 
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     return [
       {
         id: 'msg-welcome',
         role: 'model',
-        content: `¡Hola! 👋 Soy tu **Asistente Virtual de UpClic**.\n\nEstoy aquí para resolver todas tus dudas sobre nuestras licencias originales de **Microsoft Office, Windows, Visio y Project**, ayudarte con el proceso de activación o recomendarte la mejor opción según tu computadora.\n\n¿En qué te puedo ayudar hoy?`,
+        content: `Bienvenido al **Centro de Soporte y Licenciamiento UpClic**.\n\nLe brindamos asesoría técnica sobre licencias originales de **Microsoft Office, Windows, Visio y Project**, compatibilidad de hardware y facturación.\n\n¿En qué podemos asistirle hoy?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ];
@@ -425,7 +426,7 @@ export const AIAssistantChat: React.FC = () => {
                                 {p.name}
                               </h4>
                               <p className="text-[#0066FF] font-black text-xs">
-                                S/ {p.price.toFixed(2)}
+                                {formatPrice(p.price)}
                               </p>
                             </div>
                           </div>

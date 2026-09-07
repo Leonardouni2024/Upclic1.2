@@ -1,13 +1,20 @@
 import type { Product, CartTotals } from './types.ts';
 
-// Variable de atención UpClic para WhatsApp oficial
+
+export function formatPrice(priceInPEN: number): string {
+  return `S/ ${priceInPEN.toFixed(2)}`;
+}
+
+export function formatPriceNoSymbol(priceInPEN: number): string {
+  return priceInPEN.toFixed(2);
+}
+
+
+
 export const WHATSAPP_NUMBER = "51983204384";
 export const WHATSAPP_DISPLAY = "+51 983 204 384";
 
-// Código promocional oficial de apertura (10% de descuento en productos desde S/ 40.00, 30 días de vigencia)
 export const MULTI_ITEM_DISCOUNT = 0.10; // 10% si lleva 2 o más productos
-
-// Enlace oficial e inalterable de Mercado Pago según requerimiento
 export const MERCADO_PAGO_URL = "https://link.mercadopago.com.pe/iptvfuxionpago";
 
 export const products: Product[] = [
@@ -34,7 +41,7 @@ export const products: Product[] = [
       "Reinstalable en los mismos equipos ante formateos"
     ],
     compatibility: "Compatible con PC y Laptops arquitectura x64 (Windows 11 Pro + Office 2024)",
-    badge: "🔥 COMBO 2 EN 1",
+    badge: "COMBO 2 EN 1",
     bestSeller: true,
     featured: true,
     downloadUrl: "https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2024Retail.img",
@@ -1091,10 +1098,10 @@ export function buildWhatsAppMessage(
   let customerBlock = '';
   if (customerInfo?.email || customerInfo?.name || customerInfo?.phone) {
     const lines: string[] = [];
-    if (customerInfo.email) lines.push(`• 📧 Correo de Entrega: ${customerInfo.email}`);
-    if (customerInfo.name) lines.push(`• 👤 Nombre / Razón Social: ${customerInfo.name}`);
-    if (customerInfo.phone) lines.push(`• 📱 Teléfono: ${customerInfo.phone}`);
-    customerBlock = `\n👤 *DATOS DEL CLIENTE PARA ENTREGA:*\n${lines.join('\n')}\n`;
+    if (customerInfo.email) lines.push(`• Correo de Entrega: ${customerInfo.email}`);
+    if (customerInfo.name) lines.push(`• Nombre / Razón Social: ${customerInfo.name}`);
+    if (customerInfo.phone) lines.push(`• Teléfono: ${customerInfo.phone}`);
+    customerBlock = `\n*DATOS DE REGISTRO PARA ENTREGA:*\n${lines.join('\n')}\n`;
   }
 
   let discountBlock = '';
@@ -1102,16 +1109,16 @@ export function buildWhatsAppMessage(
     discountBlock = `\nSubtotal: S/ ${subtotal.toFixed(2)}\nDescuento (${(discountRate * 100).toFixed(0)}%): -S/ ${discountAmount.toFixed(2)} (${discountReason})\n`;
   }
 
-  return `Hola UpClic, deseo confirmar mi compra.
+  return `Estimado equipo de UpClic, solicito la procesamiento de mi orden de software.
 ${customerBlock}
-📦 *Productos:*
+*DETALLE DE LICENCIAS:*
 ${productLines}
 
-📊 *Resumen:*
-• Cantidad total: ${totalQuantity}${discountBlock}
-• Monto total a pagar: S/ ${total.toFixed(2)}
+*RESUMEN:*
+• Cantidad de licencias: ${totalQuantity}${discountBlock}
+• Total a pagar: S/ ${total.toFixed(2)}
 
-He seleccionado mi pedido y deseo coordinar la entrega de mis licencias digitales a mi correo electrónico.`;
+He verificado el pedido y solicito la emisión y envío de las claves de activación oficiales a mi correo electrónico.`;
 }
 
 // Generate WhatsApp direct URL with encoded text
@@ -1144,10 +1151,10 @@ export function buildWhatsAppPaidMessage(
   const cInfo = paymentDetails?.customerInfo;
   if (cInfo?.email || cInfo?.name || cInfo?.phone) {
     const lines: string[] = [];
-    if (cInfo.email) lines.push(`• 📧 Correo de Entrega: ${cInfo.email}`);
-    if (cInfo.name) lines.push(`• 👤 Nombre / Razón Social: ${cInfo.name}`);
-    if (cInfo.phone) lines.push(`• 📱 Teléfono: ${cInfo.phone}`);
-    customerBlock = `\n👤 *DATOS DEL CLIENTE PARA ENTREGA:*\n${lines.join('\n')}\n`;
+    if (cInfo.email) lines.push(`• Correo de Entrega: ${cInfo.email}`);
+    if (cInfo.name) lines.push(`• Nombre / Razón Social: ${cInfo.name}`);
+    if (cInfo.phone) lines.push(`• Teléfono: ${cInfo.phone}`);
+    customerBlock = `\n*DATOS DE REGISTRO PARA ENTREGA:*\n${lines.join('\n')}\n`;
   }
 
   let discountBlock = '';
@@ -1155,21 +1162,21 @@ export function buildWhatsAppPaidMessage(
     discountBlock = `\nSubtotal: S/ ${subtotal.toFixed(2)}\nDescuento (${(discountRate * 100).toFixed(0)}%): -S/ ${discountAmount.toFixed(2)} (${discountReason})\n`;
   }
 
-  const paymentIdStr = paymentDetails?.paymentId ? `\n• N° de Pago Mercado Pago: #${paymentDetails.paymentId}` : '';
+  const paymentIdStr = paymentDetails?.paymentId ? `\n• Transacción Mercado Pago: #${paymentDetails.paymentId}` : '';
 
-  return `✅ *¡PEDIDO PAGADO CON ÉXITO EN UPCLIC!*
+  return `*ORDEN PROCESADA Y PAGADA - UPCLIC LICENCIAMIENTO*
 
-Hola UpClic, acabo de realizar mi pago a través de Mercado Pago y solicito la entrega de mis licencias:
+Estimado equipo de Soporte, he completado el pago a través de la pasarela de Mercado Pago:
 ${customerBlock}
-📦 *Detalle del Pedido:*
+*DETALLE DE ADQUISICIÓN:*
 ${productLines}
 
-📊 *Resumen de Compra:*
-• Cantidad de licencias: ${totalQuantity}${discountBlock}
+*RESUMEN DE COMPRA:*
+• Licencias adquiridas: ${totalQuantity}${discountBlock}
 • Monto Total: S/ ${total.toFixed(2)}
-• Estado de Pago: *PAGADO* (Aprobado en Mercado Pago)${paymentIdStr}
+• Estado de Transacción: APAGADO / APROBADO${paymentIdStr}
 
-Por favor, envíenme las claves de activación originales y las guías de instalación a mi correo y por este medio. ¡Muchas gracias!`;
+Solicito la emisión de las claves de activación originales y sus respectivas guías de instalación oficiales.`;
 }
 
 export function getWhatsAppPaidConfirmationUrl(

@@ -1,3 +1,4 @@
+import { formatPrice } from '../products.ts';
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { X, Trash2, Plus, Minus, ArrowRight, Sparkles, ShoppingBag, ShieldCheck, Tag, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -192,7 +193,7 @@ export const CartDrawer: React.FC = () => {
                       </div>
 
                       <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                        Unitario: S/ {itemUnitPrice.toFixed(2)} · {item.product.duration}
+                        Unitario: {formatPrice(itemUnitPrice)} · {item.product.duration}
                       </div>
 
                       {/* Quantity & Price Row */}
@@ -238,7 +239,7 @@ export const CartDrawer: React.FC = () => {
                         <div className="text-right">
                           <span className="text-[10px] text-slate-400 block font-normal leading-none mb-0.5">Subtotal</span>
                           <span className="font-black text-sm text-slate-900 tabular-nums">
-                            S/ {itemSubtotal.toFixed(2)}
+                            {formatPrice(itemSubtotal)}
                           </span>
                         </div>
                       </div>
@@ -370,7 +371,7 @@ export const CartDrawer: React.FC = () => {
               <div className="space-y-2 text-xs font-medium text-slate-600 mb-4">
                 <div className="flex justify-between items-baseline py-0.5">
                   <span className="font-semibold text-slate-600">Subtotal:</span>
-                  <span className="font-bold text-slate-800 tabular-nums text-sm">S/ {subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-slate-800 tabular-nums text-sm">{formatPrice(subtotal)}</span>
                 </div>
 
                 {hasDiscount && (
@@ -380,7 +381,7 @@ export const CartDrawer: React.FC = () => {
                         <Sparkles className="w-3.5 h-3.5" />
                         Descuento {Math.round(discountRate * 100)}%:
                       </span>
-                      <span className="tabular-nums font-black text-sm">-S/ {discountAmount.toFixed(2)}</span>
+                      <span className="tabular-nums font-black text-sm">-{formatPrice(discountAmount)}</span>
                     </div>
                     <div className="text-[10px] text-slate-500 italic text-right">
                       * Descuentos no combinables
@@ -390,7 +391,7 @@ export const CartDrawer: React.FC = () => {
 
                 <div className="flex justify-between items-baseline text-base font-black text-slate-950 pt-2.5 border-t border-slate-200">
                   <span>TOTAL:</span>
-                  <span className="text-[#0066FF] text-xl tabular-nums font-black">S/ {total.toFixed(2)}</span>
+                  <span className="text-[#0066FF] text-xl tabular-nums font-black">{formatPrice(total)}</span>
                 </div>
               </div>
 

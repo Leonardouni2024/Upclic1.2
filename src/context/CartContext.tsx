@@ -32,7 +32,7 @@ interface CartContextType {
   appliedCoupon: string;
   applyCoupon: (code: string) => { success: boolean; message: string };
   removeCoupon: () => void;
-  couponFeedback: { type: 'success' | 'error' | 'info'; message: string } | null;
+    couponFeedback: { type: 'success' | 'error' | 'info'; message: string } | null;
   toasts: ToastData[];
   removeToast: (id: string) => void;
   // Navigation & Filtering
@@ -53,7 +53,7 @@ const LOCAL_STORAGE_KEY = 'upclic_cart_v1';
 const COUPON_STORAGE_KEY = 'upclic_coupon_v1';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>(() => {
+    const [items, setItems] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
@@ -302,7 +302,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTimeout(() => {
           addToast({
             type: 'discount',
-            title: '🔥 ¡10% de descuento aplicado!',
+            title: 'Descuento del 10% Aplicado',
             message: 'Ahorras 10% automáticamente por llevar 2 o más productos (descuentos no combinables)'
           });
         }, 300);
@@ -381,7 +381,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (prevQty < 2 && newTotalQty >= 2) {
         addToast({
           type: 'discount',
-          title: '🔥 ¡10% de descuento aplicado!',
+          title: 'Descuento del 10% Aplicado',
           message: 'Ahorras 10% automáticamente por llevar 2 o más productos'
         });
       }
@@ -416,7 +416,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (prevQty < 2 && newTotalQty >= 2) {
         addToast({
           type: 'discount',
-          title: '🔥 ¡10% de descuento aplicado!',
+          title: 'Descuento del 10% Aplicado',
           message: 'Ahorras 10% automáticamente por llevar 2 o más productos'
         });
       }

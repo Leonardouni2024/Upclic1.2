@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
-import { products, getProductBySlug, WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from '../products.ts';
+import { products, getProductBySlug, WHATSAPP_DISPLAY, WHATSAPP_NUMBER , formatPrice } from '../products.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
@@ -167,38 +167,38 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   ];
 
   return (
-    <div id="product-detail-view" className="py-10 sm:py-14 bg-slate-50/70 min-h-screen">
+    <div id="product-detail-view" className="py-10 sm:py-14 bg-[#100c22] text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back navigation breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#0066FF] hover:border-blue-200 shadow-2xs transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#1d123a] border border-white/15 text-xs sm:text-sm font-bold text-white hover:text-[#facc15] hover:border-[#facc15] shadow-md transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 text-[#facc15]" />
             <span>Volver a la tienda</span>
           </button>
 
-          <span className="text-xs font-semibold text-slate-400 hidden sm:inline">
+          <span className="text-xs font-semibold text-purple-200 hidden sm:inline">
             Inicio / {product.category.toUpperCase()} / {product.name}
           </span>
         </div>
 
         {/* Main Product Box */}
-        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-10 mb-12">
+        <div className="bg-[#1b1236] rounded-3xl border border-white/15 shadow-2xl p-6 sm:p-10 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-linear-to-b from-slate-50/60 via-white to-white p-8 border border-slate-200/80 shadow-2xs flex items-center justify-center group">
+              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-[#140b2b] p-8 border border-white/10 shadow-xl flex items-center justify-center group">
                 {/* Badges on Top-Left */}
                 <div className="absolute top-3.5 left-3.5 flex flex-col items-start gap-1.5 z-10">
                   {product.badge && (
-                    <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-black rounded-lg bg-[#0066FF] text-white uppercase tracking-wider shadow-2xs border border-white/20">
+                    <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-black rounded-lg bg-[#facc15] text-slate-950 uppercase tracking-wider shadow-md border border-amber-300">
                       {product.badge}
                     </span>
                   )}
                   {product.cloudStorage && (
-                    <span className="px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg bg-blue-50/95 text-[#0066FF] border border-blue-200/80 shadow-2xs backdrop-blur-xs">
+                    <span className="px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg bg-blue-500/20 text-cyan-300 border border-cyan-400/30 backdrop-blur-md">
                       {product.cloudStorage}
                     </span>
                   )}
@@ -208,11 +208,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 <button
                   type="button"
                   onClick={() => setShowShareModal(true)}
-                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 hover:bg-[#0066FF] text-slate-700 hover:text-white border border-slate-200 hover:border-[#0066FF] shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-xs"
+                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-md"
                   title="Compartir producto en redes sociales"
                   aria-label="Compartir en redes sociales"
                 >
-                  <Share2 className="w-3.5 h-3.5 text-[#0066FF] group-hover/share:text-white transition-colors" />
+                  <Share2 className="w-3.5 h-3.5 text-[#facc15]" />
                   <span className="text-[11px] sm:text-xs font-bold">Compartir</span>
                 </button>
 
@@ -229,13 +229,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               </div>
 
               {/* Trust Badge under image */}
-              <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-slate-500">
-                <span className="flex items-center gap-1.5 text-slate-700">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-purple-200">
+                <span className="flex items-center gap-1.5 text-white">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   Activación oficial garantizada
                 </span>
-                <span className="flex items-center gap-1.5 text-slate-700">
-                  <Lock className="w-4 h-4 text-blue-600" />
+                <span className="flex items-center gap-1.5 text-white">
+                  <Lock className="w-4 h-4 text-[#facc15]" />
                   Pago seguro Mercado Pago
                 </span>
               </div>
@@ -246,8 +246,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               <div>
                 {/* Warning notice if legacy version */}
                 {product.warning && (
-                  <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-800 bg-amber-50/90 px-3 py-1.5 rounded-xl border border-amber-200/70">
-                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-400/30">
+                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
                     <span>{product.warning}</span>
                   </div>
                 )}
@@ -268,46 +268,46 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                         className={`w-4 h-4 ${
                           star <= Math.round(stats.averageRating)
                             ? 'fill-amber-400 text-amber-400'
-                            : 'text-slate-200'
+                            : 'text-white/20'
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="font-extrabold text-sm text-slate-800 tabular-nums group-hover:text-[#0066FF] transition-colors">
+                  <span className="font-extrabold text-sm text-white tabular-nums group-hover:text-[#facc15] transition-colors">
                     {stats.averageRating.toFixed(1)} / 5.0
                   </span>
-                  <span className="text-xs text-slate-500 group-hover:text-[#0066FF] underline underline-offset-2 transition-colors">
+                  <span className="text-xs text-purple-300 group-hover:text-[#facc15] underline underline-offset-2 transition-colors">
                     ({stats.totalReviews} {stats.totalReviews === 1 ? 'calificación verificada' : 'calificaciones verificadas'})
                   </span>
                 </div>
 
                 {/* Product Name */}
-                <h1 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-[#0f172a] tracking-tight leading-tight">
+                <h1 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
                   {product.name}
                 </h1>
 
                 {/* License Tag & Cloud pill */}
                 <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-200/60">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-white/10 text-purple-100 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white/15">
                     Modalidad: {product.duration}
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] sm:text-xs font-bold border border-emerald-100">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30">
                     ✓ Licencia 100% Original Microsoft
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-blue-50 text-[#0066FF] text-[11px] sm:text-xs font-bold border border-blue-100">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-400/20 text-amber-300 text-[11px] sm:text-xs font-bold border border-amber-400/30">
                     ✓ Entrega digital inmediata
                   </span>
                 </div>
 
                 {/* Variant Selector (OEM vs Retail) for Windows products */}
                 {product.variants && product.variants.length > 0 && (
-                  <div className="mt-5 p-4 rounded-2xl bg-slate-50 border border-slate-200/90">
+                  <div className="mt-5 p-4 rounded-2xl bg-[#140b2b] border border-white/10">
                     <div className="flex items-center justify-between mb-2.5">
-                      <span className="text-xs font-black uppercase text-slate-800 tracking-wider">
+                      <span className="text-xs font-black uppercase text-purple-200 tracking-wider">
                         Selecciona el tipo de clave:
                       </span>
-                      <span className="text-[11px] font-bold text-[#0066FF] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
-                        {currentVariant?.name} (S/ {activePrice.toFixed(2)})
+                      <span className="text-[11px] font-bold text-slate-950 bg-[#facc15] px-2 py-0.5 rounded-md border border-amber-300">
+                        {currentVariant?.name} ({formatPrice(activePrice)})
                       </span>
                     </div>
 
@@ -321,8 +321,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                             onClick={() => setSelectedVariantId(v.id)}
                             className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
                               isSelected
-                                ? 'bg-blue-50/60 border-[#0066FF] shadow-xs'
-                                : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
+                                ? 'bg-amber-400/10 border-[#facc15] shadow-md'
+                                : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -330,36 +330,35 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                                 <div
                                   className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                                     isSelected
-                                      ? 'border-[#0066FF] bg-[#0066FF]'
-                                      : 'border-slate-300 bg-white'
+                                      ? 'border-[#facc15] bg-[#facc15]'
+                                      : 'border-white/30 bg-transparent'
                                   }`}
                                 >
-                                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
                                 </div>
-                                <span className={`text-xs font-black ${isSelected ? 'text-[#0066FF]' : 'text-slate-800'}`}>
+                                <span className={`text-xs font-black ${isSelected ? 'text-[#facc15]' : 'text-white'}`}>
                                   {v.name}
                                 </span>
                               </div>
                               {v.badge && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200/70 text-slate-700">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-purple-200">
                                   {v.badge}
                                 </span>
                               )}
                             </div>
 
                             <div className="flex items-baseline gap-1.5 mt-0.5">
-                              <span className="text-xs font-bold text-slate-500">S/</span>
-                              <span className="text-lg font-black text-slate-950 tabular-nums">
-                                {v.price.toFixed(2)}
+                              <span className="text-sm font-black text-[#facc15]">
+                                {formatPrice(v.price)}
                               </span>
                               {v.oldPrice && (
-                                <span className="text-xs text-slate-400 line-through tabular-nums">
-                                  S/ {v.oldPrice.toFixed(2)}
+                                <span className="text-xs text-purple-300 line-through tabular-nums">
+                                  {formatPrice(v.oldPrice)}
                                 </span>
                               )}
                             </div>
 
-                            <p className="text-[11px] text-slate-500 leading-snug font-medium">
+                            <p className="text-[11px] text-purple-200 leading-snug font-medium">
                               {v.shortDesc}
                             </p>
                           </button>
@@ -371,49 +370,46 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Price Display */}
                 <div className="mt-5 sm:mt-6 flex flex-wrap items-baseline gap-2.5 sm:gap-3">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-base sm:text-lg font-bold text-slate-500">S/</span>
-                    <span className="text-3xl sm:text-4xl font-black text-[#0f172a] tracking-tight tabular-nums leading-none">
-                      {activePrice.toFixed(2)}
-                    </span>
+                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-[#facc15]">
+                    {formatPrice(activePrice)}
                   </div>
                   {activeOldPrice && (
-                    <span className="text-base sm:text-lg text-slate-400 line-through font-semibold tabular-nums">
-                      S/ {activeOldPrice.toFixed(2)}
+                    <span className="text-base sm:text-lg text-purple-300 line-through font-semibold tabular-nums">
+                      {formatPrice(activeOldPrice)}
                     </span>
                   )}
-                  <span className="text-[11px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                  <span className="text-[11px] sm:text-xs font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
                     Precio final en soles
                   </span>
                 </div>
 
                 {/* 10% Auto Discount or 10% Coupon reminder */}
-                <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-linear-to-r from-blue-50/90 to-sky-50/80 border border-blue-200 text-[11px] sm:text-xs font-bold text-[#0066FF] flex items-center gap-2 shadow-2xs">
+                <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-amber-400/10 border border-amber-400/30 text-[11px] sm:text-xs font-bold text-amber-200 flex items-center gap-2 shadow-md">
                   <span className="text-base shrink-0">🔥</span>
                   <span className="leading-snug">
-                    ¡Lleva 2 o más productos y obtén <span className="text-emerald-700 underline font-black">10% de descuento</span> automáticamente en todo tu carrito!
+                    ¡Lleva 2 o más productos y obtén <span className="text-[#facc15] font-black">10% de descuento</span> automáticamente en todo tu carrito!
                   </span>
                 </div>
 
                 {/* Quantity selector */}
                 <div className="mt-6 flex items-center gap-4">
-                  <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">
+                  <span className="text-xs font-bold uppercase text-purple-200 tracking-wider">
                     Cantidad:
                   </span>
-                  <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5">
+                  <div className="flex items-center rounded-xl border border-white/20 bg-white/10 p-0.5">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-lg text-slate-600 hover:bg-white font-black text-base flex items-center justify-center transition-colors cursor-pointer"
+                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
                       aria-label="Disminuir"
                     >
                       -
                     </button>
-                    <span className="w-10 text-center font-black text-sm text-slate-900 tabular-nums">
+                    <span className="w-10 text-center font-black text-sm text-white tabular-nums">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-8 rounded-lg text-slate-600 hover:bg-white font-black text-base flex items-center justify-center transition-colors cursor-pointer"
+                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
                       aria-label="Aumentar"
                     >
                       +
@@ -427,18 +423,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <button
                       id="detail-add-to-cart-btn"
                       onClick={handleAddToCart}
-                      className="py-3 px-6 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
+                      className="py-3.5 px-6 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-white/20"
                     >
-                      <ShoppingCart className="w-4 h-4" />
+                      <ShoppingCart className="w-4 h-4 text-purple-200" />
                       <span>Agregar al carrito</span>
                     </button>
 
                     <button
                       id="detail-buy-now-btn"
                       onClick={handleBuyNow}
-                      className="py-3 px-6 rounded-xl bg-[#0f172a] hover:bg-slate-900 text-white font-bold text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-800"
+                      className="py-3.5 px-6 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-sm shadow-lg hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
                     >
-                      <Zap className="w-4 h-4 text-amber-400" />
+                      <Zap className="w-4 h-4 text-slate-950 fill-slate-950" />
                       <span>Comprar ahora</span>
                     </button>
                   </div>
@@ -446,27 +442,27 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   {/* Scarcity & Trust Indicators */}
                   <div className="flex flex-col gap-3 my-4">
                     {showScarcity.show && (
-                      <div className="flex items-center gap-2 text-sm font-bold text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 animate-in fade-in slide-in-from-top-2 duration-500">
-                        <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
+                      <div className="flex items-center gap-2 text-sm font-bold text-amber-300 bg-amber-500/15 p-2.5 rounded-lg border border-amber-400/30 animate-in fade-in slide-in-from-top-2 duration-500">
+                        <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
                         ¡Date prisa! Quedan solo {showScarcity.count} licencias a este precio.
                       </div>
                     )}
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600 mt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-purple-200 mt-2">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Garantía de Activación</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Entrega Inmediata al Email</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Soporte Remoto Gratuito</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Pago Seguro y Encriptado</span>
                       </div>
                     </div>
@@ -476,9 +472,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   <button
                     id="detail-guide-btn"
                     onClick={() => setShowInstallModal(true)}
-                    className="w-full py-3 px-4 rounded-xl bg-blue-50/90 hover:bg-blue-100 text-[#0066FF] font-bold text-sm border border-blue-200/80 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                    className="w-full py-3 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 font-bold text-sm border border-purple-400/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                   >
-                    <BookOpen className="w-4 h-4 text-[#0066FF]" />
+                    <BookOpen className="w-4 h-4 text-[#facc15]" />
                     <span>Guía de instalación</span>
                   </button>
                 </div>

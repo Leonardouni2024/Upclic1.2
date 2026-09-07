@@ -568,7 +568,7 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
         description: String(rawTitle).substring(0, 256),
         unit_price: unitPrice,
         quantity: qty,
-        currency_id: 'PEN',
+        currency_id: "PEN",
       };
     });
 

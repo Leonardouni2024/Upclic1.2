@@ -23,29 +23,29 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
   };
 
   return (
-    <footer id="main-footer" className="bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-800/90">
+    <footer id="main-footer" className="bg-[#0a0717] text-purple-200 pt-16 pb-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800/80">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
           {/* Brand Info (2 cols on large screens) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center">
               <UpClicLogo size="md" variant="full" theme="dark" />
             </div>
 
-            <p className="text-sm font-bold text-slate-300 max-w-sm">
+            <p className="text-sm font-bold text-white max-w-sm">
               Licencias y productos digitales
             </p>
 
-            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+            <p className="text-xs text-purple-200 leading-relaxed max-w-sm font-medium">
               Especialistas en software original de Microsoft Office y sistemas operativos Windows para uso personal, profesional y empresarial con entrega digital inmediata y soporte técnico dedicado.
             </p>
 
-            <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-bold bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-800/40">
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-purple-200">
+              <span className="flex items-center gap-1.5 text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Garantía de activación
               </span>
-              <span className="flex items-center gap-1.5 text-sky-400 font-bold bg-sky-950/40 px-2.5 py-1 rounded-lg border border-sky-800/40">
+              <span className="flex items-center gap-1.5 text-[#facc15] font-bold bg-amber-400/10 px-2.5 py-1 rounded-lg border border-amber-400/20">
                 <Lock className="w-3.5 h-3.5" />
                 Mercado Pago
               </span>
@@ -57,11 +57,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
               Productos
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
+            <ul className="space-y-2.5 text-xs text-purple-200 font-medium">
               <li>
                 <button
                   onClick={() => handleCategory('combos')}
-                  className="hover:text-white transition-colors cursor-pointer text-[#00C0F3] font-semibold"
+                  className="hover:text-[#facc15] transition-colors cursor-pointer text-[#facc15] font-bold"
                 >
                   Combos 2 en 1
                 </button>
@@ -114,7 +114,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
               Ayuda
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
+            <ul className="space-y-2.5 text-xs text-purple-200 font-medium">
               <li>
                 <button
                   onClick={() => onOpenHelpModal('faq')}
@@ -150,7 +150,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
               Legal
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400 font-medium mb-6">
+            <ul className="space-y-2.5 text-xs text-purple-200 font-medium mb-6">
               <li>
                 <button
                   onClick={() => onOpenHelpModal('terms')}
@@ -180,19 +180,19 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-2">
               Método de pago:
             </h4>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-sky-400">
-              <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-xs font-bold text-[#facc15]">
+              <span className="w-2 h-2 rounded-full bg-[#facc15]"></span>
               <span>Mercado Pago</span>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-purple-300 font-medium">
           <div className="flex flex-wrap items-center gap-3">
             <p>© {new Date().getFullYear()} UpClic. Todos los derechos reservados.</p>
           </div>
-          <p className="flex items-center gap-1 text-slate-400">
+          <p className="flex items-center gap-1 text-purple-300">
             <span>Microsoft, Windows y Office son marcas registradas de Microsoft Corporation.</span>
           </p>
         </div>
