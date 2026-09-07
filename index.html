@@ -2,6 +2,22 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var origFetch = window.fetch;
+          var currentFetch = origFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() { return currentFetch; },
+            set: function(fn) { currentFetch = fn; },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          // Ignore if property cannot be redefined
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UpClic | Licencias Digitales de Software Microsoft Original</title>
     <meta name="description" content="Tienda oficial de licencias digitales de Microsoft Office, Windows y Visio con activación inmediata, garantía permanente y soporte técnico." />

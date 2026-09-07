@@ -78,7 +78,7 @@ export const BestSellersCarousel: React.FC = () => {
   return (
     <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-[#250953] to-[#170c36] text-white border-b border-white/10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header with Title and Reel Controls */}
+        {/* Header with Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-300">
@@ -92,55 +92,6 @@ export const BestSellersCarousel: React.FC = () => {
                 Licencias oficiales con mayor demanda actualizadas en tiempo real
               </p>
             </div>
-          </div>
-
-          {/* Controls: Play/Pause, Indicators, Arrows */}
-          <div className="flex items-center gap-2.5 self-start sm:self-auto bg-white/10 p-1.5 rounded-2xl border border-white/15 backdrop-blur-md">
-            {/* Play/Pause Button */}
-            <button
-              id="reel-play-pause-btn"
-              onClick={() => setIsPlaying(prev => !prev)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                isPlaying
-                  ? 'bg-amber-400 text-slate-950 hover:bg-amber-300 border border-amber-300'
-                  : 'bg-white/15 text-white hover:bg-white/25 border border-white/20'
-              }`}
-              title={isPlaying ? 'Pausar animación del carrete' : 'Reanudar animación del carrete'}
-            >
-              {isPlaying ? (
-                <>
-                  <Pause className="w-3.5 h-3.5 fill-current" />
-                  <span className="hidden md:inline">Pausar</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span className="hidden md:inline">Continuar</span>
-                </>
-              )}
-            </button>
-
-            <div className="h-5 w-px bg-white/20 mx-0.5" />
-
-            {/* Previous Arrow */}
-            <button
-              id="reel-prev-btn"
-              onClick={handlePrev}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-sm transition-all cursor-pointer active:scale-95"
-              aria-label="Producto anterior"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-
-            {/* Next Arrow */}
-            <button
-              id="reel-next-btn"
-              onClick={handleNext}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-sm transition-all cursor-pointer active:scale-95"
-              aria-label="Siguiente producto"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
           </div>
         </div>
 

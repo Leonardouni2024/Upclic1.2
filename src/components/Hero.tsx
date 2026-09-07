@@ -1,9 +1,14 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
+import { products, formatPrice } from '../products.ts';
 import { Sparkles, ArrowRight, ShieldCheck, Zap, Laptop, FileSpreadsheet, Layers, BarChart3, Cloud, CheckCircle2 } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { setActiveCategory, navigateToHome, currentPath } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, setSelectedProduct } = useCart();
+
+  const office2024 = products.find(p => p.id === 'prod-office-2024');
+  const win11Pro = products.find(p => p.id === 'prod-win11-pro');
+  const comboWinOffice = products.find(p => p.id === 'prod-combo-win11-office2024');
 
   const handleFilter = (category: 'office' | 'windows' | 'combos' | 'project-visio' | 'all') => {
     setActiveCategory(category);
@@ -16,6 +21,15 @@ export const Hero: React.FC = () => {
         el.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  };
+
+  const handleOpenProduct = (productId: string, defaultCategory: 'office' | 'windows' | 'combos') => {
+    const prod = products.find(p => p.id === productId);
+    if (prod) {
+      setSelectedProduct(prod);
+    } else {
+      handleFilter(defaultCategory);
+    }
   };
 
   return (
@@ -35,7 +49,6 @@ export const Hero: React.FC = () => {
 
             <div className="relative z-10 max-w-xl">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#facc15] text-slate-950 text-[11px] font-black uppercase tracking-wider mb-4 shadow-md">
-                <Sparkles className="w-3.5 h-3.5 text-slate-950" />
                 <span>Licencias Digitales Originales</span>
               </div>
 
@@ -73,7 +86,7 @@ export const Hero: React.FC = () => {
           <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
             {/* Promo Card 1 */}
             <div 
-              onClick={() => handleFilter('office')}
+              onClick={() => handleOpenProduct('prod-office-2024', 'office')}
               className="group relative rounded-xl bg-gradient-to-r from-[#2c0b61] to-[#3a107e] p-4 border border-white/15 hover:border-[#facc15]/60 transition-all duration-200 cursor-pointer flex items-center justify-between shadow-lg overflow-hidden"
             >
               <div>
@@ -86,14 +99,20 @@ export const Hero: React.FC = () => {
                 <p className="text-[11px] text-purple-200">Licencia vitalicia para 1 PC</p>
               </div>
               <div className="text-right shrink-0">
-                <span className="text-xs text-purple-300 line-through block">S/ 180</span>
-                <span className="text-base font-black text-[#facc15]">S/ 48.90</span>
+                {office2024?.oldPrice && (
+                  <span className="text-xs text-purple-300 line-through block">
+                    {formatPrice(office2024.oldPrice)}
+                  </span>
+                )}
+                <span className="text-base font-black text-[#facc15]">
+                  {formatPrice(office2024?.price || 25.00)}
+                </span>
               </div>
             </div>
 
             {/* Promo Card 2 */}
             <div 
-              onClick={() => handleFilter('windows')}
+              onClick={() => handleOpenProduct('prod-win11-pro', 'windows')}
               className="group relative rounded-xl bg-gradient-to-r from-[#2c0b61] to-[#3a107e] p-4 border border-white/15 hover:border-[#facc15]/60 transition-all duration-200 cursor-pointer flex items-center justify-between shadow-lg overflow-hidden"
             >
               <div>
@@ -106,14 +125,20 @@ export const Hero: React.FC = () => {
                 <p className="text-[11px] text-purple-200">Activación oficial permanente</p>
               </div>
               <div className="text-right shrink-0">
-                <span className="text-xs text-purple-300 line-through block">S/ 120</span>
-                <span className="text-base font-black text-[#facc15]">S/ 39.90</span>
+                {win11Pro?.oldPrice && (
+                  <span className="text-xs text-purple-300 line-through block">
+                    {formatPrice(win11Pro.oldPrice)}
+                  </span>
+                )}
+                <span className="text-base font-black text-[#facc15]">
+                  {formatPrice(win11Pro?.price || 25.00)}
+                </span>
               </div>
             </div>
 
             {/* Promo Card 3 */}
             <div 
-              onClick={() => handleFilter('combos')}
+              onClick={() => handleOpenProduct('prod-combo-win11-office2024', 'combos')}
               className="group relative rounded-xl bg-gradient-to-r from-[#2c0b61] to-[#3a107e] p-4 border border-white/15 hover:border-[#facc15]/60 transition-all duration-200 cursor-pointer flex items-center justify-between shadow-lg overflow-hidden"
             >
               <div>
@@ -126,8 +151,14 @@ export const Hero: React.FC = () => {
                 <p className="text-[11px] text-purple-200">Ahorras más de 50%</p>
               </div>
               <div className="text-right shrink-0">
-                <span className="text-xs text-purple-300 line-through block">S/ 280</span>
-                <span className="text-base font-black text-[#facc15]">S/ 79.90</span>
+                {comboWinOffice?.oldPrice && (
+                  <span className="text-xs text-purple-300 line-through block">
+                    {formatPrice(comboWinOffice.oldPrice)}
+                  </span>
+                )}
+                <span className="text-base font-black text-[#facc15]">
+                  {formatPrice(comboWinOffice?.price || 46.50)}
+                </span>
               </div>
             </div>
           </div>

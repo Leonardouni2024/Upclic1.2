@@ -51,7 +51,6 @@ export const ProductGrid: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#facc15]/15 text-[#facc15] text-xs font-bold uppercase tracking-wider mb-2.5 border border-[#facc15]/30 shadow-md">
-              <Sparkles className="w-3.5 h-3.5" />
               <span>Catálogo Completo</span>
             </div>
             <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">

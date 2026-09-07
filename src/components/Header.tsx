@@ -327,7 +327,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 : 'text-purple-200 hover:text-white hover:bg-white/10'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>Combos</span>
             <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
               OFERTA
