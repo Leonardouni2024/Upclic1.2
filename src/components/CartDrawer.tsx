@@ -90,17 +90,14 @@ export const CartDrawer: React.FC = () => {
           </div>
 
           {/* Promotion / Discount Status Banner */}
-          {items.length > 0 && (
+          {items.length > 0 && hasDiscount && (
             <div
               className={`px-4 py-2.5 text-xs font-bold transition-all border-b ${
-                hasDiscount
-                  ? isMultiItemDiscount
+                  isMultiItemDiscount
                     ? 'bg-amber-50 text-amber-900 border-amber-200'
                     : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                  : 'bg-blue-50/70 text-[#0066FF] border-blue-100'
               }`}
             >
-              {hasDiscount ? (
                 <div className="flex items-start gap-2">
                   <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
@@ -114,16 +111,6 @@ export const CartDrawer: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <div className="text-[11px] leading-tight">
-                    <span className="font-extrabold">{t('multiItemDiscountNotice')}</span>
-                  </div>
-                  <span className="font-black text-[10px] bg-white px-2 py-0.5 rounded-full border border-blue-200 text-[#0066FF] uppercase shrink-0">
-                    10% OFF
-                  </span>
-                </div>
-              )}
             </div>
           )}
 

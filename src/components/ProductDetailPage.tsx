@@ -382,14 +382,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   )}
                 </div>
 
-                {/* 10% Auto Discount or 10% Coupon reminder */}
-                <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-amber-400/10 border border-amber-400/30 text-[11px] sm:text-xs font-bold text-amber-200 flex items-center gap-2 shadow-md">
-                  <Zap className="w-4 h-4 text-[#facc15] shrink-0" />
-                  <span className="leading-snug">
-                    {t('multiItemPromoBanner')}
-                  </span>
-                </div>
-
                 {/* Quantity selector */}
                 <div className="mt-6 flex items-center gap-4">
                   <span className="text-xs font-bold uppercase text-purple-200 tracking-wider">

@@ -273,7 +273,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
                 {/* Dropdown Menu */}
                 {regionDropdownOpen && (
-                  <div className="absolute right-[-60px] sm:right-0 top-full mt-2 w-[240px] sm:w-60 bg-[#1f0945] rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10">
+                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[220px] sm:w-[240px] bg-[#1f0945] rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10 origin-top-right">
                     <div className="px-3 py-2 text-[11px] font-bold text-purple-300 uppercase tracking-wider">
                       {t('regionCurrencyLangLabel')}
                     </div>

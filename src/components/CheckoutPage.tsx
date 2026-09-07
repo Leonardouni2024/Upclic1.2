@@ -523,7 +523,7 @@ export const CheckoutPage: React.FC = () => {
                   <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-[#facc15] flex items-center justify-center border border-amber-400/30">
                     <ShieldCheck className="w-4.5 h-4.5" />
                   </div>
-                  <span>{t('productsInOrder')}</span>
+                  <span>Productos en tu orden</span>
                 </h2>
                 <span className="text-xs font-bold text-purple-200 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
                   {totalQuantity} {totalQuantity === 1 ? t('item') : t('items')}
@@ -552,7 +552,7 @@ export const CheckoutPage: React.FC = () => {
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="min-w-0">
+                        <div className="flex-1 min-w-0">
                           <div className="font-bold text-white text-sm truncate" title={item.product.name}>
                             {item.product.name}
                           </div>
@@ -566,7 +566,6 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-
                       <div className="flex items-center justify-between sm:justify-end gap-4">
                         {/* Quantity Stepper */}
                         <div className="flex items-center rounded-xl border border-white/20 bg-[#110928] p-0.5">
@@ -577,22 +576,11 @@ export const CheckoutPage: React.FC = () => {
                             aria-label={t('decrease') || 'Decrease'}
                             title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
                           >
-                            <Minus className="w-3 h-3" />
+                            -
                           </button>
-                          <input
-                            type="number"
-                            min="1"
-                            max="99"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const val = parseInt(e.target.value, 10);
-                              if (!isNaN(val)) {
-                                setQuantity(itemKey, val);
-                              }
-                            }}
-                            className="w-9 text-center text-xs font-bold text-white bg-transparent focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            aria-label={t('editQuantity') || 'Edit quantity'}
-                          />
+                          <div className="w-8 text-center text-xs font-black text-white flex items-center justify-center">
+                            {item.quantity}
+                          </div>
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, 1)}
@@ -603,7 +591,6 @@ export const CheckoutPage: React.FC = () => {
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>
-
                         <span className="font-black text-[#facc15] shrink-0 tabular-nums text-sm min-w-[75px] text-right">
                           {formatPrice((itemUnitPrice * item.quantity))}
                         </span>
@@ -695,8 +682,6 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-amber-400/20 text-[#facc15] flex items-center justify-center shrink-0 border border-amber-400/30">
                     <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
                     <h2 className="text-base font-black text-white tracking-tight flex items-center gap-2">
                       <span>{t('digitalDeliveryData')}</span>
                       <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 tracking-wider">
@@ -706,8 +691,6 @@ export const CheckoutPage: React.FC = () => {
                     <p className="text-xs text-purple-200 mt-0.5">
                       {t('digitalDeliverySubtitle')}
                     </p>
-                  </div>
-                </div>
               </div>
 
               {/* Email field (Mandatory) */}
@@ -755,15 +738,10 @@ export const CheckoutPage: React.FC = () => {
                     <Mail className="w-4 h-4" />
                   </div>
                 </div>
-                {emailError ? (
+                {emailError && (
                   <p className="text-xs text-red-300 font-semibold flex items-center gap-1 mt-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>{emailError}</span>
-                  </p>
-                ) : (
-                  <p className="text-[11px] text-purple-300 leading-normal flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span><strong>{t('instantDigitalDeliveryLabel')}</strong> {t('instantDigitalDeliveryDesc')}</span>
                   </p>
                 )}
               </div>
@@ -787,8 +765,6 @@ export const CheckoutPage: React.FC = () => {
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                       <User className="w-4 h-4" />
-                    </div>
-                  </div>
                   <p className="text-[10px] text-purple-400">Para personalizar tu comprobante de compra</p>
                 </div>
 
@@ -809,8 +785,6 @@ export const CheckoutPage: React.FC = () => {
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                       <Phone className="w-4 h-4" />
-                    </div>
-                  </div>
                   <p className="text-[10px] text-purple-400">Para darte soporte directo en la activación</p>
                 </div>
               </div>
@@ -880,7 +854,7 @@ export const CheckoutPage: React.FC = () => {
                   <span className="font-bold text-white tabular-nums">{formatPrice(subtotal)}</span>
                 </div>
 
-                {hasDiscount ? (
+                {hasDiscount && (
                   <div className="space-y-1">
                     <div className="flex justify-between text-emerald-300 font-bold bg-emerald-500/20 px-2.5 py-1.5 rounded-lg border border-emerald-500/30">
                       <span className="flex items-center gap-1">
@@ -889,13 +863,6 @@ export const CheckoutPage: React.FC = () => {
                       </span>
                       <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
                     </div>
-                    <div className="text-[10px] text-purple-300 italic text-right">
-                      -{Math.round(discountRate * 100)}%
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-[11px] text-purple-300 italic">
-                    {t('multiItemPromoBanner')}
                   </div>
                 )}
 
@@ -971,6 +938,12 @@ export const CheckoutPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
         </div>
       </div>
     </div>

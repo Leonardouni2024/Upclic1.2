@@ -416,8 +416,8 @@ export const products: Product[] = [
       'Seguridad integrada con Windows Defender'
     ],
     variants: [
-      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 30.00 },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 34.00 }
+      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 30.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
+      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 34.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 11 (64 Bit)',
     downloadUrl: 'https://www.microsoft.com/software-download/windows11',
@@ -460,8 +460,8 @@ export const products: Product[] = [
       'Soporte completo para Remote Desktop'
     ],
     variants: [
-      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 21.90 },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 25.90 }
+      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 21.90, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
+      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 25.90, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
     downloadUrl: 'https://www.microsoft.com/software-download/windows10',
@@ -486,8 +486,8 @@ export const products: Product[] = [
     reviews: 180,
     features: ['DirectX 12, Cortana y protección integrada'],
     variants: [
-      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 26.00 },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 30.00 }
+      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 26.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
+      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 30.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 10 (32/64 Bit)',
     downloadUrl: 'https://www.microsoft.com/software-download/windows10',
@@ -556,8 +556,8 @@ export const products: Product[] = [
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
-    imageUrl: '/products/windows-7-pro.webp',
-    fallbackImage: '/products/windows-7-pro.png',
+    imageUrl: 'https://http2.mlstatic.com/D_NQ_NP_730833-MPE104915494199_012026-O.webp',
+    fallbackImage: 'https://http2.mlstatic.com/D_NQ_NP_730833-MPE104915494199_012026-O.webp',
     rating: 4.88,
     reviews: 64,
     features: ['BitLocker, Aero Glass y soporte multilenguaje completo'],

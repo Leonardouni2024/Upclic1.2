@@ -642,5 +642,5 @@ export const translations = {
 
 export function getTranslation(lang: Language, key: keyof typeof translations['ES']): string {
   const dict = translations[lang] || translations.ES;
-  return dict[key] || translations.ES[key] || key;
+  return (dict[key] as any) || (translations.ES[key] as any) || key;
 }
