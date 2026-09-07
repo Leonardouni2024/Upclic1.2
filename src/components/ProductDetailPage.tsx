@@ -291,11 +291,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-white/10 text-purple-100 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white/15">
                     Modalidad: {product.duration}
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30">
-                    ✓ Licencia 100% Original Microsoft
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Licencia 100% Original Microsoft</span>
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-400/20 text-amber-300 text-[11px] sm:text-xs font-bold border border-amber-400/30">
-                    ✓ Entrega digital inmediata
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-400/20 text-amber-300 text-[11px] sm:text-xs font-bold border border-amber-400/30 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Entrega digital inmediata</span>
                   </span>
                 </div>
 
@@ -385,7 +387,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* 10% Auto Discount or 10% Coupon reminder */}
                 <div className="mt-3 p-2.5 sm:p-3 rounded-xl bg-amber-400/10 border border-amber-400/30 text-[11px] sm:text-xs font-bold text-amber-200 flex items-center gap-2 shadow-md">
-                  <span className="text-base shrink-0">🔥</span>
+                  <Zap className="w-4 h-4 text-[#facc15] shrink-0" />
                   <span className="leading-snug">
                     ¡Lleva 2 o más productos y obtén <span className="text-[#facc15] font-black">10% de descuento</span> automáticamente en todo tu carrito!
                   </span>
@@ -441,14 +443,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                   {/* Scarcity & Trust Indicators */}
                   <div className="flex flex-col gap-3 my-4">
-                    {showScarcity.show && (
-                      <div className="flex items-center gap-2 text-sm font-bold text-amber-300 bg-amber-500/15 p-2.5 rounded-lg border border-amber-400/30 animate-in fade-in slide-in-from-top-2 duration-500">
-                        <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                        ¡Date prisa! Quedan solo {showScarcity.count} licencias a este precio.
-                      </div>
-                    )}
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-purple-200 mt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-purple-200">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Garantía de Activación</span>
@@ -468,14 +463,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     </div>
                   </div>
 
-                  {/* Botón Guía de instalación (Abre ventana con descarga oficial y pasos) */}
+                  {/* Botón Guía de instalación (Única ubicación limpia) */}
                   <button
                     id="detail-guide-btn"
                     onClick={() => setShowInstallModal(true)}
-                    className="w-full py-3 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 font-bold text-sm border border-purple-400/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                    className="w-full py-3 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 font-bold text-xs sm:text-sm border border-purple-400/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98"
                   >
                     <BookOpen className="w-4 h-4 text-[#facc15]" />
-                    <span>Guía de instalación</span>
+                    <span>Guía e Instalador Oficial</span>
                   </button>
                 </div>
               </div>
@@ -485,51 +480,25 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
         {/* Details & Specs Tabs */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* Description & Features & Installation Guide (2 cols) */}
+          {/* Description & Features (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Compact Installation Guide Trigger Box */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 text-[#0066FF] flex items-center justify-center shrink-0 shadow-2xs">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-sm sm:text-base">
-                    ¿Deseas descargar el instalador oficial o consultar la guía?
-                  </h4>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
-                    Descarga directa desde servidores oficiales y manual de instalación.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                id="product-detail-open-guide-btn"
-                onClick={() => setShowInstallModal(true)}
-                className="w-full sm:w-auto py-2.5 px-5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Guía de instalación</span>
-              </button>
-            </div>
-
             {/* Product Description */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
-              <h3 className="text-lg font-black text-[#0f172a] mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-[#0066FF]" />
+            <div className="bg-[#180e38] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
+              <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-[#facc15]" />
                 <span>Descripción del Producto</span>
               </h3>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              <p className="text-purple-200 text-xs sm:text-sm md:text-base leading-relaxed">
                 {product.description}
               </p>
 
-              <h4 className="font-extrabold text-slate-800 text-sm mt-6 mb-3 uppercase tracking-wider">
+              <h4 className="font-extrabold text-amber-300 text-xs sm:text-sm mt-6 mb-3 uppercase tracking-wider">
                 Características Principales:
               </h4>
               <ul className="space-y-2.5">
                 {product.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-700">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-purple-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -537,22 +506,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             </div>
 
             {/* Compatibility & License details */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
-              <h3 className="text-lg font-black text-[#0f172a] mb-4 flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-[#0066FF]" />
+            <div className="bg-[#180e38] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
+              <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-[#facc15]" />
                 <span>Compatibilidad y Requisitos</span>
               </h3>
-              <p className="text-sm text-slate-700 font-medium mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200/60">
+              <p className="text-xs sm:text-sm text-purple-200 font-medium mb-4 bg-[#110928] p-4 rounded-xl border border-white/10">
                 {product.compatibility}
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-600">
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-                  <span className="font-bold text-slate-800 block mb-1">Modalidad de Licencia:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-purple-200">
+                <div className="p-3.5 rounded-xl border border-white/10 bg-[#110928]">
+                  <span className="font-bold text-white block mb-1">Modalidad de Licencia:</span>
                   <span>{product.duration}</span>
                 </div>
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-                  <span className="font-bold text-slate-800 block mb-1">
+                <div className="p-3.5 rounded-xl border border-white/10 bg-[#110928]">
+                  <span className="font-bold text-white block mb-1">
                     Tipo de Entrega / Clave:
                   </span>
                   <span>
@@ -566,9 +535,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           </div>
 
           {/* FAQs Accordion Column (1 col) */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs h-fit">
-            <h3 className="text-lg font-black text-[#0f172a] mb-4 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-[#0066FF]" />
+          <div className="bg-[#180e38] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl text-white h-fit">
+            <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-[#facc15]" />
               <span>Preguntas Frecuentes</span>
             </h3>
 
@@ -576,20 +545,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               {faqs.map((faq, idx) => {
                 const isOpen = activeFaq === idx;
                 return (
-                  <div key={idx} className="border border-slate-200/80 rounded-xl overflow-hidden">
+                  <div key={idx} className="border border-white/10 rounded-xl overflow-hidden bg-[#110928]">
                     <button
                       onClick={() => setActiveFaq(isOpen ? null : idx)}
-                      className="w-full text-left p-3.5 text-xs sm:text-sm font-bold text-slate-800 hover:bg-slate-50 flex items-center justify-between gap-2 transition-colors cursor-pointer"
+                      className="w-full text-left p-3.5 text-xs sm:text-sm font-bold text-white hover:bg-white/5 flex items-center justify-between gap-2 transition-colors cursor-pointer"
                     >
                       <span>{faq.q}</span>
                       <ChevronDown
-                        className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
-                          isOpen ? 'transform rotate-180 text-[#0066FF]' : ''
+                        className={`w-4 h-4 text-purple-300 shrink-0 transition-transform duration-200 ${
+                          isOpen ? 'transform rotate-180 text-[#facc15]' : ''
                         }`}
                       />
                     </button>
                     {isOpen && (
-                      <div className="p-3.5 pt-0 text-xs text-slate-600 leading-relaxed bg-slate-50/50 border-t border-slate-100">
+                      <div className="p-3.5 pt-0 text-xs text-purple-200 leading-relaxed bg-white/5 border-t border-white/10">
                         {faq.a}
                       </div>
                     )}
@@ -609,12 +578,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {/* Related Products Section */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl sm:text-2xl font-black text-[#0f172a] tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Productos Relacionados
             </h3>
             <button
               onClick={navigateToHome}
-              className="text-xs font-bold text-[#0066FF] hover:underline"
+              className="text-xs sm:text-sm font-bold text-[#facc15] hover:underline cursor-pointer"
             >
               Ver todo el catálogo →
             </button>

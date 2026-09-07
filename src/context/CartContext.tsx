@@ -105,7 +105,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           addToast({
             type: 'discount',
-            title: '🎁 Cupón Especial Activo',
+            title: 'Cupón Especial Activo',
             message: `¡Usa el código ${code} en tu carrito y obtén ${discountPercent}% extra! Válido por 30 min.`
           });
         }
@@ -222,7 +222,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         const msg = `¡Cupón de ${dynamicCoupon.discountPercent}% aplicado correctamente!`;
         setCouponFeedback({ type: 'success', message: msg });
-        addToast({ type: 'discount', title: '🎉 ¡Cupón aplicado!', message: msg });
+        addToast({ type: 'discount', title: 'Cupón aplicado', message: msg });
         return { success: true, message: msg };
       } else {
         const msg = 'El cupón especial ha expirado.';
@@ -293,7 +293,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Add success toast
       addToast({
         type: 'added',
-        title: '✓ Producto agregado al carrito',
+        title: 'Producto agregado al carrito',
         message: `${product.name}${variantName ? ` (${variantName})` : ''} (${quantity > 1 ? `${quantity} uds.` : '1 ud.'})`
       });
 

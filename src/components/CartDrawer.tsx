@@ -324,7 +324,7 @@ export const CartDrawer: React.FC = () => {
                       className="text-xs text-slate-400 hover:text-red-600 font-bold p-1 cursor-pointer"
                       title="Quitar cupón"
                     >
-                      ✕
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (

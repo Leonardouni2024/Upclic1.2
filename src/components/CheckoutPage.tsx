@@ -26,7 +26,8 @@ import {
   Mail,
   User,
   Phone,
-  RefreshCw
+  RefreshCw,
+  X
 } from 'lucide-react';
 
 export const CheckoutPage: React.FC = () => {
@@ -488,49 +489,48 @@ export const CheckoutPage: React.FC = () => {
   }
 
   return (
-    <div id="checkout-view" className="py-10 sm:py-14 bg-slate-50/70 min-h-screen">
+    <div id="checkout-view" className="py-10 sm:py-14 bg-[#0c0721] text-white min-h-screen font-sans">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation back */}
         <div className="mb-8">
           <button
             onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#0066FF] hover:border-blue-200 shadow-2xs transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs sm:text-sm font-bold text-white transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 text-[#facc15]" />
             <span>Volver a la tienda</span>
           </button>
         </div>
 
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#0066FF] bg-blue-50/90 border border-blue-100 px-3 py-1 rounded-full shadow-2xs">
-            Pasarela Oficial UpClic
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-[#0f172a] tracking-tight mt-2.5">
-            Finalizar Compra y Pago
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+            <span className="bg-gradient-to-r from-[#facc15] via-amber-300 to-yellow-400 bg-clip-text text-transparent">
+              Finalizar Compra
+            </span>
           </h1>
-          <p className="text-sm text-slate-500 mt-2 font-medium">
-            Procesa tu pedido con Mercado Pago y confirma la activación inmediata
+          <p className="text-sm sm:text-base text-purple-200 mt-2 font-medium">
+            Completa tus datos de entrega digital y procesa tu pedido de forma rápida y segura
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Col 1: Detalle de Productos en el Carrito (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-8">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-                <h2 className="text-lg font-black text-[#0f172a] flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center border border-blue-100">
+            <div className="bg-[#180e38] rounded-3xl border border-white/10 shadow-xl p-6 sm:p-8 text-white">
+              <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                <h2 className="text-lg font-black text-white flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-[#facc15] flex items-center justify-center border border-amber-400/30">
                     <ShieldCheck className="w-4.5 h-4.5" />
                   </div>
                   <span>Productos en tu Pedido</span>
                 </h2>
-                <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
+                <span className="text-xs font-bold text-purple-200 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
                   {totalQuantity} {totalQuantity === 1 ? 'licencia' : 'licencias'}
                 </span>
               </div>
 
               {/* Products list */}
-              <div className="divide-y divide-slate-100 mb-6 pr-1">
+              <div className="divide-y divide-white/10 mb-6 pr-1">
                 {items.map(item => {
                   const itemUnitPrice = item.unitPrice ?? item.product.price;
                   const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
@@ -541,7 +541,7 @@ export const CheckoutPage: React.FC = () => {
                   return (
                     <div key={itemKey} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-14 h-14 rounded-xl bg-slate-50/90 p-1.5 border border-slate-200/80 shrink-0 flex items-center justify-center shadow-2xs">
+                        <div className="w-14 h-14 rounded-xl bg-[#110928] p-1.5 border border-white/15 shrink-0 flex items-center justify-center shadow-md">
                           <img
                             src={item.product.imageUrl}
                             alt={item.product.name}
@@ -552,27 +552,27 @@ export const CheckoutPage: React.FC = () => {
                           />
                         </div>
                         <div className="min-w-0">
-                          <div className="font-bold text-slate-900 text-sm truncate" title={item.product.name}>
+                          <div className="font-bold text-white text-sm truncate" title={item.product.name}>
                             {item.product.name}
                           </div>
                           {displayVariantName && (
-                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#0066FF] border border-blue-200">
+                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-400/30">
                               {displayVariantName}
                             </span>
                           )}
-                          <div className="text-[11px] text-slate-500 mt-0.5">
-                            Precio unitario: <strong className="text-slate-800">{formatPrice(itemUnitPrice)}</strong>
+                          <div className="text-[11px] text-purple-300 mt-0.5">
+                            Precio unitario: <strong className="text-white">{formatPrice(itemUnitPrice)}</strong>
                           </div>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between sm:justify-end gap-4">
                         {/* Quantity Stepper */}
-                        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5">
+                        <div className="flex items-center rounded-xl border border-white/20 bg-[#110928] p-0.5">
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, -1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold"
                             aria-label="Disminuir cantidad"
                             title={item.quantity === 1 ? 'Eliminar del carrito' : 'Disminuir'}
                           >
@@ -589,13 +589,13 @@ export const CheckoutPage: React.FC = () => {
                                 setQuantity(itemKey, val);
                               }
                             }}
-                            className="w-9 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="w-9 text-center text-xs font-bold text-white bg-transparent focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             aria-label="Editar cantidad"
                           />
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, 1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold"
                             aria-label="Aumentar cantidad"
                             title="Aumentar"
                           >
@@ -603,14 +603,14 @@ export const CheckoutPage: React.FC = () => {
                           </button>
                         </div>
 
-                        <span className="font-black text-slate-900 shrink-0 tabular-nums text-sm min-w-[75px] text-right">
+                        <span className="font-black text-[#facc15] shrink-0 tabular-nums text-sm min-w-[75px] text-right">
                           {formatPrice((itemUnitPrice * item.quantity))}
                         </span>
 
                         <button
                           type="button"
                           onClick={() => removeItem(itemKey)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
+                          className="p-1.5 text-purple-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors cursor-pointer shrink-0"
                           title="Eliminar producto"
                           aria-label="Eliminar producto"
                         >
@@ -623,31 +623,30 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Coupon input on Checkout */}
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
+                  <span className="text-xs font-bold text-purple-200 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-[#facc15]" />
                     ¿Tienes un cupón de descuento?
                   </span>
-
                 </div>
 
                 {appliedCoupon ? (
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex items-center justify-between">
+                  <div className="bg-emerald-500/20 border border-emerald-500/40 rounded-xl p-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="font-mono font-bold text-xs text-emerald-900">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                      <span className="font-mono font-bold text-xs text-emerald-200">
                         {appliedCoupon}
                       </span>
-                      <span className="text-[11px] text-emerald-700 font-medium">
+                      <span className="text-[11px] text-emerald-300 font-medium">
                         {isMultiItemDiscount ? '(10% aplicado por 2+ productos)' : '(10% de descuento aplicado)'}
                       </span>
                     </div>
                     <button
                       onClick={removeCoupon}
-                      className="text-xs text-slate-400 hover:text-red-600 font-bold px-1"
+                      className="text-xs text-purple-300 hover:text-red-400 font-bold px-1"
                     >
-                      ✕
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
@@ -657,11 +656,11 @@ export const CheckoutPage: React.FC = () => {
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
                       placeholder="Ingresa tu cupón"
-                      className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF]"
+                      className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-xl border border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:outline-none focus:border-[#facc15]"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                      className="px-4 py-2 bg-[#facc15] hover:bg-[#eab308] text-slate-950 rounded-xl text-xs font-black transition-all cursor-pointer"
                     >
                       Aplicar
                     </button>
@@ -672,10 +671,10 @@ export const CheckoutPage: React.FC = () => {
                   <div
                     className={`mt-2 text-[11px] p-2 rounded-lg flex items-start gap-1.5 ${
                       couponFeedback.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30'
                         : couponFeedback.type === 'info'
-                        ? 'bg-blue-50 text-blue-800 border border-blue-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                        ? 'bg-purple-500/20 text-purple-200 border border-purple-500/30'
+                        : 'bg-red-500/20 text-red-200 border border-red-500/30'
                     }`}
                   >
                     {couponFeedback.type === 'error' ? (
@@ -690,20 +689,20 @@ export const CheckoutPage: React.FC = () => {
             </div>
 
             {/* 2. Datos del Cliente para la Entrega Digital */}
-            <div id="customer-delivery-card" className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-7 space-y-5">
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+            <div id="customer-delivery-card" className="bg-[#180e38] rounded-3xl border border-white/10 shadow-xl p-6 sm:p-7 space-y-5 text-white">
+              <div className="flex items-start justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#0066FF] flex items-center justify-center shrink-0 border border-blue-100/80">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-400/20 text-[#facc15] flex items-center justify-center shrink-0 border border-amber-400/30">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <h2 className="text-base font-black text-white tracking-tight flex items-center gap-2">
                       <span>DATOS DE ENTREGA DIGITAL</span>
-                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 tracking-wider">
+                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 tracking-wider">
                         Requerido
                       </span>
                     </h2>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-purple-200 mt-0.5">
                       Ingresa tu correo para enviarte de inmediato tu clave de activación oficial, comprobante y guía.
                     </p>
                   </div>
@@ -712,13 +711,13 @@ export const CheckoutPage: React.FC = () => {
 
               {/* Email field (Mandatory) */}
               <div className="space-y-1.5">
-                <label htmlFor="customer-email-input" className="block text-xs font-bold text-slate-800 flex items-center justify-between">
+                <label htmlFor="customer-email-input" className="block text-xs font-bold text-purple-200 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-[#0066FF]" />
-                    Correo electrónico del cliente <span className="text-red-500 font-black">*</span>
+                    <Mail className="w-3.5 h-3.5 text-[#facc15]" />
+                    Correo electrónico del cliente <span className="text-red-400 font-black">*</span>
                   </span>
                   {customerEmail && isValidEmail(customerEmail) && (
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-emerald-300 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Correo verificado para entrega
                     </span>
@@ -745,24 +744,25 @@ export const CheckoutPage: React.FC = () => {
                     placeholder="ejemplo: tu-correo@gmail.com"
                     className={`w-full pl-10 pr-4 py-3 rounded-2xl text-sm border font-medium transition-all focus:outline-none ${
                       emailError
-                        ? 'border-red-300 bg-red-50/40 text-red-900 focus:ring-2 focus:ring-red-400 focus:border-red-400'
+                        ? 'border-red-400 bg-red-500/20 text-white placeholder-red-200 focus:ring-2 focus:ring-red-400'
                         : customerEmail && isValidEmail(customerEmail)
-                        ? 'border-emerald-300 bg-emerald-50/20 text-slate-900 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400'
-                        : 'border-slate-300 bg-white text-slate-900 focus:ring-2 focus:ring-[#0066FF] focus:border-[#0066FF]'
+                        ? 'border-emerald-400 bg-emerald-500/20 text-white focus:ring-2 focus:ring-emerald-400'
+                        : 'border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:border-[#facc15] focus:ring-1 focus:ring-[#facc15]'
                     }`}
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                     <Mail className="w-4 h-4" />
                   </div>
                 </div>
                 {emailError ? (
-                  <p className="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+                  <p className="text-xs text-red-300 font-semibold flex items-center gap-1 mt-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>{emailError}</span>
                   </p>
                 ) : (
-                  <p className="text-[11px] text-slate-500 leading-normal">
-                    ⚡ <strong>Entrega digital inmediata:</strong> A este correo te enviaremos la clave oficial original de 25 caracteres y el enlace oficial de Microsoft.
+                  <p className="text-[11px] text-purple-300 leading-normal flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span><strong>Entrega digital inmediata:</strong> A este correo te enviaremos la clave oficial original de 25 caracteres y el enlace oficial de Microsoft.</span>
                   </p>
                 )}
               </div>
@@ -770,9 +770,9 @@ export const CheckoutPage: React.FC = () => {
               {/* Optional Name and Phone in 2 cols */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div className="space-y-1.5">
-                  <label htmlFor="customer-name-input" className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-slate-500" />
-                    Nombre o Razón Social <span className="text-slate-400 font-normal">(Opcional)</span>
+                  <label htmlFor="customer-name-input" className="block text-xs font-bold text-purple-200 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-purple-300" />
+                    Nombre o Razón Social <span className="text-purple-400 font-normal">(Opcional)</span>
                   </label>
                   <div className="relative">
                     <input
@@ -782,19 +782,19 @@ export const CheckoutPage: React.FC = () => {
                       value={customerName}
                       onChange={e => handleNameChange(e.target.value)}
                       placeholder="ej: Juan Pérez o Empresa SAC"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF]"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:outline-none focus:border-[#facc15]"
                     />
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                       <User className="w-4 h-4" />
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-400">Para personalizar tu comprobante de compra</p>
+                  <p className="text-[10px] text-purple-400">Para personalizar tu comprobante de compra</p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="customer-phone-input" className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-slate-500" />
-                    Teléfono / WhatsApp <span className="text-slate-400 font-normal">(Opcional)</span>
+                  <label htmlFor="customer-phone-input" className="block text-xs font-bold text-purple-200 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-purple-300" />
+                    Teléfono / WhatsApp <span className="text-purple-400 font-normal">(Opcional)</span>
                   </label>
                   <div className="relative">
                     <input
@@ -804,27 +804,27 @@ export const CheckoutPage: React.FC = () => {
                       value={customerPhone}
                       onChange={e => handlePhoneChange(e.target.value)}
                       placeholder="ej: 987 654 321"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF]"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border border-white/20 bg-[#110928] text-white placeholder-purple-300/50 focus:outline-none focus:border-[#facc15]"
                     />
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300">
                       <Phone className="w-4 h-4" />
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-400">Para darte soporte directo en la activación</p>
+                  <p className="text-[10px] text-purple-400">Para darte soporte directo en la activación</p>
                 </div>
               </div>
 
               {/* Flow notice on Mercado Pago registration */}
-              <div className="pt-3 border-t border-slate-100 flex items-start sm:items-center gap-2.5 text-xs text-slate-500">
-                <Mail className="w-4 h-4 text-[#0066FF] shrink-0 mt-0.5 sm:mt-0" />
+              <div className="pt-3 border-t border-white/10 flex items-start sm:items-center gap-2.5 text-xs text-purple-200">
+                <Mail className="w-4 h-4 text-[#facc15] shrink-0 mt-0.5 sm:mt-0" />
                 <span className="leading-relaxed">
-                  Al hacer clic en <strong>Pagar con Mercado Pago</strong>, tu pedido se registrará y recibirás un correo con el botón para concluir tu pago en cualquier momento.
+                  Al hacer clic en <strong>Pagar con Mercado Pago</strong>, tu pedido se registrará y recibirás un correo con la confirmación para concluir tu pago de forma directa.
                 </span>
               </div>
 
               {/* Privacy note */}
-              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/70 flex items-start gap-2.5 text-xs text-slate-600">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="p-3 bg-[#110928] rounded-2xl border border-white/10 flex items-start gap-2.5 text-xs text-purple-200">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="text-[11px] leading-relaxed">
                   <strong>Privacidad y entrega garantizada:</strong> Tus datos están protegidos y se usan exclusivamente para asignarte tus licencias de software y emitir tu comprobante.
                 </span>
@@ -833,33 +833,33 @@ export const CheckoutPage: React.FC = () => {
 
             {/* Garantías de UpClic */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0066FF] flex items-center justify-center shrink-0 border border-blue-100">
+              <div className="p-4 rounded-2xl bg-[#180e38] border border-white/10 flex items-center gap-3 text-white">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-[#facc15] flex items-center justify-center shrink-0 border border-amber-400/30">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900">Licencias 100% Originales</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Activación permanente garantizada</p>
+                  <h4 className="text-xs font-bold text-white">Licencias 100% Originales</h4>
+                  <p className="text-[11px] text-purple-300 mt-0.5">Activación permanente garantizada</p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+              <div className="p-4 rounded-2xl bg-[#180e38] border border-white/10 flex items-center gap-3 text-white">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900">Entrega Inmediata</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Envío digital con guía paso a paso</p>
+                  <h4 className="text-xs font-bold text-white">Entrega Inmediata</h4>
+                  <p className="text-[11px] text-purple-300 mt-0.5">Envío digital con guía paso a paso</p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+              <div className="p-4 rounded-2xl bg-[#180e38] border border-white/10 flex items-center gap-3 text-white">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center shrink-0 border border-indigo-500/30">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900">Soporte Técnico</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Asistencia remota personalizada</p>
+                  <h4 className="text-xs font-bold text-white">Soporte Técnico</h4>
+                  <p className="text-[11px] text-purple-300 mt-0.5">Asistencia remota personalizada</p>
                 </div>
               </div>
             </div>
@@ -867,43 +867,43 @@ export const CheckoutPage: React.FC = () => {
 
           {/* Col 2: Resumen de Compra & Payment Buttons (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-7 sticky top-24">
-              <h2 className="text-base font-black text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="bg-[#180e38] rounded-3xl border border-white/10 shadow-xl p-6 sm:p-7 sticky top-24 text-white">
+              <h2 className="text-base font-black text-white mb-4 pb-3 border-b border-white/10 flex items-center justify-between">
                 <span>RESUMEN DE PAGO</span>
-                <span className="text-xs font-bold text-slate-400">
+                <span className="text-xs font-bold text-purple-300">
                   Total a pagar
                 </span>
               </h2>
 
               {/* Subtotal & Discount breakdown */}
-              <div className="space-y-2.5 text-xs text-slate-600">
+              <div className="space-y-2.5 text-xs text-purple-200">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span className="font-bold text-slate-800 tabular-nums">{formatPrice(subtotal)}</span>
+                  <span className="font-bold text-white tabular-nums">{formatPrice(subtotal)}</span>
                 </div>
 
                 {hasDiscount ? (
                   <div className="space-y-1">
-                    <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200/60">
+                    <div className="flex justify-between text-emerald-300 font-bold bg-emerald-500/20 px-2.5 py-1.5 rounded-lg border border-emerald-500/30">
                       <span className="flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                         Descuento {Math.round(discountRate * 100)}%:
                       </span>
                       <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
                     </div>
-                    <div className="text-[10px] text-slate-500 italic text-right">
+                    <div className="text-[10px] text-purple-300 italic text-right">
                       {discountReason} • <span className="font-semibold">Descuentos no combinables</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="text-[11px] text-slate-500 italic">
+                  <div className="text-[11px] text-purple-300 italic">
                     (Lleva 2 o más productos para 10% de descuento automático)
                   </div>
                 )}
 
-                <div className="flex justify-between items-baseline text-base font-black text-slate-950 pt-3 border-t border-slate-200">
+                <div className="flex justify-between items-baseline text-base font-black text-white pt-3 border-t border-white/10">
                   <span>TOTAL:</span>
-                  <span className="text-[#0066FF] text-2xl font-black tabular-nums">
+                  <span className="text-[#facc15] text-2xl sm:text-3xl font-black tabular-nums">
                     {formatPrice(total)}
                   </span>
                 </div>
@@ -912,16 +912,16 @@ export const CheckoutPage: React.FC = () => {
               {/* Customer Email status card */}
               <div className="mt-5">
                 {customerEmail && isValidEmail(customerEmail) ? (
-                  <div className="p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-950 shadow-2xs">
+                  <div className="p-3.5 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl flex items-center justify-between text-xs text-emerald-200 shadow-md">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-xl bg-emerald-500/30 text-emerald-300 flex items-center justify-center shrink-0">
                         <CheckCircle2 className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <span className="block text-[10px] uppercase font-bold text-emerald-700 tracking-wider">
+                        <span className="block text-[10px] uppercase font-bold text-emerald-300 tracking-wider">
                           Entrega digital para:
                         </span>
-                        <span className="font-bold text-xs truncate block text-emerald-950 font-mono">
+                        <span className="font-bold text-xs truncate block text-white font-mono">
                           {customerEmail}
                         </span>
                       </div>
@@ -932,7 +932,7 @@ export const CheckoutPage: React.FC = () => {
                         emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         emailInputRef.current?.focus();
                       }}
-                      className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 hover:underline shrink-0 ml-2 cursor-pointer bg-white px-2.5 py-1 rounded-lg border border-emerald-200"
+                      className="text-[11px] font-bold text-amber-300 hover:text-white hover:underline shrink-0 ml-2 cursor-pointer bg-white/10 px-2.5 py-1 rounded-lg border border-white/20"
                     >
                       Editar
                     </button>
@@ -943,16 +943,16 @@ export const CheckoutPage: React.FC = () => {
                       emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       emailInputRef.current?.focus();
                     }}
-                    className="p-3.5 bg-blue-50/90 border border-blue-200 rounded-2xl flex items-center gap-3 text-xs text-blue-950 cursor-pointer hover:bg-blue-100/70 transition-colors shadow-2xs"
+                    className="p-3.5 bg-amber-400/10 border border-amber-400/30 rounded-2xl flex items-center gap-3 text-xs text-amber-200 cursor-pointer hover:bg-amber-400/20 transition-colors shadow-md"
                   >
-                    <div className="w-7 h-7 rounded-xl bg-blue-100 text-[#0066FF] flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-xl bg-amber-400/20 text-[#facc15] flex items-center justify-center shrink-0">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <span className="block text-xs font-black text-blue-950">
+                      <span className="block text-xs font-black text-white">
                         Ingresa tu correo para continuar
                       </span>
-                      <span className="block text-[11px] text-blue-700 leading-tight">
+                      <span className="block text-[11px] text-purple-200 leading-tight">
                         Necesario para enviarte tus licencias y comprobante
                       </span>
                     </div>
@@ -963,8 +963,8 @@ export const CheckoutPage: React.FC = () => {
               {/* Action 1: Pagar con Mercado Pago */}
               <div className="mt-4 space-y-3">
                 {emailError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-xs text-red-200 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold">Dato obligatorio requerido:</p>
                       <p className="mt-0.5 text-[11px] leading-relaxed">{emailError}</p>
@@ -973,12 +973,12 @@ export const CheckoutPage: React.FC = () => {
                 )}
 
                 {paymentError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-xs text-red-200 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold">Error al procesar el pago:</p>
                       <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
-                      <p className="mt-1 text-[10px] text-red-600 font-medium">
+                      <p className="mt-1 text-[10px] text-red-300 font-medium">
                         Si el problema persiste, puedes comunicarte con nuestro equipo de soporte.
                       </p>
                     </div>
@@ -989,18 +989,18 @@ export const CheckoutPage: React.FC = () => {
                   id="mercado-pago-pay-btn"
                   onClick={handleMercadoPago}
                   disabled={isCreatingPreference}
-                  className="w-full py-4 px-4 rounded-2xl bg-[#009EE3] hover:bg-[#0089c7] text-white font-bold text-sm shadow-md hover:shadow-lg hover:shadow-sky-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-sky-400/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full py-4 px-5 rounded-2xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-base shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <CreditCard className="w-4.5 h-4.5" />
-                  <span>{isCreatingPreference ? 'Conectando con Mercado Pago...' : 'Pagar con Mercado Pago'}</span>
-                  <ExternalLink className="w-3.5 h-3.5 ml-0.5 opacity-80" />
+                  <CreditCard className="w-5 h-5 text-slate-950" />
+                  <span className="tracking-tight">{isCreatingPreference ? 'Conectando...' : 'Finalizar Compra con Mercado Pago'}</span>
+                  <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
                 </button>
               </div>
 
               {/* Delivery info clarification */}
-              <div className="mt-4 p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-[11px] text-slate-600 space-y-2">
-                <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="mt-4 p-3.5 bg-[#110928] border border-white/10 rounded-2xl text-[11px] text-purple-200 space-y-2">
+                <p className="font-bold text-white flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Entrega digital y garantía oficial:</span>
                 </p>
                 <p className="leading-relaxed">
@@ -1012,13 +1012,13 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Security guarantee footnote */}
-              <div className="mt-5 pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-2">
-                <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Pasarela 100% segura (Tarjetas y métodos locales)</span>
+              <div className="mt-5 pt-4 border-t border-white/10 text-[11px] text-purple-300 space-y-2">
+                <div className="flex items-center gap-1.5 text-white font-semibold">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Pago 100% seguro con Mercado Pago</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-                  <Clock className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center gap-1.5 text-purple-300 font-medium">
+                  <Clock className="w-4 h-4 text-amber-400" />
                   <span>Entrega de tu licencia a tu correo en 10 a 30 minutos</span>
                 </div>
               </div>

@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                     }}
                     className="absolute right-3 top-2.5 text-purple-300 hover:text-white text-xs p-1 rounded cursor-pointer"
                   >
-                    ✕
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </div>
@@ -237,8 +237,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               {/* Language / Currency Tag (Eneba Style) */}
               <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2b0c61] text-purple-200 text-xs font-semibold border border-[#5923aa]/60">
-                <span className="text-base leading-none">🇵🇪</span>
-                <span>Español | S/</span>
+                <span>PE | Español (S/)</span>
               </div>
 
               {/* Mobile Search Icon Toggle */}
@@ -404,7 +403,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-2.5 text-purple-300 hover:text-white text-sm font-bold"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>

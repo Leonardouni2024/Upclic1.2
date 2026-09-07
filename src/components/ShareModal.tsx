@@ -39,7 +39,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   const productStoreUrl = `https://upclic.store/producto/${product.slug}`;
 
   // Mensaje de recomendación con enlace directo de upclic.store
-  const exactMessage = `¡Hola! Te recomiendo este producto:\n\n🛍️ *${productName}*\n💰 *Precio:* ${productPriceFormatted}\n\n${productStoreUrl}`;
+  const exactMessage = `¡Hola! Te recomiendo este producto:\n\n*${productName}*\n*Precio:* ${productPriceFormatted}\n\n${productStoreUrl}`;
 
   // Enlace directo a WhatsApp
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(exactMessage)}`;

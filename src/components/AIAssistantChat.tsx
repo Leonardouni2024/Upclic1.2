@@ -173,7 +173,7 @@ export const AIAssistantChat: React.FC = () => {
       {
         id: `msg-welcome-${Date.now()}`,
         role: 'model',
-        content: `¡Chat reiniciado! 😊 Soy tu **Asistente Virtual de UpClic**. ¿Qué duda o producto deseas consultar hoy?`,
+        content: `¡Chat reiniciado! Soy tu **Asistente Virtual de UpClic**. ¿Qué duda o producto deseas consultar hoy?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);

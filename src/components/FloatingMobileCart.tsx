@@ -31,7 +31,7 @@ export const FloatingMobileCart: React.FC = () => {
             </div>
             {hasDiscount && (
               <div className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
-                <span>✓ 10% de descuento aplicado</span>
+                <span>10% de descuento aplicado</span>
               </div>
             )}
           </div>
