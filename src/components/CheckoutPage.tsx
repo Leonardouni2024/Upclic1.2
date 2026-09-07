@@ -919,16 +919,6 @@ export const CheckoutPage: React.FC = () => {
                   <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
                   <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
                 </button>
-
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20deseo%20pagar%20mi%20pedido%20por%20un%20total%20de%20${encodeURIComponent(formatPrice(total))}${appliedCoupon ? `%20con%20cup%C3%B3n%20${appliedCoupon}` : ''}%20(Correo:%20${encodeURIComponent(customerEmail || 'no especificado')}).`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 px-4 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 text-center"
-                >
-                  <MessageCircle className="w-4 h-4 text-emerald-400" />
-                  <span>Pagar por WhatsApp (Yape / Plin / Transferencia)</span>
-                </a>
               </div>
 
               {/* Delivery info clarification */}
