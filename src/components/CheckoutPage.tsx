@@ -682,6 +682,8 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-amber-400/20 text-[#facc15] flex items-center justify-center shrink-0 border border-amber-400/30">
                     <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
                     <h2 className="text-base font-black text-white tracking-tight flex items-center gap-2">
                       <span>{t('digitalDeliveryData')}</span>
                       <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 tracking-wider">
@@ -691,6 +693,8 @@ export const CheckoutPage: React.FC = () => {
                     <p className="text-xs text-purple-200 mt-0.5">
                       {t('digitalDeliverySubtitle')}
                     </p>
+                  </div>
+                </div>
               </div>
 
               {/* Email field (Mandatory) */}
@@ -943,8 +947,6 @@ export const CheckoutPage: React.FC = () => {
       </div>
       </div>
       </div>
-      </div>
-        </div>
       </div>
     </div>
   );

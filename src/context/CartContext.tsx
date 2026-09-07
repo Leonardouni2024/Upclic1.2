@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
-import { calculateCartTotals, DynamicCoupon } from '../products.ts';
+import { calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS } from '../products.ts';
 import { getTranslation, translations } from '../utils/i18n.ts';
 
 interface ToastData {
@@ -319,6 +319,25 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: true, message: msg };
       } else {
         const msg = 'El cupón especial ha expirado.';
+        setCouponFeedback({ type: 'error', message: msg });
+        return { success: false, message: msg };
+      }
+    }
+
+    // Check static DYNAMIC_COUPONS
+    const matchedStatic = DYNAMIC_COUPONS.find(c => c.code.toUpperCase() === clean);
+    if (matchedStatic) {
+      const isNotExpired = !matchedStatic.expiresAt || Date.now() <= matchedStatic.expiresAt;
+      if (isNotExpired) {
+        setAppliedCoupon(clean);
+        try {
+          localStorage.setItem(COUPON_STORAGE_KEY, clean);
+        } catch {}
+        const msg = `¡Cupón ${clean} aplicado correctamente!`;
+        setCouponFeedback({ type: 'success', message: msg });
+        return { success: true, message: msg };
+      } else {
+        const msg = 'El cupón promocional ha expirado.';
         setCouponFeedback({ type: 'error', message: msg });
         return { success: false, message: msg };
       }
