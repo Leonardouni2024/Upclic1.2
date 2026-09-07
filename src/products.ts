@@ -321,27 +321,28 @@ export const products: Product[] = [
   {
     id: 'prod-microsoft-365',
     slug: 'microsoft-365-personal-family',
-    name: 'Microsoft 365 Personal (Suscripción)',
-    description: 'Suscripción oficial a la suite Microsoft 365. Incluye Word, Excel, PowerPoint, Outlook y 1 TB de almacenamiento en la nube OneDrive.',
-    price: 49.00,
+    name: 'Microsoft 365 Personal (Cuenta - 1 Año)',
+    description: 'Suscripción oficial a la suite Microsoft 365 por 1 año. Incluye Word, Excel, PowerPoint, Outlook y 100 GB de almacenamiento en la nube OneDrive.',
+    price: 45.00,
     oldPrice: 110.00,
     duration: '1 año',
     category: 'office',
     imageUrl: '/products/microsoft-365.webp',
     fallbackImage: '/products/microsoft-365.png',
-    cloudStorage: '1 TB OneDrive',
+    cloudStorage: '100 GB OneDrive',
     rating: 4.94,
     reviews: 215,
     features: [
+      'Acceso mediante cuenta proporcionada (la vinculas a tu dominio)',
       'Suscripción oficial garantizada por 1 año',
-      '1 TB de almacenamiento seguro en la nube OneDrive',
+      '100 GB de almacenamiento seguro en la nube OneDrive',
       'Funciona en PC, Mac, iPad, iPhone y Android'
     ],
     compatibility: 'Windows, macOS, iOS, Android',
-    downloadUrl: 'https://account.microsoft.com/services',
+    downloadUrl: 'https://www.office.com',
     installationSteps: [
-      'Inicia sesión en tu cuenta Microsoft.',
-      'Vincula el código o correo asignado.',
+      'Inicia sesión en www.office.com con la cuenta proporcionada.',
+      'Puedes vincular la cuenta a tu propio dominio.',
       'Descarga e instala Microsoft 365 en tus dispositivos.'
     ]
   },
