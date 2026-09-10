@@ -159,7 +159,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let isMounted = true;
     
     async function detectCountryAndCurrency() {
-      if (localStorage.getItem('upclic_currency')) return;
       try {
         const geoRes = await fetch('https://get.geojs.io/v1/ip/country.json');
         if (geoRes.ok) {
