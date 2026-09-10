@@ -23,9 +23,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
   };
 
   return (
-    <footer id="main-footer" className="bg-[#0a0717] text-purple-200 pt-16 pb-12 border-t border-white/10">
+    <footer id="main-footer" className="bg-[#0a0717] text-slate-300 pt-16 pb-12 border-t border-slate-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-700">
           {/* Brand Info (2 cols on large screens) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center">
@@ -36,16 +36,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
               {t('digitalLicensesSubtitle')}
             </p>
 
-            <p className="text-xs text-purple-200 leading-relaxed max-w-sm font-medium">
+            <p className="text-xs text-slate-300 leading-relaxed max-w-sm font-medium">
               {t('footerDesc')}
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-purple-200">
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-300">
               <span className="flex items-center gap-1.5 text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 {t('activationGuaranteeBadge')}
               </span>
-              <span className="flex items-center gap-1.5 text-[#facc15] font-bold bg-amber-400/10 px-2.5 py-1 rounded-lg border border-amber-400/20">
+              <span className="flex items-center gap-1.5 text-yellow-400 font-bold bg-amber-400/10 px-2.5 py-1 rounded-lg border border-amber-400/20">
                 <Lock className="w-3.5 h-3.5" />
                 Mercado Pago
               </span>
@@ -57,11 +57,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
               {t('categories')}
             </h4>
-            <ul className="space-y-2.5 text-xs text-purple-200 font-medium">
+            <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
               <li>
                 <button
                   onClick={() => handleCategory('combos')}
-                  className="hover:text-[#facc15] transition-colors cursor-pointer text-[#facc15] font-bold"
+                  className="hover:text-yellow-400 transition-colors cursor-pointer text-yellow-400 font-bold"
                 >
                   {t('combos')}
                 </button>
@@ -114,7 +114,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
               {t('helpSection')}
             </h4>
-            <ul className="space-y-2.5 text-xs text-purple-200 font-medium">
+            <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
               <li>
                 <button
                   onClick={() => onOpenHelpModal('faq')}
@@ -150,7 +150,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
               {t('legalSection')}
             </h4>
-            <ul className="space-y-2.5 text-xs text-purple-200 font-medium mb-6">
+            <ul className="space-y-2.5 text-xs text-slate-300 font-medium mb-6">
               <li>
                 <button
                   onClick={() => onOpenHelpModal('terms')}
@@ -181,8 +181,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
               {t('paymentMethodLabel')}
             </h4>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-xs font-bold text-[#facc15]">
-                <span className="w-2 h-2 rounded-full bg-[#facc15]"></span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-slate-700 text-xs font-bold text-yellow-400">
+                <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
                 <span>Mercado Pago</span>
               </div>
             </div>
@@ -190,11 +190,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-purple-300 font-medium">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-medium">
           <div className="flex flex-wrap items-center gap-3">
             <p>© {new Date().getFullYear()} UpClic. {t('allRightsReserved')}</p>
           </div>
-          <p className="flex items-center gap-1 text-purple-300">
+          <p className="flex items-center gap-1 text-slate-400">
             <span>{t('legalNotice')}</span>
           </p>
         </div>

@@ -16,11 +16,11 @@ export const FloatingMobileCart: React.FC = () => {
     >
       <button
         onClick={() => setIsCartOpen(true)}
-        className="w-full bg-[#0f172a] text-white rounded-lg p-3.5 shadow-2xl border border-slate-700/60 flex items-center justify-between cursor-pointer active:scale-98 transition-all"
+        className="w-full bg-[#0f172a] text-white rounded-lg p-3.5 shadow-lg border border-slate-700/60 flex items-center justify-between cursor-pointer active:scale-98 transition-all"
         aria-label="Abrir carrito flotante"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#0066FF] flex items-center justify-center text-white shrink-0 shadow-md">
+          <div className="w-9 h-9 rounded-lg bg-[#0066FF] flex items-center justify-center text-white shrink-0 shadow-md">
             <ShoppingCart className="w-4 h-4" />
           </div>
           <div className="text-left">
@@ -37,7 +37,7 @@ export const FloatingMobileCart: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 text-xs font-extrabold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl text-white transition-colors">
+        <div className="flex items-center gap-1 text-xs font-extrabold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors">
           <span>{t('cart')}</span>
           <ChevronRight className="w-4 h-4 text-blue-300" />
         </div>

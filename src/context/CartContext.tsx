@@ -157,6 +157,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch real-time PEN to USD exchange rate from free API
   useEffect(() => {
     let isMounted = true;
+    
+    async function detectCountryAndCurrency() {
+      if (localStorage.getItem('upclic_currency')) return;
+      try {
+        const geoRes = await fetch('https://get.geojs.io/v1/ip/country.json');
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          const country = geoData.country;
+          let newCurrency: Currency = 'USD'; // Default for US, Ecuador, etc.
+          if (country === 'CO') newCurrency = 'COP';
+          else if (country === 'PE') newCurrency = 'PEN';
+          else if (country === 'MX') newCurrency = 'MXN';
+          
+          if (isMounted) {
+            setCurrencyState(newCurrency);
+            // Default to ES for LATAM, EN for USD (unless it's just defaulting, maybe leave lang as ES for Ecuador?)
+            // Actually, just set the currency.
+            try {
+              localStorage.setItem('upclic_currency', newCurrency);
+            } catch {}
+          }
+        }
+      } catch {
+        // Silently fail
+      }
+    }
+    
     async function fetchLiveRate() {
       try {
         const res = await fetch('https://open.er-api.com/v6/latest/USD');
@@ -176,7 +203,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Fallback silently
       }
     }
+    
+    detectCountryAndCurrency();
     fetchLiveRate();
+    
     return () => { isMounted = false; };
   }, []);
 

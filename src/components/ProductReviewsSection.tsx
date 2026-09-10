@@ -141,7 +141,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Calificaciones y Reseñas de Clientes
           </h2>
-          <p className="text-xs sm:text-sm text-purple-200 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
             Experiencias reales de clientes que han activado {product.name}
           </p>
         </div>
@@ -150,7 +150,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <button
             onClick={() => syncWithServer()}
             title={t('reviewsSyncDBTitle')}
-            className="p-2.5 rounded-xl border border-white/20 text-white hover:text-[#facc15] hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-2.5 rounded-lg border border-slate-600 text-white hover:text-yellow-400 hover:bg-white/10 transition-colors cursor-pointer"
             aria-label={t('reviewsSyncDBTitle')}
           >
             <RefreshCw className={`w-4 h-4 ${connectionStatus === 'syncing' ? 'animate-spin' : ''}`} />
@@ -162,7 +162,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               setSubmittedSuccess(false);
               setFormError(null);
             }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold transition-all cursor-pointer border border-[#0066FF]"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold transition-all cursor-pointer border border-[#0066FF]"
           >
             <MessageSquarePlus className="w-4 h-4" />
             <span>{showForm ? t('reviewsHideForm') : t('reviewsWriteReview')}</span>
@@ -171,7 +171,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       </div>
 
       {/* Scorecard & Rating Breakdown Card */}
-      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-6 sm:p-8 mb-8">
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-6 sm:p-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           {/* Col 1: Average Rating Score (4 cols) */}
           <div className="md:col-span-4 flex flex-col items-center justify-center text-center md:border-r md:border-slate-100 md:pr-6">
@@ -243,7 +243,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
 
       {/* Review Submission Form Card */}
       {showForm && (
-        <div className="bg-white rounded-xl border border-blue-200 shadow-md p-6 sm:p-8 mb-8 animate-in fade-in duration-200">
+        <div className="bg-white rounded-lg border border-blue-200 shadow-md p-6 sm:p-8 mb-8 animate-in fade-in duration-200">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <Award className="w-5 h-5 text-[#0066FF]" />
@@ -297,7 +297,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                       );
                     })}
                   </div>
-                  <span className="text-xs font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/80">
+                  <span className="text-xs font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200/80">
                     {ratingDescriptions[hoverRating || rating]}
                   </span>
                 </div>
@@ -315,7 +315,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                     onChange={e => setAuthor(e.target.value)}
                     placeholder={t('reviewsFormNamePlaceholder')}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
                   />
                 </div>
 
@@ -328,7 +328,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                     value={city}
                     onChange={e => setCity(e.target.value)}
                     placeholder={t('reviewsFormCityPlaceholder')}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all"
                   />
                 </div>
               </div>
@@ -344,7 +344,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                   placeholder={t('reviewsFormTextPlaceholder')}
                   rows={4}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all leading-relaxed"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066FF] transition-all leading-relaxed"
                 />
                 <div className="flex justify-between items-center mt-1 text-[11px] text-slate-400">
                   <span>Mínimo 8 caracteres</span>
@@ -353,7 +353,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               </div>
 
               {formError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+                <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
                   {formError}
                 </div>
               )}
@@ -364,14 +364,14 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                   type="button"
                   onClick={() => setShowForm(false)}
                   disabled={isSaving}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20 disabled:opacity-60"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20 disabled:opacity-60"
                 >
                   {isSaving ? (
                     <>
@@ -397,7 +397,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setFilterStars('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               filterStars === 'all'
                 ? 'bg-[#0066FF] text-white shadow-2xs'
                 : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80'
@@ -412,7 +412,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               <button
                 key={s}
                 onClick={() => setFilterStars(s)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
                   filterStars === s
                     ? 'bg-[#0066FF] text-white shadow-2xs'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80'
@@ -433,7 +433,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as 'recent' | 'highest' | 'lowest')}
-            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF] cursor-pointer"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF] cursor-pointer"
           >
             <option value="recent">{t('reviewsSortRecent')}</option>
             <option value="highest">{t('reviewsSortHighest')}</option>
@@ -454,7 +454,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
                   {/* Author & City */}
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-100 to-indigo-100 text-[#0066FF] font-black text-sm flex items-center justify-center border border-blue-200/60 shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-100 to-indigo-100 text-[#0066FF] font-black text-sm flex items-center justify-center border border-blue-200/60 shrink-0">
                       {review.author.charAt(0).toUpperCase()}
                     </div>
                     <div>

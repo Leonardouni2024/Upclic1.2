@@ -129,7 +129,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
   ];
 
   return (
-    <section id="comparison-table-section" className="my-10 bg-white rounded-xl border border-slate-200/80 p-6 md:p-8 shadow-sm">
+    <section id="comparison-table-section" className="my-10 bg-white rounded-lg border border-slate-200/80 p-6 md:p-8 shadow-sm">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0066FF] text-xs font-bold mb-2">
@@ -145,7 +145,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
         </div>
 
         {/* Tab switcher */}
-        <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto">
+        <div className="inline-flex p-1 bg-slate-100 rounded-lg border border-slate-200 self-start md:self-auto">
           <button
             onClick={() => setActiveTab('windows')}
             className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${

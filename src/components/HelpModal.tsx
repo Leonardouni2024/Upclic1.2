@@ -110,7 +110,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <p className="text-slate-600">
               Our technical support team is available to help you before and after your purchase.
             </p>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-emerald-600" />
@@ -136,7 +136,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <p className="text-slate-600">
               Nuestro equipo de soporte técnico está disponible para atender dudas antes y después de tu compra.
             </p>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-emerald-600" />
@@ -212,14 +212,14 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-lg rounded-xl shadow-xl border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white w-full max-w-lg rounded-lg shadow-md border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="px-6 py-4.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
           <h3 className="font-black text-slate-900 text-base">
             {titles[topic] || (isEn ? 'Information' : 'Información')}
           </h3>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
             aria-label="Cerrar modal"
           >
             <X className="w-4.5 h-4.5" />
@@ -233,7 +233,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
         <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
           >
             {isEn ? 'Got it' : 'Entendido'}
           </button>

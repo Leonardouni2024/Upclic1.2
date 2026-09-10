@@ -70,7 +70,7 @@ export const FloatingTestimonials: React.FC = () => {
       aria-label="Recomendaciones y testimonios de clientes"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="fixed bottom-20 left-3 sm:bottom-5 sm:left-5 z-20 max-w-[240px] sm:max-w-[260px] w-full bg-white/95 backdrop-blur-md rounded-xl p-2.5 sm:p-3 shadow-md border border-slate-200/80 transition-all duration-300 pointer-events-auto group"
+      className="fixed bottom-20 left-3 sm:bottom-5 sm:left-5 z-20 max-w-[240px] sm:max-w-[260px] w-full bg-white/95 backdrop-blur-md rounded-lg p-2.5 sm:p-3 shadow-md border border-slate-200/80 transition-all duration-300 pointer-events-auto group"
     >
       {/* Mini header bar */}
       <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100 text-[10px] font-bold text-slate-500">

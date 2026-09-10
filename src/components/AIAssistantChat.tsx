@@ -310,7 +310,7 @@ export const AIAssistantChat: React.FC = () => {
           id="btn-open-ai-chat"
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className={`flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-300 cursor-pointer ${
+          className={`flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 cursor-pointer ${
             isOpen
               ? 'bg-slate-800 hover:bg-slate-900 text-white scale-90'
               : 'bg-gradient-to-br from-[#0066FF] to-[#0047b3] text-white hover:scale-110 active:scale-95 animate-bounce shadow-blue-500/30'
@@ -332,7 +332,7 @@ export const AIAssistantChat: React.FC = () => {
       {isOpen && (
         <div
           id="ai-assistant-modal"
-          className="fixed bottom-32 sm:bottom-22 right-2 sm:right-6 z-40 w-[calc(100vw-16px)] sm:w-[410px] max-w-[430px] h-[550px] max-h-[calc(100vh-140px)] bg-white rounded-xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="fixed bottom-32 sm:bottom-22 right-2 sm:right-6 z-40 w-[calc(100vw-16px)] sm:w-[410px] max-w-[430px] h-[550px] max-h-[calc(100vh-140px)] bg-white rounded-lg border border-slate-200 shadow-lg flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
         >
           {/* Header */}
           <div className="px-4 py-3.5 bg-gradient-to-r from-slate-900 via-[#0a2540] to-blue-950 text-white flex items-center justify-between shadow-xs">
@@ -364,7 +364,7 @@ export const AIAssistantChat: React.FC = () => {
                 type="button"
                 onClick={handleResetChat}
                 title="Reiniciar conversación"
-                className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
+                className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
                 aria-label="Reiniciar conversación"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -373,7 +373,7 @@ export const AIAssistantChat: React.FC = () => {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 title="Minimizar ventana"
-                className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
+                className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
                 aria-label="Cerrar chat"
               >
                 <X className="w-4 h-4" />
@@ -423,7 +423,7 @@ export const AIAssistantChat: React.FC = () => {
                       {msg.suggestedProducts.map((p) => (
                         <div
                           key={p.id}
-                          className="bg-slate-50 p-2 rounded-xl border border-slate-200 flex items-center justify-between gap-2 hover:bg-blue-50/50 transition-colors"
+                          className="bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center justify-between gap-2 hover:bg-blue-50/50 transition-colors"
                         >
                           <div
                             onClick={() => handleProductClick(p.slug)}
@@ -476,7 +476,7 @@ export const AIAssistantChat: React.FC = () => {
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs transition-all shadow-xs"
+                        className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs transition-all shadow-xs"
                       >
                         <MessageCircle className="w-4 h-4 fill-white" />
                         <span>Abrir WhatsApp del Administrador</span>

@@ -167,29 +167,29 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   ];
 
   return (
-    <div id="product-detail-view" className="py-10 sm:py-14 bg-[#100c22] text-white min-h-screen">
+    <div id="product-detail-view" className="py-10 sm:py-14 bg-[#0f172a] text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back navigation breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#1d123a] border border-white/15 text-xs sm:text-sm font-bold text-white hover:text-[#facc15] hover:border-[#facc15] shadow-md transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#1d123a] border border-slate-700 text-xs sm:text-sm font-bold text-white hover:text-yellow-400 hover:border-yellow-400 shadow-md transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4 text-[#facc15]" />
+            <ArrowLeft className="w-4 h-4 text-yellow-400" />
             <span>Volver a la tienda</span>
           </button>
 
-          <span className="text-xs font-semibold text-purple-200 hidden sm:inline">
+          <span className="text-xs font-semibold text-slate-300 hidden sm:inline">
             Inicio / {product.category.toUpperCase()} / {product.name}
           </span>
         </div>
 
         {/* Main Product Box */}
-        <div className="bg-[#17132e] rounded-xl border border-white/5 shadow-md p-6 sm:p-10 mb-12">
+        <div className="bg-[#1e293b] rounded-lg border border-slate-800 shadow-md p-6 sm:p-10 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-lg bg-[#0f172a] p-8 border border-white/5 flex items-center justify-center group">
+              <div className="relative w-full max-w-[480px] aspect-square rounded-lg bg-[#0f172a] p-8 border border-slate-800 flex items-center justify-center group">
                 {/* Badges on Top-Left */}
                 <div className="absolute top-3.5 left-3.5 flex flex-col items-start gap-1.5 z-10">
                   {product.badge && (
@@ -208,11 +208,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 <button
                   type="button"
                   onClick={() => setShowShareModal(true)}
-                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-md"
+                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-slate-700 shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-md"
                   title={t('productShareTitle')}
                   aria-label={t('productShareTitle')}
                 >
-                  <Share2 className="w-3.5 h-3.5 text-[#facc15]" />
+                  <Share2 className="w-3.5 h-3.5 text-yellow-400" />
                   <span className="text-[11px] sm:text-xs font-bold">Compartir</span>
                 </button>
 
@@ -229,13 +229,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               </div>
 
               {/* Trust Badge under image */}
-              <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-purple-200">
+              <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-slate-300">
                 <span className="flex items-center gap-1.5 text-white">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   Activación oficial garantizada
                 </span>
                 <span className="flex items-center gap-1.5 text-white">
-                  <Lock className="w-4 h-4 text-[#facc15]" />
+                  <Lock className="w-4 h-4 text-yellow-400" />
                   Pago seguro Mercado Pago
                 </span>
               </div>
@@ -246,7 +246,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               <div>
                 {/* Warning notice if legacy version */}
                 {product.warning && (
-                  <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-400/30">
+                  <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-400/30">
                     <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
                     <span>{product.warning}</span>
                   </div>
@@ -273,10 +273,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       />
                     ))}
                   </div>
-                  <span className="font-extrabold text-sm text-white tabular-nums group-hover:text-[#facc15] transition-colors">
+                  <span className="font-extrabold text-sm text-white tabular-nums group-hover:text-yellow-400 transition-colors">
                     {stats.averageRating.toFixed(1)} / 5.0
                   </span>
-                  <span className="text-xs text-purple-300 group-hover:text-[#facc15] underline underline-offset-2 transition-colors">
+                  <span className="text-xs text-slate-400 group-hover:text-yellow-400 underline underline-offset-2 transition-colors">
                     ({stats.totalReviews} {t('productVerifiedRatings')})
                   </span>
                 </div>
@@ -288,7 +288,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* License Tag & Cloud pill */}
                 <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-white/10 text-purple-100 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white/15">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-white/10 text-purple-100 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-700">
                     Modalidad: {product.duration}
                   </span>
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30 flex items-center gap-1">
@@ -303,12 +303,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Variant Selector (OEM vs Retail) for Windows products */}
                 {product.variants && product.variants.length > 0 && (
-                  <div className="mt-5 p-4 rounded-lg bg-[#140b2b] border border-white/10">
+                  <div className="mt-5 p-4 rounded-lg bg-[#0f172a] border border-slate-700">
                     <div className="flex items-center justify-between mb-2.5">
-                      <span className="text-xs font-black uppercase text-purple-200 tracking-wider">
+                      <span className="text-xs font-black uppercase text-slate-300 tracking-wider">
                         Selecciona el tipo de clave:
                       </span>
-                      <span className="text-[11px] font-bold text-slate-950 bg-[#facc15] px-2 py-0.5 rounded-md border border-amber-300">
+                      <span className="text-[11px] font-bold text-slate-950 bg-yellow-400 px-2 py-0.5 rounded-md border border-amber-300">
                         {currentVariant?.name} ({formatPrice(activePrice)})
                       </span>
                     </div>
@@ -321,10 +321,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                             key={v.id}
                             type="button"
                             onClick={() => setSelectedVariantId(v.id)}
-                            className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                            className={`p-3 rounded-lg text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
                               isSelected
-                                ? 'bg-amber-400/10 border-[#facc15] shadow-md'
-                                : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
+                                ? 'bg-amber-400/10 border-yellow-400 shadow-md'
+                                : 'bg-white/5 border-slate-700 hover:border-slate-600 hover:bg-white/10'
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -332,35 +332,35 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                                 <div
                                   className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                                     isSelected
-                                      ? 'border-[#facc15] bg-[#facc15]'
+                                      ? 'border-yellow-400 bg-yellow-400'
                                       : 'border-white/30 bg-transparent'
                                   }`}
                                 >
                                   {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
                                 </div>
-                                <span className={`text-xs font-black ${isSelected ? 'text-[#facc15]' : 'text-white'}`}>
+                                <span className={`text-xs font-black ${isSelected ? 'text-yellow-400' : 'text-white'}`}>
                                   {v.name}
                                 </span>
                               </div>
                               {v.badge && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-purple-200">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-slate-300">
                                   {v.badge}
                                 </span>
                               )}
                             </div>
 
                             <div className="flex items-baseline gap-1.5 mt-0.5">
-                              <span className="text-sm font-black text-[#facc15]">
+                              <span className="text-sm font-black text-yellow-400">
                                 {formatPrice(v.price)}
                               </span>
                               {v.oldPrice && (
-                                <span className="text-xs text-purple-300 line-through tabular-nums">
+                                <span className="text-xs text-slate-400 line-through tabular-nums">
                                   {formatPrice(v.oldPrice)}
                                 </span>
                               )}
                             </div>
 
-                            <p className="text-[11px] text-purple-200 leading-snug font-medium">
+                            <p className="text-[11px] text-slate-300 leading-snug font-medium">
                               {v.shortDesc}
                             </p>
                           </button>
@@ -372,11 +372,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Price Display */}
                 <div className="mt-5 sm:mt-6 flex flex-wrap items-baseline gap-2.5 sm:gap-3">
-                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-[#facc15]">
+                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-yellow-400">
                     {formatPrice(activePrice)}
                   </div>
                   {activeOldPrice && (
-                    <span className="text-base sm:text-lg text-purple-300 line-through font-semibold tabular-nums">
+                    <span className="text-base sm:text-lg text-slate-400 line-through font-semibold tabular-nums">
                       {formatPrice(activeOldPrice)}
                     </span>
                   )}
@@ -384,10 +384,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Quantity selector */}
                 <div className="mt-6 flex items-center gap-4">
-                  <span className="text-xs font-bold uppercase text-purple-200 tracking-wider">
+                  <span className="text-xs font-bold uppercase text-slate-300 tracking-wider">
                     Cantidad:
                   </span>
-                  <div className="flex items-center rounded-xl border border-white/20 bg-white/10 p-0.5">
+                  <div className="flex items-center rounded-lg border border-slate-600 bg-white/10 p-0.5">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
@@ -414,16 +414,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <button
                       id="detail-add-to-cart-btn"
                       onClick={handleAddToCart}
-                      className="py-3.5 px-6 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-white/20"
+                      className="py-3.5 px-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-600"
                     >
-                      <ShoppingCart className="w-4 h-4 text-purple-200" />
+                      <ShoppingCart className="w-4 h-4 text-slate-300" />
                       <span>{t('addToCart')}</span>
                     </button>
 
                     <button
                       id="detail-buy-now-btn"
                       onClick={handleBuyNow}
-                      className="py-3.5 px-6 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-sm shadow-lg hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
+                      className="py-3.5 px-6 rounded-lg bg-yellow-400 hover:bg-[#eab308] text-slate-950 font-black text-sm shadow-lg hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
                     >
                       <Zap className="w-4 h-4 text-slate-950 fill-slate-950" />
                       <span>{t('buyNow')}</span>
@@ -432,7 +432,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                   {/* Scarcity & Trust Indicators */}
                   <div className="flex flex-col gap-3 my-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-purple-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-300">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Garantía de Activación</span>
@@ -462,12 +462,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           {/* Description & Features (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product Description */}
-            <div className="bg-[#180e38] rounded-xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
+            <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white">
               <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-[#facc15]" />
+                <CheckCircle2 className="w-5 h-5 text-yellow-400" />
                 <span>Descripción del Producto</span>
               </h3>
-              <p className="text-purple-200 text-xs sm:text-sm md:text-base leading-relaxed">
+              <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed">
                 {product.description}
               </p>
 
@@ -485,21 +485,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             </div>
 
             {/* Compatibility & License details */}
-            <div className="bg-[#180e38] rounded-xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
+            <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white">
               <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-[#facc15]" />
+                <Cpu className="w-5 h-5 text-yellow-400" />
                 <span>Compatibilidad y Requisitos</span>
               </h3>
-              <p className="text-xs sm:text-sm text-purple-200 font-medium mb-4 bg-[#110928] p-4 rounded-xl border border-white/10">
+              <p className="text-xs sm:text-sm text-slate-300 font-medium mb-4 bg-[#0f172a] p-4 rounded-lg border border-slate-700">
                 {product.compatibility}
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-purple-200">
-                <div className="p-3.5 rounded-xl border border-white/10 bg-[#110928]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-300">
+                <div className="p-3.5 rounded-lg border border-slate-700 bg-[#0f172a]">
                   <span className="font-bold text-white block mb-1">Modalidad de Licencia:</span>
                   <span>{product.duration}</span>
                 </div>
-                <div className="p-3.5 rounded-xl border border-white/10 bg-[#110928]">
+                <div className="p-3.5 rounded-lg border border-slate-700 bg-[#0f172a]">
                   <span className="font-bold text-white block mb-1">
                     Tipo de Entrega / Clave:
                   </span>
@@ -514,9 +514,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           </div>
 
           {/* FAQs Accordion Column (1 col) */}
-          <div className="bg-[#180e38] rounded-xl border border-white/10 p-6 sm:p-8 shadow-xl text-white h-fit">
+          <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white h-fit">
             <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-[#facc15]" />
+              <HelpCircle className="w-5 h-5 text-yellow-400" />
               <span>Preguntas Frecuentes</span>
             </h3>
 
@@ -524,20 +524,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               {faqs.map((faq, idx) => {
                 const isOpen = activeFaq === idx;
                 return (
-                  <div key={idx} className="border border-white/10 rounded-xl overflow-hidden bg-[#110928]">
+                  <div key={idx} className="border border-slate-700 rounded-lg overflow-hidden bg-[#0f172a]">
                     <button
                       onClick={() => setActiveFaq(isOpen ? null : idx)}
                       className="w-full text-left p-3.5 text-xs sm:text-sm font-bold text-white hover:bg-white/5 flex items-center justify-between gap-2 transition-colors cursor-pointer"
                     >
                       <span>{faq.q}</span>
                       <ChevronDown
-                        className={`w-4 h-4 text-purple-300 shrink-0 transition-transform duration-200 ${
-                          isOpen ? 'transform rotate-180 text-[#facc15]' : ''
+                        className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
+                          isOpen ? 'transform rotate-180 text-yellow-400' : ''
                         }`}
                       />
                     </button>
                     {isOpen && (
-                      <div className="p-3.5 pt-0 text-xs text-purple-200 leading-relaxed bg-white/5 border-t border-white/10">
+                      <div className="p-3.5 pt-0 text-xs text-slate-300 leading-relaxed bg-white/5 border-t border-slate-700">
                         {faq.a}
                       </div>
                     )}
@@ -562,7 +562,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             </h3>
             <button
               onClick={navigateToHome}
-              className="text-xs sm:text-sm font-bold text-[#facc15] hover:underline cursor-pointer"
+              className="text-xs sm:text-sm font-bold text-yellow-400 hover:underline cursor-pointer"
             >
               Ver todo el catálogo →
             </button>

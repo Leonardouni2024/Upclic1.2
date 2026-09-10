@@ -48,7 +48,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[90vh]">
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -61,7 +61,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -81,7 +81,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
               <button
                 type="submit"
                 disabled={loading || !searchTerm.trim()}
-                className="absolute right-1.5 sm:right-2 top-1.5 sm:top-2 bottom-1.5 sm:bottom-2 px-4 sm:px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
+                className="absolute right-1.5 sm:right-2 top-1.5 sm:top-2 bottom-1.5 sm:bottom-2 px-4 sm:px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
               >
                 {loading ? t('searchingOrders') : t('searchBtn')}
               </button>
@@ -156,7 +156,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                     ))}
                   </div>
 
-                  <div className="bg-slate-50 rounded-xl p-3 flex items-center justify-between">
+                  <div className="bg-slate-50 rounded-lg p-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-500">{t('orderTotalLabel')}</span>
                     <span className="text-lg font-black text-[#0066FF]">{formatPrice(order.total ?? 0)}</span>
                   </div>

@@ -78,7 +78,7 @@ export const BestSellersCarousel: React.FC = () => {
   };
 
   return (
-    <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-[#250953] to-[#170c36] text-white border-b border-white/10 overflow-hidden">
+    <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-[#250953] to-[#170c36] text-white border-b border-slate-700 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -90,7 +90,7 @@ export const BestSellersCarousel: React.FC = () => {
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
                 {t('bestSellersTitle')}
               </h2>
-              <p className="text-xs sm:text-sm text-purple-200 font-medium mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-300 font-medium mt-0.5">
                 {t('bestSellersSubtitle')}
               </p>
             </div>
@@ -116,7 +116,7 @@ export const BestSellersCarousel: React.FC = () => {
                 key={product.id}
                 className={`w-[270px] sm:w-[290px] lg:w-[305px] shrink-0 snap-center transition-all duration-300 ${
                   currentIndex === idx
-                    ? 'scale-[1.02] ring-2 ring-[#facc15] rounded-lg shadow-xl shadow-purple-950/80'
+                    ? 'scale-[1.02] ring-2 ring-yellow-400 rounded-lg shadow-md shadow-purple-950/80'
                     : 'opacity-90 hover:opacity-100'
                 }`}
               >
@@ -133,7 +133,7 @@ export const BestSellersCarousel: React.FC = () => {
                 onClick={() => scrollToIndex(idx)}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   currentIndex === idx
-                    ? 'w-7 bg-[#facc15] shadow-md shadow-amber-500/50'
+                    ? 'w-7 bg-yellow-400 shadow-md shadow-amber-500/50'
                     : 'w-2 bg-white/30 hover:bg-white/50'
                 }`}
                 aria-label={`Ir al producto ${idx + 1}`}

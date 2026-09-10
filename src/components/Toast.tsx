@@ -18,7 +18,7 @@ export const ToastContainer: React.FC = () => {
           <div
             key={toast.id}
             id={`toast-${toast.id}`}
-            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-bottom-3 ${
+            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-lg shadow-md border backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-bottom-3 ${
               isDiscount
                 ? 'bg-[#0f172a] text-white border-[#0066FF]/40 shadow-[#0066FF]/20'
                 : 'bg-white text-[#0f172a] border-slate-200/80 shadow-slate-900/10'

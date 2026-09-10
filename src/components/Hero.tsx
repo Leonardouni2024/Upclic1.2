@@ -33,12 +33,12 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero-section" className="relative bg-[#100c22] text-white pt-6 pb-10 border-b border-white/5 font-sans">
+    <section id="hero-section" className="relative bg-[#0f172a] text-white pt-6 pb-10 border-b border-white/5 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
           
           {/* Main Big Hero Banner (8 Cols) */}
-          <div className="lg:col-span-8 relative rounded-xl bg-[#17132e] p-6 sm:p-10 border border-white/5 flex flex-col justify-between overflow-hidden min-h-[300px] sm:min-h-[360px]">
+          <div className="lg:col-span-8 relative rounded-xl bg-[#1e293b] p-6 sm:p-10 border border-slate-700 flex flex-col justify-between overflow-hidden min-h-[300px] sm:min-h-[360px]">
             <div className="relative z-10 max-w-xl">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#facc15] text-slate-950 text-[11px] font-bold uppercase tracking-wider mb-4">
                 <span>{t('heroBadge')}</span>
@@ -79,7 +79,7 @@ export const Hero: React.FC = () => {
             {/* Promo Card 1 */}
             <div 
               onClick={() => handleOpenProduct('prod-office-2024', 'office')}
-              className="group relative rounded-xl bg-[#17132e] p-4 border border-white/5 hover:border-white/15 transition-all duration-200 cursor-pointer flex items-center justify-between"
+              className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
             >
               <div>
                 <span className="inline-block px-2 py-0.5 rounded bg-[#334155] text-white font-bold text-[10px] uppercase mb-1 tracking-wider">
@@ -105,7 +105,7 @@ export const Hero: React.FC = () => {
             {/* Promo Card 2 */}
             <div 
               onClick={() => handleOpenProduct('prod-win11-pro', 'windows')}
-              className="group relative rounded-xl bg-[#17132e] p-4 border border-white/5 hover:border-white/15 transition-all duration-200 cursor-pointer flex items-center justify-between"
+              className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
             >
               <div>
                 <span className="inline-block px-2 py-0.5 rounded bg-[#334155] text-white font-bold text-[10px] uppercase mb-1 tracking-wider">
@@ -131,7 +131,7 @@ export const Hero: React.FC = () => {
             {/* Promo Card 3 */}
             <div 
               onClick={() => handleOpenProduct('prod-combo-win11-office2024', 'combos')}
-              className="group relative rounded-xl bg-[#17132e] p-4 border border-white/5 hover:border-white/15 transition-all duration-200 cursor-pointer flex items-center justify-between"
+              className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
             >
               <div>
                 <span className="inline-block px-2 py-0.5 rounded bg-rose-500 text-white font-bold text-[10px] uppercase mb-1 tracking-wider">

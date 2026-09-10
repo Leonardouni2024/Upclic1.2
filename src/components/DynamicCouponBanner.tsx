@@ -50,7 +50,7 @@ export const DynamicCouponBanner: React.FC<DynamicCouponBannerProps> = ({ onAppl
   if (!coupon || isCouponApplied || totalQuantity >= 2) return null;
 
   return (
-    <div className="mx-6 mb-4 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-2">
+    <div className="mx-6 mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-2">
       <div>
         <p className="text-xs font-bold text-blue-800">Tienes un cupón de {coupon.discountPercent}% OFF</p>
         <p className="text-[10px] text-blue-600 mt-0.5">

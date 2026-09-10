@@ -62,7 +62,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-sm rounded-lg border border-slate-200 shadow-2xl overflow-hidden flex flex-col"
+        className="bg-white w-full max-w-sm rounded-lg border border-slate-200 shadow-lg overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header compacto */}
@@ -94,7 +94,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         {/* Body compacto */}
         <div className="p-3.5 space-y-3">
           {/* Card miniatura del producto */}
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 shadow-2xs">
+          <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 shadow-2xs">
             <div className="w-13 h-13 rounded-lg bg-white p-1 border border-slate-200 shrink-0 flex items-center justify-center">
               <img
                 src={imgSrc}
@@ -127,7 +127,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
           </div>
 
           {/* Vista previa del mensaje */}
-          <div className="p-2.5 rounded-xl bg-blue-50/40 border border-blue-100 text-xs space-y-1">
+          <div className="p-2.5 rounded-lg bg-blue-50/40 border border-blue-100 text-xs space-y-1">
             <div className="flex items-center justify-between text-[10px] font-bold text-blue-900">
               <span>Mensaje a enviar:</span>
               <button
@@ -151,7 +151,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-[0.98] text-white font-bold text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+              className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] active:scale-[0.98] text-white font-bold text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer"
             >
               <MessageCircle className="w-4 h-4 fill-white shrink-0" />
               <span>Compartir en WhatsApp</span>
@@ -162,7 +162,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               href={facebookUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] active:scale-[0.98] text-white font-bold text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+              className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-[#1877F2] hover:bg-[#166fe5] active:scale-[0.98] text-white font-bold text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer"
             >
               <div className="w-4 h-4 rounded-full bg-white text-[#1877F2] flex items-center justify-center font-black text-[10px] shrink-0">
                 f

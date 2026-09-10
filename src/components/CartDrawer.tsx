@@ -57,7 +57,7 @@ export const CartDrawer: React.FC = () => {
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col h-full border-l border-slate-200/80">
+        <div className="w-screen max-w-md bg-white shadow-lg flex flex-col h-full border-l border-slate-200/80">
           {/* Drawer Header */}
           <div className="px-5 py-4 sm:px-6 bg-white border-b border-slate-200/80 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -127,7 +127,7 @@ export const CartDrawer: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="mt-5 px-5 py-2.5 rounded-xl bg-[#0066FF] text-white text-xs font-bold hover:bg-[#0052cc] shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20"
+                  className="mt-5 px-5 py-2.5 rounded-lg bg-[#0066FF] text-white text-xs font-bold hover:bg-[#0052cc] shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20"
                 >
                   {t('exploreProductsBtn')}
                 </button>
@@ -144,7 +144,7 @@ export const CartDrawer: React.FC = () => {
                 return (
                   <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
                     {/* 1:1 Image */}
-                    <div className="w-16 h-16 rounded-xl bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
+                    <div className="w-16 h-16 rounded-lg bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
                       <img
                         src={item.product.imageUrl}
                         alt={item.product.name}
@@ -264,7 +264,7 @@ export const CartDrawer: React.FC = () => {
                 if (parsed.expiresAt > Date.now()) {
                   const mins = Math.ceil((parsed.expiresAt - Date.now()) / 60000);
                   return (
-                    <div className="mx-6 mb-4 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between">
+                    <div className="mx-6 mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-bold text-blue-800">Tienes un cupón de {parsed.discountPercent}% OFF</p>
                         <p className="text-[10px] text-blue-600">Código: <span className="font-bold">{parsed.code}</span> (Expira en {mins} min)</p>
@@ -294,7 +294,7 @@ export const CartDrawer: React.FC = () => {
                 </div>
 
                 {appliedCoupon ? (
-                  <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-2.5 flex items-center justify-between">
+                  <div className="bg-emerald-50/90 border border-emerald-200 rounded-lg p-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       <div>
@@ -383,7 +383,7 @@ export const CartDrawer: React.FC = () => {
               <button
                 id="cart-go-to-checkout-btn"
                 onClick={navigateToCheckout}
-                className="w-full py-3 px-4 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
+                className="w-full py-3 px-4 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
               >
                 <span>{t('proceedToCheckout')}</span>
                 <ArrowRight className="w-4 h-4" />

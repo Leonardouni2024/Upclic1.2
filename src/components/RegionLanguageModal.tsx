@@ -17,20 +17,20 @@ export const RegionLanguageModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-[#180e38] text-white w-full max-w-md rounded-xl border border-white/15 shadow-2xl overflow-hidden flex flex-col"
+        className="bg-[#1e293b] text-white w-full max-w-md rounded-lg border border-slate-700 shadow-lg overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-[#110928]">
+        <div className="px-6 py-5 border-b border-slate-700 flex items-center justify-between bg-[#0f172a]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-[#facc15] flex items-center justify-center font-black border border-amber-400/30">
+            <div className="w-10 h-10 rounded-lg bg-slate-700/50 text-yellow-400 flex items-center justify-center font-black border border-amber-400/30">
               <Globe className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-black text-white text-base sm:text-lg leading-tight">
                 {language === 'ES' ? 'Región, Moneda e Idioma' : 'Region, Currency & Language'}
               </h3>
-              <p className="text-xs text-purple-200 font-medium">
+              <p className="text-xs text-slate-300 font-medium">
                 {language === 'ES' ? 'Selecciona tu preferencia' : 'Select your preference'}
               </p>
             </div>
@@ -38,7 +38,7 @@ export const RegionLanguageModal: React.FC = () => {
 
           <button
             onClick={() => setIsRegionModalOpen(false)}
-            className="w-8 h-8 rounded-lg text-purple-300 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center cursor-pointer"
+            className="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center cursor-pointer"
             aria-label="Cerrar modal"
           >
             <X className="w-5 h-5" />
@@ -47,7 +47,7 @@ export const RegionLanguageModal: React.FC = () => {
 
         {/* Content: 2 clean option cards */}
         <div className="p-6 space-y-4">
-          <p className="text-xs font-semibold text-purple-200">
+          <p className="text-xs font-semibold text-slate-300">
             {language === 'ES' ? 'Selecciona la configuración de tu tienda:' : 'Select your store setting:'}
           </p>
 
@@ -60,8 +60,8 @@ export const RegionLanguageModal: React.FC = () => {
               }}
               className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'PEN'
-                  ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
-                  : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
+                  ? 'bg-slate-800 border-yellow-400 text-white shadow-lg ring-1 ring-yellow-400'
+                  : 'bg-[#0f172a] border-slate-700 text-slate-300 hover:border-white/25 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-3.5">
@@ -69,7 +69,7 @@ export const RegionLanguageModal: React.FC = () => {
                 <div>
                   <div className="font-black text-sm text-white flex items-center gap-2">
                     <span>Perú (PE)</span>
-                    <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold border border-purple-500/30">
+                    <span className="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded font-bold border border-purple-500/30">
                       Español
                     </span>
                   </div>
@@ -78,7 +78,7 @@ export const RegionLanguageModal: React.FC = () => {
               </div>
 
               {currency === 'PEN' && (
-                <div className="w-6 h-6 rounded-full bg-[#facc15] text-slate-950 flex items-center justify-center shrink-0 font-bold">
+                <div className="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center shrink-0 font-bold">
                   <Check className="w-4 h-4 stroke-[3]" />
                 </div>
               )}
@@ -92,8 +92,8 @@ export const RegionLanguageModal: React.FC = () => {
               }}
               className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'COP'
-                  ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
-                  : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
+                  ? 'bg-slate-800 border-yellow-400 text-white shadow-lg ring-1 ring-yellow-400'
+                  : 'bg-[#0f172a] border-slate-700 text-slate-300 hover:border-white/25 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-3.5">
@@ -101,7 +101,7 @@ export const RegionLanguageModal: React.FC = () => {
                 <div>
                   <div className="font-black text-sm text-white flex items-center gap-2">
                     <span>Colombia (CO)</span>
-                    <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold border border-purple-500/30">
+                    <span className="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded font-bold border border-purple-500/30">
                       Español
                     </span>
                   </div>
@@ -110,7 +110,7 @@ export const RegionLanguageModal: React.FC = () => {
               </div>
 
               {currency === 'COP' && (
-                <div className="w-6 h-6 rounded-full bg-[#facc15] text-slate-950 flex items-center justify-center shrink-0 font-bold">
+                <div className="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center shrink-0 font-bold">
                   <Check className="w-4 h-4 stroke-[3]" />
                 </div>
               )}
@@ -124,8 +124,8 @@ export const RegionLanguageModal: React.FC = () => {
               }}
               className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'MXN'
-                  ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
-                  : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
+                  ? 'bg-slate-800 border-yellow-400 text-white shadow-lg ring-1 ring-yellow-400'
+                  : 'bg-[#0f172a] border-slate-700 text-slate-300 hover:border-white/25 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-3.5">
@@ -133,7 +133,7 @@ export const RegionLanguageModal: React.FC = () => {
                 <div>
                   <div className="font-black text-sm text-white flex items-center gap-2">
                     <span>México (MX)</span>
-                    <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold border border-purple-500/30">
+                    <span className="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded font-bold border border-purple-500/30">
                       Español
                     </span>
                   </div>
@@ -142,7 +142,7 @@ export const RegionLanguageModal: React.FC = () => {
               </div>
 
               {currency === 'MXN' && (
-                <div className="w-6 h-6 rounded-full bg-[#facc15] text-slate-950 flex items-center justify-center shrink-0 font-bold">
+                <div className="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center shrink-0 font-bold">
                   <Check className="w-4 h-4 stroke-[3]" />
                 </div>
               )}
@@ -156,8 +156,8 @@ export const RegionLanguageModal: React.FC = () => {
               }}
               className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'USD'
-                  ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
-                  : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
+                  ? 'bg-slate-800 border-yellow-400 text-white shadow-lg ring-1 ring-yellow-400'
+                  : 'bg-[#0f172a] border-slate-700 text-slate-300 hover:border-white/25 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-3.5">
@@ -165,7 +165,7 @@ export const RegionLanguageModal: React.FC = () => {
                 <div>
                   <div className="font-black text-sm text-white flex items-center gap-2">
                     <span>United States (US)</span>
-                    <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold border border-purple-500/30">
+                    <span className="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded font-bold border border-purple-500/30">
                       English
                     </span>
                   </div>
@@ -174,7 +174,7 @@ export const RegionLanguageModal: React.FC = () => {
               </div>
 
               {currency === 'USD' && (
-                <div className="w-6 h-6 rounded-full bg-[#facc15] text-slate-950 flex items-center justify-center shrink-0 font-bold">
+                <div className="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center shrink-0 font-bold">
                   <Check className="w-4 h-4 stroke-[3]" />
                 </div>
               )}
@@ -183,10 +183,10 @@ export const RegionLanguageModal: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-white/10 flex items-center justify-end bg-[#110928]">
+        <div className="px-6 py-4 border-t border-slate-700 flex items-center justify-end bg-[#0f172a]">
           <button
             onClick={() => setIsRegionModalOpen(false)}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black text-xs transition-colors cursor-pointer border border-amber-300 shadow-md"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-yellow-400 hover:bg-[#eab308] text-slate-950 font-black text-xs transition-colors cursor-pointer border border-amber-300 shadow-md"
           >
             {language === 'ES' ? 'Guardar' : 'Save'}
           </button>
