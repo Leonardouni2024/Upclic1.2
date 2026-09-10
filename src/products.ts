@@ -76,7 +76,7 @@ export const DYNAMIC_COUPONS: DynamicCoupon[] = [
   { code: 'COMBO15', discountPercent: 15, minItems: 2, description: '15% de descuento por llevar 2 o más productos' },
   { code: 'VIP20', discountPercent: 20, description: '20% de descuento especial clientes VIP' },
   { code: 'PRICLIC1', discountPercent: 10, description: '10% de descuento exclusivo', expiresAt: 1791417599000 },
-  { code: 'PROVECLIC1', discountPercent: 50, description: '50% de descuento exclusivo' }
+  { code: 'PROVECLIC1', discountPercent: 50, description: 'Descuento especial PROVECLIC1 aplicable' }
 ];
 
 export function calculateCartTotals(
@@ -122,12 +122,24 @@ export function calculateCartTotals(
     }
   }
 
-  const isMultiItemDiscount = totalQuantity >= 2 && discountRate < 0.10;
+  const isMultiItemDiscount = totalQuantity >= 2 && discountRate < 0.10 && !(appliedCoupon && appliedCoupon.code === 'PROVECLIC1');
   if (isMultiItemDiscount) {
     discountRate = 0.10;
   }
 
-  const discountAmount = subtotal * discountRate;
+  let discountAmount = subtotal * discountRate;
+
+  // Custom logic for PROVECLIC1
+  if (appliedCoupon && appliedCoupon.code === 'PROVECLIC1') {
+    discountAmount = 0;
+    items.forEach(item => {
+      const price = item.unitPrice ?? item.product.price;
+      const rate = price < 30 ? 0.20 : 0.50;
+      discountAmount += (price * rate) * item.quantity;
+    });
+    if (subtotal > 0) discountRate = discountAmount / subtotal;
+  }
+
   const total = Math.max(0, subtotal - discountAmount);
 
   return {
