@@ -81,7 +81,8 @@ export const DYNAMIC_COUPONS: DynamicCoupon[] = [
 
 export function calculateCartTotals(
   items: { product: Product; quantity: number; unitPrice?: number }[],
-  couponCode?: string
+  couponCode?: string,
+  dynamicCoupon?: { code: string, discountPercent: number, expiresAt?: number }
 ): CartTotals {
   const subtotal = items.reduce((acc, item) => acc + (item.unitPrice ?? item.product.price) * item.quantity, 0);
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -90,12 +91,33 @@ export function calculateCartTotals(
   let appliedCoupon: DynamicCoupon | undefined = undefined;
 
   if (couponCode) {
-    const matched = DYNAMIC_COUPONS.find(c => c.code.toUpperCase() === couponCode.trim().toUpperCase());
-    if (matched) {
-      const isNotExpired = !matched.expiresAt || Date.now() <= matched.expiresAt;
-      if (isNotExpired && (!matched.minItems || totalQuantity >= matched.minItems)) {
-        discountRate = matched.discountPercent / 100;
-        appliedCoupon = matched;
+    const cleanCode = couponCode.trim().toUpperCase();
+    const matchedStatic = DYNAMIC_COUPONS.find(c => c.code.toUpperCase() === cleanCode);
+    
+    let matchedDynamic = dynamicCoupon;
+    if (!matchedDynamic && typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('upclic_dynamic_coupon');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.code && parsed.code.toUpperCase() === cleanCode) {
+            matchedDynamic = parsed;
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (matchedStatic) {
+      const isNotExpired = !matchedStatic.expiresAt || Date.now() <= matchedStatic.expiresAt;
+      if (isNotExpired && (!matchedStatic.minItems || totalQuantity >= matchedStatic.minItems)) {
+        discountRate = matchedStatic.discountPercent / 100;
+        appliedCoupon = matchedStatic;
+      }
+    } else if (matchedDynamic && matchedDynamic.code.toUpperCase() === cleanCode) {
+      const isNotExpired = !matchedDynamic.expiresAt || Date.now() <= matchedDynamic.expiresAt;
+      if (isNotExpired) {
+        discountRate = matchedDynamic.discountPercent / 100;
+        appliedCoupon = { code: matchedDynamic.code, discountPercent: matchedDynamic.discountPercent, description: `Cupón especial ${matchedDynamic.discountPercent}% OFF` };
       }
     }
   }

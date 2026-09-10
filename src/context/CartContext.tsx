@@ -493,7 +493,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems([]);
   };
 
-  const totals: CartTotals = calculateCartTotals(items, appliedCoupon || dynamicCoupon?.code);
+  const totals: CartTotals = calculateCartTotals(items, appliedCoupon || dynamicCoupon?.code, dynamicCoupon || undefined);
 
   const navigateToProduct = (slug: string) => {
     const target = `/producto/${slug}`;
