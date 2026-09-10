@@ -159,8 +159,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let isMounted = true;
     
     async function detectCountryAndCurrency() {
+      if (sessionStorage.getItem('upclic_currency_detected')) return;
       try {
-        const geoRes = await fetch('https://get.geojs.io/v1/ip/country.json');
+        const geoRes = await fetch('https://get.geojs.io/v1/ip/country.json?_t=' + Date.now());
         if (geoRes.ok) {
           const geoData = await geoRes.json();
           const country = geoData.country;
@@ -171,10 +172,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           if (isMounted) {
             setCurrencyState(newCurrency);
-            // Default to ES for LATAM, EN for USD (unless it's just defaulting, maybe leave lang as ES for Ecuador?)
-            // Actually, just set the currency.
             try {
               localStorage.setItem('upclic_currency', newCurrency);
+              sessionStorage.setItem('upclic_currency_detected', 'true');
             } catch {}
           }
         }
