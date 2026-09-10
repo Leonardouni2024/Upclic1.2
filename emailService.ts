@@ -19,7 +19,7 @@ export interface OrderEmailPayload {
   customerPhone?: string | null;
   total: number;
   items: OrderItemPayload[];
-  channel: "mercado_pago" | "whatsapp" | "email_registration";
+  channel: "mercado_pago" | "paypal" | "whatsapp" | "email_registration";
   status: string;
   discountAmount?: number;
   discountReason?: string | null;
@@ -356,7 +356,7 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             </tr>
             ${order.paymentId ? `
             <tr>
-              <td style="color: #64748b; padding-bottom: 6px;">Transacción Mercado Pago:</td>
+              <td style="color: #64748b; padding-bottom: 6px;">Transacción ${order.channel === 'paypal' ? 'PayPal' : 'Mercado Pago'}:</td>
               <td style="color: #0f172a; font-weight: 600; text-align: right; padding-bottom: 6px; font-family: monospace;">#${order.paymentId}</td>
             </tr>` : ''}
             <tr>

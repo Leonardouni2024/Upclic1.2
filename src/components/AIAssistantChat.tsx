@@ -332,13 +332,13 @@ export const AIAssistantChat: React.FC = () => {
       {isOpen && (
         <div
           id="ai-assistant-modal"
-          className="fixed bottom-32 sm:bottom-22 right-2 sm:right-6 z-40 w-[calc(100vw-16px)] sm:w-[410px] max-w-[430px] h-[550px] max-h-[calc(100vh-140px)] bg-white rounded-3xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="fixed bottom-32 sm:bottom-22 right-2 sm:right-6 z-40 w-[calc(100vw-16px)] sm:w-[410px] max-w-[430px] h-[550px] max-h-[calc(100vh-140px)] bg-white rounded-xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
         >
           {/* Header */}
           <div className="px-4 py-3.5 bg-gradient-to-r from-slate-900 via-[#0a2540] to-blue-950 text-white flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <div className="w-9 h-9 rounded-2xl bg-blue-600/90 text-white flex items-center justify-center font-black shadow-inner">
+                <div className="w-9 h-9 rounded-lg bg-blue-600/90 text-white flex items-center justify-center font-black shadow-inner">
                   <Bot className="w-5 h-5" />
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full" />
@@ -406,7 +406,7 @@ export const AIAssistantChat: React.FC = () => {
                 className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[88%] rounded-2xl p-3 text-xs leading-relaxed shadow-2xs ${
+                  className={`max-w-[88%] rounded-lg p-3 text-xs leading-relaxed shadow-2xs ${
                     msg.role === 'user'
                       ? 'bg-[#0066FF] text-white rounded-br-xs'
                       : 'bg-white text-slate-800 border border-slate-200/90 rounded-bl-xs'
@@ -492,7 +492,7 @@ export const AIAssistantChat: React.FC = () => {
             {/* Loading typing indicator */}
             {isLoading && (
               <div className="flex items-start gap-2">
-                <div className="bg-white p-3 rounded-2xl rounded-bl-xs border border-slate-200/90 shadow-2xs flex items-center gap-2 text-xs text-slate-500">
+                <div className="bg-white p-3 rounded-lg rounded-bl-xs border border-slate-200/90 shadow-2xs flex items-center gap-2 text-xs text-slate-500">
                   <div className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" />
                     <span
@@ -544,12 +544,12 @@ export const AIAssistantChat: React.FC = () => {
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={isEn ? 'Type your question about Office, Windows...' : 'Escribe tu consulta sobre Office, Windows...'}
               disabled={isLoading}
-              className="flex-1 bg-slate-100 hover:bg-slate-50 focus:bg-white text-slate-900 placeholder:text-slate-400 text-xs px-3.5 py-2.5 rounded-2xl border border-transparent focus:border-[#0066FF] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+              className="flex-1 bg-slate-100 hover:bg-slate-50 focus:bg-white text-slate-900 placeholder:text-slate-400 text-xs px-3.5 py-2.5 rounded-lg border border-transparent focus:border-[#0066FF] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
             />
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading}
-              className="w-9 h-9 rounded-2xl bg-[#0066FF] hover:bg-[#0052cc] active:scale-95 text-white flex items-center justify-center transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-xs shrink-0"
+              className="w-9 h-9 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] active:scale-95 text-white flex items-center justify-center transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer shadow-xs shrink-0"
               aria-label="Enviar mensaje"
             >
               <Send className="w-4 h-4" />

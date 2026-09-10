@@ -83,7 +83,7 @@ export const BestSellersCarousel: React.FC = () => {
         {/* Header with Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-300">
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-300">
               <Flame className="w-6 h-6 fill-slate-950" />
             </div>
             <div>
@@ -116,7 +116,7 @@ export const BestSellersCarousel: React.FC = () => {
                 key={product.id}
                 className={`w-[270px] sm:w-[290px] lg:w-[305px] shrink-0 snap-center transition-all duration-300 ${
                   currentIndex === idx
-                    ? 'scale-[1.02] ring-2 ring-[#facc15] rounded-2xl shadow-xl shadow-purple-950/80'
+                    ? 'scale-[1.02] ring-2 ring-[#facc15] rounded-lg shadow-xl shadow-purple-950/80'
                     : 'opacity-90 hover:opacity-100'
                 }`}
               >

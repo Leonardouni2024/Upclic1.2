@@ -136,7 +136,7 @@ export function generateLocalChatReply(message: string, history?: Array<{ role: 
     norm.includes('link de descarga')
   ) {
     return {
-      reply: `Procedimiento de instalación y activación oficial:\n\n**Para Microsoft Office (2024 / 2021):**\n1. Desinstale versiones anteriores o de evaluación en el panel de control.\n2. Descargue el instalador oficial (.IMG) mediante el enlace oficial proporcionado.\n3. Inicie **Setup.exe** y complete la instalación.\n4. En la ventana de activación de Word/Excel, introduzca la clave alfanumérica de 25 dígitos.\n\n**Para Windows 10 / 11:**\n1. Ingrese a **Inicio > Configuración > Sistema > Activación**.\n2. Seleccione **Cambiar la clave del producto**.\n3. Ingrese su clave original y presione **Siguiente > Activar**.\n\nLa activación se valida directamente con la infraestructura de servidores de Microsoft.`,
+      reply: `Procedimiento de activación oficial:\n\n**Para Microsoft Office (2024 / 2021):**\n1. Desinstale versiones anteriores o de evaluación en el panel de control.\n2. Inicie su aplicación instalada oficial.\n3. En la ventana de activación de Word/Excel, introduzca la clave alfanumérica de 25 dígitos proporcionada.\n\n**Para Windows 10 / 11:**\n1. Ingrese a **Inicio > Configuración > Sistema > Activación**.\n2. Seleccione **Cambiar la clave del producto**.\n3. Ingrese su clave original y presione **Siguiente > Activar**.\n\nLa activación se valida directamente con la infraestructura de servidores de Microsoft.`,
       suggestedProducts: [],
       showAdminWhatsApp: false,
     };
@@ -174,7 +174,7 @@ export function generateLocalChatReply(message: string, history?: Array<{ role: 
     norm.includes('interbank')
   ) {
     return {
-      reply: `En **UpClic** la pasarela de pagos está respaldada por la infraestructura oficial de **Mercado Pago**:\n\n• **Aceptación bancaria:** Tarjetas de Crédito/Débito (Visa, Mastercard, Amex, Diners) con confirmación inmediata.\n• **Billeteras Digitales y Banca en Línea:** Yape, PagoEfectivo y bancas móviles peruanas.\n• **Tiempo de Entrega:** Entre 10 a 25 minutos vía correo electrónico tras la confirmación de la orden, incluyendo clave de 25 caracteres, enlaces de descarga directa y guía de instalación.`,
+      reply: `En **UpClic** la pasarela de pagos está respaldada por la infraestructura oficial de **Mercado Pago**:\n\n• **Aceptación bancaria:** Tarjetas de Crédito/Débito (Visa, Mastercard, Amex, Diners) con confirmación inmediata.\n• **Billeteras Digitales y Banca en Línea:** Yape, PagoEfectivo y bancas móviles peruanas.\n• **Tiempo de Entrega:** Entre 10 a 25 minutos vía correo electrónico tras la confirmación de la orden, incluyendo clave de 25 caracteres (o instrucciones de activación).`,
       suggestedProducts: [],
       showAdminWhatsApp: false,
     };

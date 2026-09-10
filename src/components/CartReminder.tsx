@@ -23,7 +23,7 @@ export const CartReminder: React.FC = () => {
 
   return (
     <div className="fixed top-24 right-4 left-4 sm:left-auto sm:right-6 z-40 animate-in slide-in-from-right-8 fade-in duration-500 sm:max-w-[320px]">
-      <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-200 p-4 flex items-start gap-4 relative overflow-hidden group">
+      <div className="bg-white rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-200 p-4 flex items-start gap-4 relative overflow-hidden group">
         
         {/* Accent border top */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600" />

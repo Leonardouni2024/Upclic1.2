@@ -118,7 +118,7 @@ export const CartDrawer: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 divide-y divide-slate-100">
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-4">
+                <div className="w-16 h-16 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-4">
                   <ShoppingBag className="w-8 h-8 stroke-[1.5]" />
                 </div>
                 <h3 className="font-bold text-slate-800 text-base">{t('emptyCartTitle')}</h3>

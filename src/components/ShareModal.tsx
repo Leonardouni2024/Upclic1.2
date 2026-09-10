@@ -62,7 +62,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-sm rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col"
+        className="bg-white w-full max-w-sm rounded-lg border border-slate-200 shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header compacto */}

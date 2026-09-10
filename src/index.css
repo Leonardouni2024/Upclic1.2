@@ -13,16 +13,14 @@
 
   /* Sleek glass effect */
   .sleek-glass {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
   }
 
   /* Sleek dark glass */
   .sleek-glass-dark {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Sleek subtle surface */
@@ -60,3 +58,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+@theme { --font-sans: 'Inter', sans-serif; }

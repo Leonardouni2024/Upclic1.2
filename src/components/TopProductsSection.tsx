@@ -37,7 +37,7 @@ export const TopProductsSection: React.FC = () => {
             return (
             <div
               key={item.id}
-              className="bg-[#211247] rounded-3xl border border-white/15 shadow-xl hover:shadow-2xl hover:shadow-purple-900/40 hover:border-[#facc15]/80 transition-all duration-300 p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center relative overflow-hidden group"
+              className="bg-[#211247] rounded-xl border border-white/15 shadow-xl hover:shadow-2xl hover:shadow-purple-900/40 hover:border-[#facc15]/80 transition-all duration-300 p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center relative overflow-hidden group"
             >
               {/* Top badge */}
               <div className="absolute top-4 left-4 z-10">
@@ -49,7 +49,7 @@ export const TopProductsSection: React.FC = () => {
               {/* 1:1 Large Image */}
               <div
                 onClick={() => navigateToProduct(item.slug)}
-                className="w-full sm:w-1/2 aspect-square max-w-[240px] flex items-center justify-center p-4 bg-[#140b2b] border border-white/10 rounded-2xl cursor-pointer group-hover:scale-105 transition-transform duration-300"
+                className="w-full sm:w-1/2 aspect-square max-w-[240px] flex items-center justify-center p-4 bg-[#140b2b] border border-white/10 rounded-lg cursor-pointer group-hover:scale-105 transition-transform duration-300"
               >
                 <img
                   src={item.imageUrl}

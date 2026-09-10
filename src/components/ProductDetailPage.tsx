@@ -6,7 +6,6 @@ import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
 import { ProductReviewsSection } from './ProductReviewsSection.tsx';
 import { ComparisonTable } from './ComparisonTable.tsx';
-import { InstallationModal } from './InstallationModal.tsx';
 import { ShareModal } from './ShareModal.tsx';
 import {
   Star,
@@ -38,7 +37,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const { getProductStats } = useReviews();
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [showInstallModal, setShowInstallModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const product = getProductBySlug(slug) || products[0];
@@ -187,20 +185,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         </div>
 
         {/* Main Product Box */}
-        <div className="bg-[#1b1236] rounded-3xl border border-white/15 shadow-2xl p-6 sm:p-10 mb-12">
+        <div className="bg-[#17132e] rounded-xl border border-white/5 shadow-md p-6 sm:p-10 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-[#140b2b] p-8 border border-white/10 shadow-xl flex items-center justify-center group">
+              <div className="relative w-full max-w-[480px] aspect-square rounded-lg bg-[#0f172a] p-8 border border-white/5 flex items-center justify-center group">
                 {/* Badges on Top-Left */}
                 <div className="absolute top-3.5 left-3.5 flex flex-col items-start gap-1.5 z-10">
                   {product.badge && (
-                    <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-black rounded-lg bg-[#facc15] text-slate-950 uppercase tracking-wider shadow-md border border-amber-300">
+                    <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold rounded-md bg-[#334155] text-white uppercase tracking-wider">
                       {product.badge}
                     </span>
                   )}
                   {product.cloudStorage && (
-                    <span className="px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg bg-blue-500/20 text-cyan-300 border border-cyan-400/30 backdrop-blur-md">
+                    <span className="px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-md bg-blue-500/20 text-cyan-300 border border-cyan-400/30">
                       {product.cloudStorage}
                     </span>
                   )}
@@ -305,7 +303,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Variant Selector (OEM vs Retail) for Windows products */}
                 {product.variants && product.variants.length > 0 && (
-                  <div className="mt-5 p-4 rounded-2xl bg-[#140b2b] border border-white/10">
+                  <div className="mt-5 p-4 rounded-lg bg-[#140b2b] border border-white/10">
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-xs font-black uppercase text-purple-200 tracking-wider">
                         Selecciona el tipo de clave:
@@ -453,71 +451,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       </div>
                     </div>
                   </div>
-
-                  {/* Sección de Descarga Directa (Fuentes Externas) */}
-                  <div className="pt-3 border-t border-white/10 space-y-2.5 my-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-[#facc15] flex items-center gap-1.5">
-                        <Download className="w-4 h-4" />
-                        <span>
-                          {product.downloadOptions && product.downloadOptions.length > 1
-                            ? `Enlaces de Descarga Directa (${product.downloadOptions.length} fuentes externas):`
-                            : 'Descarga Directa (Fuente Oficial / Externa):'}
-                        </span>
-                      </span>
-                    </div>
-
-                    {product.downloadOptions && product.downloadOptions.length > 0 ? (
-                      <div className="grid grid-cols-1 gap-2">
-                        {product.downloadOptions.map((opt) => (
-                          <a
-                            key={opt.id}
-                            href={opt.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full py-2.5 px-3.5 rounded-xl bg-purple-900/50 hover:bg-purple-800/70 border border-purple-400/40 text-white font-bold text-xs flex items-center justify-between transition-all group cursor-pointer shadow-md hover:border-amber-400/60"
-                            title={`Descargar desde fuente externa: ${opt.name}`}
-                          >
-                            <div className="flex items-center gap-2.5 truncate">
-                              <Download className="w-4 h-4 text-[#facc15] shrink-0 group-hover:scale-110 transition-transform" />
-                              <div className="flex flex-col text-left truncate">
-                                <span className="truncate text-white font-bold">{opt.name}</span>
-                                {opt.badge && (
-                                  <span className="text-[10px] text-amber-300 font-medium truncate">
-                                    {opt.badge}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <ExternalLink className="w-3.5 h-3.5 text-purple-300 group-hover:text-amber-300 shrink-0 ml-1.5" />
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <a
-                        href={product.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full py-2.5 px-3.5 rounded-xl bg-purple-900/50 hover:bg-purple-800/70 border border-purple-400/40 text-white font-bold text-xs flex items-center justify-between transition-all group cursor-pointer shadow-md hover:border-amber-400/60"
-                        title={product.downloadLabel || 'Descargar instalador'}
-                      >
-                        <div className="flex items-center gap-2.5 truncate">
-                          <Download className="w-4 h-4 text-[#facc15] shrink-0 group-hover:scale-110 transition-transform" />
-                          <span className="truncate">{product.downloadLabel || 'Descargar instalador directo'}</span>
-                        </div>
-                        <ExternalLink className="w-3.5 h-3.5 text-purple-300 group-hover:text-amber-300 shrink-0 ml-1.5" />
-                      </a>
-                    )}
-
-                    <button
-                      id="detail-guide-btn"
-                      onClick={() => setShowInstallModal(true)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 font-bold text-xs border border-purple-400/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98 mt-1"
-                    >
-                      <BookOpen className="w-4 h-4 text-[#facc15]" />
-                      <span>Ver Guía de Instalación Paso a Paso</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -529,7 +462,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           {/* Description & Features (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product Description */}
-            <div className="bg-[#180e38] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
+            <div className="bg-[#180e38] rounded-xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
               <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-[#facc15]" />
                 <span>Descripción del Producto</span>
@@ -552,7 +485,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             </div>
 
             {/* Compatibility & License details */}
-            <div className="bg-[#180e38] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
+            <div className="bg-[#180e38] rounded-xl border border-white/10 p-6 sm:p-8 shadow-xl text-white">
               <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-[#facc15]" />
                 <span>Compatibilidad y Requisitos</span>
@@ -581,7 +514,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           </div>
 
           {/* FAQs Accordion Column (1 col) */}
-          <div className="bg-[#180e38] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl text-white h-fit">
+          <div className="bg-[#180e38] rounded-xl border border-white/10 p-6 sm:p-8 shadow-xl text-white h-fit">
             <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
               <HelpCircle className="w-5 h-5 text-[#facc15]" />
               <span>Preguntas Frecuentes</span>
@@ -642,13 +575,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           </div>
         </div>
       </div>
-
-      {/* Installation Guide Modal (Exclusive download button & native hardware steps) */}
-      <InstallationModal
-        product={product}
-        isOpen={showInstallModal}
-        onClose={() => setShowInstallModal(false)}
-      />
 
       {/* Social Media & Product Share Modal */}
       <ShareModal

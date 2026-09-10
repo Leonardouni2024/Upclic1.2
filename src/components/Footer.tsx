@@ -180,9 +180,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <h4 className="text-xs font-black uppercase text-white tracking-wider mb-2">
               {t('paymentMethodLabel')}
             </h4>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-xs font-bold text-[#facc15]">
-              <span className="w-2 h-2 rounded-full bg-[#facc15]"></span>
-              <span>Mercado Pago</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-xs font-bold text-[#facc15]">
+                <span className="w-2 h-2 rounded-full bg-[#facc15]"></span>
+                <span>Mercado Pago</span>
+              </div>
             </div>
           </div>
         </div>

@@ -17,7 +17,7 @@ export const RegionLanguageModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-[#180e38] text-white w-full max-w-md rounded-3xl border border-white/15 shadow-2xl overflow-hidden flex flex-col"
+        className="bg-[#180e38] text-white w-full max-w-md rounded-xl border border-white/15 shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -58,7 +58,7 @@ export const RegionLanguageModal: React.FC = () => {
                 setCurrency('PEN');
                 setLanguage('ES');
               }}
-              className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
+              className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'PEN'
                   ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
                   : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
@@ -90,7 +90,7 @@ export const RegionLanguageModal: React.FC = () => {
                 setCurrency('COP');
                 setLanguage('ES');
               }}
-              className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
+              className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'COP'
                   ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
                   : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
@@ -122,7 +122,7 @@ export const RegionLanguageModal: React.FC = () => {
                 setCurrency('MXN');
                 setLanguage('ES');
               }}
-              className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
+              className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'MXN'
                   ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
                   : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'
@@ -154,7 +154,7 @@ export const RegionLanguageModal: React.FC = () => {
                 setCurrency('USD');
                 setLanguage('EN');
               }}
-              className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
+              className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
                 currency === 'USD'
                   ? 'bg-[#2a0b5c] border-[#facc15] text-white shadow-lg ring-1 ring-[#facc15]'
                   : 'bg-[#110928] border-white/10 text-purple-200 hover:border-white/25 hover:text-white'

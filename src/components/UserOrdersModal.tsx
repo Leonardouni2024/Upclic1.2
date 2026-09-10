@@ -48,10 +48,10 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[90vh]">
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-100 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-blue-600" />
             </div>
             <div>
@@ -75,7 +75,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={t('searchOrdersPlaceholder')}
-                className="w-full pl-10 pr-[88px] sm:pl-12 sm:pr-32 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
+                className="w-full pl-10 pr-[88px] sm:pl-12 sm:pr-32 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
               />
               <Search className="w-5 h-5 text-slate-400 absolute left-3 sm:left-4 top-3 sm:top-4" />
               <button
@@ -89,7 +89,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
           </form>
 
           {hasSearched && !loading && orders.length === 0 && (
-            <div className="text-center py-12 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <div className="text-center py-12 px-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
               <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <h3 className="text-base font-bold text-slate-700 mb-1">{t('noOrdersFoundTitle')}</h3>
               <p className="text-sm text-slate-500">
@@ -106,7 +106,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
               </h3>
               
               {orders.map((order, idx) => (
-                <div key={order.id || idx} className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-md transition-all">
+                <div key={order.id || idx} className="bg-white border border-slate-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-md transition-all">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">

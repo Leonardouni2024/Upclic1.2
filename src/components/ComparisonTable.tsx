@@ -129,7 +129,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
   ];
 
   return (
-    <section id="comparison-table-section" className="my-10 bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 shadow-sm">
+    <section id="comparison-table-section" className="my-10 bg-white rounded-xl border border-slate-200/80 p-6 md:p-8 shadow-sm">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0066FF] text-xs font-bold mb-2">
@@ -294,7 +294,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({
       )}
 
       {/* Summary recommendation */}
-      <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-2 text-xs text-slate-700">
+      <div className="mt-6 p-4 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center gap-2 text-xs text-slate-700">
         <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
         <span>
           <strong>Garantía UpClic Perú:</strong> Todas nuestras licencias de 1 PC incluyen activación permanente con garantía oficial por 1 año y soporte en línea.

@@ -16,7 +16,7 @@ export const FloatingMobileCart: React.FC = () => {
     >
       <button
         onClick={() => setIsCartOpen(true)}
-        className="w-full bg-[#0f172a] text-white rounded-2xl p-3.5 shadow-2xl border border-slate-700/60 flex items-center justify-between cursor-pointer active:scale-98 transition-all"
+        className="w-full bg-[#0f172a] text-white rounded-lg p-3.5 shadow-2xl border border-slate-700/60 flex items-center justify-between cursor-pointer active:scale-98 transition-all"
         aria-label="Abrir carrito flotante"
       >
         <div className="flex items-center gap-2.5">

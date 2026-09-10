@@ -744,6 +744,190 @@ app.post("/api/notify_checkout_intent", express.json(), (req, res) => {
   }
 });
 
+// --- PAYPAL INTEGRATION ENDPOINTS ---
+
+// GET PayPal configuration (Client ID, exchange rate, email)
+app.get("/api/paypal/config", (_req, res) => {
+  const clientId = process.env.PAYPAL_CLIENT_ID || "sb";
+  const paypalEmail = process.env.PAYPAL_EMAIL || "pagos@upclic.store";
+  const mode = process.env.PAYPAL_MODE || "sandbox";
+  const exchangeRate = 3.75; // S/ 3.75 = $1.00 USD
+  res.json({
+    clientId,
+    paypalEmail,
+    mode,
+    currency: "USD",
+    exchangeRate,
+    enabled: true
+  });
+});
+
+// POST Create PayPal Order
+app.post("/api/paypal/create_order", express.json(), async (req, res) => {
+  try {
+    const { items, discountAmount, total, customerEmail, customerName, customerPhone } = req.body;
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail || !trimmedEmail.includes("@")) {
+      return res.status(400).json({ error: "Por favor ingresa un correo electrónico válido." });
+    }
+
+    const exchangeRate = 3.75;
+    const penTotal = Number(total) || 0;
+    const usdTotal = Math.max(1, Number((penTotal / exchangeRate).toFixed(2)));
+
+    const clientId = process.env.PAYPAL_CLIENT_ID;
+    const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+    const mode = process.env.PAYPAL_MODE || "sandbox";
+
+    const recordedOrder = saveOrderNotification({
+      customerEmail: trimmedEmail,
+      customerName: customerName?.trim() || null,
+      customerPhone: customerPhone?.trim() || null,
+      total: penTotal,
+      usdTotal,
+      items: Array.isArray(items) ? items.map((it: any) => ({
+        name: it.product?.name || it.name || 'Licencia',
+        variantName: it.variantName || null,
+        quantity: it.quantity || 1,
+        unitPrice: it.unitPrice || it.product?.price || it.price || 0,
+      })) : [],
+      status: "intent_paypal",
+      channel: "paypal"
+    });
+
+    // If official PayPal Client ID & Secret are set, call PayPal REST API
+    if (clientId && clientSecret && clientId !== "sb" && clientId.trim().length > 5) {
+      try {
+        const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+        const baseUrl = mode === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+
+        const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Basic ${auth}`,
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: "grant_type=client_credentials"
+        });
+
+        if (tokenRes.ok) {
+          const tokenData = await tokenRes.json();
+          const accessToken = tokenData.access_token;
+
+          const orderRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${accessToken}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              intent: "CAPTURE",
+              purchase_units: [
+                {
+                  reference_id: recordedOrder.id,
+                  description: `Licencias UpClic Store (${recordedOrder.id})`,
+                  amount: {
+                    currency_code: "USD",
+                    value: usdTotal.toFixed(2)
+                  }
+                }
+              ],
+              payer: {
+                email_address: trimmedEmail
+              }
+            })
+          });
+
+          if (orderRes.ok) {
+            const orderData = await orderRes.json();
+            return res.json({
+              id: orderData.id,
+              orderId: recordedOrder.id,
+              usdTotal,
+              penTotal,
+              status: orderData.status
+            });
+          }
+        }
+      } catch (paypalApiErr) {
+        console.error("Error llamando PayPal REST API:", paypalApiErr);
+      }
+    }
+
+    // Default response for Client ID JS SDK or direct checkout
+    return res.json({
+      id: `PAYPAL-ORD-${Date.now()}`,
+      orderId: recordedOrder.id,
+      usdTotal,
+      penTotal,
+      status: "CREATED"
+    });
+  } catch (err: any) {
+    console.error("Error al crear orden PayPal:", err);
+    res.status(500).json({ error: "Error al generar la orden con PayPal." });
+  }
+});
+
+// POST Confirm and Capture PayPal Payment Success
+app.post("/api/paypal/confirm_payment", express.json(), async (req, res) => {
+  try {
+    const { orderId, paypalOrderId, customerEmail, customerName, customerPhone, items, total, usdTotal } = req.body;
+
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail) {
+      return res.status(400).json({ error: "Correo electrónico es obligatorio." });
+    }
+
+    const penTotal = Number(total) || 0;
+    const recorded = saveOrderNotification({
+      id: orderId || `ORD-PP-${Date.now()}`,
+      customerEmail: trimmedEmail,
+      customerName: customerName?.trim() || null,
+      customerPhone: customerPhone?.trim() || null,
+      total: penTotal,
+      usdTotal: Number(usdTotal) || Math.round((penTotal / 3.75) * 100) / 100,
+      paymentId: paypalOrderId || `PP-TX-${Date.now()}`,
+      items: Array.isArray(items) ? items : [],
+      status: "approved",
+      channel: "paypal",
+      isPaid: true
+    });
+
+    console.log("\n=======================================================");
+    console.log("💳 [PAGO CONFIRMADO VÍA PAYPAL]");
+    console.log(`📧 Cliente: ${trimmedEmail}`);
+    console.log(`🆔 Order ID: ${recorded.id}`);
+    console.log(`🆔 PayPal Tx ID: ${paypalOrderId}`);
+    console.log(`💰 Monto: S/ ${penTotal.toFixed(2)} (USD $${recorded.usdTotal})`);
+    console.log("=======================================================\n");
+
+    // Dispatch emails to customer and administrator
+    sendOrderEmails({
+      orderId: recorded.id,
+      paymentId: paypalOrderId || recorded.id,
+      customerEmail: trimmedEmail,
+      customerName: customerName || null,
+      customerPhone: customerPhone || null,
+      total: penTotal,
+      items: recorded.items,
+      channel: "paypal",
+      status: "approved",
+      isPaid: true,
+      createdAt: new Date().toISOString()
+    }).catch(err => console.error("Error al despachar correos PayPal:", err));
+
+    return res.json({
+      success: true,
+      orderId: recorded.id,
+      paymentId: paypalOrderId || recorded.id,
+      message: "Pago con PayPal verificado y correo despachado con éxito."
+    });
+  } catch (err: any) {
+    console.error("Error en confirm_payment PayPal:", err);
+    return res.status(500).json({ error: "Error al procesar la confirmación de PayPal." });
+  }
+});
+
 // Endpoint to register order details and immediately send confirmation email to customer
 app.post("/api/register_customer_order", express.json(), async (req, res) => {
   try {

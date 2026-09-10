@@ -28,7 +28,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">How and when do I receive my license?</h4>
               <p className="text-slate-600 leading-relaxed">
-                It will be delivered to your email address after payment confirmation (usually 10 to 25 minutes) with your original product key, official Microsoft download links, and installation guide.
+                It will be delivered to your email address after payment confirmation (usually 10 to 25 minutes) with your original product key and activation instructions.
               </p>
             </div>
             <div>
@@ -71,7 +71,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo y cuándo recibo mi licencia?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con su clave de producto original (o credenciales oficiales), los enlaces de descarga oficial de Microsoft y la guía de instalación.
+                Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con su clave de producto original (o credenciales oficiales) y las instrucciones de activación correspondientes.
               </p>
             </div>
             <div>
@@ -163,17 +163,17 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
         return isEn ? (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">Software Sales and Delivery Terms:</h4>
-            <p>1. All licenses sold by UpClic correspond to original digital alphanumeric keys for direct activation.</p>
+            <p>1. All licenses sold by UpClic correspond to original digital alphanumeric keys or official access credentials for direct activation.</p>
             <p>2. Delivery is carried out digitally to your email address after payment confirmation on Mercado Pago (usually 10 to 25 minutes).</p>
-            <p>3. 1-year official activation warranty: in case of any technical issue during installation or redemption, we provide assistance or key replacement.</p>
+            <p>3. 1-year official activation warranty: in case of any technical issue during activation, we provide assistance or key replacement.</p>
             <p>4. Perpetual licenses are a one-time payment with no recurring charges for 1 PC.</p>
           </div>
         ) : (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">Condiciones de Venta y Entrega de Software:</h4>
-            <p>1. Todas las licencias comercializadas por UpClic corresponden a claves alfanuméricas digitales originales de activación directa.</p>
-            <p>2. La entrega se efectúa de manera digital y será enviado a su correo electrónico tras la confirmación del pago en Mercado Pago (puede tardar de 10 a 25 min).</p>
-            <p>3. Garantía de activación oficial de 1 año: ante cualquier inconveniente técnico durante la instalación o el canje, brindamos asistencia técnica o reemplazo inmediato de la clave.</p>
+            <p>1. Todas las licencias comercializadas por UpClic corresponden a claves alfanuméricas digitales originales o credenciales oficiales de acceso directo.</p>
+            <p>2. La entrega se efectúa de manera digital a su correo electrónico tras la confirmación del pago en Mercado Pago (típicamente de 10 a 25 min).</p>
+            <p>3. Garantía de activación oficial de 1 año: ante cualquier inconveniente técnico durante la activación, brindamos asistencia técnica o reemplazo inmediato.</p>
             <p>4. Las licencias permanentes son de pago único sin cargos recurrentes para 1 equipo.</p>
           </div>
         );
@@ -181,14 +181,14 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
         return isEn ? (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">Privacy Policy and Data Protection:</h4>
-            <p>At UpClic we respect your privacy. Data provided for delivery (name, WhatsApp number, or email address) is used exclusively to process your order and provide technical assistance for your license.</p>
+            <p>At UpClic we respect your privacy. Data provided for delivery (name, ID number, or email address) is used exclusively to process your order, provide technical assistance, and send your invoice.</p>
             <p>We do not store credit or debit card details; all payments are processed securely through certified Mercado Pago servers.</p>
           </div>
         ) : (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">Política de Privacidad y Protección de Datos:</h4>
-            <p>En UpClic respetamos tu privacidad. Los datos proporcionados para la entrega (nombre, número de WhatsApp o correo electrónico) se emplean exclusivamente para procesar la orden y brindar asistencia técnica sobre tu licencia.</p>
-            <p>No almacenamos datos de tarjetas bancarias; todos los cobros se gestionan de forma segura a través de los servidores certificados de Mercado Pago.</p>
+            <p>En UpClic respetamos su privacidad. Los datos proporcionados para la entrega (nombre, número de documento de identidad, y correo electrónico) se emplean exclusivamente para procesar su orden, enviar comprobantes de compra y brindar asistencia técnica.</p>
+            <p>No almacenamos datos de tarjetas bancarias; todos los cobros se gestionan de forma 100% segura a través de los servidores certificados de Mercado Pago.</p>
           </div>
         );
       default:
@@ -212,7 +212,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white w-full max-w-lg rounded-xl shadow-xl border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="px-6 py-4.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
           <h3 className="font-black text-slate-900 text-base">
             {titles[topic] || (isEn ? 'Information' : 'Información')}

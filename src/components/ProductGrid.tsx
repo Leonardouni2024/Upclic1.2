@@ -101,8 +101,8 @@ export const ProductGrid: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-[#1b1236] rounded-3xl p-12 text-center border border-white/15 shadow-xl max-w-lg mx-auto">
-            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center mx-auto mb-4 text-purple-300">
+          <div className="bg-[#1b1236] rounded-xl p-12 text-center border border-white/15 shadow-xl max-w-lg mx-auto">
+            <div className="w-16 h-16 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center mx-auto mb-4 text-purple-300">
               <SearchX className="w-8 h-8 stroke-[1.5]" />
             </div>
             <h3 className="text-lg font-bold text-white">No se encontraron productos</h3>

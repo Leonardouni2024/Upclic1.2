@@ -169,7 +169,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
               {/* Live Search Autocomplete Dropdown */}
               {isSearchFocused && searchQuery.trim().length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-4 py-2.5 bg-purple-950 text-white flex items-center justify-between text-xs font-bold">
                     <span>{t('searchResultsFor')} "{searchQuery}"</span>
                     <span className="text-[#facc15]">{liveResults.length} {language === 'EN' ? 'found' : 'encontrados'}</span>
@@ -273,7 +273,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
                 {/* Dropdown Menu */}
                 {regionDropdownOpen && (
-                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[220px] sm:w-[240px] bg-[#1f0945] rounded-2xl shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10 origin-top-right">
+                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[220px] sm:w-[240px] bg-[#1f0945] rounded-lg shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10 origin-top-right">
                     <div className="px-3 py-2 text-[11px] font-bold text-purple-300 uppercase tracking-wider">
                       {t('regionCurrencyLangLabel')}
                     </div>

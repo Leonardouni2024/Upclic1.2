@@ -138,10 +138,10 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
             </div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-[#0f172a] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Calificaciones y Reseñas de Clientes
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-purple-200 font-medium mt-1">
             Experiencias reales de clientes que han activado {product.name}
           </p>
         </div>
@@ -150,7 +150,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           <button
             onClick={() => syncWithServer()}
             title={t('reviewsSyncDBTitle')}
-            className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-[#0066FF] hover:bg-slate-50 transition-colors cursor-pointer"
+            className="p-2.5 rounded-xl border border-white/20 text-white hover:text-[#facc15] hover:bg-white/10 transition-colors cursor-pointer"
             aria-label={t('reviewsSyncDBTitle')}
           >
             <RefreshCw className={`w-4 h-4 ${connectionStatus === 'syncing' ? 'animate-spin' : ''}`} />
@@ -162,7 +162,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
               setSubmittedSuccess(false);
               setFormError(null);
             }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all cursor-pointer active:scale-98 border border-blue-500/20"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold transition-all cursor-pointer border border-[#0066FF]"
           >
             <MessageSquarePlus className="w-4 h-4" />
             <span>{showForm ? t('reviewsHideForm') : t('reviewsWriteReview')}</span>
@@ -171,7 +171,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       </div>
 
       {/* Scorecard & Rating Breakdown Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 sm:p-8 mb-8">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-6 sm:p-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           {/* Col 1: Average Rating Score (4 cols) */}
           <div className="md:col-span-4 flex flex-col items-center justify-center text-center md:border-r md:border-slate-100 md:pr-6">
@@ -243,7 +243,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
 
       {/* Review Submission Form Card */}
       {showForm && (
-        <div className="bg-white rounded-3xl border border-blue-200 shadow-md p-6 sm:p-8 mb-8 animate-in fade-in duration-200">
+        <div className="bg-white rounded-xl border border-blue-200 shadow-md p-6 sm:p-8 mb-8 animate-in fade-in duration-200">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <Award className="w-5 h-5 text-[#0066FF]" />
@@ -257,7 +257,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           </div>
 
           {submittedSuccess ? (
-            <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-200 text-center animate-in zoom-in-95 duration-200">
+            <div className="p-6 bg-emerald-50 rounded-lg border border-emerald-200 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
@@ -392,7 +392,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       )}
 
       {/* Filters and Sorting Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-3.5 sm:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-3.5 sm:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
         {/* Star filter chips */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           <button
@@ -449,7 +449,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
             return (
               <article
                 key={review.id}
-                className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 sm:p-6 transition-all hover:border-slate-300"
+                className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-5 sm:p-6 transition-all hover:border-slate-300"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
                   {/* Author & City */}
@@ -517,7 +517,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
           })}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl p-8 text-center border border-slate-200/90 shadow-2xs text-slate-500 text-xs">
+        <div className="bg-white rounded-lg p-8 text-center border border-slate-200/90 shadow-2xs text-slate-500 text-xs">
           No hay opiniones con {filterStars} estrellas aún.{' '}
           <button
             onClick={() => setFilterStars('all')}
