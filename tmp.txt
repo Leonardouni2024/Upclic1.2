@@ -1,0 +1,16 @@
+
+    await addReview({
+      productId: product.id,
+      author: author.trim(),
+      city: city.trim() || undefined,
+      rating,
+      comment: comment.trim()
+    });
+
+    setSubmittedSuccess(true);
+    setAuthor('');
+    setCity('');
+    setComment('');
+    setRating(5);
+
+    setTimeout(() => {

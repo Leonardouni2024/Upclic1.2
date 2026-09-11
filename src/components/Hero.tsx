@@ -82,9 +82,6 @@ export const Hero: React.FC = () => {
               className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
             >
               <div>
-                <span className="inline-block px-2 py-0.5 rounded bg-[#334155] text-white font-bold text-[10px] uppercase mb-1 tracking-wider">
-                  MÁS VENDIDO
-                </span>
                 <h3 className="font-bold text-sm text-white group-hover:text-slate-200 transition-colors">
                   Office 2024 Pro Plus
                 </h3>
@@ -108,9 +105,6 @@ export const Hero: React.FC = () => {
               className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
             >
               <div>
-                <span className="inline-block px-2 py-0.5 rounded bg-[#334155] text-white font-bold text-[10px] uppercase mb-1 tracking-wider">
-                  100% GARANTIZADO
-                </span>
                 <h3 className="font-bold text-sm text-white group-hover:text-slate-200 transition-colors">
                   Windows 11 Pro Key
                 </h3>
@@ -134,9 +128,6 @@ export const Hero: React.FC = () => {
               className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
             >
               <div>
-                <span className="inline-block px-2 py-0.5 rounded bg-rose-500 text-white font-bold text-[10px] uppercase mb-1 tracking-wider">
-                  ¡OFERTA FLASH!
-                </span>
                 <h3 className="font-bold text-sm text-white group-hover:text-slate-200 transition-colors">
                   Combo Win 11 + Off 2024
                 </h3>

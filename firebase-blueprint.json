@@ -21,7 +21,13 @@
   "firestore": {
     "reviews/{reviewId}": {
       "schema": "#/entities/Review",
-      "description": "Stores all customer reviews."
+      "description": "Stores all customer reviews.",
+      "permissions": {
+        "read": "true",
+        "create": "true",
+        "update": "false",
+        "delete": "false"
+      }
     }
   }
 }

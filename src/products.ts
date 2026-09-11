@@ -237,8 +237,6 @@ export const products: Product[] = [
     fallbackImage: '/products/office-2024.png',
     rating: 4.9,
     reviews: 342,
-    badge: 'MÁS VENDIDO',
-    bestSeller: true,
     featured: true,
     features: [
       'Clave de 25 caracteres para activación oficial',
@@ -538,8 +536,6 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-11-pro.png',
     rating: 4.95,
     reviews: 418,
-    badge: 'POPULAR',
-    bestSeller: true,
     featured: true,
     variants: [
       {
@@ -821,8 +817,6 @@ export const products: Product[] = [
     fallbackImage: '/products/combo-win11-office2024.png',
     rating: 5.0,
     reviews: 289,
-    badge: 'OFERTA ESPECIAL',
-    bestSeller: true,
     featured: true,
     features: [
       'Incluye 2 licencias 100% independientes y definitivas',

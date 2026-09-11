@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Review, ProductStats } from '../types.ts';
-import { initialReviews } from '../initialReviews.ts';
 import { db } from '../firebase.ts';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 
@@ -28,7 +27,7 @@ interface ReviewsContextType {
 const ReviewsContext = createContext<ReviewsContextType | undefined>(undefined);
 
 export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   const [connectionStatus, setConnectionStatus] = useState<DatabaseConnectionStatus>('syncing');
   const [isSaving, setIsSaving] = useState(false);
@@ -58,7 +57,7 @@ export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ child
         });
         
         // Combine real user reviews from Firestore with initial demo reviews
-        setReviews([...fetchedReviews, ...initialReviews]);
+        setReviews(fetchedReviews);
         setConnectionStatus('connected');
         setLastSavedAt(new Date());
       }, (error) => {
@@ -94,7 +93,7 @@ export const ReviewsProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     if (totalReviews === 0) {
       return {
-        averageRating: 5.0,
+        averageRating: 0.0,
         totalReviews: 0,
         distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
       };

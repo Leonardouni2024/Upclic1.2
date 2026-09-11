@@ -68,7 +68,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       return;
     }
 
-    await addReview({
+    const result = await addReview({
       productId: product.id,
       author: author.trim(),
       city: city.trim() || undefined,
@@ -76,16 +76,20 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
       comment: comment.trim()
     });
 
-    setSubmittedSuccess(true);
-    setAuthor('');
-    setCity('');
-    setComment('');
-    setRating(5);
+    if (result.success) {
+      setSubmittedSuccess(true);
+      setAuthor('');
+      setCity('');
+      setComment('');
+      setRating(5);
 
-    setTimeout(() => {
-      setSubmittedSuccess(false);
-      setShowForm(false);
-    }, 3500);
+      setTimeout(() => {
+        setSubmittedSuccess(false);
+        setShowForm(false);
+      }, 3500);
+    } else {
+      setFormError(result.error || 'Ocurrió un error al guardar tu reseña.');
+    }
   };
 
   // Filter and Sort Reviews
