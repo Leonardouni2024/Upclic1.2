@@ -200,38 +200,38 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </div>
             )}
 
-            <div className="min-h-[1.75rem] sm:min-h-[2rem] flex items-baseline gap-1.5 mb-2.5 sm:mb-3">
-              <span className="text-lg sm:text-xl font-black text-slate-900">
+            <div className="min-h-[1.75rem] sm:min-h-[2rem] flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 mb-2.5 sm:mb-3">
+              <span className="text-[15px] xs:text-base sm:text-lg md:text-xl font-black text-slate-900 tabular-nums tracking-tight whitespace-nowrap">
                 {formatPrice(activePrice)}
               </span>
               {activeOldPrice && (
-                <span className="text-[11px] sm:text-xs text-slate-400 line-through tabular-nums ml-1">
+                <span className="text-[10.5px] sm:text-xs text-slate-400 line-through tabular-nums whitespace-nowrap">
                   {formatPrice(activeOldPrice)}
                 </span>
               )}
               {currentVariant && (
-                <span className="text-[10px] font-bold text-blue-700 ml-auto bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                <span className="text-[9.5px] sm:text-[10px] font-bold text-blue-700 ml-auto bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
                   {currentVariant.name}
                 </span>
               )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                 {/* Botón: Agregar al carrito */}
                 <button
                   id={`add-to-cart-${product.id}`}
                   onClick={handleAddToCart}
-                  className="w-full py-2 sm:py-2.5 px-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200 cursor-pointer border border-slate-300"
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition-all duration-150 cursor-pointer border border-slate-300 active:scale-95"
                 >
-                  <ShoppingCart className="w-3.5 h-3.5 text-slate-500" />
+                  <ShoppingCart className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                   <span className="truncate">{t('cart')}</span>
                 </button>
                 {/* Botón Principal: Comprar Ahora */}
                 <button
                   id={`view-product-${product.id}`}
                   onClick={handleBuyNow}
-                  className="w-full py-2 sm:py-2.5 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200 cursor-pointer border border-blue-700"
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition-all duration-150 cursor-pointer border border-blue-700 active:scale-95"
                 >
                   <span className="truncate">{t('buyNow')}</span>
                 </button>

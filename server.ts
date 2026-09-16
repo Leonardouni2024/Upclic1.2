@@ -213,6 +213,19 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
+// In-memory cache for IP geolocations (TTL 1 hour)
+const geoCache = new Map<string, { country: string; timestamp: number }>();
+
+function isPrivateIpAddress(ip: string): boolean {
+  if (!ip) return true;
+  const clean = ip.replace(/^::ffff:/, '').trim();
+  if (clean === '::1' || clean === '127.0.0.1' || clean === 'localhost') return true;
+  if (clean.startsWith('10.') || clean.startsWith('192.168.') || clean.startsWith('169.254.')) return true;
+  if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(clean)) return true;
+  if (clean.startsWith('fc00:') || clean.startsWith('fe80:')) return true;
+  return false;
+}
+
 // Geolocation / Country detection endpoint
 app.get("/api/geo", async (req, res) => {
   try {
@@ -224,31 +237,105 @@ app.get("/api/geo", async (req, res) => {
 
     const rawCountry = Array.isArray(countryHeader) ? countryHeader[0] : countryHeader;
     if (rawCountry && typeof rawCountry === "string" && rawCountry.trim().length === 2) {
-      return res.json({ country: rawCountry.trim().toUpperCase(), source: "header" });
+      const code = rawCountry.trim().toUpperCase();
+      if (code !== "XX" && code !== "T1") {
+        return res.json({ country: code, source: "header" });
+      }
     }
 
-    const forwarded = req.headers["x-forwarded-for"];
-    const clientIp = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : (req.socket.remoteAddress || "");
+    // Extract client IP (handle commas from proxies)
+    let clientIp = "";
+    if (typeof req.query.ip === "string" && req.query.ip.trim()) {
+      clientIp = req.query.ip.trim();
+    } else {
+      const forwarded = req.headers["x-forwarded-for"];
+      if (typeof forwarded === "string") {
+        const parts = forwarded.split(",").map((p) => p.trim());
+        for (const part of parts) {
+          if (part && !isPrivateIpAddress(part)) {
+            clientIp = part;
+            break;
+          }
+        }
+      }
+      if (!clientIp) {
+        const realIp = req.headers["x-real-ip"];
+        if (typeof realIp === "string" && !isPrivateIpAddress(realIp.trim())) {
+          clientIp = realIp.trim();
+        }
+      }
+      if (!clientIp) {
+        const remote = req.socket.remoteAddress || "";
+        clientIp = remote.replace(/^::ffff:/, '').trim();
+      }
+    }
 
-    // Quick server-side lookup if public IP
-    if (clientIp && !clientIp.startsWith("127.") && !clientIp.startsWith("10.") && !clientIp.startsWith("192.168.") && clientIp !== "::1") {
+    // Check memory cache
+    if (clientIp && geoCache.has(clientIp)) {
+      const cached = geoCache.get(clientIp)!;
+      if (Date.now() - cached.timestamp < 3600000) {
+        return res.json({ country: cached.country, source: "cache", ip: clientIp });
+      }
+    }
+
+    // If clientIp is public, query geolocation APIs
+    if (clientIp && !isPrivateIpAddress(clientIp)) {
+      // 1. Try ipwho.is
       try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 1200);
+        const timeout = setTimeout(() => controller.abort(), 2500);
+        const geoRes = await fetch(`https://ipwho.is/${clientIp}`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (geoRes.ok) {
+          const data = await geoRes.json();
+          if (data && data.success && data.country_code && data.country_code.length === 2) {
+            const countryCode = data.country_code.toUpperCase();
+            geoCache.set(clientIp, { country: countryCode, timestamp: Date.now() });
+            return res.json({ country: countryCode, source: "ipwho", ip: clientIp });
+          }
+        }
+      } catch {}
+
+      // 2. Try ipinfo.io
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 2500);
+        const geoRes = await fetch(`https://ipinfo.io/${clientIp}/json`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (geoRes.ok) {
+          const data = await geoRes.json();
+          if (data && data.country && data.country.length === 2) {
+            const countryCode = data.country.toUpperCase();
+            geoCache.set(clientIp, { country: countryCode, timestamp: Date.now() });
+            return res.json({ country: countryCode, source: "ipinfo", ip: clientIp });
+          }
+        }
+      } catch {}
+
+      // 3. Try ip-api.com
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 2000);
         const geoRes = await fetch(`http://ip-api.com/json/${clientIp}?fields=status,countryCode`, {
           signal: controller.signal
         });
         clearTimeout(timeout);
         if (geoRes.ok) {
-          const geoData = await geoRes.json();
-          if (geoData && geoData.status === "success" && geoData.countryCode) {
-            return res.json({ country: geoData.countryCode.toUpperCase(), source: "ip-api", ip: clientIp });
+          const data = await geoRes.json();
+          if (data && data.status === "success" && data.countryCode && data.countryCode.length === 2) {
+            const countryCode = data.countryCode.toUpperCase();
+            geoCache.set(clientIp, { country: countryCode, timestamp: Date.now() });
+            return res.json({ country: countryCode, source: "ip-api", ip: clientIp });
           }
         }
       } catch {}
     }
 
-    return res.json({ country: null, ip: clientIp, source: "ip" });
+    return res.json({ country: null, ip: clientIp, source: "none" });
   } catch {
     return res.json({ country: null });
   }

@@ -210,7 +210,7 @@ export function generateLocalChatReply(
     return {
       reply: isEn
         ? `Payment & Delivery details:\n\n• **Payment Gateways:** Securely processed through Mercado Pago with full encryption. Accepts Credit and Debit Cards (Visa, Mastercard, Amex, etc.).\n• **Delivery Time:** Between 10 to 30 minutes directly to your email after transaction confirmation, including your 25-digit genuine key and step-by-step activation guide.`
-        : `En **UpClic** la pasarela de pagos está respaldada por la infraestructura oficial de **Mercado Pago**:\n\n• **Aceptación bancaria:** Tarjetas de Crédito/Débito (Visa, Mastercard, Amex, Diners) con confirmación inmediata.\n• **Billeteras Digitales:** Yape, PagoEfectivo y banca móvil.\n• **Tiempo de Entrega:** Entre 10 a 25 minutos vía correo electrónico tras la confirmación de la orden, incluyendo clave de 25 caracteres e instrucciones.`,
+        : `En **UpClic** la pasarela de pagos está respaldada por la infraestructura oficial de **Mercado Pago**:\n\n• **Aceptación bancaria:** Tarjetas de Crédito/Débito (Visa, Mastercard, Amex, Diners) con confirmación inmediata.\n• **Billeteras Digitales:** Yape, PagoEfectivo y banca móvil.\n• **Tiempo de Entrega:** Entre 10 a 30 minutos vía correo electrónico tras la confirmación de la orden, incluyendo clave de 25 caracteres e instrucciones.`,
       suggestedProducts: [],
       showAdminWhatsApp: false,
     };

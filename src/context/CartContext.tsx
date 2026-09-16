@@ -62,6 +62,9 @@ interface CartContextType {
   setLanguage: (language: 'ES' | 'EN') => void;
   exchangeRate: number;
   setExchangeRate: (rate: number) => void;
+  detectedCountry: string | null;
+  isDetectingCountry: boolean;
+  detectUserCountry: (force?: boolean) => Promise<string | null>;
   isRegionModalOpen: boolean;
   setIsRegionModalOpen: (open: boolean) => void;
   formatPrice: (priceInPEN: number) => string;
@@ -144,6 +147,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
+  const [detectedCountry, setDetectedCountry] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('upclic_detected_country');
+    }
+    return null;
+  });
+  const [isDetectingCountry, setIsDetectingCountry] = useState(false);
 
   const setCurrency = (c: Currency, manual: boolean = true, newLang?: 'ES' | 'EN') => {
     setCurrencyState(c);
@@ -158,7 +168,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('upclic_currency', c);
       localStorage.setItem('upclic_language', targetLang);
       if (manual) {
-        localStorage.setItem('upclic_currency_manual', 'true');
+        const currentCountry = localStorage.getItem('upclic_detected_country') || 'MANUAL';
+        localStorage.setItem('upclic_currency_manual_for_country', currentCountry);
       }
     } catch {}
   };
@@ -167,7 +178,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLanguageState(l);
     try {
       localStorage.setItem('upclic_language', l);
-      localStorage.setItem('upclic_currency_manual', 'true');
+      const currentCountry = localStorage.getItem('upclic_detected_country') || 'MANUAL';
+      localStorage.setItem('upclic_currency_manual_for_country', currentCountry);
     } catch {}
   };
 
@@ -212,131 +224,144 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => { isMounted = false; };
   }, []);
 
-  // Auto-detect visitor's country on initial entry if not manually set
-  useEffect(() => {
-    let isMounted = true;
+  // Resilient Country & Currency Auto-Detection
+  const detectUserCountry = async (force: boolean = false): Promise<string | null> => {
+    if (typeof window === 'undefined') return null;
 
-    async function detectCountry() {
-      if (typeof window === 'undefined') return;
-      const manualSelection = localStorage.getItem('upclic_currency_manual');
-      if (manualSelection === 'true') {
-        return; // User has chosen currency explicitly, preserve preference
+    setIsDetectingCountry(true);
+    let detected: string | null = null;
+
+    // 1. Primary: backend /api/geo (with server-side IP extraction, caching & multiple providers)
+    try {
+      const res = await fetch('/api/geo');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
+          detected = data.country.toUpperCase();
+        }
       }
+    } catch {}
 
-      let detectedCountry: string | null = null;
-
-      // 1. Try internal backend route
+    // 2. Direct client fallback 1: country.is
+    if (!detected) {
       try {
-        const res = await fetch('/api/geo');
+        const res = await fetch('https://api.country.is/');
         if (res.ok) {
           const data = await res.json();
           if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
-            detectedCountry = data.country.toUpperCase();
+            detected = data.country.toUpperCase();
           }
         }
       } catch {}
-
-      // 2. Try fast country lookup fallback
-      if (!detectedCountry) {
-        try {
-          const res = await fetch('https://api.country.is/');
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.country) {
-              detectedCountry = String(data.country).toUpperCase();
-            }
-          }
-        } catch {}
-      }
-
-      // 3. Try ipwho.is fallback
-      if (!detectedCountry) {
-        try {
-          const res = await fetch('https://ipwho.is/');
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.country_code) {
-              detectedCountry = String(data.country_code).toUpperCase();
-            }
-          }
-        } catch {}
-      }
-
-      // 4. Try ipapi.co fallback
-      if (!detectedCountry) {
-        try {
-          const res = await fetch('https://ipapi.co/json/');
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.country_code) {
-              detectedCountry = String(data.country_code).toUpperCase();
-            }
-          }
-        } catch {}
-      }
-
-      if (!isMounted || !detectedCountry) return;
-
-      localStorage.setItem('upclic_detected_country', detectedCountry);
-
-      // South America & Latin America countries
-      const LATAM_COUNTRIES = [
-        'AR', 'BO', 'BR', 'CL', 'EC', 'FK', 'GF', 'GY', 'PY', 'SR', 'UY', 'VE',
-        'CR', 'CU', 'DO', 'GT', 'HN', 'NI', 'PA', 'PR', 'SV', 'BZ'
-      ];
-
-      if (detectedCountry === 'PE') {
-        // Available country: Peru
-        setCurrencyState('PEN');
-        setLanguageState('ES');
-        try {
-          localStorage.setItem('upclic_currency', 'PEN');
-          localStorage.setItem('upclic_language', 'ES');
-        } catch {}
-      } else if (detectedCountry === 'CO') {
-        // Available country: Colombia
-        setCurrencyState('COP');
-        setLanguageState('ES');
-        try {
-          localStorage.setItem('upclic_currency', 'COP');
-          localStorage.setItem('upclic_language', 'ES');
-        } catch {}
-      } else if (detectedCountry === 'MX') {
-        // Available country: Mexico
-        setCurrencyState('MXN');
-        setLanguageState('ES');
-        try {
-          localStorage.setItem('upclic_currency', 'MXN');
-          localStorage.setItem('upclic_language', 'ES');
-        } catch {}
-      } else if (LATAM_COUNTRIES.includes(detectedCountry)) {
-        // Other countries in South America or Latin America: USD currency and Spanish language
-        setCurrencyState('USD');
-        setLanguageState('ES');
-        try {
-          localStorage.setItem('upclic_currency', 'USD');
-          localStorage.setItem('upclic_language', 'ES');
-        } catch {}
-      } else if (['US', 'CA', 'GB', 'AU', 'NZ', 'IE'].includes(detectedCountry)) {
-        setCurrencyState('USD');
-        setLanguageState('EN');
-        try {
-          localStorage.setItem('upclic_currency', 'USD');
-          localStorage.setItem('upclic_language', 'EN');
-        } catch {}
-      } else {
-        const isSpanish = typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('es');
-        setCurrencyState('USD');
-        setLanguageState(isSpanish ? 'ES' : 'EN');
-        try {
-          localStorage.setItem('upclic_currency', 'USD');
-          localStorage.setItem('upclic_language', isSpanish ? 'ES' : 'EN');
-        } catch {}
-      }
     }
 
-    detectCountry();
-    return () => { isMounted = false; };
+    // 3. Direct client fallback 2: ipwho.is
+    if (!detected) {
+      try {
+        const res = await fetch('https://ipwho.is/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && data.country_code && data.country_code.length === 2) {
+            detected = data.country_code.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    // 4. Direct client fallback 3: ipinfo.io
+    if (!detected) {
+      try {
+        const res = await fetch('https://ipinfo.io/json');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country && data.country.length === 2) {
+            detected = data.country.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    setIsDetectingCountry(false);
+
+    if (!detected) {
+      return null;
+    }
+
+    setDetectedCountry(detected);
+    const lastCountry = localStorage.getItem('upclic_detected_country');
+    localStorage.setItem('upclic_detected_country', detected);
+
+    // Check if user's location has changed
+    const countryChanged = !lastCountry || lastCountry !== detected;
+    const manualForCountry = localStorage.getItem('upclic_currency_manual_for_country');
+
+    // If not forced, same country, and user previously chose manual currency for this country: preserve choice
+    if (!force && !countryChanged && manualForCountry === detected) {
+      return detected;
+    }
+
+    // Otherwise (forced OR country changed OR no manual override): apply detected country's settings!
+    try {
+      localStorage.removeItem('upclic_currency_manual');
+      localStorage.removeItem('upclic_currency_manual_for_country');
+    } catch {}
+
+    const LATAM_COUNTRIES = [
+      'AR', 'BO', 'BR', 'CL', 'EC', 'FK', 'GF', 'GY', 'PY', 'SR', 'UY', 'VE',
+      'CR', 'CU', 'DO', 'GT', 'HN', 'NI', 'PA', 'PR', 'SV', 'BZ'
+    ];
+
+    if (detected === 'PE') {
+      setCurrencyState('PEN');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'PEN');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (detected === 'CO') {
+      setCurrencyState('COP');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'COP');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (detected === 'MX') {
+      setCurrencyState('MXN');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'MXN');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (LATAM_COUNTRIES.includes(detected)) {
+      setCurrencyState('USD');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'USD');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (['US', 'CA', 'GB', 'AU', 'NZ', 'IE'].includes(detected)) {
+      setCurrencyState('USD');
+      setLanguageState('EN');
+      try {
+        localStorage.setItem('upclic_currency', 'USD');
+        localStorage.setItem('upclic_language', 'EN');
+      } catch {}
+    } else {
+      const isSpanish = typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('es');
+      setCurrencyState('USD');
+      setLanguageState(isSpanish ? 'ES' : 'EN');
+      try {
+        localStorage.setItem('upclic_currency', 'USD');
+        localStorage.setItem('upclic_language', isSpanish ? 'ES' : 'EN');
+      } catch {}
+    }
+
+    return detected;
+  };
+
+  // Run country detection on mount
+  useEffect(() => {
+    detectUserCountry(false);
   }, []);
 
   const formatPriceLocal = (priceInPEN: number): string => {
@@ -731,6 +756,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLanguage,
         exchangeRate,
         setExchangeRate,
+        detectedCountry,
+        isDetectingCountry,
+        detectUserCountry,
         isRegionModalOpen,
         setIsRegionModalOpen,
         formatPrice: formatPriceLocal,

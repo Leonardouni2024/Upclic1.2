@@ -22,6 +22,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
     language,
     setCurrency,
     setLanguage,
+    detectedCountry,
+    isDetectingCountry,
+    detectUserCountry,
     setIsRegionModalOpen,
     t
   } = useCart();
@@ -189,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         <button
                           key={prod.id}
                           onClick={() => handleSelectProduct(prod.slug)}
-                          className="w-full text-left p-3 hover:bg-purple-50/80 transition-colors flex items-center gap-3 group cursor-pointer"
+                          className="w-full text-left p-3 hover:bg-blue-50/70 transition-colors flex items-center gap-3 group cursor-pointer"
                         >
                           <div className="w-11 h-11 rounded-lg bg-slate-50 border border-slate-200 p-1 shrink-0 flex items-center justify-center">
                             <img
@@ -200,11 +203,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-bold text-xs text-slate-900 group-hover:text-purple-700 truncate transition-colors">
+                            <div className="font-bold text-xs text-slate-900 group-hover:text-blue-600 truncate transition-colors">
                               {prod.name}
                             </div>
                             <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-500">
-                              <span className="bg-purple-100 text-purple-900 font-bold px-1.5 py-0.5 rounded">
+                              <span className="bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded border border-slate-200">
                                 {prod.category === 'combos' ? 'Combo' : prod.category.toUpperCase()}
                               </span>
                               <span>•</span>
@@ -235,7 +238,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                             const catalogEl = document.getElementById('catalogo-section');
                             if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
                           }}
-                          className="text-xs font-bold text-purple-700 hover:underline flex items-center justify-center gap-1 w-full cursor-pointer py-1"
+                          className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline flex items-center justify-center gap-1 w-full cursor-pointer py-1"
                         >
                           <span>{t('viewAllCatalogProducts')}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -247,13 +250,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               )}
             </div>
 
-            {/* Right Controls (Eneba Style: Language/Currency | Cart | Account) */}
-            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            {/* Right Controls: Language/Currency | Cart | Account */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               {/* Inline Region & Currency Selector Dropdown */}
               <div ref={regionDropdownRef} className="relative">
                 <button
                   onClick={() => setRegionDropdownOpen(!regionDropdownOpen)}
-                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-[#2b0c61] hover:bg-[#38117d] text-slate-300 hover:text-white text-xs font-bold border border-[#5923aa]/80 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer shadow-sm active:scale-95"
                   title={t("changeRegionCurrency")}
                 >
                   <Globe className="w-3.5 h-3.5 text-blue-400" />
@@ -264,20 +267,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                     {currency === 'USD' && language === 'ES' && 'LatAm | Español ($ USD)'}
                     {currency === 'USD' && language === 'EN' && 'Global | English ($ USD)'}
                   </span>
-                  <span className="sm:hidden">
+                  <span className="sm:hidden text-[11px] font-bold">
                     {currency === 'PEN' && '🇵🇪 S/'}
                     {currency === 'COP' && '🇨🇴 COP'}
                     {currency === 'MXN' && '🇲🇽 MXN'}
                     {currency === 'USD' && language === 'ES' && '🌎 USD'}
                     {currency === 'USD' && language === 'EN' && '🇺🇸 USD'}
                   </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-purple-300 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Dropdown Menu */}
                 {regionDropdownOpen && (
-                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[240px] sm:w-[260px] bg-[#1f0945] rounded-xl shadow-2xl border border-purple-500/40 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-2 divide-y divide-white/10 origin-top-right">
-                    <div className="px-3 py-1.5 text-[11px] font-bold text-purple-300 uppercase tracking-wider flex items-center justify-between">
+                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[240px] sm:w-[260px] bg-[#0f172a] rounded-xl shadow-2xl border border-slate-700 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-2 divide-y divide-slate-800 origin-top-right">
+                    <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                       <span>{t('regionCurrencyLangLabel')}</span>
                     </div>
 
@@ -292,14 +295,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'PEN'
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇵🇪</span>
                           <div>
                             <div className="text-white font-bold leading-none">Perú</div>
-                            <div className="text-[10px] text-purple-200 mt-0.5">Soles (S/ PEN) • ES</div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">Soles (S/ PEN) • ES</div>
                           </div>
                         </div>
                         {currency === 'PEN' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -315,14 +318,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'COP'
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇨🇴</span>
                           <div>
                             <div className="text-white font-bold leading-none">Colombia</div>
-                            <div className="text-[10px] text-purple-200 mt-0.5">Pesos ($ COP) • ES</div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">Pesos ($ COP) • ES</div>
                           </div>
                         </div>
                         {currency === 'COP' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -338,14 +341,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'MXN'
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇲🇽</span>
                           <div>
                             <div className="text-white font-bold leading-none">México</div>
-                            <div className="text-[10px] text-purple-200 mt-0.5">Pesos ($ MXN) • ES</div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">Pesos ($ MXN) • ES</div>
                           </div>
                         </div>
                         {currency === 'MXN' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -361,14 +364,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'USD' && language === 'ES'
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🌎</span>
                           <div>
                             <div className="text-white font-bold leading-none">Sudamérica & LatAm</div>
-                            <div className="text-[10px] text-purple-200 mt-0.5">Dólares ($ USD) • ES</div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">Dólares ($ USD) • ES</div>
                           </div>
                         </div>
                         {currency === 'USD' && language === 'ES' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -384,17 +387,39 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'USD' && language === 'EN'
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇺🇸</span>
                           <div>
                             <div className="text-white font-bold leading-none">Global / USA</div>
-                            <div className="text-[10px] text-purple-200 mt-0.5">Dollars ($ USD) • EN</div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">Dollars ($ USD) • EN</div>
                           </div>
                         </div>
                         {currency === 'USD' && language === 'EN' && <Check className="w-4 h-4 stroke-[3]" />}
+                      </button>
+                    </div>
+
+                    {/* Auto-detect by IP action */}
+                    <div className="pt-1.5 border-t border-slate-800">
+                      <button
+                        onClick={async () => {
+                          await detectUserCountry(true);
+                          setRegionDropdownOpen(false);
+                        }}
+                        disabled={isDetectingCountry}
+                        className="w-full text-left px-3 py-2 rounded-lg text-xs font-bold text-blue-400 hover:bg-slate-800 flex items-center justify-between transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Sparkles className={`w-3.5 h-3.5 ${isDetectingCountry ? 'animate-spin' : ''}`} />
+                          <span>{language === 'ES' ? 'Auto-detectar país (IP)' : 'Auto-detect country (IP)'}</span>
+                        </div>
+                        {detectedCountry && (
+                          <span className="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono">
+                            {detectedCountry}
+                          </span>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -411,17 +436,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 <Search className="w-5 h-5" />
               </button>
 
-              {/* Shopping Cart Button - Eneba Signature Yellow Icon */}
+              {/* Shopping Cart Button */}
               <button
                 id="cart-header-btn"
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center justify-center p-2.5 sm:px-3.5 sm:py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 border border-white/20 shrink-0"
+                className="relative flex items-center justify-center p-2.5 sm:px-3.5 sm:py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 border border-slate-700 shrink-0"
                 aria-label={`Ver carrito: ${totalQuantity} productos`}
                 title={`Carrito: ${totalQuantity} productos`}
               >
-                <ShoppingCart className="w-5 h-5 text-blue-500" />
+                <ShoppingCart className="w-4.5 h-4.5 text-blue-400" />
                 {totalQuantity > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                  <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10.5px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md border border-slate-900 tabular-nums">
                     {totalQuantity}
                   </span>
                 )}
@@ -545,7 +570,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
       {/* Mobile Search Bar Drawer */}
       {mobileSearchOpen && (
-        <div ref={mobileSearchRef} className="sm:hidden bg-[#2d0c63] p-3 border-b border-white/10">
+        <div ref={mobileSearchRef} className="sm:hidden bg-[#0f172a] p-3 border-b border-slate-800">
           <div className="relative">
             <input
               id="search-input-mobile"
@@ -557,13 +582,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 if (currentPath !== '/') navigateToHome();
               }}
               placeholder={t("searchPlaceholderMobile")}
-              className="w-full pl-9 pr-9 py-2 text-sm rounded-lg bg-slate-700 border border-white/20 text-white placeholder-purple-200/60 focus:outline-none"
+              className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
             />
-            <Search className="w-4 h-4 text-purple-300 absolute left-3 top-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-purple-300 hover:text-white text-sm font-bold"
+                className="absolute right-3 top-2 text-slate-400 hover:text-white text-sm font-bold"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -572,7 +597,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           {/* Mobile Live Results */}
           {searchQuery.trim().length > 0 && (
-            <div className="mt-2 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden divide-y divide-slate-100">
+            <div className="mt-2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden divide-y divide-slate-100">
               {liveResults.length === 0 ? (
                 <div className="p-3 text-center text-xs text-slate-500">
                   No encontramos coincidencias para "{searchQuery}"
@@ -605,58 +630,58 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
       {/* Mobile Navigation Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#240850] py-3 border-b border-white/10 flex flex-col space-y-1 px-4">
+        <div className="lg:hidden bg-[#0f172a] py-3 border-b border-slate-800 flex flex-col space-y-1 px-4">
           <button
             onClick={() => {
               setActiveCategory('all');
               navigateToHome();
               setMobileMenuOpen(false);
             }}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
           >
             {t('home')}
           </button>
           <button
             onClick={() => handleCategoryClick('combos')}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white flex items-center justify-between"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white flex items-center justify-between"
           >
             <span>{t('combos')}</span>
-            <span className="text-[10px] bg-blue-600 text-slate-950 font-bold px-2 py-0.5 rounded">{t('saleBadge')}</span>
+            <span className="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded">{t('saleBadge')}</span>
           </button>
           <button
             onClick={() => handleCategoryClick('office')}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
           >
             {t('office')}
           </button>
           <button
             onClick={() => handleCategoryClick('windows')}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
           >
             {t('windows')}
           </button>
           <button
             onClick={() => handleCategoryClick('project-visio')}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white flex items-center justify-between"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white flex items-center justify-between"
           >
             <span>{t('projectVisio')}</span>
-            <span className="text-[10px] bg-emerald-400 text-slate-950 font-bold px-2 py-0.5 rounded">{t('newBadge')}</span>
+            <span className="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded">{t('newBadge')}</span>
           </button>
           <button
             onClick={handleTopClick}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
           >
             {t('topLicenses')}
           </button>
           <button
             onClick={handleBestSellersClick}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
           >
             {t('bestSellers')}
           </button>
           <button
             onClick={() => handleCategoryClick('offers')}
-            className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white"
+            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
           >
             {t('deals')}
           </button>

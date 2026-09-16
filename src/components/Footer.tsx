@@ -11,7 +11,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrders }) => {
-  const { setActiveCategory, navigateToHome, currentPath, currency, setIsRegionModalOpen, t } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, currency, language, setIsRegionModalOpen, t } = useCart();
 
   const handleCategory = (category: ProductCategory) => {
     setActiveCategory(category);
@@ -177,15 +177,52 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
               </li>
             </ul>
 
-            <h4 className="text-xs font-black uppercase text-white tracking-wider mb-2">
+            <h4 className="text-xs font-black uppercase text-white tracking-wider mb-2.5">
               {t('paymentMethodLabel')}
             </h4>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-slate-700 text-xs font-bold text-blue-400">
-                <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-                <span>Mercado Pago</span>
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-700 shadow-sm">
+                <img
+                  src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                  alt="Mercado Pago"
+                  className="h-6 sm:h-7 w-auto object-contain"
+                  loading="lazy"
+                />
               </div>
+              <p className="text-[11px] text-slate-400 font-medium">
+                {language === 'ES' ? 'Tarjetas, transferencias y pagos seguros' : 'Credit/Debit cards & secure transactions'}
+              </p>
             </div>
+          </div>
+        </div>
+
+        {/* Dedicated Mercado Pago & Trust Assurance Bar */}
+        <div className="py-6 border-b border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+            <div className="px-3.5 py-1.5 bg-white rounded-lg border border-slate-700/80 shadow-sm flex items-center justify-center shrink-0">
+              <img
+                src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                alt="Mercado Pago"
+                className="h-6 sm:h-7 w-auto object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white flex items-center justify-center sm:justify-start gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>{language === 'ES' ? 'Pagos procesados y protegidos por Mercado Pago' : 'Payments processed and secured by Mercado Pago'}</span>
+              </p>
+              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                {language === 'ES' ? 'Transacciones encriptadas SSL de 256 bits con acreditación inmediata' : '256-bit SSL encrypted transactions with instant confirmation'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400">
+            <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">Visa</span>
+            <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">Mastercard</span>
+            <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">American Express</span>
+            <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">Débito</span>
           </div>
         </div>
 

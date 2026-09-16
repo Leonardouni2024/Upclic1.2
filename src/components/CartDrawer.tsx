@@ -392,13 +392,24 @@ export const CartDrawer: React.FC = () => {
               <button
                 id="cart-go-to-checkout-btn"
                 onClick={navigateToCheckout}
-                className="w-full py-3 px-4 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-sm shadow-xs hover:shadow-md hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
+                className="w-full py-3.5 px-4 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white font-black text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
               >
                 <span>{t('proceedToCheckout')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-3 flex items-center justify-center">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200/80 shadow-2xs">
+                  <span className="text-[10px] font-semibold text-slate-500">{language === 'ES' ? 'Pagas con:' : 'Pay with:'}</span>
+                  <img
+                    src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                    alt="Mercado Pago"
+                    className="h-4 w-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-400">
                 <button
                   onClick={clearCart}
                   className="hover:text-red-600 transition-colors cursor-pointer"

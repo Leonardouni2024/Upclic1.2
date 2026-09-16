@@ -68,19 +68,19 @@ export const BestSellersCarousel: React.FC = () => {
   };
 
   return (
-    <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-blue-600 to-blue-800 text-white border-b border-slate-700 overflow-hidden">
+    <section id="mas-vendidos-section" className="py-12 bg-[#0f172a] text-white border-b border-slate-800 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-white text-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 border border-blue-200">
-              <Flame className="w-6 h-6 fill-blue-600" />
+            <div className="w-11 h-11 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 shadow-sm border border-blue-500/30">
+              <Flame className="w-5 h-5 fill-blue-400" />
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
                 {t('bestSellersTitle')}
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300 font-medium mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-400 font-medium mt-0.5">
                 {t('bestSellersSubtitle')}
               </p>
             </div>

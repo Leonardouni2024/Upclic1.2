@@ -28,13 +28,13 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">How and when do I receive my license?</h4>
               <p className="text-slate-600 leading-relaxed">
-                It will be delivered to your email address after payment confirmation (usually 10 to 25 minutes) with your original product key and activation instructions.
+                It will be delivered digitally to your email address within <strong>10 to 30 minutes</strong> after payment confirmation, including your 25-character genuine product key and step-by-step activation guide.
               </p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">Do I need to send payment proof screenshot?</h4>
               <p className="text-slate-600 leading-relaxed">
-                No. Mercado Pago automatically validates the transaction. The system generates your order and dispatches your activation details to your email without manual receipts.
+                No. Mercado Pago automatically validates the transaction. The system generates your order and dispatches your license details to your email without manual receipts.
               </p>
             </div>
             <div>
@@ -69,28 +69,31 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Cómo y cuándo recibo mi producto?</h4>
+              <h4 className="font-bold text-slate-900 mb-1">¿Cómo y en cuánto tiempo recibo mi licencia?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Será enviado a la dirección indicada tras confirmar el pago. Los tiempos de envío varían entre 2 a 5 días hábiles a nivel nacional, dependiendo de tu ubicación.
+                La entrega es 100% digital a tu correo electrónico en un lapso de <strong>10 a 30 minutos</strong> tras confirmarse el pago. Recibirás tu clave original de 25 caracteres, el enlace de descarga oficial de Microsoft y la guía paso a paso de activación.
               </p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Debo enviar captura o comprobante de pago?</h4>
               <p className="text-slate-600 leading-relaxed">
-                No. Mercado Pago valida la transacción de forma automática. El sistema genera tu pedido y despacha tus datos de envío a tu correo sin requerir comprobantes manuales.
+                No. Mercado Pago valida la transacción de forma automática. El sistema genera tu pedido y despacha tus datos de activación directamente a tu correo sin requerir comprobantes manuales.
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tienen los productos?</h4>
+              <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tienen las licencias?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Cuentan con garantía oficial de fábrica y de compra. Si el producto presenta algún fallo de fábrica o error de envío, nuestro equipo te asiste de inmediato para aplicar la garantía.
+                Cuentan con garantía oficial de activación de 1 año y soporte técnico especializado. Ante cualquier problema técnico durante la instalación o validación, te asistimos de inmediato o te proporcionamos una clave de reemplazo.
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los envíos e importaciones?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                Los productos catalogados como importación toman entre 7 a 15 días hábiles en llegar, mientras que el stock local se entrega rápidamente. Recibirás tu código de seguimiento por correo.
-              </p>
+              <h4 className="font-bold text-slate-900 mb-1">¿Puedo reinstalar si formateo mi PC?</h4>
+              <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
+                <p>• <strong className="text-slate-800">Windows OEM:</strong> Queda asociada a la placa madre de tu PC, permitiéndote formatear y reinstalar todas las veces que desees sin perder la activación.</p>
+                <p>• <strong className="text-slate-800">Windows Retail:</strong> Se vincula a tu cuenta Microsoft y es transferible a otro equipo en el futuro.</p>
+                <p>• <strong className="text-slate-800">Microsoft Office 365:</strong> Reinstalable iniciando sesión con tus credenciales en portal.office.com en hasta 5 dispositivos.</p>
+                <p>• <strong className="text-slate-800">Office Perpetuo (2024 / 2021):</strong> Licencia permanente de por vida para 1 PC sin costos recurrentes.</p>
+              </div>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los descuentos?</h4>
@@ -160,16 +163,16 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
         return isEn ? (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">General Sales and Delivery Terms:</h4>
-            <p>1. All products sold by UpClic correspond to high quality items and are backed by official warranty.</p>
-            <p>2. Delivery is carried out physically to your address after payment confirmation on Mercado Pago.</p>
-            <p>3. Official warranty: in case of any issue during delivery, we provide assistance or replacement.</p>
+            <p>1. All licenses sold by UpClic are 100% genuine and backed by official activation warranty.</p>
+            <p>2. Delivery is carried out 100% digitally to your registered email address within <strong>10 to 30 minutes</strong> following payment confirmation via Mercado Pago.</p>
+            <p>3. Official warranty: in case of any technical verification issue, our team provides immediate support or key replacement.</p>
           </div>
         ) : (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">Condiciones de Venta y Entrega:</h4>
-            <p>1. Todos los productos comercializados por UpClic corresponden a artículos de alta calidad y cuentan con garantía oficial.</p>
-            <p>2. La entrega se efectúa a la dirección indicada tras la confirmación del pago en Mercado Pago (dependiendo de la ubicación, de 2 a 5 días hábiles).</p>
-            <p>3. Garantía oficial de compra: ante cualquier inconveniente técnico o de envío, brindamos asistencia o reemplazo.</p>
+            <p>1. Todas las licencias comercializadas por UpClic corresponden a claves digitales 100% originales y cuentan con garantía oficial de activación.</p>
+            <p>2. La entrega se efectúa de manera 100% digital a tu correo electrónico en un lapso estimado de <strong>10 a 30 minutos</strong> tras la confirmación del pago en Mercado Pago.</p>
+            <p>3. Garantía oficial de activación de 1 año: ante cualquier inconveniente técnico durante la activación, brindamos asistencia inmediata o reemplazo de clave sin costo.</p>
           </div>
         );
       case 'privacy':

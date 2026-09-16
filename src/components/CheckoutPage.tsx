@@ -657,11 +657,11 @@ export const CheckoutPage: React.FC = () => {
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
                       placeholder={t('couponCode')}
-                      className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-lg border border-slate-600 bg-[#0f172a] text-white placeholder-purple-300/50 focus:outline-none focus:border-yellow-400"
+                      className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-lg border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-yellow-400 hover:bg-[#eab308] text-slate-950 rounded-lg text-xs font-black transition-all cursor-pointer"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
                     >
                       {t('apply')}
                     </button>
@@ -674,7 +674,7 @@ export const CheckoutPage: React.FC = () => {
                       couponFeedback.type === 'success'
                         ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30'
                         : couponFeedback.type === 'info'
-                        ? 'bg-slate-700/50 text-slate-300 border border-purple-500/30'
+                        ? 'bg-slate-700/50 text-slate-300 border border-slate-700'
                         : 'bg-red-500/20 text-red-200 border border-red-500/30'
                     }`}
                   >
@@ -748,7 +748,7 @@ export const CheckoutPage: React.FC = () => {
                         ? 'border-red-400 bg-red-500/20 text-white placeholder-red-200 focus:ring-2 focus:ring-red-400'
                         : customerEmail && isValidEmail(customerEmail)
                         ? 'border-emerald-400 bg-emerald-500/20 text-white focus:ring-2 focus:ring-emerald-400'
-                        : 'border-slate-600 bg-[#0f172a] text-white placeholder-purple-300/50 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400'
+                        : 'border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
                     }`}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -778,7 +778,7 @@ export const CheckoutPage: React.FC = () => {
                       value={customerName}
                       onChange={e => handleNameChange(e.target.value)}
                       placeholder={language === 'ES' ? 'ej: Roberto M. / IT Dept' : 'e.g.: Robert M. / IT Dept'}
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-purple-300/50 focus:outline-none focus:border-yellow-400"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <User className="w-4 h-4" />
@@ -802,7 +802,7 @@ export const CheckoutPage: React.FC = () => {
                       value={customerPhone}
                       onChange={e => handlePhoneChange(e.target.value)}
                       placeholder="ej: 555-0123"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-purple-300/50 focus:outline-none focus:border-yellow-400"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <Phone className="w-4 h-4" />
@@ -919,13 +919,28 @@ export const CheckoutPage: React.FC = () => {
 
                 <div className="flex justify-between items-baseline text-base font-black text-white pt-3 border-t border-slate-700">
                   <span>{t('totalLabel')}</span>
-                  <span className="text-yellow-400 text-2xl sm:text-3xl font-black tabular-nums">
+                  <span className="text-blue-400 text-xl sm:text-2xl font-black tabular-nums tracking-tight">
                     {formatPrice(total)}
                   </span>
                 </div>
               </div>
 
               <div className="mt-5 pt-2">
+                {/* Official Gateway Badge */}
+                <div className="mb-3 p-2.5 rounded-lg bg-white border border-slate-700 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                      alt="Mercado Pago"
+                      className="h-6 w-auto object-contain"
+                    />
+                    <span className="text-[11px] font-bold text-slate-800">Pasarela Oficial</span>
+                  </div>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    100% Seguro
+                  </span>
+                </div>
+
                 {emailError && (
                   <div className="p-3 mb-4 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -953,9 +968,9 @@ export const CheckoutPage: React.FC = () => {
                   id="mercado-pago-pay-btn"
                   onClick={handleMercadoPago}
                   disabled={isCreatingPreference}
-                  className="w-full py-4 px-5 rounded-lg bg-yellow-400 hover:bg-[#eab308] text-slate-950 font-black text-base shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <CreditCard className="w-5 h-5 text-slate-950" />
+                  <CreditCard className="w-4.5 h-4.5 text-white" />
                   <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
                   <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
                 </button>

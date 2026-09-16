@@ -34,7 +34,7 @@ const AppContent: React.FC = () => {
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           </div>
           <h2 className="text-2xl font-black text-white mb-2">¡Pago Exitoso!</h2>
-          <p className="text-slate-300 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás la confirmación de tu pedido por correo y WhatsApp en unos instantes.</p>
+          <p className="text-slate-300 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás tu clave de activación e instrucciones en tu correo en un lapso de 10 a 30 minutos.</p>
           <button onClick={() => window.location.href = '/'} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-colors shadow-lg cursor-pointer">
             Volver a la tienda
           </button>
