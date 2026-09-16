@@ -3,12 +3,12 @@ export type Language = 'ES' | 'EN';
 export const translations = {
   ES: {
     // Top Bar & Navigation
-    searchPlaceholder: "Busca licencias, software, office, windows...",
+    searchPlaceholder: "Buscar licencias, Office, Windows, Visio...",
     categories: "Categorías",
     home: "Inicio",
-    combos: "Combos 2 en 1",
-    office: "Office",
+    office: "Microsoft Office",
     windows: "Windows",
+    combos: "Combos Ahorro",
     projectVisio: "Project & Visio",
     topLicenses: "Top Licencias",
     bestSellers: "Más vendidos",
@@ -20,49 +20,49 @@ export const translations = {
     hotBadge: "POPULAR",
 
     // Search and Header
-    searchPlaceholderMobile: "Busca Windows, Office, Visio...",
+    searchPlaceholderMobile: "Buscar licencias...",
     searchResultsFor: 'Resultados de búsqueda para',
     noProductsMatch: "No se encontraron licencias con ese término",
-    searchSuggestionsText: "Sugerencias: Windows 11, Office 2024, Combo, Visio",
-    viewAllCatalogProducts: "Ver todos los productos en catálogo",
+    searchSuggestionsText: "Sugerencias: Windows 11, Office 2024, Combo, Visio...",
+    viewAllCatalogProducts: "Ver todas las licencias en catálogo",
     regionCurrencyLabel: "Región & Moneda",
     regionCurrencyLangLabel: "Región / Moneda / Idioma",
     changeRegionCurrency: "Cambiar región, moneda e idioma",
 
     // Hero Section
-    heroBadge: "Licencias Digitales Originales",
-    heroTitleLine1: "Licencias Oficiales de",
-    heroTitleLine2: "Software Microsoft",
-    heroTitleLine3: "al mejor precio en tu país",
-    heroSubtitle: "Activación inmediata con clave 100% original de por vida. Garantía permanente y soporte técnico especializado.",
-    heroInstantDelivery: "Activación Inmediata",
-    heroOfficialWarranty: "Garantía de 1 Año",
-    heroTechSupport: "Soporte Técnico 24/7",
+    heroBadge: "Licencias Digitales 100% Originales",
+    heroTitleLine1: "Licencias Oficiales",
+    heroTitleLine2: "Microsoft Office & Windows",
+    heroTitleLine3: "al Mejor Precio",
+    heroSubtitle: "Activación inmediata con claves 100% originales. Garantía de por vida y soporte técnico especializado.",
+    heroInstantDelivery: "Entrega Inmediata",
+    heroOfficialWarranty: "Garantía de Activación",
+    heroTechSupport: "Soporte Especializado",
     heroExploreCatalog: "Explorar Catálogo",
-    heroPromoOfficeTitle: "Microsoft Office 2024 Pro",
-    heroPromoOfficeSub: "Licencia vitalicia para 1 PC",
+    heroPromoOfficeTitle: "Office 2024 Pro Plus",
+    heroPromoOfficeSub: "Licencia permanente para 1 PC",
     heroPromoWinTitle: "Windows 11 Pro Key",
     heroPromoWinSub: "Activación oficial permanente",
-    heroPromoComboTitle: "Combo Win 11 + Office 2024",
-    heroPromoComboSub: "Ahorras más de 50%",
+    heroPromoComboTitle: "Combo Win 11 + Off 2024",
+    heroPromoComboSub: "Ahorra más del 50%",
 
     // Best Sellers Section
-    bestSellersTitle: "Los Más Vendidos de la Semana",
+    bestSellersTitle: "Las Licencias Más Vendidas",
     bestSellersSubtitle: "Software con mayor demanda y activación instantánea garantizada",
 
     // Top Section
-    topSectionBadge: "Sugeridos para ti",
-    topSectionTitle: "Los Más Buscados y Recomendados",
+    topSectionBadge: "Las Mejores Ofertas",
+    topSectionTitle: "Licencias Más Populares",
     topSectionSubtitle: "Aprovecha nuestras ofertas exclusivas en licencias originales para tu hogar o empresa",
 
     // Catalog & Product Grid
     catalogBadge: "Catálogo Completo",
     catalogTitle: "Todas las Licencias Oficiales",
-    catalogSubtitle: "Filtra por categoría o busca el programa exacto que necesitas para tu equipo",
-    allProducts: "Todos los productos",
+    catalogSubtitle: "Filtra por categoría o busca el software exacto que necesitas",
+    allProducts: "Todas las licencias",
     searchNoResults: "No encontramos coincidencias para",
-    searchSuggestions: "Sugerencias: Windows 11, Office 2024, Combo, Visio",
-    viewAllCatalog: "Ver todos los productos en catálogo",
+    searchSuggestions: "Sugerencias: Windows 11, Office 2024, Combo, Visio...",
+    viewAllCatalog: "Ver todas las licencias en catálogo",
 
     // Product Card
     viewProduct: "Ver detalles",
@@ -78,7 +78,7 @@ export const translations = {
     items: "productos",
     item: "producto",
     emptyCartTitle: "Tu carrito está vacío",
-    emptyCartSub: "Añade licencias a tu carrito para continuar",
+    emptyCartSub: "Añade productos a tu carrito para continuar",
     exploreProductsBtn: "Explorar productos",
     unitPrice: "Unitario",
     subtotal: "Subtotal",
@@ -99,10 +99,10 @@ export const translations = {
     buyNow: "Comprar Ahora",
     buyViaWhatsApp: "Comprar por WhatsApp",
     productGuarantees: "Garantías del Producto",
-    instantEmailDelivery: "Envío digital inmediato a tu correo y WhatsApp",
-    officialMicrosoftWarranty: "Garantía oficial y activación 100% legal",
+    instantEmailDelivery: "Envío inmediato de actualizaciones a tu correo y WhatsApp",
+    officialMicrosoftWarranty: "Garantía oficial en todos los productos",
     freeTechSupport: "Soporte técnico de instalación sin costo adicional",
-    guaranteedActivation: "Garantía de Activación",
+    guaranteedActivation: "Garantía de Compra",
     emailDelivery: "Entrega Inmediata al Email",
     remoteSupport: "Soporte Remoto Gratuito",
     securePayment: "Pago Seguro y Encriptado",
@@ -112,7 +112,7 @@ export const translations = {
 
     // Checkout Page
     checkoutTitle: "Finalizar Compra",
-    checkoutSubtitle: "Completa tus datos para recibir tu clave digital al instante",
+    checkoutSubtitle: "Completa tus datos para procesar tu pedido",
     contactInfo: "Información de Contacto",
     fullName: "Nombre y Apellidos",
     emailAddress: "Correo Electrónico (donde recibirás la clave)",
@@ -123,7 +123,7 @@ export const translations = {
     securePaymentNotice: "Pago 100% seguro y encriptado",
 
     // Footer
-    footerDesc: "Tienda líder en distribución oficial de licencias digitales de software Microsoft.",
+    footerDesc: "Tienda líder en distribución oficial de licencias digitales de software Microsoft con entrega inmediata.",
     techSupportTitle: "Atención al Cliente",
     paymentMethodsTitle: "Métodos de Pago Aceptados",
     legalNotice: "Todas las marcas y nombres comerciales pertenecen a sus respectivos propietarios.",
@@ -162,7 +162,7 @@ export const translations = {
     downloadInstaller: "Descargar instalador",
     quickInstallSummary: "Resumen Rápido de Instalación",
     stepLabel: "Paso",
-    guaranteeSupportMsg: "Garantía de activación oficial con asistencia técnica directa",
+    guaranteeSupportMsg: "Garantía oficial con atención al cliente directa",
     gotItClose: "Entendido, cerrar",
 
     // Additional Checkout & General Labels
@@ -177,16 +177,16 @@ export const translations = {
     contactSupport: "Contactar soporte",
     backToStore: "Volver a la tienda",
     productsInOrder: "Productos en tu Pedido",
-    digitalDeliveryData: "DATOS DE ENTREGA DIGITAL",
+    digitalDeliveryData: "DATOS DE ENVÍO",
     requiredLabel: "Requerido",
-    digitalDeliverySubtitle: "Ingresa tu correo para enviarte de inmediato tu clave de activación oficial, comprobante y guía.",
+    digitalDeliverySubtitle: "Ingresa tus datos para procesar el envío de tus productos.",
     customerEmailLabel: "Correo electrónico del cliente",
-    emailVerifiedForDelivery: "Correo verificado para entrega",
-    emailRequiredError: "El correo electrónico es obligatorio para recibir tu licencia digital.",
+    emailVerifiedForDelivery: "Correo verificado",
+    emailRequiredError: "El correo electrónico es obligatorio para tu pedido.",
     validEmailError: "Por favor ingresa un correo válido (ej: nombre@gmail.com).",
-    instantDigitalDeliveryLabel: "Entrega digital inmediata:",
-    instantDigitalDeliveryDesc: "A este correo te enviaremos la clave oficial original de 25 caracteres y el enlace oficial de Microsoft.",
-    customerNameLabel: "Nombre o Razón Social",
+    instantDigitalDeliveryLabel: "Envío seguro a tu domicilio:",
+    instantDigitalDeliveryDesc: "Te enviaremos las actualizaciones de tu pedido y comprobantes a este correo.",
+    customerNameLabel: "Nombre y Apellidos",
     optionalLabel: "(Opcional)",
     paymentSummaryLabel: "RESUMEN DE PAGO",
     subtotalLabel: "Subtotal:",
@@ -199,8 +199,8 @@ export const translations = {
     selectPaymentMethod: "Método de Pago",
     mercadoPagoOption: "Mercado Pago (Soles S/)",
     securePaymentMercadoPago: "Pago 100% seguro con Mercado Pago",
-    deliveryTimeNotice: "Entrega de tu licencia a tu correo en 10 a 30 minutos",
-    digitalLicensesSubtitle: "Licencias y productos digitales",
+    deliveryTimeNotice: "Tiempo de entrega estimado: 2 a 5 días hábiles",
+    digitalLicensesSubtitle: "Electrónica, moda y accesorios al mejor precio",
 
     // Comparison Table
     ctWindows1Title: "Licencia para 1 PC (Permanente)",
@@ -316,7 +316,65 @@ export const translations = {
     clickToEdit: "Haz clic para escribir o editar la cantidad",
     removeCoupon: "Quitar cupón",
     activeMultiItemDiscount: "Activo (Aplica 10% por 2+ items)",
-    activeCoupon10: "10% descuento cupón"
+    activeCoupon10: "10% descuento cupón",
+
+    // Guarantees and UI
+    securePurchase100: "Compra Segura 100%",
+    warrantyAndSupport: "Garantía oficial y soporte continuo",
+    guaranteedDelivery: "Entrega Garantizada",
+    secureProtectedShipping: "Envío seguro y protegido",
+    techSupport: "Soporte Técnico",
+    personalizedRemoteAssistance: "Asistencia remota personalizada",
+    privacyAndDeliveryNote: "Privacidad y entrega garantizada: Tus datos están protegidos y se usan exclusivamente para asignarte tus pedidos y emitir tu comprobante.",
+    guaranteedActivationBadge: "Activación oficial garantizada",
+    license100Original: "Licencia 100% Original de Software",
+    instantDigitalDeliveryPill: "Entrega digital inmediata",
+    selectKeyType: "Selecciona el tipo de clave:",
+    compatibilityAndRequirements: "Compatibilidad y Requisitos",
+    licenseDurationLabel: "Modalidad de Licencia:",
+    deliveryTypeLabel: "Tipo de Entrega / Clave:",
+    frequentlyAskedQuestions: "Preguntas Frecuentes",
+    relatedProductsTitle: "Productos Relacionados",
+    clearCart: "Vaciar carrito",
+    securePurchaseGuarantee: "Garantía de compra segura",
+    hasCouponPrompt: "¿Tienes un cupón promocional?",
+    apply: "Aplicar",
+    verifiedGenuineKeys: "100% Claves originales probadas",
+    starsLabel: "estrellas",
+    rateAndReview: "Calificar y opinar sobre",
+    step1of1: "Paso 1 de 1",
+    quickChoiceGuide: "Guía de Elección Rápida",
+    comparisonTableTitle: "Tabla Comparativa de Ediciones",
+    comparisonTableSubtitle: "Compare las funciones principales de cada versión y elija la licencia ideal para su equipo.",
+    windowsSystems: "Sistemas Windows",
+    officeSuites: "Suites Microsoft Office",
+    features: "Características",
+    forHome: "Para el Hogar",
+    forProfessionals: "Para Profesionales",
+    forEnterprise: "Para Empresas",
+    comparisonGuarantee: "Garantía UpClic: Todas nuestras licencias de 1 PC incluyen activación permanente con garantía oficial por 1 año y soporte en línea.",
+    saveStoreSetting: "Guardar",
+    selectStoreSetting: "Selecciona la configuración de tu tienda:",
+    countryPeru: "Perú (PE)",
+    solesCurrency: "Soles Peruanos (S/ PEN)",
+    countryColombia: "Colombia (CO)",
+    copCurrency: "Pesos Colombianos ($ COP)",
+    countryMexico: "México (MX)",
+    mxnCurrency: "Pesos Mexicanos ($ MXN)",
+    latamRegion: "Sudamérica y Latinoamérica",
+    latamCurrency: "Dólares Estadounidenses ($ USD)",
+    countryUSA: "Estados Unidos y Global",
+    usdCurrency: "Dólares Estadounidenses ($ USD)",
+    changeCountryCurrency: "Cambiar país, moneda e idioma",
+    topFeatured: "TOP DESTACADO",
+    modeLabel: "Modalidad:",
+    officialActivationGuaranteed: "Activación oficial garantizada",
+    productDescriptionTitle: "Descripción del Producto",
+    keyFeaturesTitle: "Características Principales:",
+    purchaseWarranty: "Garantía de Compra",
+    freeRemoteSupport: "Soporte Remoto Gratuito",
+    secureEncryptedPayment: "Pago Seguro y Encriptado",
+    viewAllCatalogArrow: "Ver todo el catálogo →"
   },
 
   EN: {
@@ -324,9 +382,9 @@ export const translations = {
     searchPlaceholder: "Search licenses, software, office, windows...",
     categories: "Categories",
     home: "Home",
-    combos: "2-in-1 Combos",
-    office: "Office",
+    office: "Microsoft Office",
     windows: "Windows",
+    combos: "Combos",
     projectVisio: "Project & Visio",
     topLicenses: "Top Licenses",
     bestSellers: "Best Sellers",
@@ -342,17 +400,17 @@ export const translations = {
     searchResultsFor: 'Search results for',
     noProductsMatch: "No licenses found matching that term",
     searchSuggestionsText: "Suggestions: Windows 11, Office 2024, Combo, Visio",
-    viewAllCatalogProducts: "View all catalog products",
+    viewAllCatalogProducts: "View all catalog licenses",
     regionCurrencyLabel: "Region & Currency",
     regionCurrencyLangLabel: "Region / Currency / Language",
     changeRegionCurrency: "Change region, currency and language",
 
     // Hero Section
-    heroBadge: "Original Digital Licenses",
-    heroTitleLine1: "Official Licenses for",
-    heroTitleLine2: "Microsoft Software",
+    heroBadge: "100% Genuine Digital Licenses",
+    heroTitleLine1: "Official Microsoft",
+    heroTitleLine2: "Office & Windows Licenses",
     heroTitleLine3: "at the Best Price",
-    heroSubtitle: "Instant activation with 100% genuine product keys. Lifetime warranty and specialized tech support.",
+    heroSubtitle: "Instant digital activation with 100% genuine keys. Lifetime warranty and specialized technical support.",
     heroInstantDelivery: "Instant Activation",
     heroOfficialWarranty: "1-Year Warranty",
     heroTechSupport: "24/7 Tech Support",
@@ -366,18 +424,18 @@ export const translations = {
 
     // Best Sellers Section
     bestSellersTitle: "Weekly Best Sellers",
-    bestSellersSubtitle: "Highest demand software with guaranteed instant activation",
+    bestSellersSubtitle: "Highest demand software with instant activation guaranteed",
 
     // Top Section
     topSectionBadge: "Recommended for you",
     topSectionTitle: "Most Wanted & Recommended",
-    topSectionSubtitle: "Take advantage of exclusive offers on original licenses for your home or business",
+    topSectionSubtitle: "Take advantage of exclusive offers on software licenses for your home or business",
 
     // Catalog & Product Grid
     catalogBadge: "Full Catalog",
     catalogTitle: "All Official Licenses",
     catalogSubtitle: "Filter by category or search for the exact software you need",
-    allProducts: "All products",
+    allProducts: "All licenses",
     searchNoResults: "No matches found for",
     searchSuggestions: "Suggestions: Windows 11, Office 2024, Combo, Visio",
     viewAllCatalog: "View all catalog products",
@@ -515,6 +573,8 @@ export const translations = {
     connectingStatus: "Connecting...",
     finishPurchaseMercadoPago: "Complete Purchase with Mercado Pago",
     securePaymentMercadoPago: "100% Secure Payment with Mercado Pago",
+    selectPaymentMethod: "Payment Method",
+    mercadoPagoOption: "Mercado Pago (Credit Card, Debit & Cash)",
     deliveryTimeNotice: "License delivered to your email in 10 to 30 minutes",
     digitalLicensesSubtitle: "Digital licenses & software products",
 
@@ -632,11 +692,409 @@ export const translations = {
     clickToEdit: "Click to edit quantity",
     removeCoupon: "Remove coupon",
     activeMultiItemDiscount: "Active (10% off for 2+ items)",
-    activeCoupon10: "10% discount coupon"
+    activeCoupon10: "10% discount coupon",
+
+    // Guarantees and UI
+    securePurchase100: "100% Secure Purchase",
+    warrantyAndSupport: "Official warranty & continuous support",
+    guaranteedDelivery: "Guaranteed Delivery",
+    secureProtectedShipping: "Secure & protected digital delivery",
+    techSupport: "Technical Support",
+    personalizedRemoteAssistance: "Personalized remote assistance",
+    privacyAndDeliveryNote: "Privacy & guaranteed delivery: Your data is protected and used exclusively to deliver your orders and issue your receipt.",
+    guaranteedActivationBadge: "Official activation guaranteed",
+    license100Original: "100% Genuine Software License",
+    instantDigitalDeliveryPill: "Instant digital delivery",
+    selectKeyType: "Select license / key type:",
+    compatibilityAndRequirements: "Compatibility & Requirements",
+    licenseDurationLabel: "License Validity:",
+    deliveryTypeLabel: "Delivery / Key Type:",
+    frequentlyAskedQuestions: "Frequently Asked Questions",
+    relatedProductsTitle: "Related Products",
+    clearCart: "Empty cart",
+    securePurchaseGuarantee: "Secure purchase guarantee",
+    hasCouponPrompt: "Do you have a promo code?",
+    apply: "Apply",
+    verifiedGenuineKeys: "100% Tested genuine keys",
+    starsLabel: "stars",
+    rateAndReview: "Rate and review",
+    step1of1: "Step 1 of 1",
+    quickChoiceGuide: "Quick Decision Guide",
+    comparisonTableTitle: "Edition Comparison Table",
+    comparisonTableSubtitle: "Compare the key features of each version and choose the ideal license for your device.",
+    windowsSystems: "Windows Systems",
+    officeSuites: "Microsoft Office Suites",
+    features: "Features",
+    forHome: "For Home",
+    forProfessionals: "For Professionals",
+    forEnterprise: "For Enterprises",
+    comparisonGuarantee: "UpClic Guarantee: All our 1 PC licenses include lifetime activation with official 1-year warranty and remote online support.",
+    saveStoreSetting: "Save",
+    selectStoreSetting: "Select your store setting:",
+    countryPeru: "Peru (PE)",
+    solesCurrency: "Peruvian Soles (S/ PEN)",
+    countryColombia: "Colombia (CO)",
+    copCurrency: "Colombian Pesos ($ COP)",
+    countryMexico: "Mexico (MX)",
+    mxnCurrency: "Mexican Pesos ($ MXN)",
+    latamRegion: "Latin America & South America",
+    latamCurrency: "US Dollars ($ USD)",
+    countryUSA: "United States & Global",
+    usdCurrency: "US Dollars ($ USD)",
+    changeCountryCurrency: "Change country, currency & language",
+    topFeatured: "TOP FEATURED",
+    modeLabel: "License validity:",
+    officialActivationGuaranteed: "Official activation guaranteed",
+    productDescriptionTitle: "Product Description",
+    keyFeaturesTitle: "Key Features:",
+    purchaseWarranty: "Purchase Warranty",
+    freeRemoteSupport: "Free Remote Support",
+    secureEncryptedPayment: "Secure & Encrypted Payment",
+    viewAllCatalogArrow: "View full catalog →"
   }
 };
 
 export function getTranslation(lang: Language, key: keyof typeof translations['ES']): string {
   const dict = translations[lang] || translations.ES;
   return (dict[key] as any) || (translations.ES[key] as any) || key;
+}
+
+export interface ProductTranslationData {
+  name?: string;
+  description?: string;
+  badge?: string;
+  duration?: string;
+  compatibility?: string;
+  features?: string[];
+}
+
+export const PRODUCT_TRANSLATIONS_EN: Record<string, ProductTranslationData> = {
+  'prod-office-2024': {
+    name: 'Microsoft Office 2024 Professional Plus',
+    description: 'The latest perpetual version of Microsoft Office without monthly subscriptions. Includes Word, Excel, PowerPoint, Outlook, OneNote, and Access 2024 with modern UI and performance optimizations.',
+    duration: 'Lifetime / Permanent',
+    badge: 'OFFER',
+    compatibility: 'Windows 10 and Windows 11 (32 and 64 Bit)',
+    features: [
+      'Word, Excel, PowerPoint, Outlook, OneNote, Access',
+      'Official permanent digital activation for 1 PC',
+      'New 2024 formulas, improved search, and visual refresh',
+      'Lifetime license without monthly or annual fees'
+    ]
+  },
+  'prod-combo-office-project-visio-2024': {
+    name: '3-in-1 Combo: Microsoft Office + Project + Visio Professional 2024',
+    description: 'The ultimate professional productivity bundle from Microsoft. Includes 3 official lifetime licenses: Office 2024 Pro Plus, Project Professional 2024, and Visio Professional 2024. Save more than 60% compared to individual licenses.',
+    duration: 'Lifetime / Permanent (3 Licenses)',
+    badge: '3-IN-1 COMBO',
+    compatibility: 'Windows 10 and Windows 11 (32 and 64 Bit)',
+    features: [
+      'Office 2024 Pro Plus (Word, Excel, PowerPoint, Outlook, Access)',
+      'Project Professional 2024 (Advanced Gantt and project management)',
+      'Visio Professional 2024 (Engineering, network, and flowchart diagrams)',
+      '3 separate digital product keys with permanent lifetime activation',
+      'Save more than 60% compared to purchasing separately'
+    ]
+  },
+  'prod-coreldraw-2024-mac': {
+    name: 'CorelDRAW Graphics Suite 2024 for Mac (1 PC / Lifetime)',
+    description: 'Professional software for graphic design, vector illustration, and photo editing for macOS. Official lifetime license for 1 Mac with no subscriptions or recurring fees. 100% optimized for Apple Silicon (M1, M2, M3, M4) and Intel processors.',
+    duration: 'Lifetime / Permanent',
+    badge: 'MAC LIFETIME',
+    compatibility: 'macOS Sequoia, Sonoma, Ventura, Monterey (Apple Silicon & Intel)',
+    features: [
+      'Official perpetual lifetime license for 1 Mac without expiration',
+      'Optimized 100% for Apple Silicon (M1/M2/M3/M4) and Intel processors',
+      'Includes CorelDRAW 2024, Corel PHOTO-PAINT, and Corel Font Manager',
+      'Professional vector illustration, page layout, and advanced typography'
+    ]
+  },
+  'prod-office-2024-3pc': {
+    name: 'Microsoft Office 2024 Professional Plus (3 PC)',
+    description: 'Special multi-device pack: 3 permanent individual licenses for Office 2024 Pro Plus. Ideal for families, offices, or multi-computer setups. Save more than 50% compared to single licenses.',
+    duration: 'Lifetime (3 Computers)',
+    badge: '3 PC PACK',
+    compatibility: 'Windows 10 and Windows 11 (32 and 64 Bit)',
+    features: [
+      '3 independent digital product keys for 3 separate PCs',
+      'Full Office 2024 suite: Word, Excel, PowerPoint, Outlook, Access',
+      'Permanent lifetime activation on each computer',
+      'Official Microsoft updates and technical support included'
+    ]
+  },
+  'prod-gemini-ai-pro': {
+    name: 'Google Gemini AI Pro / Advanced (18 Months)',
+    description: 'Subscription to Google Gemini AI Pro / Advanced for 18 months. Official activation with direct link to your personal Google account (Gmail). Includes state-of-the-art 1.5 Pro and 2.0 Flash models, 5 TB of cloud storage in Google One, and Gemini integrated into Docs, Gmail, and Drive.',
+    duration: '18 Months',
+    badge: '5 TB CLOUD • 18M',
+    compatibility: 'Web Browsers, Windows, macOS, Android, and iOS',
+    features: [
+      'Access to state-of-the-art Gemini 1.5 Pro & 2.0 Flash models',
+      'Official direct activation link tied to your personal Google account',
+      '5 TB of secure cloud storage (Drive, Photos, and Gmail)',
+      'Gemini natively integrated into Google Docs, Sheets, Slides, and Gmail',
+      'Full warranty coverage throughout the complete 18 months'
+    ]
+  },
+  'prod-win11-pro': {
+    name: 'Windows 11 Professional Key 32/64 Bit',
+    description: 'Permanent digital product key for Windows 11 Pro. Supports official Microsoft updates, BitLocker encryption, Remote Desktop, and multi-language support.',
+    duration: 'Lifetime / Permanent',
+    badge: 'POPULAR',
+    compatibility: 'PC with TPM 2.0 and compatible 64-bit processor',
+    features: [
+      'Official Microsoft permanent digital activation',
+      'BitLocker encryption, Remote Desktop, and Windows Sandbox',
+      'Direct downloads from Microsoft and lifetime official updates',
+      'Multi-language support (English, Spanish, French, German, etc.)'
+    ]
+  },
+  'prod-combo-win11-office2024': {
+    name: '2-in-1 Combo: Windows 11 Pro + Office 2024 Pro Plus',
+    description: 'The ultimate operating system and productivity suite bundle. Complete your workspace with Windows 11 Pro and Office 2024 Pro Plus with lifetime digital activation.',
+    duration: 'Lifetime / Permanent',
+    badge: 'OFFER',
+    compatibility: 'Windows 10 and Windows 11',
+    features: [
+      'Windows 11 Professional Key (32/64 Bit)',
+      'Office 2024 Professional Plus Key',
+      '2 independent digital keys with instant email delivery',
+      'Save over 50% compared to purchasing individually'
+    ]
+  },
+  'prod-office-2021': {
+    name: 'Microsoft Office 2021 Professional Plus',
+    description: 'Stable, proven perpetual version of Microsoft Office. Includes Word, Excel, PowerPoint, Outlook, OneNote, and Access 2021.',
+    duration: 'Lifetime / Permanent',
+    badge: 'POPULAR',
+    compatibility: 'Windows 10 and Windows 11',
+    features: [
+      'Word, Excel, PowerPoint, Outlook, OneNote, Access 2021',
+      'Permanent lifetime activation for 1 PC',
+      'XLOOKUP, Dynamic Arrays, and Dark Mode support',
+      'No monthly or annual recurring subscription fees'
+    ]
+  },
+  'prod-office-2021-std': {
+    name: 'Microsoft Office 2021 Standard',
+    description: 'Standard version of Microsoft Office 2021 with essential tools for office and document creation.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-combo-win10-office2021': {
+    name: '2-in-1 Combo: Windows 10 Pro + Office 2021 Pro Plus',
+    description: 'The most stable, tested, and reliable bundle for both older and modern hardware. Includes Windows 10 Pro and Office 2021 Pro Plus with permanent activation.',
+    duration: 'Lifetime / Permanent',
+    badge: 'OFFER',
+    compatibility: 'Windows 10 compatible hardware',
+    features: [
+      'Windows 10 Professional Key (32/64 Bit)',
+      'Office 2021 Professional Plus Key',
+      'Permanent lifetime activation for both licenses',
+      'Instant digital delivery with step-by-step guides'
+    ]
+  },
+  'prod-win10-pro': {
+    name: 'Windows 10 Professional Key 32/64 Bit',
+    description: 'Official digital license for Windows 10 Pro. Perfect for computers of all specifications, business environments, and everyday productivity.',
+    duration: 'Lifetime / Permanent',
+    badge: 'POPULAR',
+    compatibility: 'PC compatible with Windows 10 32/64 Bit',
+    features: [
+      'Permanent digital activation tied to your hardware',
+      'BitLocker, Remote Desktop, and Client Hyper-V',
+      'Lifetime official Microsoft security updates',
+      'Free upgrade to Windows 11 Pro if hardware allows'
+    ]
+  },
+  'prod-microsoft-365': {
+    name: 'Microsoft 365 Personal (Account - 1 Year)',
+    description: 'Official 1-year subscription to Microsoft 365 suite. Includes Word, Excel, PowerPoint, Outlook, and 100 GB OneDrive cloud storage across all your devices.',
+    duration: '1 Year',
+    badge: 'POPULAR',
+    compatibility: 'Windows, macOS, iOS, Android',
+    features: [
+      'Direct account access (tied to your credentials)',
+      'Official subscription guaranteed for 1 year',
+      '100 GB secure OneDrive cloud storage',
+      'Works on PC, Mac, iPad, iPhone, and Android'
+    ]
+  },
+  'prod-office-2019': {
+    name: 'Microsoft Office 2019 Professional Plus',
+    description: 'Reliable perpetual license of Microsoft Office for Windows 10 and 11. Includes Word, Excel, PowerPoint, Outlook, and Access 2019.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11 only'
+  },
+  'prod-win11-home': {
+    name: 'Windows 11 Home Key 64 Bit',
+    description: 'Original digital license for Windows 11 Home. Designed for everyday home, gaming, and school usage.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'PC with TPM 2.0 and compatible 64-bit processor'
+  },
+  'prod-win10-home': {
+    name: 'Windows 10 Home Key 32/64 Bit',
+    description: 'Permanent activation key for Windows 10 Home edition. Simple, fast, and secure for personal computers.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'PC compatible with Windows 10'
+  },
+  'prod-project-2024': {
+    name: 'Microsoft Project Professional 2024',
+    description: 'Official project management software for planning, resource allocation, and tracking. Perpetual license for 1 PC.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-visio-2024': {
+    name: 'Microsoft Visio Professional 2024',
+    description: 'Professional diagramming, flowchart, and technical illustration tool with updated templates and shape libraries.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-project-2021': {
+    name: 'Microsoft Project Professional 2021',
+    description: 'Advanced project scheduling and management tool for 1 PC with permanent activation.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-project-2019': {
+    name: 'Microsoft Project Professional 2019',
+    description: 'Professional project management software for Windows 10 and 11.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-project-2016': {
+    name: 'Microsoft Project Professional 2016',
+    description: 'Perpetual project planning and tracking license for 1 PC.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 7 / 8 / 10 / 11'
+  },
+  'prod-visio-2021': {
+    name: 'Microsoft Visio Professional 2021',
+    description: 'Diagramming and vector graphic creation tool with extensive built-in shapes and templates.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-visio-2019': {
+    name: 'Microsoft Visio Professional 2019',
+    description: 'Professional diagram creation tool for flowcharts, process maps, and diagrams.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 10 and Windows 11'
+  },
+  'prod-visio-2016': {
+    name: 'Microsoft Visio Professional 2016',
+    description: 'Classic diagramming tool with built-in templates.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 7 / 8 / 10 / 11'
+  },
+  'prod-visio-2013': {
+    name: 'Microsoft Visio Professional 2013',
+    description: 'Lightweight diagramming and flowchart tool for legacy systems.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 7 / 8 / 10 / 11'
+  },
+  'prod-win11-enterprise': {
+    name: 'Windows 11 Enterprise Key 64 Bit',
+    description: 'Comprehensive enterprise edition of Windows 11 with DirectAccess, Windows To Go, and AppLocker.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Corporate hardware with TPM 2.0'
+  },
+  'prod-win10-enterprise': {
+    name: 'Windows 10 Enterprise LTSC Key',
+    description: 'Long-Term Servicing Channel edition of Windows 10 without bloatware. Ultra-stable for mission-critical workstations.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'PC compatible with Windows 10'
+  },
+  'prod-win81-pro': {
+    name: 'Windows 8.1 Professional Key',
+    description: 'Official activation key for Windows 8.1 Pro. Ideal for older laptops and legacy desktop machines.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Legacy PCs with 1 GHz CPU and 1GB/2GB RAM'
+  },
+  'prod-win7-pro': {
+    name: 'Windows 7 Professional Key',
+    description: 'Official activation key for Windows 7 Professional edition.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Legacy PCs with Windows 7 compatibility'
+  },
+  'prod-win7-ultimate': {
+    name: 'Windows 7 Ultimate Key',
+    description: 'Complete edition of Windows 7 with BitLocker and multi-language support for legacy computer systems.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Legacy PCs with Windows 7 compatibility'
+  },
+  'prod-office-2016': {
+    name: 'Microsoft Office 2016 Professional Plus',
+    description: 'Lightweight and dependable Office suite for computers with Windows 7, 8, 10, or 11.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 7 / 8 / 10 / 11'
+  },
+  'prod-office-2013': {
+    name: 'Microsoft Office 2013 Professional Plus',
+    description: 'Low-resource version of Microsoft Office for older computers.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows 7 / 8 / 10 / 11'
+  },
+  'prod-office-2010': {
+    name: 'Microsoft Office 2010 Professional Plus',
+    description: 'Classic edition compatible with legacy operating systems including Windows XP and Vista.',
+    duration: 'Lifetime / Permanent',
+    compatibility: 'Windows XP / Vista / 7 / 8 / 10'
+  }
+};
+
+export function getProductName(product: { id: string; name: string }, lang: Language): string {
+  if (lang === 'EN' && PRODUCT_TRANSLATIONS_EN[product.id]?.name) {
+    return PRODUCT_TRANSLATIONS_EN[product.id].name!;
+  }
+  return product.name;
+}
+
+export function getProductDesc(product: { id: string; description: string }, lang: Language): string {
+  if (lang === 'EN' && PRODUCT_TRANSLATIONS_EN[product.id]?.description) {
+    return PRODUCT_TRANSLATIONS_EN[product.id].description!;
+  }
+  return product.description;
+}
+
+export function getProductFeatures(product: { id: string; features?: string[] }, lang: Language): string[] {
+  if (lang === 'EN' && PRODUCT_TRANSLATIONS_EN[product.id]?.features) {
+    return PRODUCT_TRANSLATIONS_EN[product.id].features!;
+  }
+  return product.features || [];
+}
+
+export function getProductCompatibility(product: { id: string; compatibility?: string }, lang: Language): string {
+  if (lang === 'EN' && PRODUCT_TRANSLATIONS_EN[product.id]?.compatibility) {
+    return PRODUCT_TRANSLATIONS_EN[product.id].compatibility!;
+  }
+  return product.compatibility || '';
+}
+
+export function getDurationLabel(duration: string, lang: Language): string {
+  if (lang !== 'EN') return duration;
+  const d = duration.toLowerCase().trim();
+  if (d.includes('permanente') || d.includes('de por vida') || d.includes('vitalicia')) {
+    if (d.includes('3')) return 'Lifetime / Permanent (3 PCs)';
+    return 'Lifetime / Permanent';
+  }
+  if (d.includes('18 meses')) return '18 Months';
+  if (d.includes('1 año') || d.includes('1 ano')) return '1 Year';
+  if (d.includes('2 años')) return '2 Years';
+  return duration;
+}
+
+export function getBadgeLabel(badge: string | undefined, lang: Language): string | undefined {
+  if (!badge) return undefined;
+  if (lang !== 'EN') return badge;
+  const b = badge.toUpperCase().trim();
+  if (b === 'OFERTA') return 'OFFER';
+  if (b === 'NUEVO') return 'NEW';
+  if (b === 'POPULAR') return 'POPULAR';
+  if (b === 'COMBO 3 EN 1') return '3-IN-1 COMBO';
+  if (b === 'PACK 3 PC') return '3 PC PACK';
+  if (b === 'MAC PERMANENTE') return 'MAC LIFETIME';
+  if (b === 'IA PRO 18M') return 'AI PRO 18M';
+  if (b === 'TOP DESTACADO') return 'TOP FEATURED';
+  if (b === 'DESTACADO') return 'FEATURED';
+  return badge;
 }

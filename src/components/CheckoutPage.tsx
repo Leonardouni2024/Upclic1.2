@@ -51,7 +51,9 @@ export const CheckoutPage: React.FC = () => {
     setQuantity,
     clearCart,
     navigateToHome,
-    t
+    t,
+    language,
+    getProductName
  } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
@@ -347,15 +349,17 @@ export const CheckoutPage: React.FC = () => {
 
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 mb-3">
             <ShieldCheck className="w-3.5 h-3.5" />
-            Pago Aprobado con Mercado Pago
+            {language === 'ES' ? 'Pago Aprobado con Mercado Pago' : 'Payment Approved with Mercado Pago'}
           </span>
 
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            ¡Pago Realizado con Éxito!
+            {language === 'ES' ? '¡Pago Realizado con Éxito!' : 'Payment Completed Successfully!'}
           </h1>
 
           <p className="text-sm text-slate-600 mt-2.5 leading-relaxed">
-            Hemos verificado tu transacción con Mercado Pago. Te enviamos la confirmación oficial de tu compra a tu correo electrónico{paidCustomerEmail ? `: ` : '.'}
+            {language === 'ES'
+              ? 'Hemos verificado tu transacción con Mercado Pago. Te enviamos la confirmación oficial de tu compra a tu correo electrónico'
+              : 'We have verified your transaction with Mercado Pago. We have sent the official confirmation of your purchase to your email'}{paidCustomerEmail ? `: ` : '.'}
             {paidCustomerEmail && <strong className="text-slate-900 break-all">{paidCustomerEmail}</strong>}
           </p>
 
@@ -365,9 +369,11 @@ export const CheckoutPage: React.FC = () => {
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-emerald-950">Entrega de tu licencia digital:</h4>
+              <h4 className="text-sm font-bold text-emerald-950">
+                {language === 'ES' ? 'Entrega de tu licencia digital:' : 'Digital license delivery:'}
+              </h4>
               <p className="text-xs sm:text-sm text-emerald-800 mt-1 leading-relaxed">
-                <strong>Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.</strong> Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.
+                <strong>{language === 'ES' ? 'Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.' : 'Your license will be sent to your email within 10 to 30 minutes.'}</strong> {language === 'ES' ? 'Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.' : 'Our technical team is validating your product key and preparing your receipt and activation instructions.'}
               </p>
             </div>
           </div>
@@ -476,15 +482,15 @@ export const CheckoutPage: React.FC = () => {
         <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-6 text-white/40">
           <ShoppingBag className="w-10 h-10" />
         </div>
-        <h2 className="text-2xl font-black text-white">No tienes productos en el carrito</h2>
+        <h2 className="text-2xl font-black text-white">{t('emptyCartTitle')}</h2>
         <p className="text-sm text-slate-300 mt-2 mb-8">
-          Selecciona una o más licencias Microsoft para proceder con el pago seguro.
+          {t('emptyCartSub')}
         </p>
         <button
           onClick={navigateToHome}
           className="px-6 py-3 rounded-lg bg-yellow-400 text-slate-950 font-bold text-sm shadow-md hover:bg-[#eab308] transition-colors cursor-pointer"
         >
-          Volver a la tienda
+          {t('backToStore')}
         </button>
       </div>
     );
@@ -524,7 +530,7 @@ export const CheckoutPage: React.FC = () => {
                   <div className="w-8 h-8 rounded-lg bg-slate-700/50 text-yellow-400 flex items-center justify-center border border-amber-400/30">
                     <ShieldCheck className="w-4.5 h-4.5" />
                   </div>
-                  <span>Productos en tu orden</span>
+                  <span>{language === 'ES' ? 'Productos en tu orden' : 'Products in your order'}</span>
                 </h2>
                 <span className="text-xs font-bold text-slate-300 bg-white/10 px-2.5 py-1 rounded-full border border-slate-700">
                   {totalQuantity} {totalQuantity === 1 ? t('item') : t('items')}
@@ -540,13 +546,15 @@ export const CheckoutPage: React.FC = () => {
                     item.selectedVariant === 'oem' ? t('licenseTypeOEM') || 'OEM Key' :
                     item.selectedVariant === 'retail' ? t('licenseTypeRetail') || 'Retail Key' : undefined
                   );
+                  const itemName = getProductName(item.product);
                   return (
                     <div key={itemKey} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="w-14 h-14 rounded-lg bg-[#0f172a] p-1.5 border border-slate-700 shrink-0 flex items-center justify-center shadow-md">
                           <img
                             src={item.product.imageUrl}
-                            alt={item.product.name}
+                            alt={itemName}
+                            referrerPolicy="no-referrer"
                             onError={(e) => {
                               e.currentTarget.src = item.product.fallbackImage;
                             }}
@@ -554,8 +562,8 @@ export const CheckoutPage: React.FC = () => {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-bold text-white text-sm truncate" title={item.product.name}>
-                            {item.product.name}
+                          <div className="font-bold text-white text-sm truncate" title={itemName}>
+                            {itemName}
                           </div>
                           {displayVariantName && (
                             <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-700/50 text-slate-300 border border-purple-400/30">
@@ -563,7 +571,7 @@ export const CheckoutPage: React.FC = () => {
                             </span>
                           )}
                           <div className="text-[11px] text-slate-400 mt-0.5">
-                            Precio unitario: <strong className="text-white">{formatPrice(itemUnitPrice)}</strong>
+                            {language === 'ES' ? 'Precio unitario:' : 'Unit price:'} <strong className="text-white">{formatPrice(itemUnitPrice)}</strong>
                           </div>
                         </div>
                       </div>
@@ -616,7 +624,7 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <Tag className="w-3.5 h-3.5 text-yellow-400" />
-                    ¿Tienes un cupón de descuento?
+                    {t('hasCouponPrompt')}
                   </span>
                 </div>
 
@@ -628,14 +636,16 @@ export const CheckoutPage: React.FC = () => {
                         {appliedCoupon}
                       </span>
                       <span className="text-[11px] text-emerald-300 font-medium">
-                        ({Math.round(discountRate * 100)}% de descuento aplicado)
+                        {language === 'ES'
+                          ? `(${Math.round(discountRate * 100)}% de descuento aplicado)`
+                          : `(${Math.round(discountRate * 100)}% discount applied)`}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={removeCoupon}
                       className="text-xs text-slate-400 hover:text-red-400 font-bold px-1 transition-colors cursor-pointer"
-                      title="Quitar cupón"
+                      title={t('removeCoupon') || 'Quitar cupón'}
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -653,7 +663,7 @@ export const CheckoutPage: React.FC = () => {
                       type="submit"
                       className="px-4 py-2 bg-yellow-400 hover:bg-[#eab308] text-slate-950 rounded-lg text-xs font-black transition-all cursor-pointer"
                     >
-                      Aplicar
+                      {t('apply')}
                     </button>
                   </form>
                 )}
@@ -758,7 +768,7 @@ export const CheckoutPage: React.FC = () => {
                 <div className="space-y-1.5">
                   <label htmlFor="customer-name-input" className="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-slate-400" />
-                    {t('customerNameLabel')} <span className="text-slate-500 font-normal">{t('optionalLabel')}</span>
+                    {t('customerNameLabel')} <span className="text-slate-500 font-normal">({t('optionalLabel') || 'Opcional'})</span>
                   </label>
                   <div className="relative">
                     <input
@@ -767,20 +777,22 @@ export const CheckoutPage: React.FC = () => {
                       autoComplete="name"
                       value={customerName}
                       onChange={e => handleNameChange(e.target.value)}
-                      placeholder="ej: Roberto M. / IT Dept"
+                      placeholder={language === 'ES' ? 'ej: Roberto M. / IT Dept' : 'e.g.: Robert M. / IT Dept'}
                       className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-purple-300/50 focus:outline-none focus:border-yellow-400"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <User className="w-4 h-4" />
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-500">Para personalizar tu comprobante de compra</p>
+                  <p className="text-[10px] text-slate-500">
+                    {language === 'ES' ? 'Para personalizar tu comprobante de compra' : 'To customize your purchase receipt'}
+                  </p>
                 </div>
 
                 <div className="space-y-1.5">
                   <label htmlFor="customer-phone-input" className="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
-                    Teléfono / WhatsApp <span className="text-slate-500 font-normal">(Opcional)</span>
+                    {language === 'ES' ? 'Teléfono / WhatsApp' : 'Phone / WhatsApp'} <span className="text-slate-500 font-normal">({t('optionalLabel') || 'Opcional'})</span>
                   </label>
                   <div className="relative">
                     <input
@@ -796,7 +808,9 @@ export const CheckoutPage: React.FC = () => {
                       <Phone className="w-4 h-4" />
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-500">Para darte soporte directo en la activación</p>
+                  <p className="text-[10px] text-slate-500">
+                    {language === 'ES' ? 'Para darte soporte directo en la activación' : 'For direct activation assistance'}
+                  </p>
                 </div>
               </div>
 
@@ -805,13 +819,17 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex items-start gap-2.5">
                   <CreditCard className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">
-                    Para Colombia, México y otros países, por favor selecciona el pago con <strong>tarjeta de crédito o débito</strong>.
+                    {language === 'ES'
+                      ? 'Para Colombia, México y otros países, por favor selecciona el pago con tarjeta de crédito o débito.'
+                      : 'For international payments, please select credit or debit card payment.'}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">
-                    La información es encriptada y procesada de forma segura por <strong>Mercado Pago</strong>. <strong>Solo se te cobrará el monto elegido</strong>, sin recargos.
+                    {language === 'ES'
+                      ? 'La información es encriptada y procesada de forma segura por Mercado Pago. Solo se te cobrará el monto elegido, sin recargos.'
+                      : 'Information is encrypted and processed securely by Mercado Pago. You are only charged the selected amount, with no extra fees.'}
                   </span>
                 </div>
               </div>
@@ -820,7 +838,10 @@ export const CheckoutPage: React.FC = () => {
               <div className="p-3 bg-[#0f172a] rounded-lg border border-slate-700 flex items-start gap-2.5 text-xs text-slate-300">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="text-[11px] leading-relaxed">
-                  <strong>Privacidad y entrega garantizada:</strong> Tus datos están protegidos y se usan exclusivamente para asignarte tus licencias de software y emitir tu comprobante.
+                  <strong>{language === 'ES' ? 'Privacidad y entrega garantizada:' : 'Privacy and guaranteed delivery:'}</strong>{' '}
+                  {language === 'ES'
+                    ? 'Tus datos están protegidos y se usan exclusivamente para asignarte tus pedidos y emitir tu comprobante.'
+                    : 'Your data is protected and used exclusively to assign your orders and issue your receipt.'}
                 </span>
               </div>
             </div>
@@ -828,22 +849,29 @@ export const CheckoutPage: React.FC = () => {
             {/* Garantías de UpClic */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="p-4 rounded-lg bg-[#1e293b] border border-slate-700 flex items-center gap-3 text-white">
-                <div className="w-9 h-9 rounded-lg bg-slate-700/50 text-yellow-400 flex items-center justify-center shrink-0 border border-amber-400/30">
+                <div className="w-9 h-9 rounded-lg bg-slate-700/50 text-blue-400 flex items-center justify-center shrink-0 border border-blue-400/30">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">Licencias 100% Originales</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Activación permanente garantizada</p>
+                  <h4 className="text-xs font-bold text-white">
+                    {language === 'ES' ? 'Compra Segura 100%' : '100% Secure Purchase'}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'ES' ? 'Garantía oficial y soporte continuo' : 'Official warranty & ongoing support'}
+                  </p>
                 </div>
               </div>
-
               <div className="p-4 rounded-lg bg-[#1e293b] border border-slate-700 flex items-center gap-3 text-white">
                 <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">Entrega Inmediata</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Envío digital con guía paso a paso</p>
+                  <h4 className="text-xs font-bold text-white">
+                    {language === 'ES' ? 'Entrega Garantizada' : 'Guaranteed Delivery'}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'ES' ? 'Envío seguro y protegido' : 'Fast & protected dispatch'}
+                  </p>
                 </div>
               </div>
 
@@ -852,8 +880,12 @@ export const CheckoutPage: React.FC = () => {
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">Soporte Técnico</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Asistencia remota personalizada</p>
+                  <h4 className="text-xs font-bold text-white">
+                    {language === 'ES' ? 'Soporte Técnico' : 'Technical Support'}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'ES' ? 'Asistencia remota personalizada' : 'Personalized remote assistance'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -878,7 +910,7 @@ export const CheckoutPage: React.FC = () => {
                     <div className="flex justify-between text-emerald-300 font-bold bg-emerald-500/20 px-2.5 py-1.5 rounded-lg border border-emerald-500/30">
                       <span className="flex items-center gap-1">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                        Descuento {Math.round(discountRate * 100)}%:
+                        {language === 'ES' ? 'Descuento' : 'Discount'} {Math.round(discountRate * 100)}%:
                       </span>
                       <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
                     </div>

@@ -40,7 +40,7 @@ export const CartReminder: React.FC = () => {
         <div className="flex-1 pr-4">
           <h4 className="text-sm font-extrabold text-slate-800">¡No olvides tu carrito!</h4>
           <p className="text-[13px] text-slate-500 mt-1 leading-snug">
-            Tienes {totalQuantity} {totalQuantity === 1 ? 'producto esperando' : 'productos esperando'} ser {totalQuantity === 1 ? 'activado' : 'activados'}.
+            Tienes {totalQuantity} {totalQuantity === 1 ? 'producto' : 'productos'} esperando en el carrito.
           </p>
           
           <div className="mt-3 flex items-center gap-2">

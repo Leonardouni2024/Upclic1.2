@@ -27,7 +27,10 @@ export const CartDrawer: React.FC = () => {
     removeCoupon,
     couponFeedback,
     navigateToCheckout,
-    t
+    t,
+    language,
+    getProductName,
+    getDurationLabel
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState('');
@@ -141,13 +144,16 @@ export const CartDrawer: React.FC = () => {
                   item.selectedVariant === 'oem' ? t('licenseTypeOEM') || 'OEM Key' :
                   item.selectedVariant === 'retail' ? t('licenseTypeRetail') || 'Retail Key' : undefined
                 );
+                const itemName = getProductName(item.product);
+                const itemDuration = getDurationLabel(item.product.duration);
                 return (
                   <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
                     {/* 1:1 Image */}
                     <div className="w-16 h-16 rounded-lg bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
                       <img
                         src={item.product.imageUrl}
-                        alt={item.product.name}
+                        alt={itemName}
+                        referrerPolicy="no-referrer"
                         onError={(e) => {
                           e.currentTarget.src = item.product.fallbackImage;
                         }}
@@ -159,8 +165,8 @@ export const CartDrawer: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug" title={item.product.name}>
-                            {item.product.name}
+                          <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug" title={itemName}>
+                            {itemName}
                           </h4>
                           {displayVariantName && (
                             <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0066FF] border border-blue-200">
@@ -180,7 +186,7 @@ export const CartDrawer: React.FC = () => {
                       </div>
 
                       <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                        Unitario: {formatPrice(itemUnitPrice)} · {item.product.duration}
+                        {language === 'ES' ? 'Unitario' : 'Unit'}: {formatPrice(itemUnitPrice)} · {itemDuration}
                       </div>
 
                       {/* Quantity & Price Row */}
@@ -224,7 +230,7 @@ export const CartDrawer: React.FC = () => {
 
                         {/* Subtotal */}
                         <div className="text-right">
-                          <span className="text-[10px] text-slate-400 block font-normal leading-none mb-0.5">Subtotal</span>
+                          <span className="text-[10px] text-slate-400 block font-normal leading-none mb-0.5">{t('subtotal')}</span>
                           <span className="font-black text-sm text-slate-900 tabular-nums">
                             {formatPrice(itemSubtotal)}
                           </span>
@@ -234,15 +240,15 @@ export const CartDrawer: React.FC = () => {
                       {/* Action footer for item */}
                       <div className="mt-1.5 flex items-center justify-between text-[11px]">
                         <span className="text-[10px] text-slate-400">
-                          (Clic para editar cantidad)
+                          {t('clickToEdit')}
                         </span>
                         <button
                           type="button"
-                          onClick={() => removeItem(item.product.id, item.variantId)}
+                          onClick={() => removeItem(itemKey)}
                           className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3 h-3" />
-                          <span>Eliminar</span>
+                          <span>{t('remove') || (language === 'ES' ? 'Eliminar' : 'Remove')}</span>
                         </button>
                       </div>
                     </div>
@@ -266,14 +272,18 @@ export const CartDrawer: React.FC = () => {
                   return (
                     <div className="mx-6 mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-bold text-blue-800">Tienes un cupón de {parsed.discountPercent}% OFF</p>
-                        <p className="text-[10px] text-blue-600">Código: <span className="font-bold">{parsed.code}</span> (Expira en {mins} min)</p>
+                        <p className="text-xs font-bold text-blue-800">
+                          {language === 'ES' ? `Tienes un cupón de ${parsed.discountPercent}% OFF` : `You have a ${parsed.discountPercent}% OFF coupon`}
+                        </p>
+                        <p className="text-[10px] text-blue-600">
+                          {language === 'ES' ? 'Código:' : 'Code:'} <span className="font-bold">{parsed.code}</span> ({language === 'ES' ? `Expira en ${mins} min` : `Expires in ${mins} min`})
+                        </p>
                       </div>
                       <button 
                         onClick={() => applyCoupon(parsed.code)}
                         className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors"
                       >
-                        Aplicar
+                        {t('apply')}
                       </button>
                     </div>
                   );
@@ -288,9 +298,8 @@ export const CartDrawer: React.FC = () => {
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                     <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
-                    ¿Tienes un cupón promocional?
+                    {t('hasCouponPrompt')}
                   </span>
-
                 </div>
 
                 {appliedCoupon ? (
@@ -328,7 +337,7 @@ export const CartDrawer: React.FC = () => {
                       type="submit"
                       className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
                     >
-                      Aplicar
+                      {t('apply')}
                     </button>
                   </form>
                 )}
@@ -394,11 +403,11 @@ export const CartDrawer: React.FC = () => {
                   onClick={clearCart}
                   className="hover:text-red-600 transition-colors cursor-pointer"
                 >
-                  Vaciar carrito
+                  {t('clearCart')}
                 </button>
                 <span className="flex items-center gap-1 text-slate-600 font-medium">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Garantía oficial por 1 año
+                  {t('securePurchaseGuarantee')}
                 </span>
               </div>
             </div>

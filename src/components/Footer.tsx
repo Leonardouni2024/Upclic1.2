@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory } from '../types.ts';
-import { ShieldCheck, MessageCircle, Heart, Lock } from 'lucide-react';
+import { ShieldCheck, MessageCircle, Heart, Lock, Globe } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../products.ts';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
@@ -11,7 +11,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrders }) => {
-  const { setActiveCategory, navigateToHome, currentPath, t } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, currency, setIsRegionModalOpen, t } = useCart();
 
   const handleCategory = (category: ProductCategory) => {
     setActiveCategory(category);
@@ -23,7 +23,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
   };
 
   return (
-    <footer id="main-footer" className="bg-[#0a0717] text-slate-300 pt-16 pb-12 border-t border-slate-700">
+    <footer id="main-footer" className="bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-700">
           {/* Brand Info (2 cols on large screens) */}
@@ -45,7 +45,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                 <ShieldCheck className="w-3.5 h-3.5" />
                 {t('activationGuaranteeBadge')}
               </span>
-              <span className="flex items-center gap-1.5 text-yellow-400 font-bold bg-amber-400/10 px-2.5 py-1 rounded-lg border border-amber-400/20">
+              <span className="flex items-center gap-1.5 text-blue-400 font-bold bg-blue-400/10 px-2.5 py-1 rounded-lg border border-blue-400/20">
                 <Lock className="w-3.5 h-3.5" />
                 Mercado Pago
               </span>
@@ -60,14 +60,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
             <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
               <li>
                 <button
-                  onClick={() => handleCategory('combos')}
-                  className="hover:text-yellow-400 transition-colors cursor-pointer text-yellow-400 font-bold"
-                >
-                  {t('combos')}
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => handleCategory('office')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
@@ -80,6 +72,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t('windows')}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategory('combos')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  {t('combos')}
                 </button>
               </li>
               <li>
@@ -181,8 +181,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
               {t('paymentMethodLabel')}
             </h4>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-slate-700 text-xs font-bold text-yellow-400">
-                <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-slate-700 text-xs font-bold text-blue-400">
+                <span className="w-2 h-2 rounded-full bg-blue-400"></span>
                 <span>Mercado Pago</span>
               </div>
             </div>
@@ -194,9 +194,25 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal, onOpenAdminOrde
           <div className="flex flex-wrap items-center gap-3">
             <p>© {new Date().getFullYear()} UpClic. {t('allRightsReserved')}</p>
           </div>
-          <p className="flex items-center gap-1 text-slate-400">
-            <span>{t('legalNotice')}</span>
-          </p>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsRegionModalOpen(true)}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors cursor-pointer text-xs font-semibold"
+              title="Cambiar país, moneda e idioma"
+            >
+              <Globe className="w-3.5 h-3.5 text-blue-400" />
+              <span>
+                {currency === 'PEN' && '🇵🇪 Perú (S/ PEN)'}
+                {currency === 'COP' && '🇨🇴 Colombia ($ COP)'}
+                {currency === 'MXN' && '🇲🇽 México ($ MXN)'}
+                {currency === 'USD' && '🇺🇸 USA / Global ($ USD)'}
+              </span>
+            </button>
+            <p className="flex items-center gap-1 text-slate-400">
+              <span>{t('legalNotice')}</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

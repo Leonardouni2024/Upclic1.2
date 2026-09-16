@@ -1,7 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
-import { calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS } from '../products.ts';
-import { getTranslation, translations } from '../utils/i18n.ts';
+import { calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS, formatPrice } from '../products.ts';
+import { 
+  getTranslation, 
+  translations, 
+  getProductName, 
+  getProductDesc, 
+  getProductFeatures, 
+  getProductCompatibility, 
+  getDurationLabel, 
+  getBadgeLabel 
+} from '../utils/i18n.ts';
 
 interface ToastData {
   id: string;
@@ -33,7 +42,7 @@ interface CartContextType {
   appliedCoupon: string;
   applyCoupon: (code: string) => { success: boolean; message: string };
   removeCoupon: () => void;
-    couponFeedback: { type: 'success' | 'error' | 'info'; message: string } | null;
+  couponFeedback: { type: 'success' | 'error' | 'info'; message: string } | null;
   toasts: ToastData[];
   removeToast: (id: string) => void;
   // Navigation & Filtering
@@ -48,7 +57,7 @@ interface CartContextType {
   currentProductSlug?: string;
   // Region, Currency & Language System
   currency: Currency;
-  setCurrency: (currency: Currency) => void;
+  setCurrency: (currency: Currency, manual?: boolean, newLang?: 'ES' | 'EN') => void;
   language: 'ES' | 'EN';
   setLanguage: (language: 'ES' | 'EN') => void;
   exchangeRate: number;
@@ -57,6 +66,12 @@ interface CartContextType {
   setIsRegionModalOpen: (open: boolean) => void;
   formatPrice: (priceInPEN: number) => string;
   t: (key: keyof typeof translations['ES']) => string;
+  getProductName: (product: { id: string; name: string }) => string;
+  getProductDesc: (product: { id: string; description: string }) => string;
+  getProductFeatures: (product: { id: string; features?: string[] }) => string[];
+  getProductCompatibility: (product: { id: string; compatibility?: string }) => string;
+  getDurationLabel: (duration: string) => string;
+  getBadgeLabel: (badge?: string) => string | undefined;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -130,13 +145,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
 
-  const setCurrency = (c: Currency) => {
+  const setCurrency = (c: Currency, manual: boolean = true, newLang?: 'ES' | 'EN') => {
     setCurrencyState(c);
-    const targetLang = c === 'USD' ? 'EN' : 'ES';
+    let targetLang = language;
+    if (newLang) {
+      targetLang = newLang;
+    } else if (c === 'PEN' || c === 'COP' || c === 'MXN') {
+      targetLang = 'ES';
+    }
     setLanguageState(targetLang);
     try {
       localStorage.setItem('upclic_currency', c);
       localStorage.setItem('upclic_language', targetLang);
+      if (manual) {
+        localStorage.setItem('upclic_currency_manual', 'true');
+      }
     } catch {}
   };
 
@@ -144,6 +167,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLanguageState(l);
     try {
       localStorage.setItem('upclic_language', l);
+      localStorage.setItem('upclic_currency_manual', 'true');
     } catch {}
   };
 
@@ -154,46 +178,27 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {}
   };
 
-  // Fetch real-time PEN to USD exchange rate from free API
+  // Fetch real-time exchange rates from API
   useEffect(() => {
     let isMounted = true;
     
-    async function detectCountryAndCurrency() {
-      if (sessionStorage.getItem('upclic_currency_detected')) return;
-      try {
-        const geoRes = await fetch('https://get.geojs.io/v1/ip/country.json?_t=' + Date.now());
-        if (geoRes.ok) {
-          const geoData = await geoRes.json();
-          const country = geoData.country;
-          let newCurrency: Currency = 'USD'; // Default for US, Ecuador, etc.
-          if (country === 'CO') newCurrency = 'COP';
-          else if (country === 'PE') newCurrency = 'PEN';
-          else if (country === 'MX') newCurrency = 'MXN';
-          
-          if (isMounted) {
-            setCurrencyState(newCurrency);
-            try {
-              localStorage.setItem('upclic_currency', newCurrency);
-              sessionStorage.setItem('upclic_currency_detected', 'true');
-            } catch {}
-          }
-        }
-      } catch {
-        // Silently fail
-      }
-    }
-    
-    async function fetchLiveRate() {
+    async function fetchLiveRates() {
       try {
         const res = await fetch('https://open.er-api.com/v6/latest/USD');
         if (res.ok) {
           const data = await res.json();
-          if (data && data.rates && data.rates.PEN) {
-            const penRate = parseFloat(data.rates.PEN);
-            if (!isNaN(penRate) && penRate > 0 && isMounted) {
-              setExchangeRateState(penRate);
+          if (data && data.rates) {
+            const pen = parseFloat(data.rates.PEN) || 3.75;
+            const cop = parseFloat(data.rates.COP) || 4100;
+            const mxn = parseFloat(data.rates.MXN) || 19.8;
+            if (isMounted) {
+              setExchangeRateState(pen);
               try {
-                localStorage.setItem('upclic_exchange_rate', penRate.toString());
+                localStorage.setItem('upclic_exchange_rate', pen.toString());
+                localStorage.setItem(
+                  'upclic_rates',
+                  JSON.stringify({ PEN: pen, COP: cop, MXN: mxn })
+                );
               } catch {}
             }
           }
@@ -203,18 +208,139 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
     
-    detectCountryAndCurrency();
-    fetchLiveRate();
-    
+    fetchLiveRates();
+    return () => { isMounted = false; };
+  }, []);
+
+  // Auto-detect visitor's country on initial entry if not manually set
+  useEffect(() => {
+    let isMounted = true;
+
+    async function detectCountry() {
+      if (typeof window === 'undefined') return;
+      const manualSelection = localStorage.getItem('upclic_currency_manual');
+      if (manualSelection === 'true') {
+        return; // User has chosen currency explicitly, preserve preference
+      }
+
+      let detectedCountry: string | null = null;
+
+      // 1. Try internal backend route
+      try {
+        const res = await fetch('/api/geo');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
+            detectedCountry = data.country.toUpperCase();
+          }
+        }
+      } catch {}
+
+      // 2. Try fast country lookup fallback
+      if (!detectedCountry) {
+        try {
+          const res = await fetch('https://api.country.is/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.country) {
+              detectedCountry = String(data.country).toUpperCase();
+            }
+          }
+        } catch {}
+      }
+
+      // 3. Try ipwho.is fallback
+      if (!detectedCountry) {
+        try {
+          const res = await fetch('https://ipwho.is/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.country_code) {
+              detectedCountry = String(data.country_code).toUpperCase();
+            }
+          }
+        } catch {}
+      }
+
+      // 4. Try ipapi.co fallback
+      if (!detectedCountry) {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.country_code) {
+              detectedCountry = String(data.country_code).toUpperCase();
+            }
+          }
+        } catch {}
+      }
+
+      if (!isMounted || !detectedCountry) return;
+
+      localStorage.setItem('upclic_detected_country', detectedCountry);
+
+      // South America & Latin America countries
+      const LATAM_COUNTRIES = [
+        'AR', 'BO', 'BR', 'CL', 'EC', 'FK', 'GF', 'GY', 'PY', 'SR', 'UY', 'VE',
+        'CR', 'CU', 'DO', 'GT', 'HN', 'NI', 'PA', 'PR', 'SV', 'BZ'
+      ];
+
+      if (detectedCountry === 'PE') {
+        // Available country: Peru
+        setCurrencyState('PEN');
+        setLanguageState('ES');
+        try {
+          localStorage.setItem('upclic_currency', 'PEN');
+          localStorage.setItem('upclic_language', 'ES');
+        } catch {}
+      } else if (detectedCountry === 'CO') {
+        // Available country: Colombia
+        setCurrencyState('COP');
+        setLanguageState('ES');
+        try {
+          localStorage.setItem('upclic_currency', 'COP');
+          localStorage.setItem('upclic_language', 'ES');
+        } catch {}
+      } else if (detectedCountry === 'MX') {
+        // Available country: Mexico
+        setCurrencyState('MXN');
+        setLanguageState('ES');
+        try {
+          localStorage.setItem('upclic_currency', 'MXN');
+          localStorage.setItem('upclic_language', 'ES');
+        } catch {}
+      } else if (LATAM_COUNTRIES.includes(detectedCountry)) {
+        // Other countries in South America or Latin America: USD currency and Spanish language
+        setCurrencyState('USD');
+        setLanguageState('ES');
+        try {
+          localStorage.setItem('upclic_currency', 'USD');
+          localStorage.setItem('upclic_language', 'ES');
+        } catch {}
+      } else if (['US', 'CA', 'GB', 'AU', 'NZ', 'IE'].includes(detectedCountry)) {
+        setCurrencyState('USD');
+        setLanguageState('EN');
+        try {
+          localStorage.setItem('upclic_currency', 'USD');
+          localStorage.setItem('upclic_language', 'EN');
+        } catch {}
+      } else {
+        const isSpanish = typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('es');
+        setCurrencyState('USD');
+        setLanguageState(isSpanish ? 'ES' : 'EN');
+        try {
+          localStorage.setItem('upclic_currency', 'USD');
+          localStorage.setItem('upclic_language', isSpanish ? 'ES' : 'EN');
+        } catch {}
+      }
+    }
+
+    detectCountry();
     return () => { isMounted = false; };
   }, []);
 
   const formatPriceLocal = (priceInPEN: number): string => {
-    if (currency === 'USD') {
-      const usdPrice = priceInPEN / (exchangeRate || 3.75);
-      return `$ ${usdPrice.toFixed(2)}`;
-    }
-    return `S/ ${priceInPEN.toFixed(2)}`;
+    return formatPrice(priceInPEN, currency, exchangeRate);
   };
 
   // Dynamic Coupon generation logic
@@ -608,7 +734,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isRegionModalOpen,
         setIsRegionModalOpen,
         formatPrice: formatPriceLocal,
-        t: (key: keyof typeof translations['ES']) => getTranslation(language, key)
+        t: (key: keyof typeof translations['ES']) => getTranslation(language, key),
+        getProductName: (p: { id: string; name: string }) => getProductName(p, language),
+        getProductDesc: (p: { id: string; description: string }) => getProductDesc(p, language),
+        getProductFeatures: (p: { id: string; features?: string[] }) => getProductFeatures(p, language),
+        getProductCompatibility: (p: { id: string; compatibility?: string }) => getProductCompatibility(p, language),
+        getDurationLabel: (d: string) => getDurationLabel(d, language),
+        getBadgeLabel: (b?: string) => getBadgeLabel(b, language)
       }}
     >
       {children}

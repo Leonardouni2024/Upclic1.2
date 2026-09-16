@@ -12,18 +12,8 @@ export const BestSellersCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // Selected top bestselling products for the reel
-  const bestSellers = [
-    products.find(p => p.id === 'prod-combo-win11-office2024'),
-    products.find(p => p.slug === 'office-professional-plus-2024'),
-    products.find(p => p.slug === 'office-professional-plus-2021'),
-    products.find(p => p.slug === 'microsoft-365'),
-    products.find(p => p.slug === 'windows-11-pro'),
-    products.find(p => p.slug === 'windows-10-pro'),
-    products.find(p => p.slug === 'project-professional-2024'),
-    products.find(p => p.slug === 'visio-professional-2024'),
-    products.find(p => p.slug === 'windows-8-1-pro'),
-  ].filter((p): p is typeof products[0] => Boolean(p));
-
+  const bestSellers = products.slice(products.length - 2, products.length).concat(products.slice(0, 7));
+  
   const totalItems = bestSellers.length;
 
   const scrollToIndex = useCallback((index: number) => {
@@ -78,13 +68,13 @@ export const BestSellersCarousel: React.FC = () => {
   };
 
   return (
-    <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-[#250953] to-[#170c36] text-white border-b border-slate-700 overflow-hidden">
+    <section id="mas-vendidos-section" className="py-12 bg-gradient-to-b from-blue-600 to-blue-800 text-white border-b border-slate-700 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-300">
-              <Flame className="w-6 h-6 fill-slate-950" />
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-white text-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 border border-blue-200">
+              <Flame className="w-6 h-6 fill-blue-600" />
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
@@ -116,7 +106,7 @@ export const BestSellersCarousel: React.FC = () => {
                 key={product.id}
                 className={`w-[270px] sm:w-[290px] lg:w-[305px] shrink-0 snap-center transition-all duration-300 ${
                   currentIndex === idx
-                    ? 'scale-[1.02] ring-2 ring-yellow-400 rounded-lg shadow-md shadow-purple-950/80'
+                    ? 'scale-[1.02] ring-2 ring-blue-400 rounded-lg shadow-md shadow-blue-950/40'
                     : 'opacity-90 hover:opacity-100'
                 }`}
               >
@@ -133,7 +123,7 @@ export const BestSellersCarousel: React.FC = () => {
                 onClick={() => scrollToIndex(idx)}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   currentIndex === idx
-                    ? 'w-7 bg-yellow-400 shadow-md shadow-amber-500/50'
+                    ? 'w-7 bg-white shadow-md shadow-white/50'
                     : 'w-2 bg-white/30 hover:bg-white/50'
                 }`}
                 aria-label={`Ir al producto ${idx + 1}`}

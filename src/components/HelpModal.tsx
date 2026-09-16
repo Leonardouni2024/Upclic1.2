@@ -69,31 +69,28 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Cómo y cuándo recibo mi licencia?</h4>
+              <h4 className="font-bold text-slate-900 mb-1">¿Cómo y cuándo recibo mi producto?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Será enviado a su correo electrónico tras confirmar el pago. Puede tardar de 10 a 25 min en llegar con su clave de producto original (o credenciales oficiales) y las instrucciones de activación correspondientes.
+                Será enviado a la dirección indicada tras confirmar el pago. Los tiempos de envío varían entre 2 a 5 días hábiles a nivel nacional, dependiendo de tu ubicación.
               </p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Debo enviar captura o comprobante de pago?</h4>
               <p className="text-slate-600 leading-relaxed">
-                No. Mercado Pago valida la transacción de forma automática. El sistema genera tu pedido y despacha tus datos de activación a tu correo sin requerir comprobantes manuales.
+                No. Mercado Pago valida la transacción de forma automática. El sistema genera tu pedido y despacha tus datos de envío a tu correo sin requerir comprobantes manuales.
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tienen las licencias?</h4>
+              <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tienen los productos?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Cuentan con garantía oficial de activación de 1 año. Si se presenta cualquier error durante la instalación o el canje, nuestro equipo técnico te asiste de inmediato o te proporciona una clave de reemplazo.
+                Cuentan con garantía oficial de fábrica y de compra. Si el producto presenta algún fallo de fábrica o error de envío, nuestro equipo te asiste de inmediato para aplicar la garantía.
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Puedo reinstalar si formateo mi equipo?</h4>
-              <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
-                <p>• <strong className="text-slate-800">Windows OEM:</strong> Se asocia a la placa madre. Puedes formatear e instalar cuantas veces requieras en el mismo equipo sin perder la licencia.</p>
-                <p>• <strong className="text-slate-800">Windows Retail:</strong> Se vincula a tu cuenta Microsoft y permite trasladarse a otro equipo en el futuro.</p>
-                <p>• <strong className="text-slate-800">Microsoft Office 365:</strong> Reinstalable iniciando sesión con tus credenciales en portal.office.com en hasta 5 dispositivos.</p>
-                <p>• <strong className="text-slate-800">Office permanente:</strong> Licencia perpetua para 1 equipo sin pagos adicionales.</p>
-              </div>
+              <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los envíos e importaciones?</h4>
+              <p className="text-slate-600 leading-relaxed">
+                Los productos catalogados como importación toman entre 7 a 15 días hábiles en llegar, mientras que el stock local se entrega rápidamente. Recibirás tu código de seguimiento por correo.
+              </p>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los descuentos?</h4>
@@ -127,7 +124,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-blue-600" />
-                <span className="font-bold">Hours: Monday to Sunday 24/7 (Digital Delivery)</span>
+                <span className="font-bold">Hours: Monday to Sunday 24/7 (Continuous Support)</span>
               </div>
             </div>
           </div>
@@ -153,7 +150,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-blue-600" />
-                <span className="font-bold">Horario: Lunes a Domingo 24/7 (Entrega Digital)</span>
+                <span className="font-bold">Horario: Lunes a Domingo 24/7 (Atención Continua)</span>
               </div>
             </div>
           </div>
@@ -162,19 +159,17 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
       case 'sales_terms':
         return isEn ? (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
-            <h4 className="font-bold text-slate-900">Software Sales and Delivery Terms:</h4>
-            <p>1. All licenses sold by UpClic correspond to original digital alphanumeric keys or official access credentials for direct activation.</p>
-            <p>2. Delivery is carried out digitally to your email address after payment confirmation on Mercado Pago (usually 10 to 25 minutes).</p>
-            <p>3. 1-year official activation warranty: in case of any technical issue during activation, we provide assistance or key replacement.</p>
-            <p>4. Perpetual licenses are a one-time payment with no recurring charges for 1 PC.</p>
+            <h4 className="font-bold text-slate-900">General Sales and Delivery Terms:</h4>
+            <p>1. All products sold by UpClic correspond to high quality items and are backed by official warranty.</p>
+            <p>2. Delivery is carried out physically to your address after payment confirmation on Mercado Pago.</p>
+            <p>3. Official warranty: in case of any issue during delivery, we provide assistance or replacement.</p>
           </div>
         ) : (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
-            <h4 className="font-bold text-slate-900">Condiciones de Venta y Entrega de Software:</h4>
-            <p>1. Todas las licencias comercializadas por UpClic corresponden a claves alfanuméricas digitales originales o credenciales oficiales de acceso directo.</p>
-            <p>2. La entrega se efectúa de manera digital a su correo electrónico tras la confirmación del pago en Mercado Pago (típicamente de 10 a 25 min).</p>
-            <p>3. Garantía de activación oficial de 1 año: ante cualquier inconveniente técnico durante la activación, brindamos asistencia técnica o reemplazo inmediato.</p>
-            <p>4. Las licencias permanentes son de pago único sin cargos recurrentes para 1 equipo.</p>
+            <h4 className="font-bold text-slate-900">Condiciones de Venta y Entrega:</h4>
+            <p>1. Todos los productos comercializados por UpClic corresponden a artículos de alta calidad y cuentan con garantía oficial.</p>
+            <p>2. La entrega se efectúa a la dirección indicada tras la confirmación del pago en Mercado Pago (dependiendo de la ubicación, de 2 a 5 días hábiles).</p>
+            <p>3. Garantía oficial de compra: ante cualquier inconveniente técnico o de envío, brindamos asistencia o reemplazo.</p>
           </div>
         );
       case 'privacy':

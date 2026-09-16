@@ -229,7 +229,7 @@ export const UpClicLogo: React.FC<UpClicLogoProps> = ({
             theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
           }`}
         >
-          Licencias Digitales
+          Tienda Online
         </span>
       </div>
     </div>

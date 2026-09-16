@@ -33,7 +33,21 @@ interface ProductDetailPageProps {
 }
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
-  const { addItem, navigateToHome, navigateToCheckout, t, currency } = useCart();
+  const { 
+    addItem, 
+    navigateToHome, 
+    navigateToCheckout, 
+    t, 
+    currency, 
+    language,
+    formatPrice,
+    getProductName,
+    getProductDesc,
+    getProductFeatures,
+    getProductCompatibility,
+    getDurationLabel,
+    getBadgeLabel
+  } = useCart();
   const { getProductStats } = useReviews();
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -47,6 +61,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   );
   
   const [showScarcity, setShowScarcity] = useState<{ show: boolean, count: number }>({ show: false, count: 0 });
+
+  const productName = getProductName(product);
+  const productDesc = getProductDesc(product);
+  const productFeatures = getProductFeatures(product);
+  const productCompat = getProductCompatibility(product);
+  const durationLabel = getDurationLabel(product.duration);
+  const badgeLabel = getBadgeLabel(product.badge);
 
   useEffect(() => {
     // Generate scarcity badge after 15-20 seconds on the page
@@ -133,9 +154,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
   const faqs = [
     {
-      q: product.isAccountAccess
-        ? t('productFaqTitle1')
-        : t('productFaqTitle1'),
+      q: t('productFaqTitle1'),
       a: product.isAccountAccess
         ? t('productFaqAns1M365')
         : t('productFaqAns1Default')
@@ -145,7 +164,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
       a: t('productFaqAns2')
     },
     {
-      q: '¿La licencia es original y permanente?',
+      q: t('productFaqTitle3'),
       a: product.duration === '1 año'
         ? t('productFaqAns3M365')
         : product.isAccountAccess
@@ -153,11 +172,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         : t('productFaqAns3Default')
     },
     {
-      q: '¿Qué garantía tengo al comprar en UpClic?',
+      q: t('productFaqTitle4'),
       a: t('productFaqAns4')
     },
     {
-      q: '¿Puedo reinstalar el software si formateo mi PC?',
+      q: t('productFaqTitle5'),
       a: product.isAccountAccess
         ? t('productFaqAns5M365')
         : product.category === 'windows'
@@ -176,11 +195,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#1d123a] border border-slate-700 text-xs sm:text-sm font-bold text-white hover:text-yellow-400 hover:border-yellow-400 shadow-md transition-all cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 text-yellow-400" />
-            <span>Volver a la tienda</span>
+            <span>{t('backToStore')}</span>
           </button>
 
           <span className="text-xs font-semibold text-slate-300 hidden sm:inline">
-            Inicio / {product.category.toUpperCase()} / {product.name}
+            {t('home')} / {product.category.toUpperCase()} / {productName}
           </span>
         </div>
 
@@ -192,9 +211,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               <div className="relative w-full max-w-[480px] aspect-square rounded-lg bg-[#0f172a] p-8 border border-slate-800 flex items-center justify-center group">
                 {/* Badges on Top-Left */}
                 <div className="absolute top-3.5 left-3.5 flex flex-col items-start gap-1.5 z-10">
-                  {product.badge && (
+                  {badgeLabel && (
                     <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold rounded-md bg-[#334155] text-white uppercase tracking-wider">
-                      {product.badge}
+                      {badgeLabel}
                     </span>
                   )}
                   {product.cloudStorage && (
@@ -213,12 +232,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   aria-label={t('productShareTitle')}
                 >
                   <Share2 className="w-3.5 h-3.5 text-yellow-400" />
-                  <span className="text-[11px] sm:text-xs font-bold">Compartir</span>
+                  <span className="text-[11px] sm:text-xs font-bold">{t('share')}</span>
                 </button>
 
                 <img
                   src={imgSrc}
-                  alt={product.name}
+                  alt={productName}
+                  referrerPolicy="no-referrer"
                   onError={() => {
                     if (imgSrc !== product.fallbackImage) {
                       setImgSrc(product.fallbackImage);
@@ -232,11 +252,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-slate-300">
                 <span className="flex items-center gap-1.5 text-white">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Activación oficial garantizada
+                  {t('officialActivationGuaranteed')}
                 </span>
                 <span className="flex items-center gap-1.5 text-white">
                   <Lock className="w-4 h-4 text-yellow-400" />
-                  Pago seguro Mercado Pago
+                  {currency === 'PEN' ? t('securePaymentMercadoPago') : (language === 'ES' ? 'Pago seguro garantizado' : 'Secure payment guaranteed')}
                 </span>
               </div>
             </div>
@@ -283,21 +303,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Product Name */}
                 <h1 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
-                  {product.name}
+                  {productName}
                 </h1>
 
                 {/* License Tag & Cloud pill */}
                 <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-white/10 text-purple-100 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-700">
-                    Modalidad: {product.duration}
+                    {t('modeLabel')} {durationLabel}
                   </span>
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Licencia 100% Original Microsoft</span>
+                    <span>{t('license100Original')}</span>
                   </span>
                   <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-400/20 text-amber-300 text-[11px] sm:text-xs font-bold border border-amber-400/30 flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
-                    <span>Entrega digital inmediata</span>
+                    <span>{t('instantDigitalDeliveryPill')}</span>
                   </span>
                 </div>
 
@@ -306,7 +326,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   <div className="mt-5 p-4 rounded-lg bg-[#0f172a] border border-slate-700">
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-xs font-black uppercase text-slate-300 tracking-wider">
-                        Selecciona el tipo de clave:
+                        {t('selectKeyType')}
                       </span>
                       <span className="text-[11px] font-bold text-slate-950 bg-yellow-400 px-2 py-0.5 rounded-md border border-amber-300">
                         {currentVariant?.name} ({formatPrice(activePrice)})
@@ -385,7 +405,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 {/* Quantity selector */}
                 <div className="mt-6 flex items-center gap-4">
                   <span className="text-xs font-bold uppercase text-slate-300 tracking-wider">
-                    Cantidad:
+                    {language === 'ES' ? 'Cantidad:' : 'Quantity:'}
                   </span>
                   <div className="flex items-center rounded-lg border border-slate-600 bg-white/10 p-0.5">
                     <button
@@ -435,19 +455,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-300">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Garantía de Activación</span>
+                        <span>{t('purchaseWarranty')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Entrega Inmediata al Email</span>
+                        <span>{t('instantEmailDelivery')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Soporte Remoto Gratuito</span>
+                        <span>{t('freeRemoteSupport')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Pago Seguro y Encriptado</span>
+                        <span>{t('secureEncryptedPayment')}</span>
                       </div>
                     </div>
                   </div>
@@ -465,17 +485,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white">
               <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-yellow-400" />
-                <span>Descripción del Producto</span>
+                <span>{t('productDescriptionTitle')}</span>
               </h3>
               <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed">
-                {product.description}
+                {productDesc}
               </p>
 
               <h4 className="font-extrabold text-amber-300 text-xs sm:text-sm mt-6 mb-3 uppercase tracking-wider">
-                Características Principales:
+                {t('keyFeaturesTitle')}
               </h4>
               <ul className="space-y-2.5">
-                {product.features.map((feature, i) => (
+                {productFeatures.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-purple-100">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <span>{feature}</span>
@@ -488,20 +508,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white">
               <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-yellow-400" />
-                <span>Compatibilidad y Requisitos</span>
+                <span>{t('compatibilityAndRequirements')}</span>
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-medium mb-4 bg-[#0f172a] p-4 rounded-lg border border-slate-700">
-                {product.compatibility}
+                {productCompat}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-300">
                 <div className="p-3.5 rounded-lg border border-slate-700 bg-[#0f172a]">
-                  <span className="font-bold text-white block mb-1">Modalidad de Licencia:</span>
-                  <span>{product.duration}</span>
+                  <span className="font-bold text-white block mb-1">{t('licenseDurationLabel')}</span>
+                  <span>{durationLabel}</span>
                 </div>
                 <div className="p-3.5 rounded-lg border border-slate-700 bg-[#0f172a]">
                   <span className="font-bold text-white block mb-1">
-                    Tipo de Entrega / Clave:
+                    {t('deliveryTypeLabel')}
                   </span>
                   <span>
                     {product.id === 'prod-m365'
@@ -517,7 +537,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white h-fit">
             <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
               <HelpCircle className="w-5 h-5 text-yellow-400" />
-              <span>Preguntas Frecuentes</span>
+              <span>{t('frequentlyAskedQuestions')}</span>
             </h3>
 
             <div className="space-y-3">
@@ -558,13 +578,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         <div className="mt-12">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Productos Relacionados
+              {t('relatedProductsTitle')}
             </h3>
             <button
               onClick={navigateToHome}
               className="text-xs sm:text-sm font-bold text-yellow-400 hover:underline cursor-pointer"
             >
-              Ver todo el catálogo →
+              {t('viewAllCatalogArrow')}
             </button>
           </div>
 

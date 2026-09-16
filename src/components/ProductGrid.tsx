@@ -35,39 +35,38 @@ export const ProductGrid: React.FC = () => {
 
   const categories: { key: ProductCategory; label: string; count?: number }[] = [
     { key: 'all', label: t('allProducts') },
-    { key: 'combos', label: t('combos').toUpperCase() },
     { key: 'office', label: t('office').toUpperCase() },
     { key: 'windows', label: t('windows').toUpperCase() },
+    { key: 'combos', label: t('combos').toUpperCase() },
     { key: 'project-visio', label: t('projectVisio').toUpperCase() },
-    { key: 'top', label: t('topLicenses').toUpperCase() },
     { key: 'bestsellers', label: t('bestSellers').toUpperCase() },
     { key: 'offers', label: t('deals').toUpperCase() }
   ];
 
   return (
-    <section id="catalogo-section" className="py-14 bg-[#0f172a] text-white border-b border-slate-700">
+    <section id="catalogo-section" className="py-14 bg-slate-50 text-slate-900 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-400/15 text-yellow-400 text-xs font-bold uppercase tracking-wider mb-2.5 border border-yellow-400/30 shadow-md">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-2.5 border border-blue-200 shadow-sm">
               <span>{t('catalogBadge')}</span>
             </div>
-            <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+            <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
               {t('catalogTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1 sm:mt-1.5 font-medium">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 font-medium">
               {t('catalogSubtitle')}
             </p>
           </div>
 
           {/* Results count pill */}
-          <div className="text-[11px] sm:text-xs font-semibold text-slate-300 bg-white/10 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-700 shadow-sm self-start md:self-auto flex items-center gap-1.5">
+          <div className="text-[11px] sm:text-xs font-semibold text-slate-600 bg-white px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-200 shadow-sm self-start md:self-auto flex items-center gap-1.5">
             <span>Mostrando</span>
-            <span className="font-black text-slate-950 bg-yellow-400 px-2 py-0.5 rounded-md tabular-nums">
+            <span className="font-black text-white bg-blue-600 px-2 py-0.5 rounded-md tabular-nums">
               {filteredProducts.length}
             </span>
-            <span>productos</span>
+            <span>licencias</span>
             {searchQuery && <span className="text-white font-bold"> para "{searchQuery}"</span>}
           </div>
         </div>
@@ -83,8 +82,8 @@ export const ProductGrid: React.FC = () => {
                 onClick={() => setActiveCategory(cat.key)}
                 className={`px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer font-bold ${
                   isActive
-                    ? 'bg-yellow-400 text-slate-950 font-black shadow-lg shadow-amber-500/20 border border-amber-300'
-                    : 'bg-[#1d123a] hover:bg-[#281950] text-purple-100 border border-slate-700 hover:border-slate-600'
+                    ? 'bg-blue-600 text-white font-black shadow-sm border border-blue-700'
+                    : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {cat.label}
@@ -101,22 +100,22 @@ export const ProductGrid: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-[#1e293b] rounded-lg p-12 text-center border border-slate-700 shadow-md max-w-lg mx-auto">
-            <div className="w-16 h-16 rounded-lg bg-white/10 border border-slate-700 flex items-center justify-center mx-auto mb-4 text-slate-400">
+          <div className="bg-white rounded-lg p-12 text-center border border-slate-200 shadow-sm max-w-lg mx-auto">
+            <div className="w-16 h-16 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
               <SearchX className="w-8 h-8 stroke-[1.5]" />
             </div>
-            <h3 className="text-lg font-bold text-white">No se encontraron productos</h3>
-            <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-              No encontramos coincidencias para "<span className="font-semibold text-white">{searchQuery}</span>". Prueba buscando "Office", "Windows 11", "Pro" o "2024".
+            <h3 className="text-lg font-bold text-slate-900">{t('noProductsMatch')}</h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
+              No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Windows 11, Office 2024 o Combos.
             </p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setActiveCategory('all');
               }}
-              className="mt-6 px-5 py-2.5 rounded-lg bg-yellow-400 text-slate-950 text-xs sm:text-sm font-black hover:bg-[#eab308] shadow-md transition-all cursor-pointer border border-amber-300"
+              className="mt-6 px-5 py-2.5 rounded-lg bg-blue-600 text-white text-xs sm:text-sm font-black hover:bg-blue-700 shadow-sm transition-all cursor-pointer border border-blue-700"
             >
-              Ver todos los productos
+              {t('viewAllCatalog')}
             </button>
           </div>
         )}

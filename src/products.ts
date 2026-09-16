@@ -23,21 +23,40 @@ export function getStoredExchangeRate(): number {
   return 3.75;
 }
 
+export function getStoredExchangeRates(): { PEN: number; COP: number; MXN: number } {
+  const fallback = { PEN: 3.75, COP: 4100, MXN: 19.8 };
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('upclic_rates');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          PEN: Number(parsed.PEN) || fallback.PEN,
+          COP: Number(parsed.COP) || fallback.COP,
+          MXN: Number(parsed.MXN) || fallback.MXN
+        };
+      }
+    } catch {}
+  }
+  return fallback;
+}
+
 export function formatPrice(priceInPEN: number, customCurrency?: Currency, customRate?: number): string {
   const currency = customCurrency || getStoredCurrency();
-  const penRate = customRate || getStoredExchangeRate();
+  const rates = getStoredExchangeRates();
+  const penRate = customRate || rates.PEN || 3.75;
   const priceInUSD = priceInPEN / (penRate || 3.75);
 
   if (currency === 'USD') {
     return `$ ${priceInUSD.toFixed(2)} USD`;
   }
   if (currency === 'COP') {
-    const copRate = 4100;
+    const copRate = rates.COP || 4100;
     const priceInCOP = Math.round(priceInUSD * copRate);
     return `$ ${priceInCOP.toLocaleString('es-CO')} COP`;
   }
   if (currency === 'MXN') {
-    const mxnRate = 19.8;
+    const mxnRate = rates.MXN || 19.8;
     const priceInMXN = priceInUSD * mxnRate;
     return `$ ${priceInMXN.toFixed(2)} MXN`;
   }
@@ -46,18 +65,19 @@ export function formatPrice(priceInPEN: number, customCurrency?: Currency, custo
 
 export function formatPriceNoSymbol(priceInPEN: number, customCurrency?: Currency, customRate?: number): string {
   const currency = customCurrency || getStoredCurrency();
-  const penRate = customRate || getStoredExchangeRate();
+  const rates = getStoredExchangeRates();
+  const penRate = customRate || rates.PEN || 3.75;
   const priceInUSD = priceInPEN / (penRate || 3.75);
 
   if (currency === 'USD') {
     return priceInUSD.toFixed(2);
   }
   if (currency === 'COP') {
-    const copRate = 4100;
+    const copRate = rates.COP || 4100;
     return Math.round(priceInUSD * copRate).toLocaleString('es-CO');
   }
   if (currency === 'MXN') {
-    const mxnRate = 19.8;
+    const mxnRate = rates.MXN || 19.8;
     return (priceInUSD * mxnRate).toFixed(2);
   }
   return priceInPEN.toFixed(2);
@@ -229,7 +249,7 @@ export const products: Product[] = [
     slug: 'office-2024-pro-plus',
     name: 'Microsoft Office 2024 Professional Plus',
     description: 'Licencia digital oficial permanente para 1 PC. Incluye Word, Excel, PowerPoint, Outlook, OneNote, Access y Publisher 2024. Licencia vitalicia vinculable a tu cuenta de Microsoft.',
-    price: 42.90,
+    price: 27.00,
     oldPrice: 120.00,
     duration: 'Permanente (De por vida)',
     category: 'office',
@@ -266,11 +286,52 @@ export const products: Product[] = [
     installationSteps: OFFICE_STANDARD_STEPS
   },
   {
+    id: 'prod-office-2024-3pc',
+    slug: 'office-2024-pro-plus-3-pc',
+    name: 'Microsoft Office 2024 Professional Plus (3 PC)',
+    description: 'Paquete de licencias oficiales permanentes para activar hasta 3 computadoras (PC) independientes. Incluye Word, Excel, PowerPoint, Outlook, OneNote, Access y Publisher 2024 sin pagos mensuales ni suscripciones.',
+    price: 70.00,
+    oldPrice: 190.00,
+    duration: 'Permanente (De por vida)',
+    category: 'office',
+    imageUrl: '/products/office-2024.webp',
+    fallbackImage: '/products/office-2024.png',
+    rating: 4.96,
+    reviews: 124,
+    badge: 'PACK 3 PC',
+    features: [
+      'Licencia digital oficial para 3 computadoras (PC)',
+      'Activación permanente de por vida sin vencimiento',
+      'Word, Excel, PowerPoint, Outlook, Access y Publisher 2024',
+      'Soporte completo para Windows 10 y Windows 11 (32 y 64 bits)'
+    ],
+    compatibility: 'Windows 10 / Windows 11 (32 & 64 Bit)',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2024 (.exe)',
+    downloadOptions: [
+      {
+        id: 'office-2024-3pc-exe',
+        name: 'Descargar Instalador Directo Office 2024 (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Descarga directa del instalador oficial de Microsoft Office 2024 Pro Plus.'
+      },
+      {
+        id: 'office-2024-3pc-img',
+        name: 'Descargar Imagen Offline Completa (.img)',
+        url: 'https://officecdn.microsoft.com/pr/492350f6-3a01-4f97-b9c0-c7c6ddf67d60/media/es-es/ProPlus2024Retail.img',
+        badge: 'Microsoft CDN (.img)',
+        description: 'Imagen ISO/IMG oficial para instalación en múltiples PCs.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
+  },
+  {
     id: 'prod-office-2021',
     slug: 'office-2021-pro-plus',
     name: 'Microsoft Office 2021 Professional Plus',
     description: 'Licencia digital de por vida para Office 2021 Pro Plus. Activación instantánea en tu cuenta o equipo.',
-    price: 34.90,
+    price: 25.00,
     oldPrice: 95.00,
     duration: 'Permanente (De por vida)',
     category: 'office',
@@ -282,7 +343,7 @@ export const products: Product[] = [
     features: [
       'Word, Excel, PowerPoint, Outlook y Teams',
       'Licencia permanente sin pagos mensuales',
-      'Garantía de activación inmediata'
+      'Garantía de compra inmediata'
     ],
     compatibility: 'Windows 10 / Windows 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
@@ -349,7 +410,7 @@ export const products: Product[] = [
     slug: 'office-2019-pro-plus',
     name: 'Microsoft Office 2019 Professional Plus',
     description: 'Licencia digital oficial permanente para Office 2019. Excelente rendimiento para equipos de trabajo.',
-    price: 24.90,
+    price: 24.00,
     oldPrice: 80.00,
     duration: 'Permanente (De por vida)',
     category: 'office',
@@ -485,7 +546,7 @@ export const products: Product[] = [
     slug: 'microsoft-365-personal-family',
     name: 'Microsoft 365 Personal (Cuenta - 1 Año)',
     description: 'Suscripción oficial a la suite Microsoft 365 por 1 año. Incluye Word, Excel, PowerPoint, Outlook y 100 GB de almacenamiento en la nube OneDrive.',
-    price: 45.00,
+    price: 33.00,
     oldPrice: 110.00,
     duration: '1 año',
     category: 'office',
@@ -521,6 +582,49 @@ export const products: Product[] = [
     ],
     installationSteps: OFFICE_365_PRO_STEPS
   },
+  {
+    id: 'prod-gemini-ai-pro',
+    slug: 'google-gemini-ia-pro-18-meses',
+    name: 'Google Gemini IA Pro / Advanced (18 Meses)',
+    description: 'Suscripción a Google Gemini IA Pro / Advanced por 18 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados 1.5 Pro y 2.0 Flash, 5 TB de almacenamiento en la nube (Google One) y Gemini integrado en Docs, Gmail y Drive.',
+    price: 40.00,
+    oldPrice: 120.00,
+    duration: '18 meses',
+    category: 'office',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpoBkIRQbJR0zKy8ppHVjPCExMBhe83UqR2c-x99coA6ezbrIwNrzaPzjh&s=10',
+    fallbackImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpoBkIRQbJR0zKy8ppHVjPCExMBhe83UqR2c-x99coA6ezbrIwNrzaPzjh&s=10',
+    rating: 4.97,
+    reviews: 184,
+    badge: '5 TB NUBE • 18M',
+    cloudStorage: '5 TB Google One Cloud',
+    isAccountAccess: true,
+    accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin necesidad de entregar contraseñas.',
+    features: [
+      'Acceso a modelos de vanguardia Gemini 1.5 Pro & 2.0 Flash',
+      'Link de activación oficial vinculado directamente a tu cuenta personal de Google',
+      '5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
+      'Gemini integrado de manera nativa en Google Docs, Sheets, Slides y Gmail',
+      'Garantía total de funcionamiento durante los 18 meses completos'
+    ],
+    compatibility: 'Navegadores Web, Windows, macOS, Android e iOS',
+    downloadUrl: 'https://gemini.google.com',
+    downloadLabel: 'Acceder a Google Gemini Web',
+    downloadOptions: [
+      {
+        id: 'gemini-portal',
+        name: 'Portal Oficial Google Gemini IA',
+        url: 'https://gemini.google.com',
+        badge: 'Portal Oficial Google',
+        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta personal activada.'
+      }
+    ],
+    installationSteps: [
+      'Recibirás en tu correo o WhatsApp el enlace oficial de invitación y activación directa para tu cuenta Google.',
+      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Google (Gmail personal).',
+      'Acepta la activación del plan Gemini Pro / Advanced de 18 meses.',
+      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en Google One.'
+    ]
+  },
 
   // --- WINDOWS ---
   {
@@ -528,7 +632,7 @@ export const products: Product[] = [
     slug: 'windows-11-pro-key',
     name: 'Windows 11 Professional Key 32/64 Bit',
     description: 'Clave de activación digital permanente para Windows 11 Pro. Soporta actualizaciones oficiales y multilenguaje.',
-    price: 27.00,
+    price: 20.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -542,7 +646,7 @@ export const products: Product[] = [
         id: 'oem',
         name: 'Clave tipo OEM',
         type: 'OEM',
-        price: 27.00,
+        price: 21.00,
         oldPrice: 85.00,
         shortDesc: 'Se vincula a la placa madre de 1 equipo específico.',
         badge: 'ECONÓMICA'
@@ -551,7 +655,7 @@ export const products: Product[] = [
         id: 'retail',
         name: 'Clave tipo Retail',
         type: 'Retail',
-        price: 31.00,
+        price: 25.00,
         oldPrice: 105.00,
         shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.',
         badge: 'RECOMENDADA'
@@ -595,7 +699,7 @@ export const products: Product[] = [
     slug: 'windows-11-home-key',
     name: 'Windows 11 Home Key 64 Bit',
     description: 'Edición Home oficial para uso personal y entretenimiento con interfaz moderna.',
-    price: 30.00,
+    price: 25.00,
     oldPrice: 75.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -609,7 +713,7 @@ export const products: Product[] = [
     ],
     variants: [
       { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 30.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 34.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
+      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 25.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
     ],
     compatibility: 'Windows 11 (64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
@@ -637,7 +741,7 @@ export const products: Product[] = [
     slug: 'windows-11-enterprise-key',
     name: 'Windows 11 Enterprise Key 64 Bit',
     description: 'Edición empresarial avanzada con control de dispositivos y seguridad IT.',
-    price: 42.00,
+    price: 41.50,
     oldPrice: 95.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -788,7 +892,7 @@ export const products: Product[] = [
     slug: 'windows-7-ultimate-key',
     name: 'Windows 7 Ultimate Key',
     description: 'La edición más completa de Windows 7.',
-    price: 32.00,
+    price: 33.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -852,6 +956,61 @@ export const products: Product[] = [
     installationSteps: COMBO_WIN11_OFFICE2024_STEPS
   },
   {
+    id: 'prod-combo-office-project-visio-2024',
+    slug: 'combo-office-project-visio-2024',
+    name: 'Combo 3 en 1: Microsoft Office + Project + Visio Profesional 2024',
+    description: 'El combo definitivo de productividad profesional de Microsoft. Incluye 3 licencias oficiales permanentes: Office 2024 Pro Plus, Project 2024 Pro y Visio 2024 Pro. Activación de por vida para 1 PC sin suscripciones ni cobros recurrentes.',
+    price: 70.00,
+    oldPrice: 230.00,
+    duration: 'Permanente (De por vida)',
+    category: 'combos',
+    imageUrl: '/products/combo-3in1-2024.webp',
+    fallbackImage: '/products/combo-3in1-2024.png',
+    rating: 4.98,
+    reviews: 142,
+    badge: 'COMBO 3 EN 1',
+    featured: true,
+    features: [
+      '3 licencias digitales oficiales de por vida',
+      'Office 2024 Pro Plus (Word, Excel, PowerPoint, Outlook, Access, Publisher)',
+      'Microsoft Project Professional 2024 (Cartas Gantt y Recursos)',
+      'Microsoft Visio Professional 2024 (Flujogramas BPMN y Redes)',
+      'Ahorro superior al 65% en paquete integral'
+    ],
+    compatibility: 'Windows 10 / Windows 11 (32 & 64 Bit)',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instaladores oficiales Microsoft (.exe)',
+    downloadOptions: [
+      {
+        id: 'combo-3in1-office',
+        name: 'Instalador Office 2024 Professional Plus (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Office 2024 (.exe)',
+        description: 'Descarga directa del ejecutable oficial de Office 2024 Pro Plus.'
+      },
+      {
+        id: 'combo-3in1-project',
+        name: 'Instalador Project 2024 Professional (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Project 2024 (.exe)',
+        description: 'Descarga directa del instalador de Project 2024 Pro.'
+      },
+      {
+        id: 'combo-3in1-visio',
+        name: 'Instalador Visio 2024 Professional (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2024Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Visio 2024 (.exe)',
+        description: 'Descarga directa del instalador de Visio 2024 Pro.'
+      }
+    ],
+    installationSteps: [
+      'Descarga e instala Microsoft Office 2024 Pro Plus ejecutando el archivo instalador oficial y activa con la clave proporcionada.',
+      'Descarga e instala Microsoft Project 2024 Professional e introduce la clave oficial de Project.',
+      'Descarga e instala Microsoft Visio 2024 Professional e introduce su respectiva clave de activación.',
+      'Las 3 aplicaciones quedarán activadas de forma permanente de por vida en tu equipo con soporte oficial.'
+    ]
+  },
+  {
     id: 'prod-combo-win10-office2021',
     slug: 'combo-windows-10-pro-office-2021',
     name: 'Combo 2 en 1: Windows 10 Pro + Office 2021 Pro Plus',
@@ -897,7 +1056,7 @@ export const products: Product[] = [
     slug: 'microsoft-project-2024-pro',
     name: 'Microsoft Project Professional 2024',
     description: 'Herramienta líder en gestión de proyectos corporativos. Licencia permanente para 1 PC.',
-    price: 28.00,
+    price: 36.80,
     oldPrice: 110.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -931,6 +1090,45 @@ export const products: Product[] = [
       }
     ],
     installationSteps: OFFICE_STANDARD_STEPS
+  },
+  {
+    id: 'prod-coreldraw-2024-mac',
+    slug: 'coreldraw-graphics-suite-2024-mac',
+    name: 'CorelDRAW Graphics Suite 2024 para Mac (1 PC / Permanente)',
+    description: 'Software profesional de diseño gráfico, ilustración vectorial y edición fotográfica para macOS. Licencia oficial de por vida para 1 Mac sin suscripciones ni cuotas recurrentes. Optimizado para procesadores Apple Silicon (M1, M2, M3, M4) e Intel.',
+    price: 32.00,
+    oldPrice: 150.00,
+    duration: 'Permanente (De por vida)',
+    category: 'project-visio',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ1iPMksYIwUphd1GAozF9cOTFe46zZO7BqOYD_JyNzFLdsi93DyExAUM&s=10',
+    fallbackImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ1iPMksYIwUphd1GAozF9cOTFe46zZO7BqOYD_JyNzFLdsi93DyExAUM&s=10',
+    rating: 4.95,
+    reviews: 116,
+    badge: 'MAC PERMANENTE',
+    features: [
+      'Licencia oficial vitalicia para 1 Mac sin vencimiento',
+      'Optimizado 100% para Apple Silicon (M1/M2/M3/M4) y procesadores Intel',
+      'Incluye CorelDRAW 2024, Corel PHOTO-PAINT y Corel Font Manager',
+      'Ilustración vectorial profesional, maquetación y tipografía avanzada'
+    ],
+    compatibility: 'macOS Sequoia, Sonoma, Ventura, Monterey (Apple Silicon & Intel)',
+    downloadUrl: 'https://www.coreldraw.com/la/pages/download/',
+    downloadLabel: 'Descargar Instalador CorelDRAW 2024 (.dmg)',
+    downloadOptions: [
+      {
+        id: 'coreldraw-mac-pkg',
+        name: 'Instalador CorelDRAW Graphics Suite 2024 (.dmg)',
+        url: 'https://www.coreldraw.com/la/pages/download/',
+        badge: 'Instalador macOS (.dmg)',
+        description: 'Instalador oficial de CorelDRAW para macOS con soporte Apple Silicon e Intel.'
+      }
+    ],
+    installationSteps: [
+      'Descarga el instalador oficial de CorelDRAW Graphics Suite 2024 para macOS (.dmg).',
+      'Abre el archivo descargado y arrastra la aplicación CorelDRAW a tu carpeta de Aplicaciones.',
+      'Inicia la aplicación e introduce la clave oficial de activación permanente provista en tu pedido.',
+      'Tu software quedará activado de por vida para 1 Mac sin suscripciones ni cobros recurrentes.'
+    ]
   },
   {
     id: 'prod-visio-2024',
@@ -1014,7 +1212,7 @@ export const products: Product[] = [
     slug: 'microsoft-project-2019-pro',
     name: 'Microsoft Project Professional 2019',
     description: 'Lleva el control de tus proyectos corporativos con herramientas oficiales.',
-    price: 28.00,
+    price: 39.20,
     oldPrice: 80.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1181,3 +1379,4 @@ export const products: Product[] = [
     installationSteps: OFFICE_STANDARD_STEPS
   }
 ];
+

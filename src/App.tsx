@@ -20,7 +20,7 @@ import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 import { RegionLanguageModal } from './components/RegionLanguageModal.tsx';
 
 const AppContent: React.FC = () => {
-  const { currentPath, currentProductSlug } = useCart();
+  const { currentPath, currentProductSlug, activeCategory } = useCart();
   const [helpTopic, setHelpTopic] = useState<string | null>(null);
   const [isUserOrdersModalOpen, setIsUserOrdersModalOpen] = useState(false);
 
@@ -34,8 +34,8 @@ const AppContent: React.FC = () => {
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           </div>
           <h2 className="text-2xl font-black text-white mb-2">¡Pago Exitoso!</h2>
-          <p className="text-purple-200 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás tu licencia y las instrucciones por correo y WhatsApp en unos instantes.</p>
-          <button onClick={() => window.location.href = '/'} className="px-6 py-3 bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-black rounded-xl transition-colors shadow-lg cursor-pointer">
+          <p className="text-slate-300 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás la confirmación de tu pedido por correo y WhatsApp en unos instantes.</p>
+          <button onClick={() => window.location.href = '/'} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-colors shadow-lg cursor-pointer">
             Volver a la tienda
           </button>
         </div>
@@ -52,23 +52,20 @@ const AppContent: React.FC = () => {
 
     return (
       <main>
-        {/* Main Hero Section with Call-To-Action & Trust Badges */}
-        <Hero />
-
-        {/* Carousel: Más Vendidos (Office 2024, 2021, Windows 11 Pro, M365) */}
-        <BestSellersCarousel />
-
-        {/* Section: Los más buscados (Top Featured Products with Big Cards) */}
-        <TopProductsSection />
-
-        {/* Complete Catalog Grid with Live Search & Category Filtering */}
+        {activeCategory === 'all' && (
+          <>
+            <Hero />
+            <BestSellersCarousel />
+            <TopProductsSection />
+          </>
+        )}
         <ProductGrid />
       </main>
     );
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0f172a] text-slate-200 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-600 font-sans">
       {/* Sticky Header with Navigation, Live Search and Cart Counter */}
       <Header onOpenUserOrders={() => setIsUserOrdersModalOpen(true)} />
 

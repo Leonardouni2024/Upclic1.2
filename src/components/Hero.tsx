@@ -33,119 +33,43 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero-section" className="relative bg-[#0f172a] text-white pt-6 pb-10 border-b border-white/5 font-sans">
+    <section id="hero-section" className="relative bg-white text-slate-900 pt-6 pb-10 border-b border-slate-200 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
           
           {/* Main Big Hero Banner (8 Cols) */}
-          <div className="lg:col-span-8 relative rounded-xl bg-[#1e293b] p-6 sm:p-10 border border-slate-700 flex flex-col justify-between overflow-hidden min-h-[300px] sm:min-h-[360px]">
+          <div className="lg:col-span-12 relative rounded-xl bg-blue-50 p-6 sm:p-10 border border-blue-100 flex flex-col justify-between overflow-hidden min-h-[300px] sm:min-h-[360px]">
             <div className="relative z-10 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#facc15] text-slate-950 text-[11px] font-bold uppercase tracking-wider mb-4">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider mb-4 shadow-sm">
                 <span>{t('heroBadge')}</span>
               </div>
-
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
                 {t('heroTitleLine1')} <br />
-                <span className="text-[#facc15]">
+                <span className="text-blue-600">
                   {t('heroTitleLine2')}
                 </span>
               </h1>
-
-              <p className="mt-3 text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-lg">
+              <p className="mt-3 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-lg">
                 {t('heroSubtitle')}
               </p>
             </div>
 
             <div className="relative z-10 mt-6 sm:mt-8 flex flex-wrap items-center gap-3">
               <button
-                onClick={() => handleFilter('office')}
-                className="px-6 py-3 rounded-lg bg-[#facc15] hover:bg-[#eab308] text-slate-950 font-bold text-sm transition-all cursor-pointer flex items-center gap-2 border border-transparent"
+                onClick={() => handleFilter('all')}
+                className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all cursor-pointer flex items-center gap-2 border border-transparent shadow-sm"
               >
                 <span>{t('heroExploreCatalog')}</span>
                 <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </button>
-
               <button
                 onClick={() => handleFilter('combos')}
-                className="px-5 py-3 rounded-lg bg-[#334155] hover:bg-[#475569] text-white font-bold text-sm transition-all cursor-pointer flex items-center gap-2 border border-transparent"
+                className="px-5 py-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all cursor-pointer flex items-center gap-2 border border-slate-300 shadow-sm"
               >
                 <span>{t('combos')}</span>
               </button>
             </div>
           </div>
-
-          {/* Right Stacked Feature Banners (4 Cols) */}
-          <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
-            {/* Promo Card 1 */}
-            <div 
-              onClick={() => handleOpenProduct('prod-office-2024', 'office')}
-              className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
-            >
-              <div>
-                <h3 className="font-bold text-sm text-white group-hover:text-slate-200 transition-colors">
-                  Office 2024 Pro Plus
-                </h3>
-                <p className="text-[11px] text-slate-400">Licencia vitalicia para 1 PC</p>
-              </div>
-              <div className="text-right shrink-0">
-                {office2024?.oldPrice && (
-                  <span className="text-xs text-slate-500 line-through block">
-                    {formatPrice(office2024.oldPrice)}
-                  </span>
-                )}
-                <span className="text-base font-extrabold text-[#facc15]">
-                  {formatPrice(office2024?.price || 25.00)}
-                </span>
-              </div>
-            </div>
-
-            {/* Promo Card 2 */}
-            <div 
-              onClick={() => handleOpenProduct('prod-win11-pro', 'windows')}
-              className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
-            >
-              <div>
-                <h3 className="font-bold text-sm text-white group-hover:text-slate-200 transition-colors">
-                  Windows 11 Pro Key
-                </h3>
-                <p className="text-[11px] text-slate-400">Activación oficial permanente</p>
-              </div>
-              <div className="text-right shrink-0">
-                {win11Pro?.oldPrice && (
-                  <span className="text-xs text-slate-500 line-through block">
-                    {formatPrice(win11Pro.oldPrice)}
-                  </span>
-                )}
-                <span className="text-base font-extrabold text-[#facc15]">
-                  {formatPrice(win11Pro?.price || 25.00)}
-                </span>
-              </div>
-            </div>
-
-            {/* Promo Card 3 */}
-            <div 
-              onClick={() => handleOpenProduct('prod-combo-win11-office2024', 'combos')}
-              className="group relative rounded-xl bg-slate-800/80 p-4 border border-slate-700 hover:border-slate-600 transition-all duration-200 cursor-pointer flex items-center justify-between"
-            >
-              <div>
-                <h3 className="font-bold text-sm text-white group-hover:text-slate-200 transition-colors">
-                  Combo Win 11 + Off 2024
-                </h3>
-                <p className="text-[11px] text-slate-400">Ahorras más de 50%</p>
-              </div>
-              <div className="text-right shrink-0">
-                {comboWinOffice?.oldPrice && (
-                  <span className="text-xs text-slate-500 line-through block">
-                    {formatPrice(comboWinOffice.oldPrice)}
-                  </span>
-                )}
-                <span className="text-base font-extrabold text-[#facc15]">
-                  {formatPrice(comboWinOffice?.price || 46.50)}
-                </span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
     </section>

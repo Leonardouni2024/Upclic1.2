@@ -145,12 +145,14 @@ export const AIAssistantChat: React.FC = () => {
 
       // If backend is not present (e.g. static hosting on GitHub Pages), use the rich client-side knowledge engine
       if (!data || !data.reply) {
-        data = generateLocalChatReply(messageText);
+        data = generateLocalChatReply(messageText, undefined, language);
       }
 
       const replyContent =
         data.reply ||
-        `¡Hola! Para consultas personalizadas o soporte técnico rápido, puedes contactar directamente a nuestro Administrador por WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
+        (isEn
+          ? `Hello! For personalized questions or instant support, contact our Administrator directly on WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`
+          : `¡Hola! Para consultas personalizadas o soporte técnico rápido, puedes contactar directamente a nuestro Administrador por WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`);
 
       const checkAdminInReply = Boolean(data.showAdminWhatsApp);
 
@@ -166,7 +168,7 @@ export const AIAssistantChat: React.FC = () => {
       setMessages((prev) => [...prev, newBotMessage]);
     } catch (err) {
       console.error('Error in chat request:', err);
-      const localFallback = generateLocalChatReply(messageText);
+      const localFallback = generateLocalChatReply(messageText, undefined, language);
       const fallbackMsg: ChatMessage = {
         id: `bot-fallback-${Date.now()}`,
         role: 'model',
@@ -186,7 +188,9 @@ export const AIAssistantChat: React.FC = () => {
       {
         id: `msg-welcome-${Date.now()}`,
         role: 'model',
-        content: `¡Chat reiniciado! Soy tu **Asistente Virtual de UpClic**. ¿Qué duda o producto deseas consultar hoy?`,
+        content: isEn
+          ? `Chat restarted! I am your **UpClic Virtual Assistant**. How can I help you with software licenses today?`
+          : `¡Chat reiniciado! Soy tu **Asistente Virtual de UpClic**. ¿Qué duda o producto deseas consultar hoy?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -292,7 +296,7 @@ export const AIAssistantChat: React.FC = () => {
             onClick={() => setIsOpen(true)}
             className="hidden sm:flex items-center gap-1.5 bg-white py-1.5 px-3 rounded-full border border-blue-200 shadow-md cursor-pointer hover:border-blue-400 transition-all transform hover:-translate-y-0.5"
           >
-            <span className="text-xs font-bold text-slate-700">¿Te ayudo?</span>
+            <span className="text-xs font-bold text-slate-700">{isEn ? 'Need help?' : '¿Te ayudo?'}</span>
             <button
               type="button"
               onClick={(e) => {
@@ -315,7 +319,7 @@ export const AIAssistantChat: React.FC = () => {
               ? 'bg-slate-800 hover:bg-slate-900 text-white scale-90'
               : 'bg-gradient-to-br from-[#0066FF] to-[#0047b3] text-white hover:scale-110 active:scale-95 animate-bounce shadow-blue-500/30'
           }`}
-          aria-label={isOpen ? 'Cerrar Asistente UpClic' : 'Abrir Asistente UpClic'}
+          aria-label={isOpen ? (isEn ? 'Close UpClic Assistant' : 'Cerrar Asistente UpClic') : (isEn ? 'Open UpClic Assistant' : 'Abrir Asistente UpClic')}
         >
           {isOpen ? (
             <X className="w-6 h-6" />
@@ -346,15 +350,15 @@ export const AIAssistantChat: React.FC = () => {
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="font-extrabold text-sm text-white leading-tight">
-                    Asistente UpClic
+                    {isEn ? 'UpClic Assistant' : 'Asistente UpClic'}
                   </h3>
                   <span className="bg-blue-500/30 text-blue-200 text-[10px] px-1.5 py-0.2 rounded-md font-semibold border border-blue-400/20">
-                    AI Soporte
+                    {isEn ? 'AI Support' : 'AI Soporte'}
                   </span>
                 </div>
                 <p className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  En línea • Respuestas al instante
+                  {isEn ? 'Online • Instant answers' : 'En línea • Respuestas al instante'}
                 </p>
               </div>
             </div>
@@ -363,18 +367,18 @@ export const AIAssistantChat: React.FC = () => {
               <button
                 type="button"
                 onClick={handleResetChat}
-                title="Reiniciar conversación"
+                title={isEn ? 'Restart conversation' : 'Reiniciar conversación'}
                 className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                aria-label="Reiniciar conversación"
+                aria-label={isEn ? 'Restart conversation' : 'Reiniciar conversación'}
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                title="Minimizar ventana"
+                title={isEn ? 'Minimize window' : 'Minimizar ventana'}
                 className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                aria-label="Cerrar chat"
+                aria-label={isEn ? 'Close chat' : 'Cerrar chat'}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -385,7 +389,7 @@ export const AIAssistantChat: React.FC = () => {
           <div className="bg-blue-50/80 px-3.5 py-1.5 border-b border-blue-100 flex items-center justify-between text-[11px] text-blue-900">
             <span className="flex items-center gap-1 font-medium">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              Soporte oficial de licencias Microsoft
+              {isEn ? 'Official Microsoft & software licenses support' : 'Soporte oficial de licencias de software'}
             </span>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -418,7 +422,7 @@ export const AIAssistantChat: React.FC = () => {
                   {msg.suggestedProducts && msg.suggestedProducts.length > 0 && (
                     <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-2">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Productos recomendados:
+                        {isEn ? 'Recommended products:' : 'Productos recomendados:'}
                       </p>
                       {msg.suggestedProducts.map((p) => (
                         <div
@@ -448,7 +452,7 @@ export const AIAssistantChat: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleAddToCart(p.slug)}
-                              title="Añadir al carrito"
+                              title={isEn ? 'Add to cart' : 'Añadir al carrito'}
                               className="p-1.5 rounded-lg bg-[#0066FF] text-white hover:bg-[#0052cc] transition-colors cursor-pointer"
                             >
                               <ShoppingCart className="w-3.5 h-3.5" />
@@ -457,7 +461,7 @@ export const AIAssistantChat: React.FC = () => {
                               type="button"
                               onClick={() => handleProductClick(p.slug)}
                               className="p-1.5 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors cursor-pointer"
-                              title="Ver ficha técnica"
+                              title={isEn ? 'View specifications' : 'Ver ficha técnica'}
                             >
                               <ChevronRight className="w-3.5 h-3.5" />
                             </button>
@@ -472,14 +476,16 @@ export const AIAssistantChat: React.FC = () => {
                     <div className="mt-2.5 pt-2 border-t border-slate-100">
                       <a
                         href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                          'Hola Administrador de UpClic, solicito asistencia con una consulta desde la tienda web.'
+                          isEn
+                            ? 'Hello UpClic Administrator, I need assistance from the store.'
+                            : 'Hola Administrador de UpClic, solicito asistencia con una consulta desde la tienda web.'
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs transition-all shadow-xs"
                       >
                         <MessageCircle className="w-4 h-4 fill-white" />
-                        <span>Abrir WhatsApp del Administrador</span>
+                        <span>{isEn ? 'Open WhatsApp Admin Chat' : 'Abrir WhatsApp del Administrador'}</span>
                       </a>
                     </div>
                   )}

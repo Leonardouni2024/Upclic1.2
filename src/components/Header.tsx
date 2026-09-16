@@ -22,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
     language,
     setCurrency,
     setLanguage,
+    setIsRegionModalOpen,
     t
   } = useCart();
 
@@ -252,33 +253,35 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               <div ref={regionDropdownRef} className="relative">
                 <button
                   onClick={() => setRegionDropdownOpen(!regionDropdownOpen)}
-                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-[#2b0c61] hover:bg-[#38117d] text-purple-200 hover:text-white text-xs font-bold border border-[#5923aa]/80 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-[#2b0c61] hover:bg-[#38117d] text-slate-300 hover:text-white text-xs font-bold border border-[#5923aa]/80 transition-all cursor-pointer shadow-sm active:scale-95"
                   title={t("changeRegionCurrency")}
                 >
-                  <Globe className="w-3.5 h-3.5 text-[#facc15]" />
+                  <Globe className="w-3.5 h-3.5 text-blue-400" />
                   <span className="hidden sm:inline">
                     {currency === 'PEN' && 'PE | Español (S/)'}
                     {currency === 'COP' && 'CO | Español ($ COP)'}
                     {currency === 'MXN' && 'MX | Español ($ MXN)'}
-                    {currency === 'USD' && 'US | English ($ USD)'}
+                    {currency === 'USD' && language === 'ES' && 'LatAm | Español ($ USD)'}
+                    {currency === 'USD' && language === 'EN' && 'Global | English ($ USD)'}
                   </span>
                   <span className="sm:hidden">
-                    {currency === 'PEN' && 'PE'}
-                    {currency === 'COP' && 'CO'}
-                    {currency === 'MXN' && 'MX'}
-                    {currency === 'USD' && 'US'}
+                    {currency === 'PEN' && '🇵🇪 S/'}
+                    {currency === 'COP' && '🇨🇴 COP'}
+                    {currency === 'MXN' && '🇲🇽 MXN'}
+                    {currency === 'USD' && language === 'ES' && '🌎 USD'}
+                    {currency === 'USD' && language === 'EN' && '🇺🇸 USD'}
                   </span>
                   <ChevronDown className={`w-3.5 h-3.5 text-purple-300 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Dropdown Menu */}
                 {regionDropdownOpen && (
-                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[220px] sm:w-[240px] bg-[#1f0945] rounded-lg shadow-2xl border border-purple-500/30 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-1.5 divide-y divide-white/10 origin-top-right">
-                    <div className="px-3 py-2 text-[11px] font-bold text-purple-300 uppercase tracking-wider">
-                      {t('regionCurrencyLangLabel')}
+                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[240px] sm:w-[260px] bg-[#1f0945] rounded-xl shadow-2xl border border-purple-500/40 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-2 divide-y divide-white/10 origin-top-right">
+                    <div className="px-3 py-1.5 text-[11px] font-bold text-purple-300 uppercase tracking-wider flex items-center justify-between">
+                      <span>{t('regionCurrencyLangLabel')}</span>
                     </div>
 
-                    <div className="py-1 space-y-1">
+                    <div className="py-1.5 space-y-1">
                       {/* Option 1: Perú */}
                       <button
                         onClick={() => {
@@ -286,15 +289,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                           setLanguage('ES');
                           setRegionDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'PEN'
-                            ? 'bg-[#facc15] text-slate-950 shadow-md'
-                            : 'text-white hover:bg-white/10'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">🇵🇪</span>
-                          <span>PE | Español (S/)</span>
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg">🇵🇪</span>
+                          <div>
+                            <div className="text-white font-bold leading-none">Perú</div>
+                            <div className="text-[10px] text-purple-200 mt-0.5">Soles (S/ PEN) • ES</div>
+                          </div>
                         </div>
                         {currency === 'PEN' && <Check className="w-4 h-4 stroke-[3]" />}
                       </button>
@@ -306,15 +312,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                           setLanguage('ES');
                           setRegionDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'COP'
-                            ? 'bg-[#facc15] text-slate-950 shadow-md'
-                            : 'text-white hover:bg-white/10'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">🇨🇴</span>
-                          <span>CO | Español ($ COP)</span>
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg">🇨🇴</span>
+                          <div>
+                            <div className="text-white font-bold leading-none">Colombia</div>
+                            <div className="text-[10px] text-purple-200 mt-0.5">Pesos ($ COP) • ES</div>
+                          </div>
                         </div>
                         {currency === 'COP' && <Check className="w-4 h-4 stroke-[3]" />}
                       </button>
@@ -326,37 +335,66 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                           setLanguage('ES');
                           setRegionDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'MXN'
-                            ? 'bg-[#facc15] text-slate-950 shadow-md'
-                            : 'text-white hover:bg-white/10'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">🇲🇽</span>
-                          <span>MX | Español ($ MXN)</span>
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg">🇲🇽</span>
+                          <div>
+                            <div className="text-white font-bold leading-none">México</div>
+                            <div className="text-[10px] text-purple-200 mt-0.5">Pesos ($ MXN) • ES</div>
+                          </div>
                         </div>
                         {currency === 'MXN' && <Check className="w-4 h-4 stroke-[3]" />}
                       </button>
 
-                      {/* Option 4: USA / Global */}
+                      {/* Option 4: Sudamérica & Latinoamérica */}
                       <button
                         onClick={() => {
-                          setCurrency('USD');
+                          setCurrency('USD', true, 'ES');
+                          setLanguage('ES');
+                          setRegionDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          currency === 'USD' && language === 'ES'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg">🌎</span>
+                          <div>
+                            <div className="text-white font-bold leading-none">Sudamérica & LatAm</div>
+                            <div className="text-[10px] text-purple-200 mt-0.5">Dólares ($ USD) • ES</div>
+                          </div>
+                        </div>
+                        {currency === 'USD' && language === 'ES' && <Check className="w-4 h-4 stroke-[3]" />}
+                      </button>
+
+                      {/* Option 5: USA / Global */}
+                      <button
+                        onClick={() => {
+                          setCurrency('USD', true, 'EN');
                           setLanguage('EN');
                           setRegionDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          currency === 'USD'
-                            ? 'bg-[#facc15] text-slate-950 shadow-md'
-                            : 'text-white hover:bg-white/10'
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          currency === 'USD' && language === 'EN'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">🇺🇸</span>
-                          <span>US | English ($ USD)</span>
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg">🇺🇸</span>
+                          <div>
+                            <div className="text-white font-bold leading-none">Global / USA</div>
+                            <div className="text-[10px] text-purple-200 mt-0.5">Dollars ($ USD) • EN</div>
+                          </div>
                         </div>
-                        {currency === 'USD' && <Check className="w-4 h-4 stroke-[3]" />}
+                        {currency === 'USD' && language === 'EN' && <Check className="w-4 h-4 stroke-[3]" />}
                       </button>
                     </div>
                   </div>
@@ -367,7 +405,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               <button
                 id="search-toggle-mobile"
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="sm:hidden p-2 rounded-lg text-purple-200 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                className="sm:hidden p-2 rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                 aria-label="Buscar productos"
               >
                 <Search className="w-5 h-5" />
@@ -381,9 +419,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 aria-label={`Ver carrito: ${totalQuantity} productos`}
                 title={`Carrito: ${totalQuantity} productos`}
               >
-                <ShoppingCart className="w-5 h-5 text-[#facc15]" />
+                <ShoppingCart className="w-5 h-5 text-blue-500" />
                 {totalQuantity > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-[#facc15] text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                  <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-slate-950 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md">
                     {totalQuantity}
                   </span>
                 )}
@@ -395,7 +433,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer border border-white/15 shrink-0"
                 title={t('myOrders')}
               >
-                <User className="w-4 h-4 text-purple-200" />
+                <User className="w-4 h-4 text-slate-300" />
                 <span className="hidden md:inline">{t('myOrders')}</span>
               </button>
             </div>
@@ -404,15 +442,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
       </div>
 
       {/* Second Navigation Bar - Eneba Category Bar */}
-      <div className="bg-[#2a0b5c] border-b border-white/10 shadow-xs">
+      <div className="bg-slate-800 border-b border-white/10 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-2 no-scrollbar text-xs sm:text-sm font-bold">
           {/* Categorías Button */}
           <button
             onClick={() => handleCategoryClick('all')}
             className={`px-3.5 py-1.5 rounded-md flex items-center gap-2 cursor-pointer shrink-0 transition-all ${
               activeCategory === 'all' && currentPath === '/'
-                ? 'bg-[#facc15] text-slate-950 font-black'
-                : 'bg-[#1e0742] hover:bg-[#320f6d] text-white border border-white/15'
+                ? 'bg-blue-600 text-white font-black'
+                : 'bg-slate-700 hover:bg-slate-600 text-white border border-white/15'
             }`}
           >
             <Menu className="w-4 h-4" />
@@ -421,33 +459,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           {/* Category Chips */}
           <button
-            onClick={() => handleCategoryClick('windows')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'windows'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            {t('windows')}
-          </button>
-
-          <button
-            onClick={() => handleCategoryClick('office')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'office'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            {t('office')}
-          </button>
-
-          <button
             onClick={() => handleCategoryClick('combos')}
             className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all flex items-center gap-1.5 ${
               activeCategory === 'combos'
-                ? 'bg-[#facc15] text-slate-950 font-black'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
+                ? 'bg-blue-600 text-white font-black'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             <span>{t('combos')}</span>
@@ -457,15 +473,39 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
           </button>
 
           <button
+            onClick={() => handleCategoryClick('office')}
+            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+              activeCategory === 'office'
+                ? 'bg-white/20 text-white font-extrabold border border-white/30'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            {t('office')}
+          </button>
+
+          <button
+            onClick={() => handleCategoryClick('windows')}
+            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+              activeCategory === 'windows'
+                ? 'bg-white/20 text-white font-extrabold border border-white/30'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            {t('windows')}
+          </button>
+
+          <button
             onClick={() => handleCategoryClick('project-visio')}
             className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all flex items-center gap-1.5 ${
               activeCategory === 'project-visio'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
+                ? 'bg-blue-600 text-white font-black'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-emerald-400" />
             <span>{t('projectVisio')}</span>
+            <span className="bg-emerald-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
+              {t('newBadge')}
+            </span>
           </button>
 
           <button
@@ -473,7 +513,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
               activeCategory === 'top'
                 ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             {t('topLicenses')}
@@ -484,7 +524,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
               activeCategory === 'bestsellers'
                 ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             {t('bestSellers')}
@@ -495,7 +535,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
               activeCategory === 'offers'
                 ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-purple-200 hover:text-white hover:bg-white/10'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             {t('deals')}
@@ -517,7 +557,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 if (currentPath !== '/') navigateToHome();
               }}
               placeholder={t("searchPlaceholderMobile")}
-              className="w-full pl-9 pr-9 py-2 text-sm rounded-lg bg-[#1e0742] border border-white/20 text-white placeholder-purple-200/60 focus:outline-none"
+              className="w-full pl-9 pr-9 py-2 text-sm rounded-lg bg-slate-700 border border-white/20 text-white placeholder-purple-200/60 focus:outline-none"
             />
             <Search className="w-4 h-4 text-purple-300 absolute left-3 top-3 pointer-events-none" />
             {searchQuery && (
@@ -581,7 +621,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             className="w-full text-left py-2.5 text-sm font-semibold text-purple-100 hover:text-white flex items-center justify-between"
           >
             <span>{t('combos')}</span>
-            <span className="text-[10px] bg-[#facc15] text-slate-950 font-bold px-2 py-0.5 rounded">{t('saleBadge')}</span>
+            <span className="text-[10px] bg-blue-600 text-slate-950 font-bold px-2 py-0.5 rounded">{t('saleBadge')}</span>
           </button>
           <button
             onClick={() => handleCategoryClick('office')}
@@ -620,6 +660,30 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
           >
             {t('deals')}
           </button>
+
+          <div className="pt-2 border-t border-white/15 mt-1">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsRegionModalOpen(true);
+              }}
+              className="w-full text-left py-2.5 text-xs font-bold text-blue-400 hover:text-white flex items-center justify-between cursor-pointer"
+            >
+              <span className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-blue-400" />
+                <span>
+                  {currency === 'PEN' && '🇵🇪 Perú (S/ PEN)'}
+                  {currency === 'COP' && '🇨🇴 Colombia ($ COP)'}
+                  {currency === 'MXN' && '🇲🇽 México ($ MXN)'}
+                  {currency === 'USD' && language === 'ES' && '🌎 Sudamérica / LatAm ($ USD)'}
+                  {currency === 'USD' && language === 'EN' && '🇺🇸 Global / USA ($ USD)'}
+                </span>
+              </span>
+              <span className="text-[11px] underline text-slate-300 hover:text-white">
+                {language === 'ES' ? 'Cambiar país/moneda' : 'Change country/currency'}
+              </span>
+            </button>
+          </div>
         </div>
       )}
     </header>

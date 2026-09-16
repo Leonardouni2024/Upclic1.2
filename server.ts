@@ -152,11 +152,12 @@ function injectOpenGraphTags(html: string, req: express.Request): string {
   if (product) {
     title = `${product.name} | UpClic`;
     description = product.description;
-    if (product.images && product.images.length > 0) {
-      if (product.images[0].startsWith("http")) {
-        imageUrl = product.images[0];
+    const imgSource = (product.images && product.images.length > 0) ? product.images[0] : product.imageUrl;
+    if (imgSource) {
+      if (imgSource.startsWith("http")) {
+        imageUrl = imgSource;
       } else {
-        imageUrl = `${baseUrl}${product.images[0].startsWith("/") ? "" : "/"}${product.images[0]}`;
+        imageUrl = `${baseUrl}${imgSource.startsWith("/") ? "" : "/"}${imgSource}`;
       }
     }
   }
@@ -210,6 +211,47 @@ app.get("/api/health", (_req, res) => {
     reviewsCount: "moved_to_firebase",
     storage: "filesystem_persistent"
   });
+});
+
+// Geolocation / Country detection endpoint
+app.get("/api/geo", async (req, res) => {
+  try {
+    const countryHeader =
+      req.headers["x-country-code"] ||
+      req.headers["x-client-geo-country"] ||
+      req.headers["cf-ipcountry"] ||
+      req.headers["x-appengine-country"];
+
+    const rawCountry = Array.isArray(countryHeader) ? countryHeader[0] : countryHeader;
+    if (rawCountry && typeof rawCountry === "string" && rawCountry.trim().length === 2) {
+      return res.json({ country: rawCountry.trim().toUpperCase(), source: "header" });
+    }
+
+    const forwarded = req.headers["x-forwarded-for"];
+    const clientIp = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : (req.socket.remoteAddress || "");
+
+    // Quick server-side lookup if public IP
+    if (clientIp && !clientIp.startsWith("127.") && !clientIp.startsWith("10.") && !clientIp.startsWith("192.168.") && clientIp !== "::1") {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 1200);
+        const geoRes = await fetch(`http://ip-api.com/json/${clientIp}?fields=status,countryCode`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          if (geoData && geoData.status === "success" && geoData.countryCode) {
+            return res.json({ country: geoData.countryCode.toUpperCase(), source: "ip-api", ip: clientIp });
+          }
+        }
+      } catch {}
+    }
+
+    return res.json({ country: null, ip: clientIp, source: "ip" });
+  } catch {
+    return res.json({ country: null });
+  }
 });
 
 // --- AI CHATBOT ASSISTANT ENDPOINT (GEMINI) ---

@@ -25,21 +25,25 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { currency } = useCart();
+  const { currency, language, getProductName, t } = useCart();
+  const isEn = language === 'EN';
 
   const [copied, setCopied] = useState(false);
   const [imgSrc, setImgSrc] = useState(product.fallbackImage || product.imageUrl);
 
   if (!isOpen) return null;
 
-  const productName = currentVariant ? `${product.name} (${currentVariant.name})` : product.name;
+  const baseName = getProductName(product);
+  const productName = currentVariant ? `${baseName} (${currentVariant.name})` : baseName;
   const productPriceFormatted = `${formatPrice(activePrice)}`;
   
   // Enlace oficial de upclic.store
   const productStoreUrl = `https://upclic.store/producto/${product.slug}`;
 
   // Mensaje de recomendación con enlace directo de upclic.store
-  const exactMessage = `¡Hola! Te recomiendo este producto:\n\n*${productName}*\n*Precio:* ${productPriceFormatted}\n\n${productStoreUrl}`;
+  const exactMessage = isEn
+    ? `Hello! I recommend this product:\n\n*${productName}*\n*Price:* ${productPriceFormatted}\n\n${productStoreUrl}`
+    : `¡Hola! Te recomiendo este producto:\n\n*${productName}*\n*Precio:* ${productPriceFormatted}\n\n${productStoreUrl}`;
 
   // Enlace directo a WhatsApp
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(exactMessage)}`;
@@ -73,10 +77,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-slate-900 text-sm leading-tight">
-                Compartir Producto
+                {isEn ? 'Share Product' : 'Compartir Producto'}
               </h3>
               <p className="text-[11px] text-slate-500">
-                Te recomiendo este producto
+                {isEn ? 'I recommend this product' : 'Te recomiendo este producto'}
               </p>
             </div>
           </div>
@@ -85,7 +89,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             type="button"
             onClick={onClose}
             className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-full transition-colors cursor-pointer"
-            aria-label="Cerrar ventana"
+            aria-label={isEn ? 'Close window' : 'Cerrar ventana'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -98,7 +102,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             <div className="w-13 h-13 rounded-lg bg-white p-1 border border-slate-200 shrink-0 flex items-center justify-center">
               <img
                 src={imgSrc}
-                alt={product.name}
+                alt={productName}
                 onError={() => {
                   if (imgSrc !== product.fallbackImage) {
                     setImgSrc(product.fallbackImage);
@@ -113,7 +117,9 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                 {productName}
               </h4>
               <div className="mt-0.5 flex items-baseline gap-1">
-                <span className="text-[10px] font-bold text-slate-500">Precio:</span>
+                <span className="text-[10px] font-bold text-slate-500">
+                  {isEn ? 'Price:' : 'Precio:'}
+                </span>
                 <span className="text-sm font-black text-[#0066FF] tabular-nums">
                   {productPriceFormatted}
                 </span>
@@ -129,14 +135,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({
           {/* Vista previa del mensaje */}
           <div className="p-2.5 rounded-lg bg-blue-50/40 border border-blue-100 text-xs space-y-1">
             <div className="flex items-center justify-between text-[10px] font-bold text-blue-900">
-              <span>Mensaje a enviar:</span>
+              <span>{isEn ? 'Message to send:' : 'Mensaje a enviar:'}</span>
               <button
                 type="button"
                 onClick={handleCopy}
                 className="inline-flex items-center gap-1 text-[#0066FF] hover:underline font-bold cursor-pointer"
               >
                 {copied ? <Check className="w-2.5 h-2.5 text-emerald-600" /> : <Copy className="w-2.5 h-2.5" />}
-                <span>{copied ? '¡Copiado!' : 'Copiar'}</span>
+                <span>{copied ? (isEn ? 'Copied!' : '¡Copiado!') : (isEn ? 'Copy' : 'Copiar')}</span>
               </button>
             </div>
             <div className="p-2 rounded-lg bg-white border border-blue-100/70 text-[11px] text-slate-700 whitespace-pre-line leading-relaxed font-sans select-all break-all">
@@ -154,7 +160,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] active:scale-[0.98] text-white font-bold text-xs transition-all shadow-2xs hover:shadow-xs cursor-pointer"
             >
               <MessageCircle className="w-4 h-4 fill-white shrink-0" />
-              <span>Compartir en WhatsApp</span>
+              <span>{isEn ? 'Share on WhatsApp' : 'Compartir en WhatsApp'}</span>
             </a>
 
             {/* Facebook */}
@@ -167,7 +173,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               <div className="w-4 h-4 rounded-full bg-white text-[#1877F2] flex items-center justify-center font-black text-[10px] shrink-0">
                 f
               </div>
-              <span>Compartir en Facebook</span>
+              <span>{isEn ? 'Share on Facebook' : 'Compartir en Facebook'}</span>
             </a>
           </div>
         </div>
@@ -186,12 +192,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             {copied ? (
               <>
                 <Check className="w-3 h-3 text-emerald-600" />
-                <span>Copiado</span>
+                <span>{isEn ? 'Copied' : 'Copiado'}</span>
               </>
             ) : (
               <>
                 <Copy className="w-3 h-3 text-slate-500" />
-                <span>Copiar texto</span>
+                <span>{isEn ? 'Copy text' : 'Copiar texto'}</span>
               </>
             )}
           </button>
@@ -201,7 +207,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             onClick={onClose}
             className="px-3 py-1 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-colors cursor-pointer"
           >
-            Cerrar
+            {isEn ? 'Close' : 'Cerrar'}
           </button>
         </div>
       </div>

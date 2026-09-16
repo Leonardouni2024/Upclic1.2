@@ -148,14 +148,48 @@ export const RegionLanguageModal: React.FC = () => {
               )}
             </button>
 
-            {/* Option 4: USA / Global - Dólares ($) - English */}
+            {/* Option 4: Sudamérica y Latinoamérica - Dólares ($ USD) - Español */}
             <button
               onClick={() => {
-                setCurrency('USD');
+                setCurrency('USD', true, 'ES');
+                setLanguage('ES');
+              }}
+              className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
+                currency === 'USD' && language === 'ES'
+                  ? 'bg-slate-800 border-yellow-400 text-white shadow-lg ring-1 ring-yellow-400'
+                  : 'bg-[#0f172a] border-slate-700 text-slate-300 hover:border-white/25 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3.5">
+                <span className="text-3xl">🌎</span>
+                <div>
+                  <div className="font-black text-sm text-white flex items-center gap-2">
+                    <span>{language === 'ES' ? 'Sudamérica y Latinoamérica' : 'Latin America & South America'}</span>
+                    <span className="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded font-bold border border-purple-500/30">
+                      Español
+                    </span>
+                  </div>
+                  <div className="text-xs text-amber-300 font-bold mt-0.5">
+                    {language === 'ES' ? 'Dólares Estadounidenses ($ USD)' : 'US Dollars ($ USD)'}
+                  </div>
+                </div>
+              </div>
+
+              {currency === 'USD' && language === 'ES' && (
+                <div className="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center shrink-0 font-bold">
+                  <Check className="w-4 h-4 stroke-[3]" />
+                </div>
+              )}
+            </button>
+
+            {/* Option 5: USA / Global - Dólares ($) - English */}
+            <button
+              onClick={() => {
+                setCurrency('USD', true, 'EN');
                 setLanguage('EN');
               }}
               className={`p-4 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between relative overflow-hidden ${
-                currency === 'USD'
+                currency === 'USD' && language === 'EN'
                   ? 'bg-slate-800 border-yellow-400 text-white shadow-lg ring-1 ring-yellow-400'
                   : 'bg-[#0f172a] border-slate-700 text-slate-300 hover:border-white/25 hover:text-white'
               }`}
@@ -164,16 +198,18 @@ export const RegionLanguageModal: React.FC = () => {
                 <span className="text-3xl">🇺🇸</span>
                 <div>
                   <div className="font-black text-sm text-white flex items-center gap-2">
-                    <span>United States (US)</span>
+                    <span>{language === 'ES' ? 'Estados Unidos y Global' : 'United States & Global'}</span>
                     <span className="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded font-bold border border-purple-500/30">
                       English
                     </span>
                   </div>
-                  <div className="text-xs text-amber-300 font-bold mt-0.5">Dólares Estadounidenses ($ USD)</div>
+                  <div className="text-xs text-amber-300 font-bold mt-0.5">
+                    {language === 'ES' ? 'Dólares Estadounidenses ($ USD)' : 'US Dollars ($ USD)'}
+                  </div>
                 </div>
               </div>
 
-              {currency === 'USD' && (
+              {currency === 'USD' && language === 'EN' && (
                 <div className="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center shrink-0 font-bold">
                   <Check className="w-4 h-4 stroke-[3]" />
                 </div>
