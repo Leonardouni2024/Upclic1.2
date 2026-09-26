@@ -15,7 +15,7 @@ interface CategoryCardItem {
 }
 
 export const ProductCategoriesSection: React.FC = () => {
-  const { setActiveCategory, navigateToHome, currentPath } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, language } = useCart();
 
   const handleSelectCategory = (categoryKey: 'office' | 'windows' | 'apps' | 'project-visio') => {
     setActiveCategory(categoryKey);
@@ -30,50 +30,68 @@ export const ProductCategoriesSection: React.FC = () => {
     }, 100);
   };
 
+  const isEn = language === 'EN';
+
   const categories: CategoryCardItem[] = [
     {
       id: 'cat-office',
-      title: 'Microsoft Office',
-      subtitle: 'Productividad y gestión documental',
+      title: isEn ? 'Microsoft Office' : 'Microsoft Office',
+      subtitle: isEn ? 'Productivity & document suites' : 'Productividad y gestión documental',
       icon: <Laptop className="w-5 h-5 text-[#0067B8]" />,
       categoryKey: 'office',
       image: '/products/office-2024.webp',
-      badge: 'Más Solicitado',
-      featuredItems: ['Office 2024 LTSC', 'Office 2021 LTSC', 'Office 2019 LTSC', 'Microsoft 365 (1 año)'],
-      description: 'Suites ofimáticas completas con Word, Excel, PowerPoint y Outlook para hogar, estudios y empresas.'
+      badge: isEn ? 'Most Popular' : 'Más Solicitado',
+      featuredItems: isEn
+        ? ['Office 2024 LTSC', 'Office 2021 LTSC', 'Office 2019 LTSC', 'Microsoft 365 (1 Year)']
+        : ['Office 2024 LTSC', 'Office 2021 LTSC', 'Office 2019 LTSC', 'Microsoft 365 (1 año)'],
+      description: isEn
+        ? 'Complete office productivity suites with Word, Excel, PowerPoint, and Outlook for home, school, and business.'
+        : 'Suites ofimáticas completas con Word, Excel, PowerPoint y Outlook para hogar, estudios y empresas.'
     },
     {
       id: 'cat-windows',
-      title: 'Microsoft Windows',
-      subtitle: 'Sistemas operativos oficiales',
+      title: isEn ? 'Microsoft Windows' : 'Microsoft Windows',
+      subtitle: isEn ? 'Official operating systems' : 'Sistemas operativos oficiales',
       icon: <Layers className="w-5 h-5 text-[#0067B8]" />,
       categoryKey: 'windows',
       image: '/products/windows-11-pro.webp',
-      badge: 'Original OEM / Retail',
-      featuredItems: ['Windows 11 Pro', 'Windows 10 Pro', 'Windows 11 Home', 'Windows 10 Enterprise'],
-      description: 'Activación directa con licencia digital permanente y actualizaciones directas desde los servidores oficiales de Microsoft.'
+      badge: isEn ? 'Genuine OEM / Retail' : 'Original OEM / Retail',
+      featuredItems: isEn
+        ? ['Windows 11 Pro', 'Windows 10 Pro', 'Windows 11 Home', 'Windows 10 Enterprise']
+        : ['Windows 11 Pro', 'Windows 10 Pro', 'Windows 11 Home', 'Windows 10 Enterprise'],
+      description: isEn
+        ? 'Direct permanent digital activation and updates straight from official Microsoft servers.'
+        : 'Activación directa con licencia digital permanente y actualizaciones directas desde los servidores oficiales de Microsoft.'
     },
     {
       id: 'cat-diseno',
-      title: 'Diseño Profesional',
-      subtitle: 'Creatividad y edición de contenido',
+      title: isEn ? 'Professional Design & AI' : 'Diseño Profesional',
+      subtitle: isEn ? 'Creativity and content editing' : 'Creatividad y edición de contenido',
       icon: <Palette className="w-5 h-5 text-[#0067B8]" />,
       categoryKey: 'apps',
       image: '/products/canva-pro.webp',
-      badge: 'Cuentas Premium',
-      featuredItems: ['Adobe Acrobat Pro DC 2018 (Permanente)', 'Canva Pro (12 meses)', 'CorelDRAW Graphics Suite', 'Gemini AI Pro'],
-      description: 'Herramientas de diseño gráfico, plantillas premium y software creativo para diseñadores, agencias y creadores de contenido.'
+      badge: isEn ? 'Premium Accounts' : 'Cuentas Premium',
+      featuredItems: isEn
+        ? ['Adobe Acrobat Pro DC (Lifetime)', 'Canva Pro (12 Months)', 'CorelDRAW Graphics Suite', 'Google Gemini AI Pro']
+        : ['Adobe Acrobat Pro DC 2018 (Permanente)', 'Canva Pro (12 meses)', 'CorelDRAW Graphics Suite', 'Gemini AI Pro'],
+      description: isEn
+        ? 'Graphic design tools, PDF suites, premium templates, and creative AI software for creators and agencies.'
+        : 'Herramientas de diseño gráfico, plantillas premium y software creativo para diseñadores, agencias y creadores de contenido.'
     },
     {
       id: 'cat-seguridad',
-      title: 'Seguridad & Antivirus',
-      subtitle: 'Protección integral para tus equipos',
+      title: isEn ? 'Security & Antivirus' : 'Seguridad & Antivirus',
+      subtitle: isEn ? 'Comprehensive protection for your PCs' : 'Protección integral para tus equipos',
       icon: <Shield className="w-5 h-5 text-[#0067B8]" />,
       categoryKey: 'apps',
       image: '/products/mcafee-antivirus.webp',
-      badge: 'Protección 24/7',
-      featuredItems: ['McAfee AntiVirus (1 PC • 12 meses)', 'Defensa contra ransomware', 'Navegación segura y firewall', 'Protección para PC'],
-      description: 'Protege tu información personal y empresarial contra virus, troyanos, ataques web y software malicioso en tiempo real.'
+      badge: isEn ? '24/7 Protection' : 'Protección 24/7',
+      featuredItems: isEn
+        ? ['McAfee AntiVirus (1 PC • 12 Months)', 'Ransomware defense', 'Secure web browsing & firewall', 'Full PC protection']
+        : ['McAfee AntiVirus (1 PC • 12 meses)', 'Defensa contra ransomware', 'Navegación segura y firewall', 'Protección para PC'],
+      description: isEn
+        ? 'Protect personal and business data against viruses, trojans, web threats, and malware in real time.'
+        : 'Protege tu información personal y empresarial contra virus, troyanos, ataques web y software malicioso en tiempo real.'
     }
   ];
 
@@ -84,13 +102,15 @@ export const ProductCategoriesSection: React.FC = () => {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0067B8] text-xs font-bold tracking-wide uppercase mb-3">
-            <span>Catálogo Corporativo</span>
+            <span>{isEn ? 'Corporate Catalog' : 'Catálogo Corporativo'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">
-            Categorías de Software Profesional
+            {isEn ? 'Professional Software Categories' : 'Categorías de Software Profesional'}
           </h2>
           <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-            Soluciones de software 100% genuinas para empresas, profesionales independientes y estudiantes. Selecciona una categoría para explorar licencias y precios.
+            {isEn
+              ? '100% genuine software solutions for companies, professionals, and students. Select a category to explore licenses and pricing.'
+              : 'Soluciones de software 100% genuinas para empresas, profesionales independientes y estudiantes. Selecciona una categoría para explorar licencias y precios.'}
           </p>
         </div>
 
@@ -157,7 +177,7 @@ export const ProductCategoriesSection: React.FC = () => {
                   onClick={() => handleSelectCategory(cat.categoryKey)}
                   className="w-full py-2.5 px-4 rounded-lg bg-slate-50 hover:bg-[#0067B8] text-[#0B1F3A] hover:text-white font-bold text-xs sm:text-sm border border-slate-200 hover:border-[#0067B8] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.98]"
                 >
-                  <span>Ver productos</span>
+                  <span>{isEn ? 'View products' : 'Ver productos'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

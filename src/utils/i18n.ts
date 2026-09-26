@@ -1041,6 +1041,78 @@ export const PRODUCT_TRANSLATIONS_EN: Record<string, ProductTranslationData> = {
     description: 'Classic edition compatible with legacy operating systems including Windows XP and Vista.',
     duration: 'Lifetime / Permanent',
     compatibility: 'Windows XP / Vista / 7 / 8 / 10'
+  },
+  'prod-adobe-acrobat-pro-2018': {
+    name: 'Adobe Acrobat Pro DC 2018 (Lifetime License)',
+    description: 'Official permanent digital license of Adobe Acrobat Pro DC 2018 for Windows. Includes lifetime activation key, full installer, and step-by-step guide. Create, edit, convert, sign, protect, and combine professional PDF documents without recurring monthly fees.',
+    duration: 'Lifetime / Permanent',
+    badge: 'LIFETIME • PDF PRO',
+    compatibility: 'Windows 11, Windows 10, Windows 8.1, and Windows 7 (32/64 Bit)',
+    features: [
+      'Lifetime permanent license (one-time payment, no monthly subscriptions)',
+      'Official digital activation key + full installer included',
+      'Full text and image editing directly in PDF files',
+      'High-accuracy bidirectional conversion to Word, Excel, PowerPoint, and images',
+      'Digital signatures, password protection, and advanced security permissions',
+      'Detailed step-by-step installation guide and guaranteed technical support'
+    ]
+  },
+  'prod-mcafee-antivirus': {
+    name: 'McAfee AntiVirus (1 PC • 12 Months)',
+    description: 'Official digital license for McAfee AntiVirus for 1 PC over 12 months. Award-winning protection against viruses, ransomware, trojans, identity theft, and secure web browsing for your computer.',
+    duration: '12 Months (1 PC)',
+    badge: '1 PC • 12 MONTHS',
+    compatibility: 'Windows 11 and Windows 10 (32 and 64 Bit)',
+    features: [
+      'Protection for 1 Windows PC (12 full months of continuous coverage)',
+      'Real-time antivirus, anti-malware, and anti-ransomware defense',
+      'Safe web browsing and anti-phishing banking protection',
+      'Advanced bidirectional firewall and PC performance optimizer',
+      'Official 25-character key redeemable directly at mcafee.com/activate',
+      'Daily automatic security definition updates and guaranteed technical support'
+    ]
+  },
+  'prod-canva-pro': {
+    name: 'Canva Pro (12 Months)',
+    description: 'Canva Pro 12-month subscription for professional graphic design. Direct official email invitation to your personal account. Unlimited access to 100M+ photos, videos, graphics, premium templates, magic background remover in one click, and Magic Studio AI tools.',
+    duration: '12 Months',
+    badge: 'PRO INVITATION',
+    compatibility: 'Web (PC & Mac), Android, iOS, iPad',
+    features: [
+      'Full access to 100M+ premium assets (photos, audio, templates, videos)',
+      'Magic Studio AI tools and 1-click instant background remover',
+      'Brand kits with unlimited color palettes, custom fonts, and logos',
+      'Magic switch and instant smart resizing for any social media format',
+      'Official direct invitation to your personal email account'
+    ]
+  },
+  'prod-gemini-ai-pro-12m': {
+    name: 'Google Gemini AI Pro (12 Months)',
+    description: 'Subscription to Google Gemini AI Pro / Advanced for 12 months. Official activation with direct link to your personal Google account (Gmail). Includes advanced AI models, Google One cloud storage, and native integration in Docs, Sheets, and Gmail.',
+    duration: '12 Months',
+    badge: 'GOOGLE AI PRO',
+    compatibility: 'Web Browsers, Windows, macOS, Android, and iOS',
+    features: [
+      'Access to Google Gemini advanced AI models',
+      'Official direct activation link to your personal Gmail account',
+      'Secure cloud storage with Google One',
+      'Native AI integration in Google Workspace (Docs, Sheets, Gmail)',
+      'Full 12-month continuous warranty and support'
+    ]
+  },
+  'prod-duolingo-super': {
+    name: 'Duolingo Super (12 Months)',
+    description: '12-month subscription to Duolingo Super. Official invitation directly linked to your personal email account. Unlimited hearts, zero ads, unlimited legendary challenges, and detailed mistake reviews.',
+    duration: '12 Months',
+    badge: 'UNLIMITED HEARTS',
+    compatibility: 'Web, Android, iOS',
+    features: [
+      'Unlimited hearts / lives without waiting or penalties',
+      '100% ad-free learning experience',
+      'Personalized mistake review practice and legendary tests',
+      'Full access on mobile app and web browser',
+      'Guaranteed 12 months of uninterrupted access'
+    ]
   }
 };
 

@@ -4,7 +4,7 @@ import { formatPrice } from '../products.ts';
 import { ArrowRight, ShieldCheck, Zap, Headphones, CheckCircle2, Check, ExternalLink } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { setActiveCategory, navigateToHome, navigateToProduct, currentPath } = useCart();
+  const { setActiveCategory, navigateToHome, navigateToProduct, currentPath, t } = useCart();
 
   const handleScrollTo = (sectionId: string, category?: 'office' | 'windows' | 'combos' | 'all') => {
     if (category) {
@@ -33,17 +33,17 @@ export const Hero: React.FC = () => {
         {/* Trust Pill */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0067B8] text-xs font-bold tracking-wide uppercase mb-6">
           <ShieldCheck className="w-4 h-4 text-[#0067B8]" />
-          <span>Tienda Especializada en Software Original</span>
+          <span>{t('heroBadge')}</span>
         </div>
 
         {/* Main Headline */}
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#0B1F3A] tracking-tight leading-[1.12] mb-6">
-          Licencias digitales originales para potenciar tu productividad
+          {t('heroTitleLine1')} {t('heroTitleLine2')} {t('heroTitleLine3')}
         </h1>
 
         {/* Subtitle */}
         <p className="text-base sm:text-xl text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto mb-8">
-          Software profesional para empresas, estudiantes y usuarios que buscan soluciones rápidas, seguras y confiables.
+          {t('heroSubtitle')}
         </p>
 
         {/* Action Buttons */}
@@ -53,7 +53,7 @@ export const Hero: React.FC = () => {
             onClick={() => handleScrollTo('destacados-section')}
             className="px-7 py-3.5 rounded-lg bg-[#0067B8] hover:bg-[#005499] text-white font-bold text-sm sm:text-base transition-all duration-150 shadow-sm hover:shadow-md cursor-pointer flex items-center gap-2 active:scale-95"
           >
-            <span>Comprar ahora</span>
+            <span>{t('buyNow')}</span>
             <ArrowRight className="w-4 h-4 stroke-[2.5]" />
           </button>
 
@@ -62,7 +62,7 @@ export const Hero: React.FC = () => {
             onClick={() => handleScrollTo('catalogo-section', 'all')}
             className="px-7 py-3.5 rounded-lg bg-white hover:bg-slate-50 text-[#0B1F3A] font-bold text-sm sm:text-base border border-slate-300 hover:border-slate-400 transition-all duration-150 cursor-pointer shadow-xs active:scale-95"
           >
-            <span>Ver catálogo</span>
+            <span>{t('viewAllCatalog')}</span>
           </button>
         </div>
 
@@ -70,15 +70,15 @@ export const Hero: React.FC = () => {
         <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs sm:text-sm font-semibold text-slate-600">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Activación directa garantizada</span>
+            <span>{t('heroOfficialWarranty')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-500 shrink-0" />
-            <span>Entrega en 5-15 minutos</span>
+            <span>{t('heroInstantDelivery')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Headphones className="w-4 h-4 text-[#0067B8] shrink-0" />
-            <span>Soporte personalizado</span>
+            <span>{t('heroTechSupport')}</span>
           </div>
         </div>
 

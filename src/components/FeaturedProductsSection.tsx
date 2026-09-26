@@ -6,8 +6,21 @@ import { useReviews } from '../context/ReviewsContext.tsx';
 import { MessageCircle, ShoppingCart, Star, ArrowRight, ShieldCheck, Check } from 'lucide-react';
 
 export const FeaturedProductsSection: React.FC = () => {
-  const { addItem, navigateToProduct, formatPrice, t } = useCart();
+  const { 
+    addItem, 
+    navigateToProduct, 
+    formatPrice, 
+    t, 
+    currency, 
+    language,
+    getProductName,
+    getProductDesc,
+    getBadgeLabel,
+    getDurationLabel
+  } = useCart();
   const { getProductStats } = useReviews();
+
+  const isEn = language === 'EN';
 
   // Curated flagship featured products requested by user
   const featuredIds = [
@@ -26,7 +39,9 @@ export const FeaturedProductsSection: React.FC = () => {
     .filter(Boolean) as Product[];
 
   const handleWhatsAppBuy = (product: Product) => {
-    const text = `Hola UpClic, deseo comprar la licencia de *${product.name}* por *${formatPrice(product.price)}*. ¿Me podrían brindar los medios de pago para coordinar la entrega inmediata?`;
+    const text = isEn
+      ? `Hello UpClic, I would like to buy the license for *${getProductName(product)}* for *${formatPrice(product.price)}*. Could you please provide payment and instant delivery details?`
+      : `Hola UpClic, deseo comprar la licencia de *${getProductName(product)}* por *${formatPrice(product.price)}*. ¿Me podrían brindar los medios de pago para coordinar la entrega inmediata?`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
@@ -38,19 +53,24 @@ export const FeaturedProductsSection: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0067B8] text-xs font-bold tracking-wide uppercase mb-2">
-              <span>Más Vendidos & Recomendados</span>
+              <span>{isEn ? 'Best Sellers & Recommended' : 'Más Vendidos & Recomendados'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">
-              Productos Destacados
+              {isEn ? 'Featured Products' : 'Productos Destacados'}
             </h2>
             <p className="mt-1.5 text-xs sm:text-sm text-slate-600 font-normal">
-              Las licencias más solicitadas por empresas, profesionales y estudiantes con entrega digital inmediata.
+              {isEn
+                ? 'The most requested software licenses for companies, professionals, and students with instant digital delivery.'
+                : 'Las licencias más solicitadas por empresas, profesionales y estudiantes con entrega digital inmediata.'}
             </p>
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-auto">
             <span className="text-xs sm:text-sm text-slate-500 font-medium">
-              Precios oficiales en Soles peruanos
+              {currency === 'PEN' && 'Precios oficiales en Soles peruanos'}
+              {currency === 'USD' && (isEn ? 'Official prices in US Dollars ($ USD)' : 'Precios oficiales en Dólares ($ USD)')}
+              {currency === 'COP' && 'Precios oficiales en Pesos colombianos ($ COP)'}
+              {currency === 'MXN' && 'Precios oficiales en Pesos mexicanos ($ MXN)'}
             </span>
           </div>
         </div>
@@ -63,6 +83,11 @@ export const FeaturedProductsSection: React.FC = () => {
               ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
               : 0;
 
+            const name = getProductName(product);
+            const desc = getProductDesc(product);
+            const badge = getBadgeLabel(product.badge) || (isEn ? 'Genuine' : 'Genuino');
+            const duration = getDurationLabel(product.duration);
+
             return (
               <div
                 key={product.id}
@@ -71,7 +96,7 @@ export const FeaturedProductsSection: React.FC = () => {
                 {/* Top Badge & Discount */}
                 <div className="p-4 pb-0 flex items-center justify-between gap-2">
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0067B8] border border-blue-200 uppercase tracking-wider truncate max-w-[170px]">
-                    {product.badge || 'Genuino'}
+                    {badge}
                   </span>
                   {discountPercent > 0 && (
                     <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200">
@@ -87,7 +112,7 @@ export const FeaturedProductsSection: React.FC = () => {
                 >
                   <img
                     src={product.imageUrl}
-                    alt={product.name}
+                    alt={name}
                     className="max-h-full max-w-full object-contain mix-blend-multiply drop-shadow-sm"
                     onError={(e) => {
                       e.currentTarget.src = product.fallbackImage;
@@ -122,14 +147,14 @@ export const FeaturedProductsSection: React.FC = () => {
                     <h3
                       onClick={() => navigateToProduct(product.slug)}
                       className="font-bold text-sm text-[#0B1F3A] group-hover:text-[#0067B8] transition-colors cursor-pointer line-clamp-2 leading-snug min-h-[2.5rem]"
-                      title={product.name}
+                      title={name}
                     >
-                      {product.name}
+                      {name}
                     </h3>
 
                     {/* Short Description */}
                     <p className="mt-1 text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                      {product.description}
+                      {desc}
                     </p>
                   </div>
 
@@ -145,7 +170,7 @@ export const FeaturedProductsSection: React.FC = () => {
                         </span>
                       )}
                       <span className="text-[10px] font-semibold text-slate-500 ml-auto bg-slate-100 px-1.5 py-0.5 rounded">
-                        {product.duration}
+                        {duration}
                       </span>
                     </div>
 
@@ -154,10 +179,10 @@ export const FeaturedProductsSection: React.FC = () => {
                       <button
                         onClick={() => handleWhatsAppBuy(product)}
                         className="w-full py-2.5 px-3 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-xs transition-all duration-150 cursor-pointer active:scale-[0.98]"
-                        title="Comprar por WhatsApp directamente con un asesor"
+                        title={isEn ? 'Buy via WhatsApp with a live agent' : 'Comprar por WhatsApp directamente con un asesor'}
                       >
                         <MessageCircle className="w-4 h-4 fill-white stroke-none shrink-0" />
-                        <span>Comprar por WhatsApp</span>
+                        <span>{isEn ? 'Buy via WhatsApp' : 'Comprar por WhatsApp'}</span>
                       </button>
 
                       <div className="grid grid-cols-2 gap-2">
@@ -166,14 +191,14 @@ export const FeaturedProductsSection: React.FC = () => {
                           className="w-full py-2 px-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 border border-slate-200 transition-colors cursor-pointer"
                         >
                           <ShoppingCart className="w-3.5 h-3.5 text-slate-500" />
-                          <span className="truncate">{t('cart')}</span>
+                          <span className="truncate">{t('addToCart')}</span>
                         </button>
 
                         <button
                           onClick={() => navigateToProduct(product.slug)}
                           className="w-full py-2 px-2 rounded-lg bg-[#0067B8] hover:bg-[#005499] text-white font-bold text-xs flex items-center justify-center gap-1 transition-colors cursor-pointer"
                         >
-                          <span>Ver detalle</span>
+                          <span>{t('viewProduct')}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
