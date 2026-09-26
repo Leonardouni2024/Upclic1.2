@@ -18,6 +18,7 @@ import { HelpModal } from './components/HelpModal.tsx';
 import { CartReminder } from './components/CartReminder.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 import { RegionLanguageModal } from './components/RegionLanguageModal.tsx';
+import { AIAssistantChat } from './components/AIAssistantChat.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug, activeCategory } = useCart();
@@ -101,6 +102,7 @@ const AppContent: React.FC = () => {
         <RegionLanguageModal />
 
       {/* Intelligent AI Support & Recommendation Chatbot */}
+      <AIAssistantChat />
 
     </div>
   );

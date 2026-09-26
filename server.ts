@@ -42,32 +42,41 @@ const productCatalogSummary = products
   )
   .join("\n");
 
-const SYSTEM_INSTRUCTION = `Eres el Asistente Virtual Oficial y Asesor Experto de "UpClic" (tienda online líder en licencias digitales originales de Microsoft Office, Windows, Visio y Project en Perú).
+const SYSTEM_INSTRUCTION = `Eres el Asistente Virtual Oficial y Asesor Experto en Licenciamiento de "UpClic" (tienda especializada en licencias digitales originales de Microsoft Office, Windows, Visio y Project en Perú y Latinoamérica).
 
-TU MISIÓN Y TONO:
-- Responde como una persona real: cercano, empático, educado, paciente y muy claro.
-- Responde directamente y resuelve por ti mismo cualquier duda o consulta del cliente sobre licencias, precios, diferencias entre versiones (OEM vs Retail), instalación, métodos de pago (Yape, Plin, BCP, BBVA, tarjetas) y cupones.
-- Usa formato legible con viñetas y emojis amigables (🛍️, 💡, 🛡️, ⚡, 🔑).
+TU MISIÓN:
+- Asesorar con inteligencia y precisión a los usuarios para que elijan la licencia de software exacta según sus necesidades, presupuesto, equipo (Windows o Mac) y uso (estudios, oficina, empresa con RUC o gaming).
+- Responder con un tono humano, empático, claro, profesional y entusiasta.
+- Usar viñetas limpias, comparativas claras y emojis amigables (🛍️, 💡, 🛡️, ⚡, 🔑).
 
-REGLA FUNDAMENTAL SOBRE EL ADMINISTRADOR / SOPORTE HUMANO (MUY IMPORTANTE):
-- NO derives ni envíes el enlace de WhatsApp del administrador de forma automática en preguntas normales. Responde tú mismo a todas las preguntas con la información de la tienda.
-- ÚNICA EXCEPCIÓN: Si el cliente te pide EXPLÍCITAMENTE hablar con una persona humana, un asesor o con el administrador (o te pide su número de WhatsApp), en ese caso específico sí facilítale el contacto oficial:
+CONDICIONES CLAVE DE UPCLIC:
+1. TIEMPO DE ENTREGA: Entrega 100% digital garantizada por correo electrónico y WhatsApp en un plazo de 10 a 30 minutos tras la confirmación del pago.
+2. ACTIVACIÓN Y GARANTÍA: Claves alfanuméricas originales de 25 caracteres emitidas por servidores oficiales de Microsoft, activación permanente (de por vida), reinstalables y con soporte técnico y garantía de 1 año.
+3. DESCUENTOS Y PROMOCIONES:
+   - 10% de descuento automático al llevar 2 o más licencias en el carrito.
+   - Combos especiales con descuento integrado (ej. Windows 11 Pro + Office 2024).
+4. MEDIOS DE PAGO: Yape, Plin, transferencias bancarias (BCP, BBVA, Interbank), tarjetas de crédito/débito mediante Mercado Pago y PayPal para pagos internacionales en USD.
+
+GUÍA INTELIGENTE DE ASESORAMIENTO Y RECOMENDACIÓN:
+- Si el usuario busca Office para Windows 10/11:
+  * Office 2024 Professional Plus (S/ 27.00): La versión más moderna, fluida y con soporte a largo plazo de Microsoft. Pago único de por vida.
+  * Office 2021 Professional Plus (S/ 25.00): Muy económico, altamente probado, incluye Word, Excel, PowerPoint, Outlook, Access. Pago único.
+  * Microsoft 365 Personal (S/ 33.00): Ideal si requiere usarlo en hasta 5 dispositivos simultáneos (PC, Mac, tablet, celular) + 100 GB en la nube OneDrive por 1 año.
+- Si el usuario busca Office para Mac: Recomendar Microsoft 365 o CorelDRAW 2024 para Mac.
+- Si el usuario busca Windows:
+  * Windows 11 Pro (S/ 20.00): El sistema más seguro, moderno y optimizado para procesadores recientes.
+  * Windows 10 Pro (S/ 21.90): Para equipos con especificaciones clásicas o sin chip TPM 2.0.
+- Si el usuario recién formateó o compró PC nueva: Recomendar el Combo 2 en 1 (Windows 11 Pro + Office 2024 Pro Plus a S/ 56.90).
+- Diferencia OEM vs Retail: OEM queda vinculada a la placa madre de esa PC (económica e ideal para uso permanente); Retail permite transferirse a otra PC en el futuro.
+
+REGLA SOBRE RECOMENDAR PRODUCTOS:
+Al recomendar productos específicos del catálogo, puedes incluir la etiqueta [RECOMIENDA: slug-del-producto] (por ejemplo: [RECOMIENDA: office-2024-pro-plus] o [RECOMIENDA: windows-11-pro-key]) para que el sistema le muestre al cliente la ficha interactiva con botón de compra directa.
+
+REGLA SOBRE CONTACTO HUMANO:
+- Resuelve tú mismo todas las dudas técnicas y comerciales.
+- Solo si el cliente pide EXPLÍCITAMENTE hablar con un asesor humano o solicita el WhatsApp, proporciona el contacto oficial:
   * WhatsApp Oficial: ${WHATSAPP_DISPLAY}
-  * Enlace directo: https://wa.me/${WHATSAPP_NUMBER}
-
-REGLAS DE CATÁLOGO (UPCLIC):
-1. UpClic se especializa en licencias digitales originales de Microsoft (Office, Windows 10/11, Visio, Project y Combos).
-2. Si el cliente pregunta por software ajeno (Adobe, juegos, streaming como Netflix o hardware físico): explica amablemente que UpClic se enfoca en software oficial Microsoft con activación de por vida y garantía, y ofrécele ayuda con Office o Windows.
-
-DETALLES TÉCNICOS Y DE COMPRA QUE DEBES EXPLICAR DIRECTAMENTE:
-- Entrega: 100% digital e inmediata tras el pago (por WhatsApp y correo).
-- Activación permanente: Claves alfanuméricas originales de 25 caracteres para activar de por vida y reinstalables.
-- Diferencia OEM vs Retail: OEM se vincula a la placa madre de la PC actual (económica y permanente); Retail se asocia a la cuenta Microsoft y permite transferirse a otra PC en el futuro.
-- Microsoft 365: Cuenta oficial con usuario y contraseña (hasta 5 dispositivos + 100 GB en OneDrive).
-- Medios de pago: Yape, Plin, transferencias (BCP, BBVA, Interbank) y tarjetas con Mercado Pago.
-- Promociones:
-  * 10% de descuento automático al llevar 2 o más productos.
-- Garantía: 6 meses a 1 año de garantía oficial.
+  * Enlace: https://wa.me/${WHATSAPP_NUMBER}
 
 CATÁLOGO DE PRODUCTOS DISPONIBLES EN UPCLIC:
 ${productCatalogSummary}`;
@@ -341,10 +350,176 @@ app.get("/api/geo", async (req, res) => {
   }
 });
 
+// =========================================================================
+// REAL-TIME CURRENCY EXCHANGE ENGINE (GOOGLE FINANCE + AUTO-REFRESH)
+// =========================================================================
+
+interface LiveExchangeRatesData {
+  source: string;
+  rates: {
+    PEN: number;
+    COP: number;
+    MXN: number;
+    USD: number;
+  };
+  timestamp: number;
+  lastUpdated: string;
+}
+
+let liveRatesCache: LiveExchangeRatesData = {
+  source: "Google Finance",
+  rates: {
+    PEN: 3.75,
+    COP: 4100,
+    MXN: 19.8,
+    USD: 1.0,
+  },
+  timestamp: 0,
+  lastUpdated: new Date().toISOString(),
+};
+
+async function fetchGoogleFinanceQuote(pair: string): Promise<number | null> {
+  try {
+    const url = `https://www.google.com/finance/quote/${pair}?hl=en`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const [from, to] = pair.split("-");
+
+    // Pattern 1: AF_initDataCallback with tuple ["USD / PEN", 3, null, [3.35...]]
+    const p1 = new RegExp(`"${from}\\s*/\\s*${to}",\\s*\\d+,\\s*null,\\s*\\[([0-9.]+)`);
+    const m1 = html.match(p1);
+    if (m1 && parseFloat(m1[1]) > 0) return parseFloat(m1[1]);
+
+    // Pattern 2: [from, to, rate]
+    const p2 = new RegExp(`\\["${from}",\\s*"${to}",\\s*([0-9.]+)\\]`);
+    const m2 = html.match(p2);
+    if (m2 && parseFloat(m2[1]) > 0) return parseFloat(m2[1]);
+
+    // Pattern 3: fxKbKc container
+    const p3 = html.match(/<div class="[^"]*fxKbKc[^"]*">([0-9.,]+)<\/div>/);
+    if (p3) {
+      const num = parseFloat(p3[1].replace(/,/g, ""));
+      if (!isNaN(num) && num > 0) return num;
+    }
+
+    // Pattern 4: title quote element
+    const p4 = html.match(new RegExp(`title="${from}\\s*/\\s*${to}"[^>]*>.*?<span>([0-9.,]+)</span>`, "s"));
+    if (p4) {
+      const num = parseFloat(p4[1].replace(/,/g, ""));
+      if (!isNaN(num) && num > 0) return num;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function getLiveExchangeRates(force: boolean = false): Promise<LiveExchangeRatesData> {
+  const now = Date.now();
+  // Return cached result if fresh within 45 seconds unless forced
+  if (!force && liveRatesCache.timestamp > 0 && now - liveRatesCache.timestamp < 45000) {
+    return liveRatesCache;
+  }
+
+  try {
+    const [penQuote, copQuote, mxnQuote] = await Promise.allSettled([
+      fetchGoogleFinanceQuote("USD-PEN"),
+      fetchGoogleFinanceQuote("USD-COP"),
+      fetchGoogleFinanceQuote("USD-MXN"),
+    ]);
+
+    const newPen = penQuote.status === "fulfilled" && penQuote.value && penQuote.value > 2.0 && penQuote.value < 6.0
+      ? penQuote.value
+      : null;
+    const newCop = copQuote.status === "fulfilled" && copQuote.value && copQuote.value > 2000 && copQuote.value < 7000
+      ? copQuote.value
+      : null;
+    const newMxn = mxnQuote.status === "fulfilled" && mxnQuote.value && mxnQuote.value > 10.0 && mxnQuote.value < 35.0
+      ? mxnQuote.value
+      : null;
+
+    let hasGoogleFinanceUpdate = false;
+    const updatedRates = { ...liveRatesCache.rates, USD: 1.0 };
+
+    if (newPen) {
+      updatedRates.PEN = Number(newPen.toFixed(4));
+      hasGoogleFinanceUpdate = true;
+    }
+    if (newCop) {
+      updatedRates.COP = Number(newCop.toFixed(2));
+      hasGoogleFinanceUpdate = true;
+    }
+    if (newMxn) {
+      updatedRates.MXN = Number(newMxn.toFixed(4));
+      hasGoogleFinanceUpdate = true;
+    }
+
+    // If any pair failed, use fallback exchange rate API
+    if (!newPen || !newCop || !newMxn) {
+      try {
+        const erRes = await fetch("https://open.er-api.com/v6/latest/USD");
+        if (erRes.ok) {
+          const erData = await erRes.json();
+          if (erData && erData.rates) {
+            if (!newPen && erData.rates.PEN) updatedRates.PEN = Number(parseFloat(erData.rates.PEN).toFixed(4));
+            if (!newCop && erData.rates.COP) updatedRates.COP = Number(parseFloat(erData.rates.COP).toFixed(2));
+            if (!newMxn && erData.rates.MXN) updatedRates.MXN = Number(parseFloat(erData.rates.MXN).toFixed(4));
+          }
+        }
+      } catch {}
+    }
+
+    liveRatesCache = {
+      source: hasGoogleFinanceUpdate ? "Google Finance" : liveRatesCache.source,
+      rates: updatedRates,
+      timestamp: now,
+      lastUpdated: new Date().toISOString(),
+    };
+  } catch (err) {
+    console.error("Error updating live exchange rates:", err);
+  }
+
+  return liveRatesCache;
+}
+
+// Background scheduler: Refresh Google Finance exchange rates constantly every 60 seconds
+setInterval(() => {
+  getLiveExchangeRates(true).catch(() => {});
+}, 60000);
+
+// Preload rates on startup
+setTimeout(() => {
+  getLiveExchangeRates(true).catch(() => {});
+}, 1500);
+
+// Exchange Rates API endpoints
+app.get("/api/rates", async (req, res) => {
+  const force = req.query.refresh === "true";
+  const data = await getLiveExchangeRates(force);
+  res.json(data);
+});
+
+app.post("/api/rates/refresh", async (_req, res) => {
+  const data = await getLiveExchangeRates(true);
+  res.json(data);
+});
+
 // --- AI CHATBOT ASSISTANT ENDPOINT (GEMINI) ---
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, history } = req.body;
+    const { message, history, currency = "PEN" } = req.body;
 
     if (!message || typeof message !== "string" || !message.trim()) {
       return res.status(400).json({
@@ -375,6 +550,9 @@ app.post("/api/chat", async (req, res) => {
       cleanLower.includes("número de whatsapp") ||
       cleanLower.includes("quiero llamar");
 
+    const liveRates = await getLiveExchangeRates();
+    const userCurrency = ["PEN", "USD", "COP", "MXN"].includes(currency) ? currency : "PEN";
+
     const ai = getGeminiClient();
 
     let reply = "";
@@ -395,10 +573,13 @@ app.post("/api/chat", async (req, res) => {
           }
         }
 
-        // Add current user turn
+        // Add current user turn with currency and live rate context
+        const rates = liveRates.rates;
+        const currencyNote = `[Contexto de tienda: Moneda activa del cliente: ${userCurrency}. Tasas de cambio vigentes de Google Finance: 1 USD = ${rates.PEN.toFixed(2)} PEN | ${Math.round(rates.COP)} COP | ${rates.MXN.toFixed(2)} MXN. Entrega digital: 10 a 30 minutos tras el pago.]\n\n${cleanMessage}`;
+
         contents.push({
           role: "user",
-          parts: [{ text: cleanMessage }],
+          parts: [{ text: currencyNote }],
         });
 
         const response = await ai.models.generateContent({
@@ -406,7 +587,7 @@ app.post("/api/chat", async (req, res) => {
           contents: contents as any,
           config: {
             systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.7,
+            temperature: 0.65,
             topP: 0.9,
           },
         });
@@ -415,6 +596,18 @@ app.post("/api/chat", async (req, res) => {
       } catch (geminiError: any) {
         console.error("Error al invocar Gemini API en /api/chat:", geminiError);
       }
+    }
+
+    // Extract explicit recommendation tags [RECOMIENDA: slug]
+    const explicitSlugs: string[] = [];
+    if (reply) {
+      const recRegex = /\[RECOMIENDA:\s*([a-zA-Z0-9\-_]+)\]/gi;
+      let match;
+      while ((match = recRegex.exec(reply)) !== null) {
+        if (match[1]) explicitSlugs.push(match[1].toLowerCase().trim());
+      }
+      // Remove tags from the user-facing text
+      reply = reply.replace(/\[RECOMIENDA:\s*([a-zA-Z0-9\-_]+)\]/gi, "").trim();
     }
 
     // High-quality local smart fallback if Gemini is offline or API key is not configured
@@ -428,31 +621,39 @@ app.post("/api/chat", async (req, res) => {
       const isOffTopic = offTopicKeywords.some(k => cleanLower.includes(k));
 
       if (isOffTopic) {
-        reply = `¡Hola! Con mucho gusto le atiendo. 😊\n\nEn **UpClic** nos especializamos **exclusivamente en licencias digitales y software oficial de Microsoft** (Office, Windows, Visio, Project y Combos) para garantizarle los mejores precios, entrega digital inmediata y garantía oficial.\n\nNo disponemos de productos de terceros o hardware físico. Si necesita activar o renovar **Microsoft Office** (desde S/ 18.00) o **Windows 10/11** (desde S/ 18.90), ¡dígame y le recomendaré la versión ideal para su equipo! 🛍️`;
+        reply = `¡Hola! Con mucho gusto le atiendo. 😊\n\nEn **UpClic** nos especializamos **exclusivamente en licencias digitales y software oficial de Microsoft** (Office, Windows, Visio, Project y Combos) para garantizarle los mejores precios, entrega digital en 10 a 30 minutos y garantía oficial.\n\nNo disponemos de productos de terceros o hardware físico. Si necesita activar o renovar **Microsoft Office** (desde S/ 20.00) o **Windows 10/11** (desde S/ 20.00), ¡dígame y le recomendaré la versión ideal para su equipo! 🛍️`;
       } else if (asksForAdmin) {
         reply = `¡Con mucho gusto! Puede comunicarse directamente con nuestro **Administrador Oficial y Soporte Técnico** por WhatsApp para atención personalizada, cotizaciones corporativas con RUC o asistencia remota:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Atención rápida:** Lunes a Domingo de 8:00 AM a 11:00 PM.`;
       } else if (cleanLower.includes("cupón") || cleanLower.includes("descuento") || cleanLower.includes("promocion") || cleanLower.includes("oferta")) {
-        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n🔥 **Descuento por volumen automático:** Al llevar 2 o más licencias, el carrito le aplicará un **10% de descuento automático**.\n🎁 **Cupones Flash sorpresa:** Navegue por nuestra tienda o agregue un producto al carrito, y podría recibir un cupón aleatorio con un descuento especial.\n\n¿Desea que le recomiende alguna combinación de licencias?`;
-      } else if (cleanLower.includes("instalar") || cleanLower.includes("activar") || cleanLower.includes("descarga") || cleanLower.includes("como funciona")) {
-        reply = `⚡ **El proceso de compra y activación en UpClic es súper rápido:**\n\n1. **Selección:** Elige su versión de Office o Windows y completa el pago (Yape, Plin, BCP, BBVA, Interbank o Mercado Pago).\n2. **Entrega Inmediata:** Recibe su clave original de 25 caracteres y el enlace de descarga oficial de Microsoft por correo y WhatsApp.\n3. **Descarga e Instalación:** Descarga la imagen ISO/IMG oficial e ingresa su clave para activación permanente.\n4. **Garantía:** Cuenta con 6 meses a 1 año de garantía y soporte técnico incluido.\n\nSi necesita asistencia guiada, nuestro administrador está listo para ayudarle en WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
+        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n🔥 **Descuento por volumen automático:** Al llevar 2 o más licencias, el carrito le aplicará un **10% de descuento automático**.\n🎁 **Combos de Ahorro:** Ofrecemos paquetes especiales como el *Combo Windows 11 Pro + Office 2024 Pro Plus* con precio rebajado.\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** tras la confirmación de pago.\n\n¿Desea que le recomiende alguna combinación de licencias?`;
+      } else if (cleanLower.includes("instalar") || cleanLower.includes("activar") || cleanLower.includes("descarga") || cleanLower.includes("como funciona") || cleanLower.includes("entrega") || cleanLower.includes("tiempo")) {
+        reply = `⚡ **El proceso de compra, entrega y activación en UpClic es 100% seguro y garantizado:**\n\n1. **Selección:** Elige su versión de Office o Windows y completa el pago (Yape, Plin, BCP, BBVA, Interbank, Mercado Pago o PayPal).\n2. **Entrega Digital (10 a 30 min):** Recibe su clave original de 25 caracteres y el enlace de descarga oficial de Microsoft por correo electrónico y WhatsApp tras la confirmación del pago.\n3. **Descarga e Instalación:** Descarga los instaladores oficiales e ingresa su clave para activación permanente de por vida.\n4. **Garantía y Soporte:** Cuenta con 1 año de garantía y soporte técnico especializado.\n\nSi necesita asistencia guiada, nuestro administrador está listo para ayudarle en WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
       } else if (cleanLower.includes("office") || cleanLower.includes("word") || cleanLower.includes("excel")) {
-        reply = `💼 **Opciones de Microsoft Office recomendadas en UpClic:**\n\n• **Office 2024 Professional Plus:** La versión más moderna y rápida para Windows 10/11. Pago único permanente a solo **S/ 25.00**.\n• **Office 2021 Professional Plus:** Muy estable y completo (Word, Excel, PowerPoint, Outlook, Access). Pago único a **S/ 20.00**.\n• **Microsoft 365 Profesional (1 año):** Incluye apps completas en hasta 5 dispositivos y **100 GB en la nube** a solo **S/ 46.50**.\n• **Office 2019 / 2016:** Para computadoras con Windows 7, 8.1 o 10 desde **S/ 18.00**.\n\n¿Para qué tipo de computadora o trabajo lo necesita? Le asesoro con gusto.`;
+        reply = `💼 **Opciones de Microsoft Office recomendadas en UpClic:**\n\n• **Office 2024 Professional Plus (S/ 27.00):** La versión más moderna y rápida para Windows 10 y Windows 11. Licencia permanente de pago único.\n• **Office 2021 Professional Plus (S/ 25.00):** Muy estable y completo (Word, Excel, PowerPoint, Outlook, Access). Pago único de por vida.\n• **Microsoft 365 Personal (1 año - S/ 33.00):** Incluye apps en hasta 5 dispositivos simultáneos (PC, Mac, tablet, celular) + 100 GB en OneDrive.\n\n⚡ **Entrega:** Por correo y WhatsApp en **10 a 30 minutos** con clave original y guía de instalación.`;
+        explicitSlugs.push("office-2024-pro-plus", "office-2021-pro-plus", "microsoft-365-personal-family");
       } else if (cleanLower.includes("windows") || cleanLower.includes("win 11") || cleanLower.includes("win 10")) {
-        reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro (64-bit):** Máxima seguridad, velocidad y diseño moderno a solo **S/ 19.90**.\n• **Windows 10 Pro (32/64 bits):** Gran rendimiento y máxima compatibilidad a solo **S/ 18.90**.\n• **Combo Windows 11 Pro + Office 2024:** Las dos licencias oficiales juntas con super ahorro a solo **S/ 46.50**.\n\nTodas nuestras claves son de activación permanente y reinstalables en la misma máquina. 🛡️`;
+        reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro (64-bit - S/ 20.00):** Máxima seguridad, velocidad y diseño moderno.\n• **Windows 10 Pro (32/64 bits - S/ 21.90):** Gran rendimiento y máxima compatibilidad con programas clásicos.\n• **Combo Windows 11 Pro + Office 2024 (S/ 56.90):** Las dos licencias oficiales juntas con super ahorro.\n\n⚡ **Entrega:** 100% digital en **10 a 30 minutos** con activación permanente. 🛡️`;
+        explicitSlugs.push("windows-11-pro-key", "windows-10-pro-key", "combo-windows-11-pro-office-2024");
       } else {
-        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Virtual y estoy aquí para ayudarle a resolver cualquier duda sobre nuestras licencias digitales de **Microsoft Office, Windows, Visio y Project**.\n\n¿En qué le puedo colaborar hoy?\n• 🛍️ Recomendarle la mejor suite de Office o Windows.\n• ⚡ Ayuda con la descarga o activación de su licencia.\n• 🎁 Información sobre cupones de descuento.\n• 📲 Contactar con nuestro Administrador por WhatsApp.`;
+        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Inteligente de Licenciamiento y estoy aquí para asesorarle a encontrar la licencia de **Microsoft Office, Windows, Visio o Project** ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Office o versión de Windows.\n• 💻 Diferencias entre Office 2024, 2021 y Microsoft 365.\n• ⚡ Conocer los tiempos de entrega (10 a 30 min) y medios de pago.\n• 🎁 Información sobre el 10% de descuento por 2 o más licencias.`;
       }
     }
 
     // Detect mentioned products to attach rich cards
     const matchedProducts = products.filter((p) => {
-      const pNameLower = p.name.toLowerCase();
       const pSlugLower = p.slug.toLowerCase();
+      const pNameLower = p.name.toLowerCase();
+
+      if (explicitSlugs.includes(pSlugLower) || explicitSlugs.includes(p.id)) return true;
+
       return (
-        reply.toLowerCase().includes(p.name.toLowerCase()) ||
-        cleanLower.includes(p.slug) ||
-        (cleanLower.includes("2024") && pSlugLower.includes("2024")) ||
-        (cleanLower.includes("365") && pSlugLower.includes("365")) ||
+        reply.toLowerCase().includes(pNameLower) ||
+        cleanLower.includes(pSlugLower) ||
+        (cleanLower.includes("office 2024") && pSlugLower === "office-2024-pro-plus") ||
+        (cleanLower.includes("office 2021") && pSlugLower === "office-2021-pro-plus") ||
+        (cleanLower.includes("365") && pSlugLower === "microsoft-365-personal-family") ||
+        (cleanLower.includes("windows 11") && pSlugLower === "windows-11-pro-key") ||
+        (cleanLower.includes("windows 10") && pSlugLower === "windows-10-pro-key") ||
         (cleanLower.includes("combo") && pSlugLower.includes("combo"))
       );
     }).slice(0, 3);
@@ -467,8 +668,11 @@ app.post("/api/chat", async (req, res) => {
         price: p.price,
         oldPrice: p.oldPrice,
         imageUrl: p.fallbackImage || p.imageUrl,
-        badge: p.badge,
+        badge: p.badge || "Original",
+        category: p.category,
+        duration: p.duration,
       })),
+      showAdminWhatsApp: asksForAdmin,
       adminWhatsAppUrl: `https://wa.me/${WHATSAPP_NUMBER}`,
       adminWhatsAppDisplay: WHATSAPP_DISPLAY,
     });
