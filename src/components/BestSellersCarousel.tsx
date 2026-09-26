@@ -12,7 +12,7 @@ export const BestSellersCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // Selected top bestselling products for the reel
-  const bestSellers = products.slice(products.length - 2, products.length).concat(products.slice(0, 7));
+  const bestSellers = products.filter(p => p.bestSeller || p.featured || p.id === 'prod-office-2024' || p.id === 'prod-win11-pro' || p.id === 'prod-canva-pro' || p.id === 'prod-duolingo-super').slice(0, 10);
   
   const totalItems = bestSellers.length;
 

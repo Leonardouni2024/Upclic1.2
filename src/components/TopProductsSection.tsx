@@ -19,10 +19,11 @@ export const TopProductsSection: React.FC = () => {
   } = useCart();
   const { getProductStats } = useReviews();
 
-  // Highlight top 2 products: Office Professional Plus 2024 and Windows 11 Pro
-   
-   
-  const topItems = products.slice(products.length - 2, products.length).filter(Boolean);
+  // Highlight top 2 flagship products: Office Professional Plus 2024 and Windows 11 Pro
+  const topItems = [
+    products.find(p => p.id === 'prod-office-2024') || products[0],
+    products.find(p => p.id === 'prod-win11-pro') || products[1]
+  ].filter(Boolean) as Product[];
 
   return (
     <section id="top-section" className="py-14 bg-white text-slate-900 border-b border-slate-200">

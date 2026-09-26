@@ -1,4 +1,4 @@
-import { formatPrice } from '../products.ts';
+import { formatPrice, WHATSAPP_NUMBER } from '../products.ts';
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   Eye,
   AlertCircle,
+  MessageCircle,
 } from 'lucide-react';
 
 interface ProductCardProps {
@@ -62,6 +63,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     navigateToCheckout();
   };
 
+  const handleWhatsAppBuy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = `Hola UpClic, deseo comprar la licencia de *${productName}* por *${formatPrice(activePrice)}*. ¿Me podrían brindar los medios de pago para coordinar la entrega inmediata?`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <>
       <article
@@ -70,38 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Top Badges */}
-        <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none">
-          {badgeText ? (
-            <span
-              className={`px-2.5 py-1 text-[10px] sm:text-[11px] font-bold rounded-md uppercase tracking-wider ${
-                badgeText.includes('TOP') || badgeText.includes('BEST') || badgeText.includes('MÁS VENDIDO')
-                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                  : badgeText.includes('1 AÑO') || badgeText.includes('1 YEAR')
-                  ? 'bg-slate-100 text-slate-700 border border-slate-200'
-                  : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-              }`}
-            >
-              {badgeText}
-            </span>
-          ) : (
-            <div></div>
-          )}
-          
-          {/* Discount Badge */}
-          {discountPercent > 0 && (
-            <span className="px-2 py-1 bg-rose-100 text-rose-600 text-[11px] font-bold rounded-md border border-rose-200">
-              -{discountPercent}%
-            </span>
-          )}
-          {product.cloudStorage && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-50 text-blue-600 border border-blue-200">
-              {product.cloudStorage}
-            </span>
-          )}
-        </div>
-
-        {/* Product Image Section (occupies ~55-60% of card) */}
+        {/* Product Image Section (clean and unobstructed) */}
         <div
           onClick={() => navigateToProduct(product.slug)}
           className="relative w-full aspect-square p-5 sm:p-6 bg-slate-50 flex items-center justify-center cursor-pointer overflow-hidden border-b border-slate-100"
@@ -217,6 +193,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             <div className="flex flex-col gap-1.5">
+              {/* Botón WhatsApp directo */}
+              <button
+                type="button"
+                onClick={handleWhatsAppBuy}
+                className="w-full py-2 px-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-emerald-200"
+                title="Comprar por WhatsApp"
+              >
+                <MessageCircle className="w-3.5 h-3.5 fill-emerald-600 stroke-none shrink-0" />
+                <span className="truncate">Comprar por WhatsApp</span>
+              </button>
+
               <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                 {/* Botón: Agregar al carrito */}
                 <button
@@ -231,7 +218,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <button
                   id={`view-product-${product.id}`}
                   onClick={handleBuyNow}
-                  className="w-full py-2 sm:py-2.5 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition-all duration-150 cursor-pointer border border-blue-700 active:scale-95"
+                  className="w-full py-2 sm:py-2.5 px-2 rounded-lg bg-[#0067B8] hover:bg-[#005499] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition-all duration-150 cursor-pointer border border-transparent active:scale-95"
                 >
                   <span className="truncate">{t('buyNow')}</span>
                 </button>

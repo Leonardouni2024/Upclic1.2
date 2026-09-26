@@ -22,6 +22,8 @@ export const ProductGrid: React.FC = () => {
       result = result.filter(p => p.category === 'windows');
     } else if (activeCategory === 'project-visio') {
       result = result.filter(p => p.category === 'project-visio');
+    } else if (activeCategory === 'apps') {
+      result = result.filter(p => p.category === 'apps');
     } else if (activeCategory === 'top') {
       result = result.filter(p => p.featured || p.bestSeller);
     } else if (activeCategory === 'bestsellers') {
@@ -39,6 +41,7 @@ export const ProductGrid: React.FC = () => {
     { key: 'windows', label: t('windows').toUpperCase() },
     { key: 'combos', label: t('combos').toUpperCase() },
     { key: 'project-visio', label: t('projectVisio').toUpperCase() },
+    { key: 'apps', label: (t('apps') || 'APPS').toUpperCase() },
     { key: 'bestsellers', label: t('bestSellers').toUpperCase() },
     { key: 'offers', label: t('deals').toUpperCase() }
   ];
@@ -49,25 +52,25 @@ export const ProductGrid: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-2.5 border border-blue-200 shadow-sm">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0067B8] text-xs font-bold uppercase tracking-wider mb-2.5 border border-blue-200">
               <span>{t('catalogBadge')}</span>
             </div>
-            <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">
               {t('catalogTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 sm:mt-1.5 font-normal">
               {t('catalogSubtitle')}
             </p>
           </div>
 
           {/* Results count pill */}
-          <div className="text-[11px] sm:text-xs font-semibold text-slate-600 bg-white px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-200 shadow-sm self-start md:self-auto flex items-center gap-1.5">
+          <div className="text-[11px] sm:text-xs font-semibold text-slate-600 bg-white px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-200 shadow-xs self-start md:self-auto flex items-center gap-1.5">
             <span>Mostrando</span>
-            <span className="font-black text-white bg-blue-600 px-2 py-0.5 rounded-md tabular-nums">
+            <span className="font-bold text-white bg-[#0067B8] px-2 py-0.5 rounded-md tabular-nums">
               {filteredProducts.length}
             </span>
             <span>licencias</span>
-            {searchQuery && <span className="text-white font-bold"> para "{searchQuery}"</span>}
+            {searchQuery && <span className="text-[#0B1F3A] font-bold"> para "{searchQuery}"</span>}
           </div>
         </div>
 
@@ -80,10 +83,10 @@ export const ProductGrid: React.FC = () => {
                 key={cat.key}
                 id={`cat-filter-${cat.key}`}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer font-bold ${
+                className={`px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-all duration-150 cursor-pointer font-bold ${
                   isActive
-                    ? 'bg-blue-600 text-white font-black shadow-sm border border-blue-700'
-                    : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 hover:border-slate-300'
+                    ? 'bg-[#0067B8] text-white font-bold shadow-xs border border-transparent'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {cat.label}

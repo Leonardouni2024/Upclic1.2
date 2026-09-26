@@ -1,0 +1,116 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background subtle studio lighting -->
+    <radialGradient id="bgGlow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f0f9ff"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </radialGradient>
+
+    <!-- Floor shadow gradient -->
+    <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.35)"/>
+      <stop offset="40%" stop-color="rgba(15, 23, 42, 0.18)"/>
+      <stop offset="80%" stop-color="rgba(15, 23, 42, 0.04)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0)"/>
+    </radialGradient>
+
+    <!-- Cyan / Sky Windows Gradient -->
+    <linearGradient id="winTelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="50%" stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#0C4A6E"/>
+    </linearGradient>
+
+    <linearGradient id="winTelSpine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#082F49"/>
+      <stop offset="60%" stop-color="#075985"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+
+    <linearGradient id="winTelTop" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+
+    <linearGradient id="frontGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.45)"/>
+      <stop offset="30%" stop-color="rgba(255,255,255,0.12)"/>
+      <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="1000" fill="url(#bgGlow)"/>
+
+  <!-- Pedestal Floor Shadow -->
+  <ellipse cx="500" cy="855" rx="360" ry="42" fill="url(#floorShadow)"/>
+  <ellipse cx="490" cy="845" rx="270" ry="24" fill="rgba(15, 23, 42, 0.45)"/>
+
+  <!-- 3D SOFTWARE BOX -->
+  <!-- Top Face -->
+  <polygon points="280,160 680,140 740,205 350,230" fill="url(#winTelTop)"/>
+  <polygon points="280,160 680,140 740,205 350,230" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- Spine / Left Face -->
+  <polygon points="280,160 350,230 350,810 280,720" fill="url(#winTelSpine)"/>
+  <g transform="translate(315, 480) rotate(-90)">
+    <text x="0" y="0" fill="white" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" letter-spacing="4" text-anchor="middle">
+      WINDOWS • ACTIVACIÓN POR TELÉFONO
+    </text>
+  </g>
+
+  <!-- Front Face -->
+  <polygon points="350,230 740,205 740,760 350,810" fill="url(#winTelGrad)"/>
+  <polygon points="350,230 740,205 740,760 350,810" fill="url(#frontGloss)"/>
+
+  <!-- Badge / Tag -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 260)">
+    <rect x="0" y="0" width="220" height="38" rx="8" fill="#38BDF8"/>
+    <text x="110" y="25" fill="#0c4a6e" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="15" letter-spacing="1" text-anchor="middle">
+      📞 VÍA TELEFÓNICA MICROSOFT
+    </text>
+  </g>
+
+  <!-- Main Art / Telephone + Windows -->
+  <g transform="matrix(0.96 0 -0.05 0.98 525 430)">
+    <circle cx="0" cy="0" r="75" fill="rgba(255,255,255,0.18)"/>
+    <circle cx="0" cy="0" r="55" fill="white"/>
+    <text x="0" y="16" font-size="54" text-anchor="middle">📞</text>
+  </g>
+
+  <!-- Title & Features on Front -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 570)">
+    <text x="0" y="0" fill="white" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" letter-spacing="0">
+      Windows 11 / 10
+    </text>
+    <text x="0" y="32" fill="#BAE6FD" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" letter-spacing="1">
+      ACTIVACIÓN TELEFÓNICA
+    </text>
+
+    <!-- Checklist -->
+    <g transform="translate(0, 65)">
+      <circle cx="10" cy="0" r="6" fill="#38BDF8"/>
+      <text x="26" y="5" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Alternativa económica y práctica
+      </text>
+
+      <circle cx="10" cy="30" r="6" fill="#38BDF8"/>
+      <text x="26" y="35" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Guía e instrucciones paso a paso
+      </text>
+
+      <circle cx="10" cy="60" r="6" fill="#38BDF8"/>
+      <text x="26" y="65" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Activación genuina y permanente
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Brand -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 770)">
+    <text x="0" y="0" fill="#BAE6FD" font-family="system-ui, sans-serif" font-weight="800" font-size="15" letter-spacing="2">
+      UPCLIC LICENCIAS • GARANTÍA 100%
+    </text>
+  </g>
+</svg>

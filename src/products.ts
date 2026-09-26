@@ -3,6 +3,8 @@ import type { Product, CartTotals, Currency } from './types.ts';
 export const WHATSAPP_NUMBER = '51983204384';
 export const WHATSAPP_DISPLAY = '+51 983 204 384';
 export const MERCADO_PAGO_URL = 'https://www.mercadopago.com.pe';
+export const INSTAGRAM_URL = 'https://www.instagram.com/upclic.peru/';
+export const INSTAGRAM_DISPLAY = '@upclic.peru';
 
 export function getStoredCurrency(): Currency {
   if (typeof window !== 'undefined') {
@@ -242,8 +244,16 @@ export const COMBO_WIN10_OFFICE2021_STEPS = [
   'Activar Office: Abrir Word o Excel, entrar a Cuenta > Activar producto e ingresar tu clave de 25 caracteres de Office 2021 Pro Plus.'
 ];
 
+export const TELEPHONE_ACTIVATION_STEPS = [
+  'Descarga e instala el software oficial de Microsoft utilizando el enlace del instalador directo provisto en tu pedido.',
+  'Abre cualquier aplicación (Word, Excel o en Configuración > Activación de Windows) y selecciona la opción "Deseo activar el software por teléfono".',
+  'El asistente de activación oficial de Microsoft generará tu Identificador de Instalación (ID de instalación compuesto por varios bloques de números).',
+  'Accede al portal web oficial de activación telefónica de Microsoft (o a la línea telefónica gratuita) e introduce tu Identificador de Instalación.',
+  'El sistema automatizado de Microsoft verificará los datos y te entregará tu Identificador de Confirmación (bloques de la A a la H). Ingrésalos en la pantalla y el software quedará activado de por vida con garantía total.'
+];
+
 export const products: Product[] = [
-  // --- OFFICE ---
+  // --- OFFICE CLAVES DIRECTAS ---
   {
     id: 'prod-office-2024',
     slug: 'office-2024-pro-plus',
@@ -258,8 +268,9 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 342,
     featured: true,
+    badge: 'DIRECTA LTSC',
     features: [
-      'Clave de 25 caracteres para activación oficial',
+      'Clave de 25 caracteres para activación directa oficial',
       'Compatibilidad con Windows 10 y Windows 11',
       'Actualizaciones automáticas de seguridad de Microsoft',
       'Multilenguaje y soporte oficial permanente'
@@ -284,6 +295,106 @@ export const products: Product[] = [
       }
     ],
     installationSteps: OFFICE_STANDARD_STEPS
+  },
+
+  // --- OFFICE ACTIVACIÓN POR TELÉFONO ---
+  {
+    id: 'prod-office-2024-tel',
+    slug: 'office-2024-activacion-telefono',
+    name: 'Office Profesional 2024 (Activación por Teléfono)',
+    description: 'Alternativa económica y práctica para disfrutar de Microsoft Office 2024 Professional Plus. Incluye guía paso a paso e instrucciones claras para activación telefónica automatizada ante Microsoft. Licencia de por vida para 1 PC.',
+    price: 13.00,
+    oldPrice: 65.00,
+    duration: 'Permanente (De por vida)',
+    category: 'office',
+    imageUrl: '/products/office-2024.webp',
+    fallbackImage: '/products/office-2024.png',
+    rating: 4.88,
+    reviews: 178,
+    badge: '📞 POR TELÉFONO • S/ 13',
+    features: [
+      'Activación telefónica automatizada Microsoft',
+      'Word, Excel, PowerPoint, Outlook, OneNote, Access y Publisher 2024',
+      'Licencia permanente de pago único para 1 PC',
+      'Guía paso a paso ilustrada incluida'
+    ],
+    compatibility: 'Windows 10 / Windows 11 (32 & 64 Bit)',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2024 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
+  },
+  {
+    id: 'prod-office-2021-tel',
+    slug: 'office-2021-activacion-telefono',
+    name: 'Office Profesional 2021 (Activación por Teléfono)',
+    description: 'Activación telefónica económica y 100% legal de Microsoft Office 2021 Professional Plus. Incluye suite completa de productividad y guía paso a paso para activación en servidores oficiales de Microsoft.',
+    price: 12.00,
+    oldPrice: 55.00,
+    duration: 'Permanente (De por vida)',
+    category: 'office',
+    imageUrl: '/products/office-2021.webp',
+    fallbackImage: '/products/office-2021.png',
+    rating: 4.86,
+    reviews: 142,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Activación telefónica oficial Microsoft',
+      'Word, Excel, PowerPoint, Outlook, Access 2021',
+      'Licencia permanente sin cuotas mensuales',
+      'Guía de instalación y activación incluida'
+    ],
+    compatibility: 'Windows 10 / Windows 11',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2021 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
+  },
+  {
+    id: 'prod-office-2019-tel',
+    slug: 'office-2019-activacion-telefono',
+    name: 'Office Profesional 2019 (Activación por Teléfono)',
+    description: 'Alternativa económica para activar Office 2019 Professional Plus en tu PC de trabajo u hogar mediante el sistema telefónico de Microsoft.',
+    price: 12.00,
+    oldPrice: 50.00,
+    duration: 'Permanente (De por vida)',
+    category: 'office',
+    imageUrl: '/products/office-2019.webp',
+    fallbackImage: '/products/office-2019.png',
+    rating: 4.84,
+    reviews: 96,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Word 2019, Excel 2019, PowerPoint 2019, Outlook 2019',
+      'Activación telefónica de por vida para 1 PC',
+      'Instrucciones paso a paso de fácil ejecución'
+    ],
+    compatibility: 'Windows 10 / Windows 11',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2019Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2019 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
+  },
+  {
+    id: 'prod-office-2016-tel',
+    slug: 'office-2016-activacion-telefono',
+    name: 'Office Profesional 2016 (Activación por Teléfono)',
+    description: 'Super precio accesible para activar Microsoft Office 2016 Professional Plus en cualquier PC con Windows 7, 8, 10 u 11.',
+    price: 12.00,
+    oldPrice: 45.00,
+    duration: 'Permanente (De por vida)',
+    category: 'office',
+    imageUrl: '/products/office-2016.webp',
+    fallbackImage: '/products/office-2016.png',
+    rating: 4.82,
+    reviews: 88,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Word, Excel, PowerPoint, Outlook 2016',
+      'Excelente compatibilidad con PCs de recursos moderados',
+      'Licencia permanente de activación telefónica'
+    ],
+    compatibility: 'Windows 7 / 8.1 / 10 / 11',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlusRetail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Office 2016 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
   },
   {
     id: 'prod-office-2024-3pc',
@@ -449,7 +560,7 @@ export const products: Product[] = [
     slug: 'office-2016-pro-plus',
     name: 'Microsoft Office 2016 Professional Plus',
     description: 'Licencia permanente compatible con Windows 7, 8, 10 y 11. Ideal para equipos clásicos.',
-    price: 20.00,
+    price: 24.00,
     oldPrice: 65.00,
     duration: 'Permanente (De por vida)',
     category: 'office',
@@ -457,6 +568,7 @@ export const products: Product[] = [
     fallbackImage: '/products/office-2016.png',
     rating: 4.82,
     reviews: 145,
+    badge: 'DIRECTA LTSC',
     features: [
       'Word 2016, Excel 2016, PowerPoint 2016, Outlook 2016',
       'Excelente compatibilidad con versiones anteriores de Windows'
@@ -518,7 +630,7 @@ export const products: Product[] = [
     slug: 'office-2010-pro-plus',
     name: 'Microsoft Office 2010 Professional Plus',
     description: 'Edición clásica compatible con sistemas antiguos.',
-    price: 50.00,
+    price: 29.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'office',
@@ -526,6 +638,7 @@ export const products: Product[] = [
     fallbackImage: '/products/office-2010.png',
     rating: 4.75,
     reviews: 74,
+    badge: 'DIRECTA LTSC',
     features: ['Word 2010, Excel 2010 y suite básica de Office'],
     compatibility: 'Windows XP / Vista / 7 / 8 / 10',
     downloadUrl: 'https://archive.org/download/office-2010-professional-plus-sp-2-spanish/Office2010ProPlusSP2_Spanish.iso',
@@ -546,7 +659,7 @@ export const products: Product[] = [
     slug: 'microsoft-365-personal-family',
     name: 'Microsoft 365 Personal (Cuenta - 1 Año)',
     description: 'Suscripción oficial a la suite Microsoft 365 por 1 año. Incluye Word, Excel, PowerPoint, Outlook y 100 GB de almacenamiento en la nube OneDrive.',
-    price: 33.00,
+    price: 35.00,
     oldPrice: 110.00,
     duration: '1 año',
     category: 'office',
@@ -585,25 +698,25 @@ export const products: Product[] = [
   {
     id: 'prod-gemini-ai-pro',
     slug: 'google-gemini-ia-pro-18-meses',
-    name: 'Google Gemini IA Pro / Advanced (18 Meses)',
-    description: 'Suscripción a Google Gemini IA Pro / Advanced por 18 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados 1.5 Pro y 2.0 Flash, 5 TB de almacenamiento en la nube (Google One) y Gemini integrado en Docs, Gmail y Drive.',
-    price: 40.00,
+    name: 'Gemini AI Pro (18 Meses)',
+    description: 'Suscripción a Gemini AI Pro / Advanced por 18 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados, 5 TB de almacenamiento en la nube (Google One) e integración en Docs, Gmail y Drive.',
+    price: 35.00,
     oldPrice: 120.00,
     duration: '18 meses',
-    category: 'office',
-    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpoBkIRQbJR0zKy8ppHVjPCExMBhe83UqR2c-x99coA6ezbrIwNrzaPzjh&s=10',
-    fallbackImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpoBkIRQbJR0zKy8ppHVjPCExMBhe83UqR2c-x99coA6ezbrIwNrzaPzjh&s=10',
+    category: 'apps',
+    imageUrl: '/products/gemini-ai-pro.webp',
+    fallbackImage: '/products/gemini-ai-pro.png',
     rating: 4.97,
     reviews: 184,
-    badge: '5 TB NUBE • 18M',
+    badge: 'GOOGLE AI ADVANCED',
     cloudStorage: '5 TB Google One Cloud',
     isAccountAccess: true,
     accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin necesidad de entregar contraseñas.',
     features: [
-      'Acceso a modelos de vanguardia Gemini 1.5 Pro & 2.0 Flash',
+      'Acceso a modelos de vanguardia de Inteligencia Artificial',
       'Link de activación oficial vinculado directamente a tu cuenta personal de Google',
       '5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
-      'Gemini integrado de manera nativa en Google Docs, Sheets, Slides y Gmail',
+      'IA integrada de manera nativa en Google Docs, Sheets, Slides y Gmail',
       'Garantía total de funcionamiento durante los 18 meses completos'
     ],
     compatibility: 'Navegadores Web, Windows, macOS, Android e iOS',
@@ -626,7 +739,7 @@ export const products: Product[] = [
     ]
   },
 
-  // --- WINDOWS ---
+  // --- WINDOWS CLAVES DIRECTAS ---
   {
     id: 'prod-win11-pro',
     slug: 'windows-11-pro-key',
@@ -641,24 +754,25 @@ export const products: Product[] = [
     rating: 4.95,
     reviews: 418,
     featured: true,
+    badge: 'CLAVE DIRECTA',
     variants: [
       {
         id: 'oem',
-        name: 'Clave tipo OEM',
+        name: 'Windows 11 Pro OEM',
         type: 'OEM',
-        price: 21.00,
+        price: 20.00,
         oldPrice: 85.00,
         shortDesc: 'Se vincula a la placa madre de 1 equipo específico.',
-        badge: 'ECONÓMICA'
+        badge: 'OEM • S/ 20'
       },
       {
         id: 'retail',
-        name: 'Clave tipo Retail',
+        name: 'Windows 11 Pro Retail',
         type: 'Retail',
-        price: 25.00,
+        price: 28.00,
         oldPrice: 105.00,
         shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.',
-        badge: 'RECOMENDADA'
+        badge: 'RETAIL • S/ 28'
       }
     ],
     features: [
@@ -699,7 +813,7 @@ export const products: Product[] = [
     slug: 'windows-11-home-key',
     name: 'Windows 11 Home Key 64 Bit',
     description: 'Edición Home oficial para uso personal y entretenimiento con interfaz moderna.',
-    price: 25.00,
+    price: 20.00,
     oldPrice: 75.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -707,13 +821,14 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-11-home.png',
     rating: 4.91,
     reviews: 210,
+    badge: 'CLAVE DIRECTA',
     features: [
       'Widgets, nuevo menú de inicio y controles táctiles avanzados',
       'Seguridad integrada con Windows Defender'
     ],
     variants: [
-      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 30.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 25.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
+      { id: 'oem', name: 'Windows 11 Home OEM', type: 'OEM', price: 20.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.', badge: 'OEM • S/ 20' },
+      { id: 'retail', name: 'Windows 11 Home Retail', type: 'Retail', price: 26.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.', badge: 'RETAIL • S/ 26' }
     ],
     compatibility: 'Windows 11 (64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
@@ -741,7 +856,7 @@ export const products: Product[] = [
     slug: 'windows-11-enterprise-key',
     name: 'Windows 11 Enterprise Key 64 Bit',
     description: 'Edición empresarial avanzada con control de dispositivos y seguridad IT.',
-    price: 41.50,
+    price: 33.00,
     oldPrice: 95.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -749,6 +864,7 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-11-enterprise.png',
     rating: 4.93,
     reviews: 135,
+    badge: 'ENTERPRISE',
     features: ['DirectAccess, AppLocker y virtualización corporativa'],
     compatibility: 'Windows 11 (64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
@@ -769,7 +885,7 @@ export const products: Product[] = [
     slug: 'windows-10-pro-key',
     name: 'Windows 10 Professional Key 32/64 Bit',
     description: 'Clave original para Windows 10 Pro. Actualizable gratis a Windows 11 Pro cuando lo desees.',
-    price: 21.90,
+    price: 20.00,
     oldPrice: 70.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -777,14 +893,15 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-10-pro.png',
     rating: 4.85,
     reviews: 310,
+    badge: 'CLAVE DIRECTA',
     features: [
       'Clave vitalicia para 1 PC',
       'Apta para actualización directa desde Windows 10 Home',
       'Soporte completo para Remote Desktop'
     ],
     variants: [
-      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 21.90, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 25.90, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
+      { id: 'oem', name: 'Windows 10 Pro OEM', type: 'OEM', price: 20.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.', badge: 'OEM • S/ 20' },
+      { id: 'retail', name: 'Windows 10 Pro Retail', type: 'Retail', price: 27.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.', badge: 'RETAIL • S/ 27' }
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
@@ -812,7 +929,7 @@ export const products: Product[] = [
     slug: 'windows-10-home-key',
     name: 'Windows 10 Home Key 32/64 Bit',
     description: 'Licencia original para usuarios de hogar. Rápido, seguro y estable.',
-    price: 26.00,
+    price: 19.00,
     oldPrice: 60.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -820,10 +937,11 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-10-home.png',
     rating: 4.84,
     reviews: 180,
+    badge: 'CLAVE DIRECTA',
     features: ['DirectX 12, Cortana y protección integrada'],
     variants: [
-      { id: 'oem', name: 'Clave tipo OEM', type: 'OEM', price: 26.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.' },
-      { id: 'retail', name: 'Clave tipo Retail', type: 'Retail', price: 30.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.' }
+      { id: 'oem', name: 'Windows 10 Home OEM', type: 'OEM', price: 19.00, shortDesc: 'Se vincula a la placa madre de 1 equipo específico.', badge: 'OEM • S/ 19' },
+      { id: 'retail', name: 'Windows 10 Home Retail', type: 'Retail', price: 25.00, shortDesc: 'Transferible a otro equipo en el futuro si cambias de PC.', badge: 'RETAIL • S/ 25' }
     ],
     compatibility: 'Windows 10 (32/64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
@@ -835,7 +953,7 @@ export const products: Product[] = [
     slug: 'windows-10-enterprise-key',
     name: 'Windows 10 Enterprise LTSC Key',
     description: 'Versión corporativa sin aplicaciones innecesarias. Máxima estabilidad.',
-    price: 36.00,
+    price: 32.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -843,6 +961,7 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-10-enterprise.png',
     rating: 4.9,
     reviews: 142,
+    badge: 'ENTERPRISE',
     features: ['Long Term Servicing Channel (LTSC) para la máxima estabilidad'],
     compatibility: 'Windows 10 Enterprise LTSC',
     downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
@@ -854,7 +973,7 @@ export const products: Product[] = [
     slug: 'windows-8-1-pro-key',
     name: 'Windows 8.1 Professional Key',
     description: 'Licencia vitalicia para Windows 8.1 Pro.',
-    price: 55.00,
+    price: 35.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
@@ -862,6 +981,7 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-8-1-pro.png',
     rating: 4.78,
     reviews: 65,
+    badge: 'CLAVE DIRECTA',
     features: ['Soporte para pantalla táctil y escritorio clásico'],
     compatibility: 'Windows 8.1 (32/64 Bit)',
     downloadUrl: 'https://archive.org/download/Win8.1ProSpanishx64/Win8.1_Spanish_x64.iso',
@@ -881,6 +1001,7 @@ export const products: Product[] = [
     fallbackImage: '/products/windows-7-professional.png',
     rating: 4.82,
     reviews: 128,
+    badge: 'CLAVE DIRECTA',
     features: ['Aero Glass, Windows XP Mode y compatibilidad retro'],
     compatibility: 'Windows 7 (32/64 Bit)',
     downloadUrl: 'https://archive.org/download/windows-7-professional-sp1-spanish-x64/Win7_Pro_SP1_Spanish_x64.iso',
@@ -892,19 +1013,119 @@ export const products: Product[] = [
     slug: 'windows-7-ultimate-key',
     name: 'Windows 7 Ultimate Key',
     description: 'La edición más completa de Windows 7.',
-    price: 33.00,
+    price: 28.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'windows',
-    imageUrl: 'https://http2.mlstatic.com/D_NQ_NP_730833-MPE104915494199_012026-O.webp',
-    fallbackImage: 'https://http2.mlstatic.com/D_NQ_NP_730833-MPE104915494199_012026-O.webp',
+    imageUrl: '/products/windows-7-ultimate.webp',
+    fallbackImage: '/products/windows-7-ultimate.png',
     rating: 4.88,
     reviews: 64,
+    badge: 'CLAVE DIRECTA',
     features: ['BitLocker, Aero Glass y soporte multilenguaje completo'],
     compatibility: 'Windows 7 (32/64 Bit)',
     downloadUrl: 'https://archive.org/download/windows-7-ultimate-sp1-spanish-x64/Win7_Ult_SP1_Spanish_x64.iso',
     downloadLabel: 'Descargar ISO Windows 7 Ultimate (SP1 64 Bit)',
     installationSteps: WINDOWS_STANDARD_STEPS
+  },
+
+  // --- WINDOWS ACTIVACIÓN POR TELÉFONO ---
+  {
+    id: 'prod-win11-pro-tel',
+    slug: 'windows-11-pro-activacion-telefono',
+    name: 'Windows 11 Professional (Activación por Teléfono)',
+    description: 'Alternativa económica y práctica para activar Windows 11 Pro en tu equipo. Incluye guía paso a paso e instrucciones claras para activación telefónica automatizada ante Microsoft. Licencia permanente de por vida.',
+    price: 12.00,
+    oldPrice: 60.00,
+    duration: 'Permanente (De por vida)',
+    category: 'windows',
+    imageUrl: '/products/windows-11-pro.webp',
+    fallbackImage: '/products/windows-11-pro.png',
+    rating: 4.9,
+    reviews: 165,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Activación telefónica oficial automatizada Microsoft',
+      'BitLocker, Remote Desktop, Hyper-V y Windows Sandbox',
+      'Licencia permanente de por vida para 1 PC',
+      'Guía paso a paso ilustrada incluida'
+    ],
+    compatibility: 'Windows 11 (64 Bit)',
+    downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+    downloadLabel: 'Descargar Media Creation Tool Windows 11 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
+  },
+  {
+    id: 'prod-win11-home-tel',
+    slug: 'windows-11-home-activacion-telefono',
+    name: 'Windows 11 Home (Activación por Teléfono)',
+    description: 'Activación telefónica rápida y económica para Windows 11 Home. Ideal para computadoras personales y entretenimiento en el hogar.',
+    price: 12.00,
+    oldPrice: 55.00,
+    duration: 'Permanente (De por vida)',
+    category: 'windows',
+    imageUrl: '/products/windows-11-home.webp',
+    fallbackImage: '/products/windows-11-home.png',
+    rating: 4.87,
+    reviews: 112,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Activación telefónica oficial Microsoft',
+      'Interfaz moderna, soporte para DirectX 12 y Widgets',
+      'Licencia de por vida para 1 equipo'
+    ],
+    compatibility: 'Windows 11 (64 Bit)',
+    downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
+    downloadLabel: 'Descargar Media Creation Tool Windows 11 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
+  },
+  {
+    id: 'prod-win10-pro-tel',
+    slug: 'windows-10-pro-activacion-telefono',
+    name: 'Windows 10 Professional (Activación por Teléfono)',
+    description: 'La opción más económica para activar Windows 10 Pro de por vida mediante llamada o asistente telefónico de Microsoft. Compatible con cualquier PC.',
+    price: 12.00,
+    oldPrice: 55.00,
+    duration: 'Permanente (De por vida)',
+    category: 'windows',
+    imageUrl: '/products/windows-10-pro.webp',
+    fallbackImage: '/products/windows-10-pro.png',
+    rating: 4.88,
+    reviews: 189,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Activación telefónica de por vida para 1 PC',
+      'Soporte completo para Remote Desktop y BitLocker',
+      'Instrucciones sencillas garantizadas'
+    ],
+    compatibility: 'Windows 10 (32 & 64 Bit)',
+    downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+    downloadLabel: 'Descargar Media Creation Tool Windows 10 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
+  },
+  {
+    id: 'prod-win10-home-tel',
+    slug: 'windows-10-home-activacion-telefono',
+    name: 'Windows 10 Home (Activación por Teléfono)',
+    description: 'Alternativa económica para activar Windows 10 Home de forma permanente en laptops o PCs de escritorio.',
+    price: 12.00,
+    oldPrice: 50.00,
+    duration: 'Permanente (De por vida)',
+    category: 'windows',
+    imageUrl: '/products/windows-10-home.webp',
+    fallbackImage: '/products/windows-10-home.png',
+    rating: 4.83,
+    reviews: 94,
+    badge: '📞 POR TELÉFONO • S/ 12',
+    features: [
+      'Activación telefónica económica y legal',
+      'Ideal para uso doméstico y estudio',
+      'Sin vencimiento'
+    ],
+    compatibility: 'Windows 10 (32 & 64 Bit)',
+    downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
+    downloadLabel: 'Descargar Media Creation Tool Windows 10 (.exe)',
+    installationSteps: TELEPHONE_ACTIVATION_STEPS
   },
 
   // --- COMBOS ---
@@ -1056,7 +1277,7 @@ export const products: Product[] = [
     slug: 'microsoft-project-2024-pro',
     name: 'Microsoft Project Professional 2024',
     description: 'Herramienta líder en gestión de proyectos corporativos. Licencia permanente para 1 PC.',
-    price: 36.80,
+    price: 28.00,
     oldPrice: 110.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1064,7 +1285,7 @@ export const products: Product[] = [
     fallbackImage: '/products/project-2024.png',
     rating: 4.92,
     reviews: 88,
-    badge: 'NUEVO',
+    badge: 'NUEVO • S/ 28',
     features: [
       'Diagramas de Gantt y gestión avanzada de recursos',
       'Integración nativa con Office 2024 y Microsoft Teams',
@@ -1100,8 +1321,8 @@ export const products: Product[] = [
     oldPrice: 150.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
-    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ1iPMksYIwUphd1GAozF9cOTFe46zZO7BqOYD_JyNzFLdsi93DyExAUM&s=10',
-    fallbackImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ1iPMksYIwUphd1GAozF9cOTFe46zZO7BqOYD_JyNzFLdsi93DyExAUM&s=10',
+    imageUrl: '/products/coreldraw-2024-mac.webp',
+    fallbackImage: '/products/coreldraw-2024-mac.png',
     rating: 4.95,
     reviews: 116,
     badge: 'MAC PERMANENTE',
@@ -1135,7 +1356,7 @@ export const products: Product[] = [
     slug: 'microsoft-visio-2024-pro',
     name: 'Microsoft Visio Professional 2024',
     description: 'Crea diagramas de flujo, mapas de procesos y esquemas técnicos con la versión oficial 2024.',
-    price: 34.90,
+    price: 28.00,
     oldPrice: 110.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1143,6 +1364,7 @@ export const products: Product[] = [
     fallbackImage: '/products/visio-2024.png',
     rating: 4.9,
     reviews: 76,
+    badge: 'VISIO 2024 • S/ 28',
     features: [
       'Cientos de plantillas vectoriales y formas estándar',
       'Modelado de procesos BPMN 2.0 y UML 2.5',
@@ -1174,7 +1396,7 @@ export const products: Product[] = [
     slug: 'microsoft-project-2021-pro',
     name: 'Microsoft Project Professional 2021',
     description: 'Gestión profesional de proyectos con diagramas de Gantt y recursos asignados.',
-    price: 28.00,
+    price: 27.00,
     oldPrice: 95.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1182,6 +1404,7 @@ export const products: Product[] = [
     fallbackImage: '/products/project-2021.png',
     rating: 4.88,
     reviews: 62,
+    badge: 'PROJECT 2021 • S/ 27',
     features: [
       'Control de costos y programación de tareas',
       'Licencia oficial de por vida'
@@ -1212,7 +1435,7 @@ export const products: Product[] = [
     slug: 'microsoft-project-2019-pro',
     name: 'Microsoft Project Professional 2019',
     description: 'Lleva el control de tus proyectos corporativos con herramientas oficiales.',
-    price: 39.20,
+    price: 27.00,
     oldPrice: 80.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1220,6 +1443,7 @@ export const products: Product[] = [
     fallbackImage: '/products/project-2019.png',
     rating: 4.85,
     reviews: 54,
+    badge: 'PROJECT 2019 • S/ 27',
     features: ['Diagramas de Gantt y control de entregables'],
     compatibility: 'Windows 10 / Windows 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectPro2019Retail&platform=x64&language=es-es&version=O16GA',
@@ -1247,7 +1471,7 @@ export const products: Product[] = [
     slug: 'microsoft-project-2016-pro',
     name: 'Microsoft Project Professional 2016',
     description: 'Herramienta clásica de proyectos para Windows.',
-    price: 28.00,
+    price: 27.00,
     oldPrice: 65.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1255,6 +1479,7 @@ export const products: Product[] = [
     fallbackImage: '/products/project-2016.png',
     rating: 4.81,
     reviews: 48,
+    badge: 'PROJECT 2016 • S/ 27',
     features: ['Planificación e informes de proyectos'],
     compatibility: 'Windows 7 / 8 / 10 / 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProjectProRetail&platform=x64&language=es-es&version=O16GA',
@@ -1282,7 +1507,7 @@ export const products: Product[] = [
     slug: 'microsoft-visio-2021-pro',
     name: 'Microsoft Visio Professional 2021',
     description: 'Diagramación profesional y flujo de procesos técnicos.',
-    price: 29.90,
+    price: 27.00,
     oldPrice: 95.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1290,6 +1515,7 @@ export const products: Product[] = [
     fallbackImage: '/products/visio-2021.png',
     rating: 4.87,
     reviews: 58,
+    badge: 'VISIO 2021 • S/ 27',
     features: [
       'Plantillas vectoriales y diagramas de flujo',
       'Licencia permanente de por vida'
@@ -1316,11 +1542,44 @@ export const products: Product[] = [
     installationSteps: OFFICE_STANDARD_STEPS
   },
   {
+    id: 'prod-visio-2019',
+    slug: 'microsoft-visio-2019-pro',
+    name: 'Microsoft Visio Professional 2019',
+    description: 'Herramientas profesionales para diseño de diagramas, mapas conceptuales e ingeniería de procesos.',
+    price: 26.00,
+    oldPrice: 85.00,
+    duration: 'Permanente (De por vida)',
+    category: 'project-visio',
+    imageUrl: '/products/visio-2019.webp',
+    fallbackImage: '/products/visio-2019.png',
+    rating: 4.84,
+    reviews: 51,
+    badge: 'VISIO 2019 • S/ 26',
+    features: [
+      'Diagramas BPMN 2.0, UML y redes informáticas',
+      'Compatibilidad nativa con Windows 10 y 11',
+      'Licencia permanente de por vida para 1 PC'
+    ],
+    compatibility: 'Windows 10 / Windows 11',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2019Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instalador Visio 2019 Pro (.exe)',
+    downloadOptions: [
+      {
+        id: 'visio-2019-exe',
+        name: 'Descargar Instalador Directo Visio 2019 Pro (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioPro2019Retail&platform=x64&language=es-es&version=O16GA',
+        badge: 'Servidor Oficial Microsoft (.exe)',
+        description: 'Ejecutable oficial OfficeSetup.exe para Visio 2019.'
+      }
+    ],
+    installationSteps: OFFICE_STANDARD_STEPS
+  },
+  {
     id: 'prod-visio-2016',
     slug: 'microsoft-visio-2016-pro',
     name: 'Microsoft Visio Professional 2016',
     description: 'Diseño de mapas conceptuales e ingenierías.',
-    price: 29.00,
+    price: 26.00,
     oldPrice: 65.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1328,6 +1587,7 @@ export const products: Product[] = [
     fallbackImage: '/products/visio-2016.png',
     rating: 4.8,
     reviews: 42,
+    badge: 'VISIO 2016',
     features: ['Diagramas de arquitectura de red y flujogramas'],
     compatibility: 'Windows 7 / 8 / 10 / 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=VisioProRetail&platform=x64&language=es-es&version=O16GA',
@@ -1355,7 +1615,7 @@ export const products: Product[] = [
     slug: 'microsoft-visio-2013-pro',
     name: 'Microsoft Visio Professional 2013',
     description: 'Esquemas técnicos e ingeniería de procesos.',
-    price: 35.00,
+    price: 25.00,
     oldPrice: 85.00,
     duration: 'Permanente (De por vida)',
     category: 'project-visio',
@@ -1363,6 +1623,7 @@ export const products: Product[] = [
     fallbackImage: '/products/visio-2013.png',
     rating: 4.76,
     reviews: 35,
+    badge: 'VISIO 2013 • S/ 25',
     features: ['Modelado básico de procesos'],
     compatibility: 'Windows 7 / 8 / 10 / 11',
     downloadUrl: 'https://archive.org/download/visio-professional-2013-sp1-spanish/VisioPro2013SP1_Spanish.iso',
@@ -1377,6 +1638,210 @@ export const products: Product[] = [
       }
     ],
     installationSteps: OFFICE_STANDARD_STEPS
+  },
+
+  // --- APPS & SUSCRIPCIONES DIGITALES PREMIUM ---
+  {
+    id: 'prod-duolingo-super',
+    slug: 'duolingo-super-12-meses',
+    name: 'Duolingo Super (12 Meses)',
+    description: 'Suscripción premium a Duolingo Super por 12 meses completos para aprender idiomas sin límites. Vidas infinitas, sin anuncios molestos, modo sin conexión y práctica personalizada de errores. Se activa en tu cuenta personal.',
+    price: 27.00,
+    oldPrice: 89.00,
+    duration: '12 meses',
+    category: 'apps',
+    imageUrl: '/products/duolingo-super.webp',
+    fallbackImage: '/products/duolingo-super.png',
+    rating: 4.96,
+    reviews: 245,
+    badge: 'CUENTA PREMIUM',
+    features: [
+      'Vidas infinitas para practicar sin interrupciones',
+      'Cero anuncios para máxima concentración',
+      'Repaso personalizado de errores cometidos',
+      'Activación en tu cuenta personal de Duolingo',
+      'Garantía total durante los 12 meses'
+    ],
+    compatibility: 'Android, iOS, iPad, Web (PC y Mac)',
+    downloadUrl: 'https://www.duolingo.com',
+    downloadLabel: 'Acceder a Duolingo Web',
+    downloadOptions: [
+      {
+        id: 'duo-portal',
+        name: 'Portal Web Oficial Duolingo',
+        url: 'https://www.duolingo.com',
+        badge: 'Acceso Oficial Web',
+        description: 'Acceso directo a la plataforma con tu suscripción Super activada.'
+      }
+    ],
+    installationSteps: [
+      'Recibirás en tu correo o WhatsApp la invitación oficial de activación para tu cuenta de Duolingo.',
+      'Abre el enlace mientras tienes iniciada sesión en tu cuenta de Duolingo (correo personal).',
+      'Acepta unirte y tu cuenta quedará actualizada de inmediato a Duolingo Super con vidas infinitas por 12 meses.'
+    ]
+  },
+  {
+    id: 'prod-gemini-ai-pro-12m',
+    slug: 'gemini-ai-pro-12-meses',
+    name: 'Gemini AI Pro (12 Meses)',
+    description: 'Suscripción a Gemini AI Pro / Advanced por 12 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados de IA, almacenamiento en la nube e integración nativa en Google Docs, Sheets y Gmail.',
+    price: 20.00,
+    oldPrice: 80.00,
+    duration: '12 meses',
+    category: 'apps',
+    imageUrl: '/products/gemini-ai-pro.webp',
+    fallbackImage: '/products/gemini-ai-pro.png',
+    rating: 4.95,
+    reviews: 130,
+    badge: 'GOOGLE AI PRO',
+    cloudStorage: 'Almacenamiento Google One Cloud',
+    isAccountAccess: true,
+    accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin entregar contraseñas.',
+    features: [
+      'Acceso a modelos de vanguardia de Inteligencia Artificial',
+      'Activación directa en tu cuenta personal de Google (Gmail)',
+      'Espacio seguro en la nube Google One',
+      'IA integrada de forma nativa en Google Workspace',
+      'Garantía total de 12 meses continuos'
+    ],
+    compatibility: 'Web, Windows, macOS, Android e iOS',
+    downloadUrl: 'https://gemini.google.com',
+    downloadLabel: 'Acceder a Plataforma IA',
+    downloadOptions: [
+      {
+        id: 'gemini-12m-portal',
+        name: 'Portal Oficial Web',
+        url: 'https://gemini.google.com',
+        badge: 'Portal Oficial',
+        description: 'Acceso directo a la plataforma con tu cuenta personal activada.'
+      }
+    ],
+    installationSteps: [
+      'Recibirás el enlace oficial de invitación y activación directa para tu cuenta Google.',
+      'Abre el enlace con tu sesión de Gmail personal iniciada.',
+      'Acepta la activación del plan Pro de 12 meses y disfruta del servicio.'
+    ]
+  },
+  {
+    id: 'prod-mcafee-antivirus',
+    slug: 'mcafee-antivirus-total-protection-12m',
+    name: 'McAfee AntiVirus (1 PC • 12 Meses)',
+    description: 'Licencia digital oficial de McAfee AntiVirus para 1 PC durante 12 meses. Protección galardonada contra virus, ransomware, troyanos, robo de identidad y navegación web segura para tu computadora.',
+    price: 38.00,
+    oldPrice: 120.00,
+    duration: '12 meses (1 PC)',
+    category: 'apps',
+    imageUrl: '/products/mcafee-antivirus.webp',
+    fallbackImage: '/products/mcafee-antivirus.jpg',
+    rating: 4.92,
+    reviews: 164,
+    badge: '1 PC • 12 MESES',
+    features: [
+      'Protección para 1 PC con Windows (12 meses de cobertura completa)',
+      'Defensa antivirus, anti-malware y anti-ransomware en tiempo real',
+      'Navegación web segura y protección bancaria anti-phishing',
+      'Firewall bidireccional avanzado y optimizador de rendimiento para PC',
+      'Clave oficial de 25 caracteres canjeable directamente en mcafee.com/activate',
+      'Actualizaciones automáticas diarias de seguridad y soporte técnico'
+    ],
+    compatibility: 'Windows 11 y Windows 10 (32 y 64 bits)',
+    downloadUrl: 'https://www.mcafee.com/activate',
+    downloadLabel: 'Canjear y Descargar en McAfee Oficial',
+    downloadOptions: [
+      {
+        id: 'mcafee-portal',
+        name: 'Portal Oficial Canje McAfee (.com/activate)',
+        url: 'https://www.mcafee.com/activate',
+        badge: 'Web Oficial McAfee',
+        description: 'Ingresa tu clave de 25 caracteres para registrar tu suscripción de 1 PC en tu cuenta McAfee y descargar el instalador.'
+      }
+    ],
+    installationSteps: [
+      'Ingresa a la página oficial de activación: mcafee.com/activate.',
+      'Introduce la clave oficial de 25 caracteres provista en tu orden e inicia sesión con tu cuenta McAfee (o crea una gratis).',
+      'Haz clic en Descargar para bajar el instalador oficial de McAfee AntiVirus en tu PC.',
+      'Ejecuta el instalador y tu equipo quedará protegido en tiempo real con 12 meses completos de cobertura.'
+    ]
+  },
+  {
+    id: 'prod-canva-pro',
+    slug: 'canva-pro-12-meses',
+    name: 'Canva Pro (12 Meses)',
+    description: 'Suscripción a Canva Pro por 12 meses para diseño gráfico profesional. Activación directa por invitación oficial a tu correo personal. Acceso ilimitado a más de 100 millones de fotos, videos, gráficos, plantillas premium, quitafondos mágico de imágenes y videos en un clic, y herramientas de Inteligencia Artificial (Magic Studio).',
+    price: 20.00,
+    oldPrice: 79.00,
+    duration: '12 meses',
+    category: 'apps',
+    imageUrl: '/products/canva-pro.webp',
+    fallbackImage: '/products/canva-pro.png',
+    rating: 4.98,
+    reviews: 312,
+    badge: 'PRO INVITACIÓN',
+    features: [
+      'Acceso total a biblioteca de 100M+ recursos premium (fotos, audio, video)',
+      'Herramientas IA Magic Studio y quitafondos instantáneo con un clic',
+      'Kits de marca con paletas de colores, fuentes y logos ilimitados',
+      'Redimensionamiento mágico inteligente a cualquier formato de red social',
+      'Activación por invitación directa a tu correo electrónico personal'
+    ],
+    compatibility: 'Web (PC y Mac), App móvil Android e iOS, iPad',
+    downloadUrl: 'https://www.canva.com',
+    downloadLabel: 'Acceder a Canva Web',
+    downloadOptions: [
+      {
+        id: 'canva-portal',
+        name: 'Portal Oficial Canva Web',
+        url: 'https://www.canva.com',
+        badge: 'Canva Oficial',
+        description: 'Accede a tus proyectos y herramientas Pro directamente en tu navegador o app.'
+      }
+    ],
+    installationSteps: [
+      'Recibirás en tu correo o WhatsApp la invitación oficial de activación para tu cuenta de Canva.',
+      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Canva (correo personal).',
+      'Acepta la invitación y tu cuenta pasará automáticamente a contar con todas las funciones de Canva Pro por 12 meses.'
+    ]
+  },
+  {
+    id: 'prod-adobe-acrobat-pro-2018',
+    slug: 'adobe-acrobat-pro-dc-2018-licencia-permanente',
+    name: 'Adobe Acrobat Pro DC 2018 (Licencia Permanente)',
+    description: 'Licencia digital oficial permanente de Adobe Acrobat Pro DC 2018 para Windows. Incluye clave de activación vitalicia, instalador completo y guía paso a paso. Crea, edita, convierte, firma, protege y combina documentos PDF profesionales sin suscripciones ni mensualidades.',
+    price: 50.00,
+    oldPrice: 160.00,
+    duration: 'Permanente (De por vida)',
+    category: 'apps',
+    imageUrl: '/products/adobe-acrobat-pro-2018.webp',
+    fallbackImage: '/products/adobe-acrobat-pro-2018.png',
+    rating: 4.96,
+    reviews: 148,
+    badge: 'PERMANENTE • PDF PRO',
+    features: [
+      'Licencia permanente de por vida (un solo pago, sin mensualidades)',
+      'Clave de activación digital oficial + instalador completo incluido',
+      'Edición completa de texto e imágenes directamente en archivos PDF',
+      'Conversión precisa de PDF a Word, Excel, PowerPoint y viceversa',
+      'Firma electrónica, protección con contraseña y permisos de seguridad',
+      'Guía paso a paso de instalación y soporte técnico garantizado'
+    ],
+    compatibility: 'Windows 10, Windows 11, Windows 8.1 y Windows 7 (32/64 bits)',
+    downloadUrl: 'https://helpx.adobe.com/es/acrobat/kb/acrobat-downloads.html',
+    downloadLabel: 'Descargar Instalador Adobe Acrobat',
+    downloadOptions: [
+      {
+        id: 'acrobat-installer-direct',
+        name: 'Instalador Oficial Adobe Acrobat DC (.exe)',
+        url: 'https://helpx.adobe.com/es/acrobat/kb/acrobat-downloads.html',
+        badge: 'Instalador + Guía Incluida',
+        description: 'Instalador completo oficial provisto junto a tu clave y guía de activación paso a paso.'
+      }
+    ],
+    installationSteps: [
+      'Descarga el instalador oficial de Adobe Acrobat Pro DC provisto en tu confirmación de orden.',
+      'Ejecuta el asistente de instalación en tu PC siguiendo la guía paso a paso adjunta.',
+      'Ingresa tu clave de activación permanente cuando el instalador lo requiera.',
+      '¡Listo! Tu Adobe Acrobat Pro DC quedará activado de forma definitiva sin pagos recurrentes.'
+    ]
   }
 ];
 

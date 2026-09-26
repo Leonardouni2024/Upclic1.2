@@ -170,8 +170,8 @@ export const AIAssistantChat: React.FC = () => {
         id: 'msg-welcome',
         role: 'model',
         content: isEn
-          ? `¡Hello! I am your **UpClic AI License Advisor & Support Assistant** powered by Gemini 3.8. 🤖✨\n\nI am here to guide you in choosing the exact software license for your needs:\n• **Microsoft Office** (2024, 2021, 365 or Mac)\n• **Windows** (11 Pro, 10 Pro or Enterprise)\n• **Money-saving Bundles & Project/Visio**\n\n⚡ **Guaranteed digital delivery:** 10 to 30 minutes by email & WhatsApp.\n🛡️ **1-Year Warranty & genuine Microsoft activation.**\n\nHow can I help you today? You can select a quick scenario or type your question below.`
-          : `¡Hola! Soy tu **Asesor Inteligente de Licencias y Soporte UpClic** impulsado por IA Gemini 3.8. 🤖✨\n\nEstoy aquí para orientarte a elegir la licencia exacta según tu equipo y necesidades:\n• **Microsoft Office** (2024, 2021, 365 o Mac)\n• **Windows** (11 Pro, 10 Pro o Enterprise)\n• **Combos de Ahorro y Project/Visio**\n\n⚡ **Entrega digital garantizada:** En 10 a 30 minutos a tu correo y WhatsApp.\n🛡️ **1 Año de Garantía y activación oficial Microsoft.**\n\n¿En qué puedo ayudarte hoy? Puedes elegir una de las opciones guiadas o escribirme tu consulta.`,
+          ? `¡Hello! I am your **UpClic AI License Advisor & Support Assistant**. 🤖✨\n\nI am here to guide you in choosing the exact software license for your needs:\n• **Microsoft Office** (2024, 2021, 365 or Mac)\n• **Windows** (11 Pro, 10 Pro or Enterprise)\n• **Money-saving Bundles & Project/Visio**\n\n⚡ **Guaranteed digital delivery:** 10 to 30 minutes by email & WhatsApp.\n🛡️ **1-Year Warranty & genuine Microsoft activation.**\n\nHow can I help you today? You can select a quick scenario or type your question below.`
+          : `¡Hola! Soy tu **Asesor Inteligente de Licencias y Soporte UpClic**. 🤖✨\n\nEstoy aquí para orientarte a elegir la licencia exacta según tu equipo y necesidades:\n• **Microsoft Office** (2024, 2021, 365 o Mac)\n• **Windows** (11 Pro, 10 Pro o Enterprise)\n• **Combos de Ahorro y Project/Visio**\n\n⚡ **Entrega digital garantizada:** En 10 a 30 minutos a tu correo y WhatsApp.\n🛡️ **1 Año de Garantía y activación oficial Microsoft.**\n\n¿En qué puedo ayudarte hoy? Puedes elegir una de las opciones guiadas o escribirme tu consulta.`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         suggestedProducts: [
           {
@@ -180,7 +180,7 @@ export const AIAssistantChat: React.FC = () => {
             name: 'Microsoft Office 2024 Professional Plus',
             price: 27,
             oldPrice: 89,
-            imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=300&auto=format&fit=crop&q=80',
+            imageUrl: '/products/office-2024.webp',
             badge: 'Más Vendido',
             category: 'Office',
             duration: 'Permanente',
@@ -191,7 +191,7 @@ export const AIAssistantChat: React.FC = () => {
             name: 'Windows 11 Professional Key 32/64 Bit',
             price: 20,
             oldPrice: 65,
-            imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300&auto=format&fit=crop&q=80',
+            imageUrl: '/products/windows-11-pro.webp',
             badge: 'Popular',
             category: 'Windows',
             duration: 'Permanente',
@@ -202,7 +202,7 @@ export const AIAssistantChat: React.FC = () => {
             name: 'Combo 2 en 1: Windows 11 Pro + Office 2024 Pro Plus',
             price: 56.9,
             oldPrice: 154,
-            imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=300&auto=format&fit=crop&q=80',
+            imageUrl: '/products/combo-win11-office2024.webp',
             badge: 'Super Ahorro',
             category: 'Combos',
             duration: 'Permanente',
@@ -654,7 +654,7 @@ export const AIAssistantChat: React.FC = () => {
                   </h3>
                   <span className="bg-gradient-to-r from-blue-500/30 to-indigo-500/30 text-blue-200 text-[10px] px-2 py-0.5 rounded-full font-bold border border-blue-400/30 flex items-center gap-1">
                     <Sparkles className="w-2.5 h-2.5 text-yellow-300" />
-                    Gemini 3.8
+                    {isEn ? 'AI Advisor' : 'Asesor IA'}
                   </span>
                 </div>
                 <p className="text-[11px] text-emerald-400 font-medium flex items-center gap-1 mt-0.5">

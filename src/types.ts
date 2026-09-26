@@ -1,4 +1,4 @@
-export type ProductCategory = 'all' | 'office' | 'windows' | 'combos' | 'project-visio' | 'offers' | 'bestsellers' | 'top';
+export type ProductCategory = 'all' | 'office' | 'windows' | 'combos' | 'project-visio' | 'apps' | 'offers' | 'bestsellers' | 'top';
 export type Currency = 'PEN' | 'USD' | 'COP' | 'MXN';
 
 export interface ProductVariant {
@@ -24,7 +24,7 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
-  category: 'office' | 'windows' | 'combos' | 'project-visio';
+  category: 'office' | 'windows' | 'combos' | 'project-visio' | 'apps';
   price: number;
   oldPrice?: number;
   duration: string;

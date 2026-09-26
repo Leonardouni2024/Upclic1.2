@@ -1,0 +1,120 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background subtle studio lighting -->
+    <radialGradient id="bgGlow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f5f3ff"/>
+      <stop offset="100%" stop-color="#ede9fe"/>
+    </radialGradient>
+
+    <!-- Floor shadow gradient -->
+    <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.35)"/>
+      <stop offset="40%" stop-color="rgba(15, 23, 42, 0.18)"/>
+      <stop offset="80%" stop-color="rgba(15, 23, 42, 0.04)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0)"/>
+    </radialGradient>
+
+    <!-- Canva Gradient -->
+    <linearGradient id="canvaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00C4CC"/>
+      <stop offset="50%" stop-color="#7D2AE8"/>
+      <stop offset="100%" stop-color="#2D115C"/>
+    </linearGradient>
+
+    <linearGradient id="canvaSpine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1B0A38"/>
+      <stop offset="60%" stop-color="#4B188F"/>
+      <stop offset="100%" stop-color="#7D2AE8"/>
+    </linearGradient>
+
+    <linearGradient id="canvaTop" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00C4CC"/>
+      <stop offset="100%" stop-color="#7D2AE8"/>
+    </linearGradient>
+
+    <linearGradient id="frontGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.45)"/>
+      <stop offset="30%" stop-color="rgba(255,255,255,0.12)"/>
+      <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="1000" fill="url(#bgGlow)"/>
+
+  <!-- Pedestal Floor Shadow -->
+  <ellipse cx="500" cy="855" rx="360" ry="42" fill="url(#floorShadow)"/>
+  <ellipse cx="490" cy="845" rx="270" ry="24" fill="rgba(15, 23, 42, 0.45)"/>
+
+  <!-- 3D SOFTWARE BOX -->
+  <!-- Top Face -->
+  <polygon points="280,160 680,140 740,205 350,230" fill="url(#canvaTop)"/>
+  <polygon points="280,160 680,140 740,205 350,230" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- Spine / Left Face -->
+  <polygon points="280,160 350,230 350,810 280,720" fill="url(#canvaSpine)"/>
+  <g transform="translate(315, 480) rotate(-90)">
+    <text x="0" y="0" fill="white" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" letter-spacing="4" text-anchor="middle">
+      CANVA PRO • 12 MESES
+    </text>
+  </g>
+
+  <!-- Front Face -->
+  <polygon points="350,230 740,205 740,760 350,810" fill="url(#canvaGrad)"/>
+  <polygon points="350,230 740,205 740,760 350,810" fill="url(#frontGloss)"/>
+
+  <!-- Badge / Tag -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 260)">
+    <rect x="0" y="0" width="180" height="38" rx="8" fill="#00C4CC"/>
+    <text x="90" y="25" fill="#0f172a" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="16" letter-spacing="2" text-anchor="middle">
+      12 MESES • PREMIUM
+    </text>
+  </g>
+
+  <!-- Main Art / Logo -->
+  <g transform="matrix(0.96 0 -0.05 0.98 525 430)">
+    <!-- Stylized Canva Pro Symbol -->
+    <circle cx="0" cy="0" r="75" fill="rgba(255,255,255,0.15)"/>
+    <circle cx="0" cy="0" r="55" fill="white"/>
+    <text x="0" y="20" fill="#7D2AE8" font-family="system-ui, -apple-system, cursive, sans-serif" font-weight="900" font-size="58" text-anchor="middle">
+      C
+    </text>
+    <path d="M45 -50 L52 -32 L70 -30 L56 -18 L60 0 L45 -10 L30 0 L34 -18 L20 -30 L38 -32 Z" fill="#FFC800"/>
+  </g>
+
+  <!-- Title & Features on Front -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 570)">
+    <text x="0" y="0" fill="white" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="38" letter-spacing="0">
+      Canva Pro
+    </text>
+    <text x="0" y="32" fill="#E2E8F0" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" letter-spacing="1">
+      DISEÑO GRÁFICO &amp; IA
+    </text>
+
+    <!-- Checklist -->
+    <g transform="translate(0, 65)">
+      <circle cx="10" cy="0" r="6" fill="#00C4CC"/>
+      <text x="26" y="5" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Plantillas premium y kits de marca
+      </text>
+
+      <circle cx="10" cy="30" r="6" fill="#00C4CC"/>
+      <text x="26" y="35" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Herramientas IA y quitafondos mágico
+      </text>
+
+      <circle cx="10" cy="60" r="6" fill="#00C4CC"/>
+      <text x="26" y="65" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        1 TB almacenamiento en la nube
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Brand -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 770)">
+    <text x="0" y="0" fill="#E2E8F0" font-family="system-ui, sans-serif" font-weight="800" font-size="15" letter-spacing="2">
+      UPCLIC LICENCIAS • GARANTÍA 100%
+    </text>
+  </g>
+</svg>

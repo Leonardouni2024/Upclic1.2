@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory, Product } from '../types.ts';
 import { searchProducts } from '../products.ts';
-import { Search, Menu, X, Star, ArrowRight, Sparkles, Layers, ShoppingCart, User, Globe, ChevronDown, Check } from 'lucide-react';
+import { Search, Menu, X, Star, ArrowRight, Layers, ShoppingCart, User, Globe, ChevronDown, Check } from 'lucide-react';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
 interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: boolean) => void; setIsHelpModalOpen?: (open: boolean) => void; }
@@ -114,7 +114,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
   return (
     <header id="main-header" className="sticky top-0 z-40 text-slate-200 shadow-md transition-all font-sans">
       {/* Top Header Row */}
-      <div className="bg-[#0f172a] border-b border-slate-800">
+      <div className="bg-[#0B1F3A] border-b border-[#173256]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6">
             {/* Mobile menu toggle button */}
@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               </button>
             </div>
 
-            {/* Logo Eneba style */}
+            {/* Logo */}
             <div className="flex items-center shrink-0">
               <button
                 id="logo-btn"
@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               </button>
             </div>
 
-            {/* Central Search Bar (Eneba style box) */}
+            {/* Central Search Bar */}
             <div ref={searchContainerRef} className="flex-1 max-w-2xl relative hidden sm:block">
               <div className="relative">
                 <input
@@ -155,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                     if (currentPath !== '/') navigateToHome();
                   }}
                   placeholder={t('searchPlaceholder')}
-                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 focus:bg-slate-800 border border-slate-700 focus:border-blue-500 text-white placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-medium rounded-lg bg-[#132A4C] hover:bg-[#18345E] focus:bg-[#132A4C] border border-[#214373] focus:border-[#0067B8] text-white placeholder-slate-400 focus:outline-none transition-all shadow-inner"
                 />
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 {searchQuery && (
@@ -400,28 +400,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         {currency === 'USD' && language === 'EN' && <Check className="w-4 h-4 stroke-[3]" />}
                       </button>
                     </div>
-
-                    {/* Auto-detect by IP action */}
-                    <div className="pt-1.5 border-t border-slate-800">
-                      <button
-                        onClick={async () => {
-                          await detectUserCountry(true);
-                          setRegionDropdownOpen(false);
-                        }}
-                        disabled={isDetectingCountry}
-                        className="w-full text-left px-3 py-2 rounded-lg text-xs font-bold text-blue-400 hover:bg-slate-800 flex items-center justify-between transition-colors cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Sparkles className={`w-3.5 h-3.5 ${isDetectingCountry ? 'animate-spin' : ''}`} />
-                          <span>{language === 'ES' ? 'Auto-detectar país (IP)' : 'Auto-detect country (IP)'}</span>
-                        </div>
-                        {detectedCountry && (
-                          <span className="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono">
-                            {detectedCountry}
-                          </span>
-                        )}
-                      </button>
-                    </div>
                   </div>
                 )}
               </div>
@@ -466,16 +444,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
         </div>
       </div>
 
-      {/* Second Navigation Bar - Eneba Category Bar */}
-      <div className="bg-slate-800 border-b border-white/10 shadow-xs">
+      {/* Second Navigation Bar - Professional Category Bar */}
+      <div className="bg-[#0E2442] border-b border-[#1A3864] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-2 no-scrollbar text-xs sm:text-sm font-bold">
           {/* Categorías Button */}
           <button
             onClick={() => handleCategoryClick('all')}
             className={`px-3.5 py-1.5 rounded-md flex items-center gap-2 cursor-pointer shrink-0 transition-all ${
               activeCategory === 'all' && currentPath === '/'
-                ? 'bg-blue-600 text-white font-black'
-                : 'bg-slate-700 hover:bg-slate-600 text-white border border-white/15'
+                ? 'bg-[#0067B8] text-white font-black'
+                : 'bg-[#18345E] hover:bg-[#20447A] text-white border border-white/10'
             }`}
           >
             <Menu className="w-4 h-4" />
@@ -530,6 +508,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
             <span>{t('projectVisio')}</span>
             <span className="bg-emerald-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
               {t('newBadge')}
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleCategoryClick('apps')}
+            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all flex items-center gap-1.5 ${
+              activeCategory === 'apps'
+                ? 'bg-blue-600 text-white font-black'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <span>{t('apps')}</span>
+            <span className="bg-indigo-400 text-white text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
+              HOT
             </span>
           </button>
 

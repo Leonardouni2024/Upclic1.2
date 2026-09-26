@@ -3,8 +3,10 @@ import { CartProvider, useCart } from './context/CartContext.tsx';
 import { ReviewsProvider } from './context/ReviewsContext.tsx';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
-import { BestSellersCarousel } from './components/BestSellersCarousel.tsx';
-import { TopProductsSection } from './components/TopProductsSection.tsx';
+import { ProductCategoriesSection } from './components/ProductCategoriesSection.tsx';
+import { BenefitsSection } from './components/BenefitsSection.tsx';
+import { FeaturedProductsSection } from './components/FeaturedProductsSection.tsx';
+import { TrustSection } from './components/TrustSection.tsx';
 import { ProductGrid } from './components/ProductGrid.tsx';
 import { ProductDetailPage } from './components/ProductDetailPage.tsx';
 import { CheckoutPage } from './components/CheckoutPage.tsx';
@@ -18,7 +20,6 @@ import { HelpModal } from './components/HelpModal.tsx';
 import { CartReminder } from './components/CartReminder.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 import { RegionLanguageModal } from './components/RegionLanguageModal.tsx';
-import { AIAssistantChat } from './components/AIAssistantChat.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug, activeCategory } = useCart();
@@ -30,13 +31,13 @@ const AppContent: React.FC = () => {
     
     if (currentPath === '/checkout/success') {
       return (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center text-white">
-          <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mb-4 border border-emerald-500/30">
+        <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center text-[#0B1F3A]">
+          <div className="w-16 h-16 bg-emerald-500/10 text-emerald-600 rounded-full flex items-center justify-center mb-4 border border-emerald-500/20">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           </div>
-          <h2 className="text-2xl font-black text-white mb-2">¡Pago Exitoso!</h2>
-          <p className="text-slate-300 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás tu clave de activación e instrucciones en tu correo en un lapso de 10 a 30 minutos.</p>
-          <button onClick={() => window.location.href = '/'} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-colors shadow-lg cursor-pointer">
+          <h2 className="text-2xl font-black text-[#0B1F3A] mb-2">¡Pago Exitoso!</h2>
+          <p className="text-slate-600 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás tu clave de activación e instrucciones en tu correo y WhatsApp en un lapso de 5 a 15 minutos.</p>
+          <button onClick={() => window.location.href = '/'} className="px-6 py-3 bg-[#0067B8] hover:bg-[#005499] text-white font-bold rounded-lg transition-colors shadow-sm cursor-pointer">
             Volver a la tienda
           </button>
         </div>
@@ -55,11 +56,23 @@ const AppContent: React.FC = () => {
       <main>
         {activeCategory === 'all' && (
           <>
+            {/* 1. Página principal (Hero) */}
             <Hero />
-            <BestSellersCarousel />
-            <TopProductsSection />
+
+            {/* 2. Categorías de productos */}
+            <ProductCategoriesSection />
+
+            {/* 3. Sección de beneficios */}
+            <BenefitsSection />
+
+            {/* 4. Productos destacados (Estilo ecommerce con WhatsApp) */}
+            <FeaturedProductsSection />
+
+            {/* 5. Sección de confianza */}
+            <TrustSection />
           </>
         )}
+        {/* Catálogo completo y buscador */}
         <ProductGrid />
       </main>
     );
@@ -100,9 +113,6 @@ const AppContent: React.FC = () => {
 
         <UserOrdersModal isOpen={isUserOrdersModalOpen} onClose={() => setIsUserOrdersModalOpen(false)} />
         <RegionLanguageModal />
-
-      {/* Intelligent AI Support & Recommendation Chatbot */}
-      <AIAssistantChat />
 
     </div>
   );

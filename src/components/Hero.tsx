@@ -1,78 +1,88 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
-import { products, formatPrice } from '../products.ts';
-import { Sparkles, ArrowRight, ShieldCheck, Zap, Laptop, FileSpreadsheet, Layers, BarChart3, Cloud, CheckCircle2 } from 'lucide-react';
+import { formatPrice } from '../products.ts';
+import { ArrowRight, ShieldCheck, Zap, Headphones, CheckCircle2, Check, ExternalLink } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { setActiveCategory, navigateToHome, currentPath, setSelectedProduct, t } = useCart();
+  const { setActiveCategory, navigateToHome, navigateToProduct, currentPath } = useCart();
 
-  const office2024 = products.find(p => p.id === 'prod-office-2024');
-  const win11Pro = products.find(p => p.id === 'prod-win11-pro');
-  const comboWinOffice = products.find(p => p.id === 'prod-combo-win11-office2024');
-
-  const handleFilter = (category: 'office' | 'windows' | 'combos' | 'project-visio' | 'all') => {
-    setActiveCategory(category);
+  const handleScrollTo = (sectionId: string, category?: 'office' | 'windows' | 'combos' | 'all') => {
+    if (category) {
+      setActiveCategory(category);
+    }
     if (currentPath !== '/') {
       navigateToHome();
     }
     setTimeout(() => {
-      const el = document.getElementById('catalogo-section');
+      const el = document.getElementById(sectionId);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
   };
 
-  const handleOpenProduct = (productId: string, defaultCategory: 'office' | 'windows' | 'combos') => {
-    const prod = products.find(p => p.id === productId);
-    if (prod) {
-      setSelectedProduct(prod);
-    } else {
-      handleFilter(defaultCategory);
-    }
-  };
-
   return (
-    <section id="hero-section" className="relative bg-white text-slate-900 pt-6 pb-10 border-b border-slate-200 font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-          
-          {/* Main Big Hero Banner (8 Cols) */}
-          <div className="lg:col-span-12 relative rounded-xl bg-blue-50 p-6 sm:p-10 border border-blue-100 flex flex-col justify-between overflow-hidden min-h-[300px] sm:min-h-[360px]">
-            <div className="relative z-10 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider mb-4 shadow-sm">
-                <span>{t('heroBadge')}</span>
-              </div>
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                {t('heroTitleLine1')} <br />
-                <span className="text-blue-600">
-                  {t('heroTitleLine2')}
-                </span>
-              </h1>
-              <p className="mt-3 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-lg">
-                {t('heroSubtitle')}
-              </p>
-            </div>
+    <section id="hero-section" className="relative bg-white text-[#0B1F3A] pt-12 pb-16 sm:pt-18 sm:pb-20 border-b border-slate-200 font-sans overflow-hidden">
+      
+      {/* Subtle background tech ambient gradients */}
+      <div className="absolute top-0 right-1/4 w-[550px] h-[550px] bg-blue-50/70 rounded-full blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-slate-100/80 rounded-full blur-2xl -z-10 pointer-events-none" />
 
-            <div className="relative z-10 mt-6 sm:mt-8 flex flex-wrap items-center gap-3">
-              <button
-                onClick={() => handleFilter('all')}
-                className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all cursor-pointer flex items-center gap-2 border border-transparent shadow-sm"
-              >
-                <span>{t('heroExploreCatalog')}</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </button>
-              <button
-                onClick={() => handleFilter('combos')}
-                className="px-5 py-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all cursor-pointer flex items-center gap-2 border border-slate-300 shadow-sm"
-              >
-                <span>{t('combos')}</span>
-              </button>
-            </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        
+        {/* Trust Pill */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0067B8] text-xs font-bold tracking-wide uppercase mb-6">
+          <ShieldCheck className="w-4 h-4 text-[#0067B8]" />
+          <span>Tienda Especializada en Software Original</span>
+        </div>
+
+        {/* Main Headline */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#0B1F3A] tracking-tight leading-[1.12] mb-6">
+          Licencias digitales originales para potenciar tu productividad
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-base sm:text-xl text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto mb-8">
+          Software profesional para empresas, estudiantes y usuarios que buscan soluciones rápidas, seguras y confiables.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
+          <button
+            id="hero-buy-now-btn"
+            onClick={() => handleScrollTo('destacados-section')}
+            className="px-7 py-3.5 rounded-lg bg-[#0067B8] hover:bg-[#005499] text-white font-bold text-sm sm:text-base transition-all duration-150 shadow-sm hover:shadow-md cursor-pointer flex items-center gap-2 active:scale-95"
+          >
+            <span>Comprar ahora</span>
+            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+          </button>
+
+          <button
+            id="hero-catalog-btn"
+            onClick={() => handleScrollTo('catalogo-section', 'all')}
+            className="px-7 py-3.5 rounded-lg bg-white hover:bg-slate-50 text-[#0B1F3A] font-bold text-sm sm:text-base border border-slate-300 hover:border-slate-400 transition-all duration-150 cursor-pointer shadow-xs active:scale-95"
+          >
+            <span>Ver catálogo</span>
+          </button>
+        </div>
+
+        {/* Micro assurances */}
+        <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs sm:text-sm font-semibold text-slate-600">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Activación directa garantizada</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-amber-500 shrink-0" />
+            <span>Entrega en 5-15 minutos</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Headphones className="w-4 h-4 text-[#0067B8] shrink-0" />
+            <span>Soporte personalizado</span>
           </div>
         </div>
+
       </div>
     </section>
   );
 };
-

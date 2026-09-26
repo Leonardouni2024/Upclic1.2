@@ -1,0 +1,105 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </radialGradient>
+    <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.4)"/>
+      <stop offset="60%" stop-color="rgba(15, 23, 42, 0.12)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.0)"/>
+    </radialGradient>
+    <linearGradient id="frontGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF"/>
+      <stop offset="50%" stop-color="#1E3A8A"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="spineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="60%" stop-color="#1E3A8A"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="topGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
+    </linearGradient>
+    <linearGradient id="frontGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.45)"/>
+      <stop offset="30%" stop-color="rgba(255,255,255,0.12)"/>
+      <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="1000" fill="url(#bgGlow)"/>
+  <ellipse cx="500" cy="855" rx="360" ry="42" fill="url(#floorShadow)"/>
+  <ellipse cx="490" cy="845" rx="270" ry="24" fill="rgba(15, 23, 42, 0.45)"/>
+
+  <!-- Top Face -->
+  <polygon points="280,160 680,140 740,205 350,230" fill="url(#topGrad)"/>
+  <polygon points="280,160 680,140 740,205 350,230" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- Spine / Left Face -->
+  <polygon points="280,160 350,230 350,810 280,720" fill="url(#spineGrad)"/>
+  <g transform="translate(315, 480) rotate(-90)">
+    <text x="0" y="0" fill="white" font-family="system-ui, sans-serif" font-weight="900" font-size="28" letter-spacing="4" text-anchor="middle">
+      VISIO PROFESSIONAL 2019
+    </text>
+  </g>
+
+  <!-- Front Face -->
+  <polygon points="350,230 740,205 740,760 350,810" fill="url(#frontGrad)"/>
+  <polygon points="350,230 740,205 740,760 350,810" fill="url(#frontGloss)"/>
+
+  <!-- Badge -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 260)">
+    <rect x="0" y="0" width="160" height="36" rx="8" fill="#60A5FA"/>
+    <text x="80" y="24" fill="#0f172a" font-family="system-ui, sans-serif" font-weight="900" font-size="16" letter-spacing="2" text-anchor="middle">
+      EDICIÓN 2019
+    </text>
+  </g>
+
+  <!-- Central Symbol -->
+  <g transform="matrix(0.96 0 -0.05 0.98 525 430)">
+    <rect x="-60" y="-60" width="120" height="120" rx="20" fill="rgba(255,255,255,0.15)"/>
+    <rect x="-45" y="-45" width="90" height="90" rx="14" fill="#2563EB"/>
+    <text x="0" y="20" fill="white" font-family="system-ui, sans-serif" font-weight="900" font-size="64" text-anchor="middle">
+      V
+    </text>
+  </g>
+
+  <!-- Title & Features -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 570)">
+    <text x="0" y="0" fill="white" font-family="system-ui, sans-serif" font-weight="900" font-size="34" letter-spacing="0">
+      Visio Professional
+    </text>
+    <text x="0" y="32" fill="#93C5FD" font-family="system-ui, sans-serif" font-weight="700" font-size="19" letter-spacing="1">
+      MICROSOFT 2019
+    </text>
+
+    <!-- Checklist -->
+    <g transform="translate(0, 65)">
+      <circle cx="10" cy="0" r="6" fill="#60A5FA"/>
+      <text x="26" y="5" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Diagramación avanzada y mapas de procesos
+      </text>
+
+      <circle cx="10" cy="30" r="6" fill="#60A5FA"/>
+      <text x="26" y="35" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Modelado BPMN 2.0 y arquitectura de redes
+      </text>
+
+      <circle cx="10" cy="60" r="6" fill="#60A5FA"/>
+      <text x="26" y="65" fill="white" font-family="system-ui, sans-serif" font-weight="600" font-size="16">
+        Licencia permanente para 1 PC
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Brand -->
+  <g transform="matrix(0.96 0 -0.05 0.98 385 770)">
+    <text x="0" y="0" fill="#93C5FD" font-family="system-ui, sans-serif" font-weight="800" font-size="15" letter-spacing="2">
+      UPCLIC LICENCIAS • GARANTÍA 100%
+    </text>
+  </g>
+</svg>

@@ -208,30 +208,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-lg bg-[#0f172a] p-8 border border-slate-800 flex items-center justify-center group">
-                {/* Badges on Top-Left */}
-                <div className="absolute top-3.5 left-3.5 flex flex-col items-start gap-1.5 z-10">
-                  {badgeLabel && (
-                    <span className="px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold rounded-md bg-[#334155] text-white uppercase tracking-wider">
-                      {badgeLabel}
-                    </span>
-                  )}
-                  {product.cloudStorage && (
-                    <span className="px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-md bg-blue-500/20 text-cyan-300 border border-cyan-400/30">
-                      {product.cloudStorage}
-                    </span>
-                  )}
-                </div>
-
+              <div className="relative w-full max-w-[480px] aspect-square rounded-xl bg-white p-6 sm:p-8 border border-slate-700/60 shadow-lg flex items-center justify-center group overflow-hidden">
                 {/* Share Button on Top-Right of the image */}
                 <button
                   type="button"
                   onClick={() => setShowShareModal(true)}
-                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-slate-700 shadow-md transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-md"
+                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/10 hover:bg-slate-900/20 text-[#0B1F3A] border border-slate-200 shadow-sm transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-sm"
                   title={t('productShareTitle')}
                   aria-label={t('productShareTitle')}
                 >
-                  <Share2 className="w-3.5 h-3.5 text-yellow-400" />
+                  <Share2 className="w-3.5 h-3.5 text-blue-600" />
                   <span className="text-[11px] sm:text-xs font-bold">{t('share')}</span>
                 </button>
 
@@ -244,12 +230,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       setImgSrc(product.fallbackImage);
                     }
                   }}
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
                 />
               </div>
 
               {/* Trust Badge under image */}
-              <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-slate-300">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-300">
                 <span className="flex items-center gap-1.5 text-white">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   {t('officialActivationGuaranteed')}
