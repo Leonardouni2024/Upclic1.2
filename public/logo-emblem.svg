@@ -1,12 +1,8 @@
 
-  <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="512" height="512" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#0F2444" />
-        <stop offset="100%" stop-color="#081426" />
-      </linearGradient>
       <linearGradient id="gBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#00D2FF" />
+        <stop offset="0%" stop-color="#00C0FF" />
         <stop offset="60%" stop-color="#0066FF" />
         <stop offset="100%" stop-color="#0038A8" />
       </linearGradient>
@@ -19,16 +15,16 @@
 
       <linearGradient id="gCursor" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="#00E5FF" />
-        <stop offset="100%" stop-color="#0066FF" />
+        <stop offset="100%" stop-color="#0055FF" />
       </linearGradient>
+
+      <filter id="fShadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.35"/>
+      </filter>
     </defs>
 
-    <!-- Deep Blue Premium Circular Badge that fills Google Search circle cleanly -->
-    <rect width="512" height="512" rx="256" fill="url(#bgGrad)" />
-    <circle cx="256" cy="256" r="250" stroke="#1E3A66" stroke-width="8" />
-
-    <!-- Pure Bold Emblem inside (scaled to occupy 78% of the circle) -->
-    <g transform="translate(56, 56) scale(4.0)">
+    <!-- Centered bold emblem scaled to fill the canvas with 6px padding -->
+    <g transform="translate(5, 5) scale(0.9)" filter="url(#fShadow)">
       <!-- Inner Orange Ascending Arrow Ribbon -->
       <path
         d="M32 58C31 46 36 34 46 25L52 30L60 12L40 18L46 23C36 33 30 45 30 58C30 63 32 66 35 68C36 67 36 65 37 62C34 61 32 59 32 58Z"
@@ -46,7 +42,7 @@
         d="M48 38L66 54L58 56L66 70L60 73L52 59L44 64L48 38Z"
         fill="url(#gCursor)"
         stroke="#FFFFFF"
-        stroke-width="3"
+        stroke-width="2.5"
         stroke-linejoin="round"
       />
     </g>
