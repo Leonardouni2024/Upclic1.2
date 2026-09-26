@@ -7,6 +7,7 @@ import { ProductCategoriesSection } from './components/ProductCategoriesSection.
 import { BenefitsSection } from './components/BenefitsSection.tsx';
 import { FeaturedProductsSection } from './components/FeaturedProductsSection.tsx';
 import { TrustSection } from './components/TrustSection.tsx';
+import { TrustpilotReviewsSection } from './components/TrustpilotReviewsSection.tsx';
 import { ProductGrid } from './components/ProductGrid.tsx';
 import { ProductDetailPage } from './components/ProductDetailPage.tsx';
 import { CheckoutPage } from './components/CheckoutPage.tsx';
@@ -70,6 +71,9 @@ const AppContent: React.FC = () => {
 
             {/* 5. Sección de confianza */}
             <TrustSection />
+
+            {/* 6. Reseñas y Valoraciones en Trustpilot */}
+            <TrustpilotReviewsSection />
           </>
         )}
         {/* Catálogo completo y buscador */}

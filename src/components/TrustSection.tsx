@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldCheck, Users, Headphones, Clock, CheckCircle2, MessageCircle, FileCheck2, Instagram, ExternalLink } from 'lucide-react';
+import { ShieldCheck, Users, Headphones, Clock, CheckCircle2, MessageCircle, FileCheck2, Instagram, ExternalLink, Star } from 'lucide-react';
 import { WHATSAPP_NUMBER, INSTAGRAM_URL, INSTAGRAM_DISPLAY } from '../products.ts';
+import { TrustpilotStars, TrustpilotLogo } from './TrustpilotWidget.tsx';
 
 export const TrustSection: React.FC = () => {
   const handleConsultWhatsApp = () => {
@@ -23,8 +24,9 @@ export const TrustSection: React.FC = () => {
       isInstagram: true
     },
     {
-      title: 'Múltiples Medios de Pago Seguros',
-      description: 'Paga con Yape, Plin, transferencia bancaria directa (BCP, BBVA, Interbank) o tarjeta.'
+      title: 'Excelente en Trustpilot (4.8/5)',
+      description: 'Calificación sobresaliente respaldada por opiniones independientes de compradores verificados.',
+      isTrustpilot: true
     }
   ];
 
@@ -94,32 +96,67 @@ export const TrustSection: React.FC = () => {
 
           {/* Right Column: 4 Trust cards */}
           <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {trustPoints.map((point, index) => (
-              point.isInstagram ? (
-                <a
-                  key={index}
-                  href={INSTAGRAM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-5 rounded-xl bg-gradient-to-br from-purple-900/30 via-pink-900/20 to-rose-900/20 border border-pink-500/40 hover:border-pink-400 transition-all flex flex-col justify-start group cursor-pointer shadow-sm hover:shadow-md"
-                >
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#FD1D1D] to-[#833AB4] flex items-center justify-center mb-3 text-white shadow-sm group-hover:scale-105 transition-transform">
-                    <Instagram className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <h4 className="text-sm font-bold text-white group-hover:text-pink-300 transition-colors leading-snug">
-                      {point.title}
-                    </h4>
-                    <ExternalLink className="w-3.5 h-3.5 text-pink-400 shrink-0 opacity-70 group-hover:opacity-100" />
-                  </div>
-                  <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                    {point.description}
-                  </p>
-                  <span className="mt-2 text-[11px] font-bold text-pink-400 group-hover:underline">
-                    Abrir @upclic.peru &rarr;
-                  </span>
-                </a>
-              ) : (
+            {trustPoints.map((point, index) => {
+              if (point.isInstagram) {
+                return (
+                  <a
+                    key={index}
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-5 rounded-xl bg-gradient-to-br from-purple-900/30 via-pink-900/20 to-rose-900/20 border border-pink-500/40 hover:border-pink-400 transition-all flex flex-col justify-start group cursor-pointer shadow-sm hover:shadow-md"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#FD1D1D] to-[#833AB4] flex items-center justify-center mb-3 text-white shadow-sm group-hover:scale-105 transition-transform">
+                      <Instagram className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <h4 className="text-sm font-bold text-white group-hover:text-pink-300 transition-colors leading-snug">
+                        {point.title}
+                      </h4>
+                      <ExternalLink className="w-3.5 h-3.5 text-pink-400 shrink-0 opacity-70 group-hover:opacity-100" />
+                    </div>
+                    <p className="text-xs text-slate-300 font-normal leading-relaxed">
+                      {point.description}
+                    </p>
+                    <span className="mt-2 text-[11px] font-bold text-pink-400 group-hover:underline">
+                      Abrir @upclic.peru &rarr;
+                    </span>
+                  </a>
+                );
+              }
+
+              if (point.isTrustpilot) {
+                return (
+                  <a
+                    key={index}
+                    href="https://www.trustpilot.com/review/upclic.pe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-5 rounded-xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-[#00B67A]/50 hover:border-[#00B67A] transition-all flex flex-col justify-start group cursor-pointer shadow-sm hover:shadow-md"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-9 h-9 rounded-lg bg-[#00B67A] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+                        <span className="text-base font-black">★</span>
+                      </div>
+                      <TrustpilotStars count={5} size="sm" />
+                    </div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug flex items-center gap-1.5">
+                        <span>{point.title}</span>
+                      </h4>
+                      <ExternalLink className="w-3.5 h-3.5 text-emerald-400 shrink-0 opacity-70 group-hover:opacity-100" />
+                    </div>
+                    <p className="text-xs text-slate-300 font-normal leading-relaxed">
+                      {point.description}
+                    </p>
+                    <span className="mt-2 text-[11px] font-bold text-emerald-400 group-hover:underline flex items-center gap-1">
+                      <span>Ver perfil en Trustpilot &rarr;</span>
+                    </span>
+                  </a>
+                );
+              }
+
+              return (
                 <div
                   key={index}
                   className="p-5 rounded-xl bg-white/5 border border-white/10 hover:border-blue-400/40 transition-colors flex flex-col justify-start"
@@ -134,8 +171,8 @@ export const TrustSection: React.FC = () => {
                     {point.description}
                   </p>
                 </div>
-              )
-            ))}
+              );
+            })}
           </div>
 
         </div>
