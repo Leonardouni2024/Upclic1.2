@@ -132,14 +132,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [dynamicCoupon, setDynamicCoupon] = useState<DynamicCoupon | null>(() => {
     try {
-      const saved = localStorage.getItem('upclic_dynamic_coupon');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.expiresAt > Date.now()) {
-          return parsed;
-        } else {
-          localStorage.removeItem('upclic_dynamic_coupon');
-        }
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('upclic_dynamic_coupon');
       }
     } catch(e) {}
     return null;
@@ -481,26 +475,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return formatPrice(priceInPEN, currency, exchangeRate);
   };
 
-  // Dynamic Coupon generation logic
-  useEffect(() => {
-    if (items.length > 0 && !dynamicCoupon) {
-      const timer = setTimeout(() => {
-        // Only if they haven't applied a better multi-item discount
-        const qty = items.reduce((sum, item) => sum + item.quantity, 0);
-        if (qty < 2) {
-          const discountPercent = Math.floor(Math.random() * 4) + 3; // 3, 4, 5, or 6
-          const code = `FLASH${Math.floor(Math.random() * 1000)}X`;
-          const expiresAt = Date.now() + 30 * 60 * 1000;
-          const newCoupon = { code, discountPercent, expiresAt };
-          
-          setDynamicCoupon(newCoupon);
-          localStorage.setItem('upclic_dynamic_coupon', JSON.stringify(newCoupon));
-        }
-      }, 20000); // 20 seconds after having an item in cart
-      
-      return () => clearTimeout(timer);
-    }
-  }, [items, dynamicCoupon]);
   const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastData[]>([]);

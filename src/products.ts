@@ -94,7 +94,7 @@ export interface DynamicCoupon {
 }
 
 export const DYNAMIC_COUPONS: DynamicCoupon[] = [
-  { code: 'UPCLIC10', discountPercent: 10, description: '10% de descuento de bienvenida' },
+  { code: 'UPCLIC10', discountPercent: 10, description: '10% de descuento oficial UpClic' },
   { code: 'COMBO15', discountPercent: 15, minItems: 2, description: '15% de descuento por llevar 2 o más productos' },
   { code: 'VIP20', discountPercent: 20, description: '20% de descuento especial clientes VIP' },
   { code: 'PRICLIC1', discountPercent: 10, description: '10% de descuento exclusivo', expiresAt: 1791417599000 },
