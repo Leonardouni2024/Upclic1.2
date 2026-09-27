@@ -389,29 +389,57 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 </div>
 
                 {/* Quantity selector */}
-                <div className="mt-6 flex items-center gap-4">
+                <div className="mt-6 flex flex-wrap items-center gap-4">
                   <span className="text-xs font-bold uppercase text-slate-300 tracking-wider">
                     {language === 'ES' ? 'Cantidad:' : 'Quantity:'}
                   </span>
-                  <div className="flex items-center rounded-lg border border-slate-600 bg-white/10 p-0.5">
+                  <div className="flex items-center rounded-lg border border-slate-600 bg-white/10 p-0.5 shadow-xs">
                     <button
+                      type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
+                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
                       aria-label={t('decrease') || 'Decrease'}
+                      title={t('decrease') || 'Decrease'}
                     >
                       -
                     </button>
-                    <span className="w-10 text-center font-black text-sm text-white tabular-nums">
-                      {quantity}
-                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="99"
+                      value={quantity}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        if (!isNaN(val)) {
+                          setQuantity(Math.min(99, Math.max(1, val)));
+                        } else if (e.target.value === '') {
+                          setQuantity(1);
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!quantity || quantity < 1) {
+                          setQuantity(1);
+                        }
+                      }}
+                      className="w-12 text-center font-black text-sm text-white bg-transparent focus:bg-white/20 focus:outline-none rounded py-1 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      aria-label={language === 'ES' ? 'Cantidad deseada' : 'Desired quantity'}
+                    />
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer"
+                      type="button"
+                      onClick={() => setQuantity(Math.min(99, quantity + 1))}
+                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
                       aria-label={t('increase') || 'Increase'}
+                      title={t('increase') || 'Increase'}
                     >
                       +
                     </button>
                   </div>
+
+                  {quantity > 1 && (
+                    <span className="text-xs font-semibold text-blue-300 bg-blue-500/15 border border-blue-400/30 px-2.5 py-1 rounded-md">
+                      Subtotal: <strong className="text-white font-black">{formatPrice(activePrice * quantity)}</strong>
+                    </span>
+                  )}
                 </div>
 
                 {/* Primary Action Buttons & Installation Guide Button */}

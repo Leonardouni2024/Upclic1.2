@@ -281,6 +281,32 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch {}
     }
 
+    // 5. Direct client fallback 4: ipapi.co
+    if (!detected) {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country_code && data.country_code.length === 2) {
+            detected = data.country_code.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    // 6. Direct client fallback 5: freeipapi.com
+    if (!detected) {
+      try {
+        const res = await fetch('https://freeipapi.com/api/json');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.countryCode && data.countryCode.length === 2) {
+            detected = data.countryCode.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
     setIsDetectingCountry(false);
 
     if (!detected) {
@@ -288,22 +314,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     setDetectedCountry(detected);
-    const lastCountry = localStorage.getItem('upclic_detected_country');
-    localStorage.setItem('upclic_detected_country', detected);
-
-    // Check if user's location has changed
-    const countryChanged = !lastCountry || lastCountry !== detected;
-    const manualForCountry = localStorage.getItem('upclic_currency_manual_for_country');
-
-    // If not forced, same country, and user previously chose manual currency for this country: preserve choice
-    if (!force && !countryChanged && manualForCountry === detected) {
-      return detected;
-    }
-
-    // Otherwise (forced OR country changed OR no manual override): apply detected country's settings!
     try {
-      localStorage.removeItem('upclic_currency_manual');
-      localStorage.removeItem('upclic_currency_manual_for_country');
+      localStorage.setItem('upclic_detected_country', detected);
     } catch {}
 
     const LATAM_COUNTRIES = [
@@ -347,7 +359,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('upclic_language', 'EN');
       } catch {}
     } else {
-      const isSpanish = typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('es');
+      const isSpanish = typeof navigator !== 'undefined' && (
+        navigator.language?.toLowerCase().startsWith('es') ||
+        (Array.isArray(navigator.languages) && navigator.languages.some(l => l.toLowerCase().startsWith('es')))
+      );
       setCurrencyState('USD');
       setLanguageState(isSpanish ? 'ES' : 'EN');
       try {
@@ -550,19 +565,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Automatically open the cart drawer when adding a product as requested
     setIsCartOpen(true);
 
+    const safeQuantity = Math.max(1, Math.min(99, Math.floor(Number(quantity) || 1)));
+
     const variant = product.variants
       ? (product.variants.find(v => v.id === selectedVariant) || product.variants[0])
       : undefined;
 
     const variantKey = variant ? variant.id : undefined;
     const itemKey = getItemKey(product.id, variantKey);
-    const itemPrice = variant ? variant.price : product.price;
+    const itemPrice = Number(variant ? variant.price : product.price) || product.price;
     const variantName = variant ? variant.name : undefined;
 
     setItems(prevItems => {
-      const prevQty = prevItems.reduce((sum, item) => sum + item.quantity, 0);
-      const newTotalQty = prevQty + quantity;
-
       const existingIndex = prevItems.findIndex(
         item => (item.id === itemKey) || (!item.id && item.product.id === product.id && item.selectedVariant === variantKey)
       );
@@ -570,7 +584,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (existingIndex > -1) {
         updated = prevItems.map((item, idx) =>
-          idx === existingIndex ? { ...item, quantity: item.quantity + quantity } : item
+          idx === existingIndex
+            ? { ...item, quantity: Math.min(99, Math.max(1, (Number(item.quantity) || 1) + safeQuantity)) }
+            : item
         );
       } else {
         updated = [
@@ -578,7 +594,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           {
             id: itemKey,
             product,
-            quantity,
+            quantity: safeQuantity,
             selectedVariant: variantKey,
             variantName,
             unitPrice: itemPrice
@@ -592,15 +608,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeItem = (itemKeyOrProductId: string, variantId?: string) => {
     setItems(prev => {
-      const target = prev.find(item => {
-        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
-        if (itemKey === itemKeyOrProductId || item.id === itemKeyOrProductId) return true;
-        if (variantId) {
-          return item.product.id === itemKeyOrProductId && item.selectedVariant === variantId;
-        }
-        return item.product.id === itemKeyOrProductId;
-      });
-
       return prev.filter(item => {
         const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
         if (itemKey === itemKeyOrProductId || item.id === itemKeyOrProductId) return false;
@@ -613,10 +620,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateQuantity = (itemKeyOrProductId: string, delta: number, variantId?: string) => {
+    const safeDelta = Number(delta) || 0;
     setItems(prev => {
-      const prevQty = prev.reduce((sum, item) => sum + item.quantity, 0);
-      let removedName = '';
-
       const updated = prev
         .map(item => {
           const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
@@ -628,12 +633,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
               : item.product.id === itemKeyOrProductId);
 
           if (isMatch) {
-            const newQty = item.quantity + delta;
+            const currentQty = Number(item.quantity) || 1;
+            const newQty = currentQty + safeDelta;
             if (newQty <= 0) {
-              removedName = `${item.product.name}${item.variantName ? ` (${item.variantName})` : ''}`;
               return null;
             }
-            return { ...item, quantity: Math.min(99, newQty) };
+            return { ...item, quantity: Math.min(99, Math.max(1, Math.floor(newQty))) };
           }
           return item;
         })
@@ -644,15 +649,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const setQuantity = (itemKeyOrProductId: string, quantity: number, variantId?: string) => {
-    if (quantity <= 0) {
+    const rawNum = Number(quantity);
+    if (isNaN(rawNum) || rawNum <= 0) {
       removeItem(itemKeyOrProductId, variantId);
       return;
     }
 
-    const validQty = Math.min(99, Math.max(1, Math.floor(quantity)));
+    const validQty = Math.min(99, Math.max(1, Math.floor(rawNum)));
 
     setItems(prev => {
-      const prevQty = prev.reduce((sum, item) => sum + item.quantity, 0);
       const updated = prev.map(item => {
         const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
         const isMatch =

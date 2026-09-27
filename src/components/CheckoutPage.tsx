@@ -581,19 +581,36 @@ export const CheckoutPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, -1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold active:scale-95"
                             aria-label={t('decrease') || 'Decrease'}
                             title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
                           >
                             -
                           </button>
-                          <div className="w-8 text-center text-xs font-black text-white flex items-center justify-center">
-                            {item.quantity}
-                          </div>
+                          <input
+                            type="number"
+                            min="1"
+                            max="99"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (!isNaN(val)) {
+                                setQuantity(itemKey, Math.min(99, Math.max(1, val)));
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (isNaN(val) || val < 1) {
+                                setQuantity(itemKey, 1);
+                              }
+                            }}
+                            className="w-9 text-center text-xs font-black text-white bg-transparent focus:bg-white/20 focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            aria-label={t('editQuantity') || 'Edit quantity'}
+                          />
                           <button
                             type="button"
                             onClick={() => updateQuantity(itemKey, 1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold active:scale-95"
                             aria-label={t('increase') || 'Increase'}
                             title={t('increase') || 'Increase'}
                           >

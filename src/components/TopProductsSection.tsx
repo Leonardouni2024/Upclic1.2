@@ -9,6 +9,7 @@ export const TopProductsSection: React.FC = () => {
   const {
     addItem,
     navigateToProduct,
+    navigateToCheckout,
     t,
     getProductName,
     getProductDesc,
@@ -145,7 +146,7 @@ export const TopProductsSection: React.FC = () => {
                     <button
                       onClick={() => {
                         addItem(item, 1);
-                        navigateToProduct(item.slug);
+                        navigateToCheckout();
                       }}
                       className="px-3.5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-sm transition-all flex items-center gap-1.5 cursor-pointer border border-blue-700"
                     >

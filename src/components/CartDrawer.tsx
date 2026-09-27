@@ -210,7 +210,13 @@ export const CartDrawer: React.FC = () => {
                             onChange={(e) => {
                               const val = parseInt(e.target.value, 10);
                               if (!isNaN(val)) {
-                                setQuantity(itemKey, val);
+                                setQuantity(itemKey, Math.min(99, Math.max(1, val)));
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (isNaN(val) || val < 1) {
+                                setQuantity(itemKey, 1);
                               }
                             }}
                             className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"

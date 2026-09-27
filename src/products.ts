@@ -106,8 +106,16 @@ export function calculateCartTotals(
   couponCode?: string,
   dynamicCoupon?: { code: string, discountPercent: number, expiresAt?: number }
 ): CartTotals {
-  const subtotal = items.reduce((acc, item) => acc + (item.unitPrice ?? item.product.price) * item.quantity, 0);
-  const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+  const subtotal = items.reduce((acc, item) => {
+    const unitPrice = Number(item.unitPrice ?? item.product?.price) || 0;
+    const qty = Math.max(1, Math.min(99, Math.floor(Number(item.quantity) || 1)));
+    return acc + (unitPrice * qty);
+  }, 0);
+  
+  const totalQuantity = items.reduce((acc, item) => {
+    const qty = Math.max(1, Math.min(99, Math.floor(Number(item.quantity) || 1)));
+    return acc + qty;
+  }, 0);
 
   let discountRate = 0;
   let appliedCoupon: DynamicCoupon | undefined = undefined;
