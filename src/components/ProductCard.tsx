@@ -24,6 +24,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     navigateToCheckout, 
     isInComparison, 
     toggleComparison, 
+    setIsComparisonModalOpen,
     t, 
     getProductName, 
     getBadgeLabel, 
@@ -100,12 +101,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
+              e.preventDefault();
               toggleComparison(product);
+              setIsComparisonModalOpen(true);
             }}
-            className={`absolute top-2.5 right-2.5 z-10 px-2 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border shadow-xs ${
+            className={`absolute top-2.5 right-2.5 z-20 px-2 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border shadow-sm ${
               isCompared
-                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                : 'bg-white/90 hover:bg-white text-slate-700 hover:text-blue-600 border-slate-200 backdrop-blur-xs'
+                ? 'bg-blue-600 text-white border-blue-700'
+                : 'bg-white/95 hover:bg-white text-slate-800 hover:text-blue-600 border-slate-300 backdrop-blur-sm'
             }`}
             title={isCompared ? t('compareRemove') : t('compareAdd')}
             aria-label={isCompared ? t('compareRemove') : t('compareAdd')}

@@ -1142,7 +1142,7 @@ export const products: Product[] = [
     slug: 'combo-windows-11-pro-office-2024',
     name: 'Combo 2 en 1: Windows 11 Pro + Office 2024 Pro Plus',
     description: 'Paquete de licencias definitivas. Activa Windows 11 Pro y la suite completa de Office 2024 al mejor precio.',
-    price: 56.90,
+    price: 45.00,
     oldPrice: 195.00,
     duration: 'Permanente (De por vida)',
     category: 'combos',
@@ -1153,7 +1153,8 @@ export const products: Product[] = [
     featured: true,
     features: [
       'Incluye 2 licencias 100% independientes y definitivas',
-      'Ahorro superior al 50% en comparación con licencias individuales',
+      'Windows 11 Pro + Office 2024 Pro Plus',
+      'Ahorro superior al 55% en comparación con licencias individuales',
       'Garantía técnica y soporte de instalación prioritario'
     ],
     compatibility: 'Windows 10 y 11 (32 y 64 Bit)',
@@ -1240,26 +1241,27 @@ export const products: Product[] = [
     ]
   },
   {
-    id: 'prod-combo-win10-office2021',
-    slug: 'combo-windows-10-pro-office-2021',
-    name: 'Combo 2 en 1: Windows 10 Pro + Office 2021 Pro Plus',
-    description: 'Solución completa y económica para repotenciar cualquier laptop o PC de escritorio.',
-    price: 46.50,
-    oldPrice: 155.00,
+    id: 'prod-combo-win10-office2024',
+    slug: 'combo-windows-10-pro-office-2024',
+    name: 'Combo 2 en 1: Windows 10 Pro + Office 2024 Pro Plus',
+    description: 'Paquete de licencias definitivas. Activa Windows 10 Pro y la suite completa de Office 2024 al mejor precio.',
+    price: 44.00,
+    oldPrice: 180.00,
     duration: 'Permanente (De por vida)',
     category: 'combos',
     imageUrl: '/products/combo-win11-office2024.webp',
     fallbackImage: '/products/combo-win11-office2024.png',
-    rating: 4.89,
-    reviews: 142,
+    rating: 4.95,
+    reviews: 178,
     features: [
-      'Windows 10 Pro + Office 2021 Pro Plus',
-      'Licencias independientes de por vida',
-      'Ahorro del 45%'
+      'Windows 10 Pro + Office 2024 Pro Plus',
+      'Licencias 100% independientes de por vida',
+      'Ahorro superior al 55% frente a compra individual',
+      'Garantía técnica y soporte de instalación prioritario'
     ],
-    compatibility: 'Windows 10 (32 & 64 Bit)',
-    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
-    downloadLabel: 'Descargar instaladores de Windows 10 Pro y Office 2021 Pro',
+    compatibility: 'Windows 10 (32 y 64 Bit)',
+    downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
+    downloadLabel: 'Descargar instaladores de Windows 10 Pro y Office 2024 Pro',
     downloadOptions: [
       {
         id: 'combo-win10-pro',
@@ -1269,11 +1271,11 @@ export const products: Product[] = [
         description: 'Herramienta oficial Media Creation Tool 22H2 para descargar la ISO de Windows 10 o crear el USB booteable con Rufus.'
       },
       {
-        id: 'combo-office-2021-pro',
-        name: 'Descargar Office 2021 Professional Plus (.exe)',
-        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
+        id: 'combo-office-2024-pro',
+        name: 'Descargar Office 2024 Professional Plus (.exe)',
+        url: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
         badge: 'Instalador Office (.exe)',
-        description: 'Descarga directa del instalador ejecutable oficial de Office 2021 Pro Plus (OfficeSetup.exe) en español.'
+        description: 'Descarga directa del instalador ejecutable oficial de Office 2024 Pro Plus (OfficeSetup.exe) en español.'
       }
     ],
     installationSteps: COMBO_WIN10_OFFICE2021_STEPS

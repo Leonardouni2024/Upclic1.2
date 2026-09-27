@@ -945,17 +945,17 @@ export const PRODUCT_TRANSLATIONS_EN: Record<string, ProductTranslationData> = {
     duration: 'Lifetime / Permanent',
     compatibility: 'Windows 10 and Windows 11'
   },
-  'prod-combo-win10-office2021': {
-    name: '2-in-1 Combo: Windows 10 Pro + Office 2021 Pro Plus',
-    description: 'The most stable, tested, and reliable bundle for both older and modern hardware. Includes Windows 10 Pro and Office 2021 Pro Plus with permanent activation.',
+  'prod-combo-win10-office2024': {
+    name: '2-in-1 Combo: Windows 10 Pro + Office 2024 Pro Plus',
+    description: 'The ultimate operating system and productivity bundle. Activate Windows 10 Pro and the full Office 2024 suite with permanent digital license at the best price.',
     duration: 'Lifetime / Permanent',
     badge: 'OFFER',
-    compatibility: 'Windows 10 compatible hardware',
+    compatibility: 'Windows 10 (32 & 64 Bit)',
     features: [
       'Windows 10 Professional Key (32/64 Bit)',
-      'Office 2021 Professional Plus Key',
-      'Permanent lifetime activation for both licenses',
-      'Digital delivery in 10 to 30 min with step-by-step guides'
+      'Office 2024 Professional Plus Key',
+      '2 independent lifetime digital keys',
+      'Save over 55% compared to individual purchase'
     ]
   },
   'prod-win10-pro': {

@@ -11,6 +11,7 @@ export const FeaturedProductsSection: React.FC = () => {
     navigateToProduct, 
     isInComparison,
     toggleComparison,
+    setIsComparisonModalOpen,
     formatPrice, 
     t, 
     currency, 
@@ -107,12 +108,14 @@ export const FeaturedProductsSection: React.FC = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
+                        e.preventDefault();
                         toggleComparison(product);
+                        setIsComparisonModalOpen(true);
                       }}
                       className={`p-1.5 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border ${
                         isInComparison(product.id)
-                          ? 'bg-blue-600 text-white border-blue-700 shadow-xs'
-                          : 'bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-blue-600 border-slate-200'
+                          ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-blue-600 border-slate-300'
                       }`}
                       title={isInComparison(product.id) ? t('compareRemove') : t('compareAdd')}
                       aria-label={isInComparison(product.id) ? t('compareRemove') : t('compareAdd')}
