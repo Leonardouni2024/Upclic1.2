@@ -778,8 +778,9 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       };
     });
 
-    // Derive real public URL from APP_URL env, request origin/referer, or default to production domain
-    const originHeader = req.get('origin') || req.get('referer');
+    // Derive real public URL from body origin, APP_URL env, request origin/referer, or default to production domain
+    const clientOrigin = req.body.origin || req.body.returnUrl;
+    const originHeader = clientOrigin || req.get('origin') || req.get('referer');
     let appUrl = process.env.APP_URL;
     if (!appUrl && originHeader) {
       try {
@@ -810,7 +811,7 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       },
       back_urls: {
         success: `${appUrl}/checkout?status=success`,
-        failure: `${appUrl}/checkout?status=failure`,
+        failure: `${appUrl}/checkout?status=return&cart=open`,
         pending: `${appUrl}/checkout?status=pending`,
       },
     };

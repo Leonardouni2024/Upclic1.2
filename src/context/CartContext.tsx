@@ -83,11 +83,29 @@ const LOCAL_STORAGE_KEY = 'upclic_cart_v1';
 const COUPON_STORAGE_KEY = 'upclic_coupon_v1';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [items, setItems] = useState<CartItem[]>(() => {
+  const [items, setItems] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+      // If cart key is empty, check if there are saved items in upclic_last_order (e.g. user returned from Mercado Pago)
+      const lastOrder = localStorage.getItem('upclic_last_order');
+      if (lastOrder) {
+        const parsedOrder = JSON.parse(lastOrder);
+        if (Array.isArray(parsedOrder.items) && parsedOrder.items.length > 0) {
+          return parsedOrder.items.map((it: any) => ({
+            id: it.id || (it.product?.id ? `${it.product.id}${it.variantName ? `-${it.variantName}` : ''}` : Math.random().toString(36)),
+            product: it.product,
+            quantity: Math.max(1, Number(it.quantity) || 1),
+            selectedVariant: it.selectedVariant,
+            variantName: it.variantName,
+            unitPrice: Number(it.unitPrice ?? it.product?.price) || 0,
+          }));
+        }
       }
     } catch (e) {
       console.error('Error loading cart from localStorage', e);
@@ -416,7 +434,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (hash.startsWith('#/producto/')) {
         return hash.replace('#', '');
       }
-      if (hash === '#/checkout') {
+      if (hash === '#/checkout' || hash === '#checkout' || hash.startsWith('#/checkout?') || hash.startsWith('#checkout?')) {
         return '/checkout';
       }
 
@@ -433,7 +451,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (prodIndex !== -1) {
         return path.slice(prodIndex);
       }
-      if (path.endsWith('/checkout') || path === '/checkout') {
+      if (path.endsWith('/checkout') || path === '/checkout' || path.includes('/checkout')) {
         return '/checkout';
       }
     } catch {
@@ -444,6 +462,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Routing state
   const [currentPath, setCurrentPath] = useState<string>(resolvePath);
+
+  // Auto-detect returning from Mercado Pago / payment gateway
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const search = window.location.search;
+      if (!search) return;
+      const params = new URLSearchParams(search);
+      const status = params.get('status') || params.get('collection_status');
+
+      if (status === 'return' || status === 'failure' || status === 'null' || params.get('cart') === 'open') {
+        // User returned from Mercado Pago without completing payment
+        // Keep their cart open and intact
+        setIsCartOpen(true);
+      }
+    } catch {}
+  }, []);
 
   // Keep localStorage updated for cart
   useEffect(() => {

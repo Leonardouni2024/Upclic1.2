@@ -49,6 +49,7 @@ export const CheckoutPage: React.FC = () => {
     removeItem,
     updateQuantity,
     setQuantity,
+    addItem,
     clearCart,
     navigateToHome,
     t,
@@ -158,6 +159,21 @@ export const CheckoutPage: React.FC = () => {
     return null;
   });
 
+  const [returnNotice, setReturnNotice] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hash = window.location.hash || '';
+      const hashParams = hash.includes('?') ? new URLSearchParams(hash.substring(hash.indexOf('?'))) : null;
+      const status = searchParams.get('status') || searchParams.get('collection_status') || hashParams?.get('status');
+
+      if (status === 'return' || status === 'failure' || status === 'null' || searchParams.get('cart') === 'open') {
+        return true;
+      }
+    } catch {}
+    return false;
+  });
+
   const hasConfirmedPaymentRef = useRef(false);
 
   // Retrieve last order details saved before redirecting to Mercado Pago
@@ -169,6 +185,17 @@ export const CheckoutPage: React.FC = () => {
     } catch {}
     return null;
   })();
+
+  // Auto-restore items from last order if cart was empty when returning
+  useEffect(() => {
+    if (items.length === 0 && lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0 && !paymentResult?.isSuccess) {
+      lastOrderSnapshot.items.forEach((it: any) => {
+        if (it.product) {
+          addItem(it.product, it.quantity || 1, it.selectedVariant);
+        }
+      });
+    }
+  }, [items.length, lastOrderSnapshot, paymentResult?.isSuccess, addItem]);
 
   const paidOrderItems = (lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0)
     ? lastOrderSnapshot.items
@@ -265,6 +292,8 @@ export const CheckoutPage: React.FC = () => {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
+          origin: window.location.origin,
+          returnUrl: `${window.location.origin}/checkout?status=return&cart=open`,
           items,
           discountAmount,
           discountReason,
@@ -510,7 +539,7 @@ export const CheckoutPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="text-center max-w-2xl mx-auto mb-10">
+        <div className="text-center max-w-2xl mx-auto mb-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
             <span className="text-yellow-400">
               {t('checkoutTitle')}
@@ -520,6 +549,31 @@ export const CheckoutPage: React.FC = () => {
             {t('checkoutSubtitle')}
           </p>
         </div>
+
+        {returnNotice && (
+          <div className="mb-8 p-4 sm:p-5 rounded-lg bg-blue-500/15 border border-blue-400/40 text-blue-200 flex items-start gap-3.5 shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/25 text-blue-300 flex items-center justify-center shrink-0 mt-0.5 border border-blue-400/30">
+              <ShoppingBag className="w-4.5 h-4.5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-white text-sm">
+                {language === 'ES' ? '¡Has regresado a UpClic!' : 'You have returned to UpClic!'}
+              </h4>
+              <p className="mt-1 text-blue-200/90 text-xs sm:text-sm leading-relaxed">
+                {language === 'ES' 
+                  ? 'Tus productos seleccionados, cantidades y descuentos se mantienen guardados exactamente como los dejaste en tu carrito para que continúes cuando desees.'
+                  : 'Your selected products, quantities, and discounts remain saved exactly as you left them in your cart so you can continue whenever you want.'}
+              </p>
+            </div>
+            <button
+              onClick={() => setReturnNotice(false)}
+              className="text-blue-300 hover:text-white p-1 cursor-pointer transition-colors text-xs font-bold"
+              aria-label="Cerrar aviso"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Col 1: Detalle de Productos en el Carrito (7 cols) */}
