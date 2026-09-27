@@ -11,7 +11,6 @@ import {
   Send,
   ShieldCheck,
   Award,
-  Database,
   Loader2,
   RefreshCw
 } from 'lucide-react';
@@ -118,27 +117,6 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({ pr
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/90 text-[#0066FF] text-xs font-bold uppercase tracking-wider border border-blue-100 shadow-2xs">
               <Star className="w-3.5 h-3.5 fill-[#0066FF]" />
               <span>{t('reviewsTitle')}</span>
-            </div>
-
-            {/* Database Connection Status Badge */}
-            <div
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all ${
-                connectionStatus === 'connected'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : connectionStatus === 'syncing'
-                  ? 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse'
-                  : 'bg-slate-100 text-slate-600 border-slate-200'
-              }`}
-              title={t('reviewsSyncDBTitle')}
-            >
-              <Database className="w-3 h-3" />
-              <span>
-                {connectionStatus === 'connected'
-                  ? t('reviewsConnectionActive')
-                  : connectionStatus === 'syncing'
-                  ? t('reviewsSyncing')
-                  : t('reviewsLocalSync')}
-              </span>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
-import { products, getProductBySlug, WHATSAPP_DISPLAY, WHATSAPP_NUMBER , formatPrice } from '../products.ts';
+import { products, getProductBySlug, getProductDeliveryType, WHATSAPP_DISPLAY, WHATSAPP_NUMBER , formatPrice } from '../products.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
@@ -151,38 +151,185 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     .filter(p => p.id !== product.id && (p.category === product.category || p.bestSeller))
     .slice(0, 4);
 
-  const faqs = [
-    {
-      q: t('productFaqTitle1'),
-      a: product.isAccountAccess
-        ? t('productFaqAns1M365')
-        : t('productFaqAns1Default')
-    },
-    {
-      q: t('productFaqTitle2'),
-      a: t('productFaqAns2')
-    },
-    {
-      q: t('productFaqTitle3'),
-      a: product.duration === '1 año'
-        ? t('productFaqAns3M365')
-        : product.isAccountAccess
-        ? t('productFaqAns3M365Corp')
-        : t('productFaqAns3Default')
-    },
-    {
-      q: t('productFaqTitle4'),
-      a: t('productFaqAns4')
-    },
-    {
-      q: t('productFaqTitle5'),
-      a: product.isAccountAccess
-        ? t('productFaqAns5M365')
-        : product.category === 'windows'
-        ? t('productFaqAns5Windows')
-        : t('productFaqAns5Default')
+  const getDynamicFaqs = () => {
+    const isEn = language === 'EN';
+
+    if (product.id.includes('gemini')) {
+      return [
+        {
+          q: isEn ? 'How do I receive and activate Gemini AI Pro?' : '¿Cómo recibo y activo mi suscripción a Gemini AI Pro?',
+          a: isEn
+            ? 'You will receive the official Google family group invitation link via email and WhatsApp. Open the link with your personal Gmail account and accept the invite. No passwords are ever required.'
+            : 'Recibirás en tu correo electrónico y WhatsApp el enlace oficial de invitación de Google para unirte al grupo familiar. Solo debes abrir el enlace con tu cuenta de Gmail personal iniciada y aceptar unirte. No necesitas entregar contraseñas.'
+        },
+        {
+          q: isEn ? 'Is my 5 TB cloud storage private and independent?' : '¿Es privado mi almacenamiento de 5 TB en Google One?',
+          a: isEn
+            ? '100% private. Although the 5 TB total capacity is shared across the family plan, no other member can view, access, or modify your Google Drive files, Google Photos, or Gmail emails. Your data remains strictly confidential.'
+            : 'Totalmente privado e independiente. Aunque los 5 TB de capacidad total se gestionan a través del plan familiar, ningún otro miembro puede ver tus fotos de Google Fotos, archivos de Drive ni correos de Gmail. Tu información es 100% confidencial.'
+        },
+        {
+          q: isEn ? 'Which AI models and features are included?' : '¿Qué funciones y modelos de IA incluye?',
+          a: isEn
+            ? 'You get full access to Google’s most advanced multimodal AI models, native AI assistance in Google Docs, Sheets, Slides, and Gmail, and high-speed processing.'
+            : 'Incluye acceso completo a los modelos más avanzados de Inteligencia Artificial de Google, asistencia integrada de IA en Google Docs, Sheets, Slides y Gmail, y máxima velocidad de procesamiento.'
+        },
+        {
+          q: isEn ? 'Does it work on mobile phones and computers?' : '¿Funciona en teléfonos móviles y computadoras?',
+          a: isEn
+            ? 'Yes, it works across web browsers (PC and Mac), Android smartphones, iPhone, iPad, and all devices connected to your Google account.'
+            : 'Sí, funciona en cualquier navegador web (PC y Mac), smartphones Android, iPhone, iPad y tablets vinculadas a tu cuenta de Google.'
+        },
+        {
+          q: isEn ? 'Does it include technical support and warranty?' : '¿Cuenta con soporte técnico y garantía?',
+          a: isEn
+            ? `Yes, your subscription includes full technical warranty and support throughout the entire ${product.duration}.`
+            : `Sí, tu suscripción cuenta con garantía de funcionamiento total y soporte técnico durante los ${product.duration} completos.`
+        }
+      ];
     }
-  ];
+
+    if (product.id === 'prod-canva-pro') {
+      return [
+        {
+          q: isEn ? 'How do I receive Canva Pro?' : '¿Cómo recibo mi acceso a Canva Pro?',
+          a: isEn
+            ? 'We will send an official Canva invitation link to your personal email. Accepting it upgrades your personal Canva account to Pro for 12 months.'
+            : 'Te enviaremos una invitación oficial de Canva directamente a tu correo electrónico personal. Al aceptarla, tu cuenta personal pasa automáticamente a contar con todas las funciones de Canva Pro por 12 meses.'
+        },
+        {
+          q: isEn ? 'Will I keep my existing designs?' : '¿Conservaré mis proyectos y diseños anteriores?',
+          a: isEn
+            ? 'Yes! All your previous designs, folders, and brand assets remain completely intact in your personal account.'
+            : '¡Sí! Todos tus diseños, carpetas y creaciones previas se mantienen intactos en tu cuenta personal.'
+        },
+        {
+          q: isEn ? 'What features does Canva Pro include?' : '¿Qué herramientas incluye Canva Pro?',
+          a: isEn
+            ? 'Full access to 100M+ premium stock photos and videos, one-click Magic Background Remover, Magic Studio AI tools, and unlimited brand kits.'
+            : 'Acceso ilimitado a más de 100 millones de fotos y videos premium, quitafondos mágico de un clic, herramientas de IA Magic Studio y kits de marca con fuentes y logos ilimitados.'
+        },
+        {
+          q: isEn ? 'On which devices can I use Canva?' : '¿En qué dispositivos puedo usar Canva?',
+          a: isEn
+            ? 'You can use it simultaneously on Web (PC/Mac), mobile apps (Android and iOS), and iPad tablets.'
+            : 'Puedes usarlo en cualquier navegador web (PC y Mac), en la app móvil para Android e iOS, y en tablets iPad.'
+        },
+        {
+          q: isEn ? 'Is it guaranteed?' : '¿Tiene garantía de uso?',
+          a: isEn
+            ? 'Yes, 12 months full warranty with immediate replacement support if needed.'
+            : 'Sí, cuenta con garantía total durante los 12 meses completos con asistencia inmediata.'
+        }
+      ];
+    }
+
+    if (product.id === 'prod-duolingo-super') {
+      return [
+        {
+          q: isEn ? 'How is Duolingo Super activated?' : '¿Cómo se activa Duolingo Super?',
+          a: isEn
+            ? 'You will receive an official activation invitation for your personal Duolingo account. Clicking the link enables Super benefits on your account.'
+            : 'Recibirás la invitación oficial para tu cuenta personal de Duolingo (correo personal). Al hacer clic en el enlace, tu cuenta se actualiza al plan Super de inmediato.'
+        },
+        {
+          q: isEn ? 'What benefits do I get with Duolingo Super?' : '¿Qué ventajas obtengo con Duolingo Super?',
+          a: isEn
+            ? 'Unlimited hearts/lives, zero ads, personalized mistake practice, offline lessons, and all languages unlocked.'
+            : 'Vidas infinitas para practicar sin pausas, cero anuncios molestos, repaso personalizado de errores y lecciones descargables sin conexión a internet.'
+        },
+        {
+          q: isEn ? 'Will my streaks and progress be saved?' : '¿Se conserva mi racha y progreso de idiomas?',
+          a: isEn
+            ? 'Yes! Your learning streak, XP points, and completed lessons remain 100% saved in your account.'
+            : '¡Totalmente! Tu racha de días, puntos de experiencia (XP) y avance en cada idioma se mantienen intactos.'
+        },
+        {
+          q: isEn ? 'On which devices can I learn?' : '¿En qué dispositivos puedo usarlo?',
+          a: isEn
+            ? 'Android, iPhone, iPad, and Web browsers.'
+            : 'En smartphones Android, iPhone, iPad y en la versión web para computadoras.'
+        },
+        {
+          q: isEn ? 'How long is the subscription?' : '¿Por cuánto tiempo está activo?',
+          a: isEn
+            ? '12 months continuous service with full warranty.'
+            : '12 meses continuos de servicio con garantía total.'
+        }
+      ];
+    }
+
+    if (product.id.includes('-tel')) {
+      return [
+        {
+          q: isEn ? 'How does automated phone activation work?' : '¿Cómo funciona la activación telefónica automatizada?',
+          a: isEn
+            ? 'You download the official installer, and use Microsoft’s automated verification system or toll-free hotline to get your permanent Confirmation ID.'
+            : 'Descargas el instalador oficial de Microsoft e introduces los bloques numéricos en el sistema telefónico o portal web automatizado de Microsoft para recibir tu ID de confirmación de por vida.'
+        },
+        {
+          q: isEn ? 'Is it a genuine Microsoft activation?' : '¿Es una activación 100% original de Microsoft?',
+          a: isEn
+            ? 'Yes, it is validated directly on official Microsoft activation servers with permanent lifetime validity.'
+            : 'Sí, queda validada directamente en los servidores de Microsoft de por vida para 1 equipo.'
+        },
+        {
+          q: isEn ? 'Is it easy to do?' : '¿Es fácil realizar el proceso?',
+          a: isEn
+            ? 'Very simple! We include an illustrated step-by-step guide and our technical team is available on WhatsApp to assist you.'
+            : '¡Muy sencillo! Incluye guía paso a paso ilustrada y nuestro equipo técnico te acompaña por WhatsApp ante cualquier duda.'
+        },
+        {
+          q: isEn ? 'Can I reinstall if needed?' : '¿Se puede reinstalar en la misma PC?',
+          a: isEn
+            ? 'Yes, the activation remains permanent for that PC.'
+            : 'Sí, la activación es de por vida para esa computadora.'
+        },
+        {
+          q: isEn ? 'Do I get technical support?' : '¿Incluye soporte técnico?',
+          a: isEn
+            ? 'Yes, full activation warranty and priority support.'
+            : 'Sí, garantía total de activación y soporte prioritario por WhatsApp.'
+        }
+      ];
+    }
+
+    // Default FAQs for Standard Keys and Suites
+    return [
+      {
+        q: t('productFaqTitle1'),
+        a: product.isAccountAccess
+          ? t('productFaqAns1M365')
+          : t('productFaqAns1Default')
+      },
+      {
+        q: t('productFaqTitle2'),
+        a: t('productFaqAns2')
+      },
+      {
+        q: t('productFaqTitle3'),
+        a: product.duration === '1 año'
+          ? t('productFaqAns3M365')
+          : product.isAccountAccess
+          ? t('productFaqAns3M365Corp')
+          : t('productFaqAns3Default')
+      },
+      {
+        q: t('productFaqTitle4'),
+        a: t('productFaqAns4')
+      },
+      {
+        q: t('productFaqTitle5'),
+        a: product.isAccountAccess
+          ? t('productFaqAns5M365')
+          : product.category === 'windows'
+          ? t('productFaqAns5Windows')
+          : t('productFaqAns5Default')
+      }
+    ];
+  };
+
+  const faqs = getDynamicFaqs();
 
   return (
     <div id="product-detail-view" className="py-10 sm:py-14 bg-[#0f172a] text-white min-h-screen">
@@ -541,9 +688,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     {t('deliveryTypeLabel')}
                   </span>
                   <span>
-                    {product.id === 'prod-m365'
-                      ? t('productLicenseKeyDescM365')
-                      : t('productLicenseKeyDescDefault')}
+                    {getProductDeliveryType(product, language)}
                   </span>
                 </div>
               </div>

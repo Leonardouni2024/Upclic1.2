@@ -64,19 +64,19 @@ export const ProductCategoriesSection: React.FC = () => {
         : 'Activación directa con licencia digital permanente y actualizaciones directas desde los servidores oficiales de Microsoft.'
     },
     {
-      id: 'cat-diseno',
-      title: isEn ? 'Professional Design & AI' : 'Diseño Profesional',
-      subtitle: isEn ? 'Creativity and content editing' : 'Creatividad y edición de contenido',
+      id: 'cat-cuentas-premium',
+      title: isEn ? 'Premium Accounts' : 'Cuentas Premium',
+      subtitle: isEn ? 'Duolingo, Canva Pro, Gemini AI' : 'Duolingo, Canva Pro, Gemini IA',
       icon: <Palette className="w-5 h-5 text-[#0067B8]" />,
       categoryKey: 'apps',
       image: '/products/canva-pro.webp',
-      badge: isEn ? 'Premium Accounts' : 'Cuentas Premium',
+      badge: isEn ? 'Popular Accounts' : 'Suscripciones TOP',
       featuredItems: isEn
-        ? ['Adobe Acrobat Pro DC (Lifetime)', 'Canva Pro (12 Months)', 'CorelDRAW Graphics Suite', 'Google Gemini AI Pro']
-        : ['Adobe Acrobat Pro DC 2018 (Permanente)', 'Canva Pro (12 meses)', 'CorelDRAW Graphics Suite', 'Gemini AI Pro'],
+        ? ['Duolingo Super (12 Months)', 'Canva Pro (12 Months)', 'Gemini AI Pro (18 Months)', 'Gemini AI Pro (12 Months)']
+        : ['Duolingo Super (12 meses)', 'Canva Pro (12 meses)', 'Gemini AI Pro (18 meses)', 'Gemini AI Pro (12 meses)'],
       description: isEn
-        ? 'Graphic design tools, PDF suites, premium templates, and creative AI software for creators and agencies.'
-        : 'Herramientas de diseño gráfico, plantillas premium y software creativo para diseñadores, agencias y creadores de contenido.'
+        ? 'Official premium subscriptions for languages, graphic design, and advanced Artificial Intelligence.'
+        : 'Cuentas y suscripciones premium oficiales para aprendizaje de idiomas, diseño gráfico e Inteligencia Artificial avanzada.'
     },
     {
       id: 'cat-seguridad',

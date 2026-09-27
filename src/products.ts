@@ -705,49 +705,6 @@ const rawProducts: Product[] = [
     ],
     installationSteps: OFFICE_365_PRO_STEPS
   },
-  {
-    id: 'prod-gemini-ai-pro',
-    slug: 'google-gemini-ia-pro-18-meses',
-    name: 'Gemini AI Pro (18 Meses)',
-    description: 'Suscripción a Gemini AI Pro / Advanced por 18 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados, 5 TB de almacenamiento en la nube (Google One) e integración en Docs, Gmail y Drive.',
-    price: 35.00,
-    oldPrice: 120.00,
-    duration: '18 meses',
-    category: 'apps',
-    imageUrl: '/products/gemini-ai-pro.webp',
-    fallbackImage: '/products/gemini-ai-pro.png',
-    rating: 4.97,
-    reviews: 184,
-    badge: 'GOOGLE AI ADVANCED',
-    cloudStorage: '5 TB Google One Cloud',
-    isAccountAccess: true,
-    accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin necesidad de entregar contraseñas.',
-    features: [
-      'Acceso a modelos de vanguardia de Inteligencia Artificial',
-      'Link de activación oficial vinculado directamente a tu cuenta personal de Google',
-      '5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
-      'IA integrada de manera nativa en Google Docs, Sheets, Slides y Gmail',
-      'Garantía total de funcionamiento durante los 18 meses completos'
-    ],
-    compatibility: 'Navegadores Web, Windows, macOS, Android e iOS',
-    downloadUrl: 'https://gemini.google.com',
-    downloadLabel: 'Acceder a Google Gemini Web',
-    downloadOptions: [
-      {
-        id: 'gemini-portal',
-        name: 'Portal Oficial Google Gemini IA',
-        url: 'https://gemini.google.com',
-        badge: 'Portal Oficial Google',
-        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta personal activada.'
-      }
-    ],
-    installationSteps: [
-      'Recibirás en tu correo o WhatsApp el enlace oficial de invitación y activación directa para tu cuenta Google.',
-      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Google (Gmail personal).',
-      'Acepta la activación del plan Gemini Pro / Advanced de 18 meses.',
-      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en Google One.'
-    ]
-  },
 
   // --- WINDOWS CLAVES DIRECTAS ---
   {
@@ -1693,10 +1650,92 @@ const rawProducts: Product[] = [
     ]
   },
   {
+    id: 'prod-canva-pro',
+    slug: 'canva-pro-12-meses',
+    name: 'Canva Pro (12 Meses)',
+    description: 'Suscripción a Canva Pro por 12 meses para diseño gráfico profesional. Activación directa por invitación oficial a tu correo personal. Acceso ilimitado a más de 100 millones de fotos, videos, gráficos, plantillas premium, quitafondos mágico de imágenes y videos en un clic, y herramientas de Inteligencia Artificial (Magic Studio).',
+    price: 20.00,
+    oldPrice: 79.00,
+    duration: '12 meses',
+    category: 'apps',
+    imageUrl: '/products/canva-pro.webp',
+    fallbackImage: '/products/canva-pro.png',
+    rating: 4.98,
+    reviews: 312,
+    badge: 'PRO INVITACIÓN',
+    features: [
+      'Acceso total a biblioteca de 100M+ recursos premium (fotos, audio, video)',
+      'Herramientas IA Magic Studio y quitafondos instantáneo con un clic',
+      'Kits de marca con paletas de colores, fuentes y logos ilimitados',
+      'Redimensionamiento mágico inteligente a cualquier formato de red social',
+      'Activación por invitación directa a tu correo electrónico personal'
+    ],
+    compatibility: 'Web (PC y Mac), App móvil Android e iOS, iPad',
+    downloadUrl: 'https://www.canva.com',
+    downloadLabel: 'Acceder a Canva Web',
+    downloadOptions: [
+      {
+        id: 'canva-portal',
+        name: 'Portal Oficial Canva Web',
+        url: 'https://www.canva.com',
+        badge: 'Canva Oficial',
+        description: 'Accede a tus proyectos y herramientas Pro directamente en tu navegador o app.'
+      }
+    ],
+    installationSteps: [
+      'Recibirás en tu correo o WhatsApp la invitación oficial de activación para tu cuenta de Canva.',
+      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Canva (correo personal).',
+      'Acepta la invitación y tu cuenta pasará automáticamente a contar con todas las funciones de Canva Pro por 12 meses.'
+    ]
+  },
+  {
+    id: 'prod-gemini-ai-pro',
+    slug: 'google-gemini-ia-pro-18-meses',
+    name: 'Gemini AI Pro (18 Meses)',
+    description: 'Suscripción a Gemini AI Pro / Advanced por 18 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados, 5 TB de almacenamiento en la nube (Google One) e integración en Docs, Gmail y Drive.',
+    price: 35.00,
+    oldPrice: 120.00,
+    duration: '18 meses',
+    category: 'apps',
+    imageUrl: '/products/gemini-ai-pro.webp',
+    fallbackImage: '/products/gemini-ai-pro.png',
+    rating: 4.97,
+    reviews: 184,
+    badge: 'GOOGLE AI ADVANCED',
+    cloudStorage: '5 TB Google One Cloud',
+    isAccountAccess: true,
+    accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin necesidad de entregar contraseñas.',
+    features: [
+      'Acceso a modelos de vanguardia de Inteligencia Artificial',
+      'Link de activación oficial vinculado directamente a tu cuenta personal de Google',
+      '5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
+      'IA integrada de manera nativa en Google Docs, Sheets, Slides y Gmail',
+      'Garantía total de funcionamiento durante los 18 meses completos'
+    ],
+    compatibility: 'Navegadores Web, Windows, macOS, Android e iOS',
+    downloadUrl: 'https://gemini.google.com',
+    downloadLabel: 'Acceder a Google Gemini Web',
+    downloadOptions: [
+      {
+        id: 'gemini-portal',
+        name: 'Portal Oficial Google Gemini IA',
+        url: 'https://gemini.google.com',
+        badge: 'Portal Oficial Google',
+        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta personal activada.'
+      }
+    ],
+    installationSteps: [
+      'Recibirás en tu correo o WhatsApp el enlace oficial de invitación y activación directa para tu cuenta Google.',
+      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Google (Gmail personal).',
+      'Acepta la activación del plan Gemini Pro / Advanced de 18 meses.',
+      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en Google One.'
+    ]
+  },
+  {
     id: 'prod-gemini-ai-pro-12m',
     slug: 'gemini-ai-pro-12-meses',
     name: 'Gemini AI Pro (12 Meses)',
-    description: 'Suscripción a Gemini AI Pro / Advanced por 12 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados de IA, almacenamiento en la nube e integración nativa en Google Docs, Sheets y Gmail.',
+    description: 'Suscripción a Gemini AI Pro / Advanced por 12 meses mediante invitación oficial a grupo familiar de Google. Incluye modelos avanzados de IA, 5 TB de almacenamiento en la nube de Google One de forma compartida y totalmente privada, e integración nativa en Google Docs, Sheets y Gmail.',
     price: 20.00,
     oldPrice: 80.00,
     duration: '12 meses',
@@ -1705,16 +1744,16 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/gemini-ai-pro.png',
     rating: 4.95,
     reviews: 130,
-    badge: 'GOOGLE AI PRO',
-    cloudStorage: 'Almacenamiento Google One Cloud',
+    badge: 'INVITACIÓN FAMILIAR',
+    cloudStorage: '5 TB Google One Cloud (Compartido y Privado)',
     isAccountAccess: true,
-    accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin entregar contraseñas.',
+    accountNotice: 'Tipo de entrega: Activación mediante invitación oficial a grupo familiar de Google (Gmail personal). Sin necesidad de entregar contraseñas.',
     features: [
-      'Acceso a modelos de vanguardia de Inteligencia Artificial',
-      'Activación directa en tu cuenta personal de Google (Gmail)',
-      'Espacio seguro en la nube Google One',
-      'IA integrada de forma nativa en Google Workspace',
-      'Garantía total de 12 meses continuos'
+      'Acceso a modelos de vanguardia de Inteligencia Artificial (Gemini Pro / Advanced)',
+      'Tipo de entrega: Activación por invitación oficial a grupo familiar en tu cuenta personal de Google (Gmail)',
+      'Incluye 5 TB de almacenamiento en la nube de Google One de forma compartida (tus archivos son 100% privados e independientes)',
+      'IA integrada de forma nativa en Google Docs, Sheets, Slides y Gmail',
+      'Garantía total de 12 meses continuos de servicio'
     ],
     compatibility: 'Web, Windows, macOS, Android e iOS',
     downloadUrl: 'https://gemini.google.com',
@@ -1729,9 +1768,9 @@ const rawProducts: Product[] = [
       }
     ],
     installationSteps: [
-      'Recibirás el enlace oficial de invitación y activación directa para tu cuenta Google.',
-      'Abre el enlace con tu sesión de Gmail personal iniciada.',
-      'Acepta la activación del plan Pro de 12 meses y disfruta del servicio.'
+      'Recibirás en tu correo o WhatsApp el enlace oficial de invitación de Google para unirte al grupo familiar.',
+      'Abre el enlace con tu sesión de Gmail personal iniciada y acepta unirte al grupo familiar.',
+      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en la nube de forma compartida y privada.'
     ]
   },
   {
@@ -1773,45 +1812,6 @@ const rawProducts: Product[] = [
       'Introduce la clave oficial de 25 caracteres provista en tu orden e inicia sesión con tu cuenta McAfee (o crea una gratis).',
       'Haz clic en Descargar para bajar el instalador oficial de McAfee AntiVirus en tu PC.',
       'Ejecuta el instalador y tu equipo quedará protegido en tiempo real con 12 meses completos de cobertura.'
-    ]
-  },
-  {
-    id: 'prod-canva-pro',
-    slug: 'canva-pro-12-meses',
-    name: 'Canva Pro (12 Meses)',
-    description: 'Suscripción a Canva Pro por 12 meses para diseño gráfico profesional. Activación directa por invitación oficial a tu correo personal. Acceso ilimitado a más de 100 millones de fotos, videos, gráficos, plantillas premium, quitafondos mágico de imágenes y videos en un clic, y herramientas de Inteligencia Artificial (Magic Studio).',
-    price: 20.00,
-    oldPrice: 79.00,
-    duration: '12 meses',
-    category: 'apps',
-    imageUrl: '/products/canva-pro.webp',
-    fallbackImage: '/products/canva-pro.png',
-    rating: 4.98,
-    reviews: 312,
-    badge: 'PRO INVITACIÓN',
-    features: [
-      'Acceso total a biblioteca de 100M+ recursos premium (fotos, audio, video)',
-      'Herramientas IA Magic Studio y quitafondos instantáneo con un clic',
-      'Kits de marca con paletas de colores, fuentes y logos ilimitados',
-      'Redimensionamiento mágico inteligente a cualquier formato de red social',
-      'Activación por invitación directa a tu correo electrónico personal'
-    ],
-    compatibility: 'Web (PC y Mac), App móvil Android e iOS, iPad',
-    downloadUrl: 'https://www.canva.com',
-    downloadLabel: 'Acceder a Canva Web',
-    downloadOptions: [
-      {
-        id: 'canva-portal',
-        name: 'Portal Oficial Canva Web',
-        url: 'https://www.canva.com',
-        badge: 'Canva Oficial',
-        description: 'Accede a tus proyectos y herramientas Pro directamente en tu navegador o app.'
-      }
-    ],
-    installationSteps: [
-      'Recibirás en tu correo o WhatsApp la invitación oficial de activación para tu cuenta de Canva.',
-      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Canva (correo personal).',
-      'Acepta la invitación y tu cuenta pasará automáticamente a contar con todas las funciones de Canva Pro por 12 meses.'
     ]
   },
   {
@@ -1861,4 +1861,62 @@ export const products: Product[] = rawProducts.map(p => ({
   ...p,
   stock: p.stock ?? DEFAULT_PRODUCT_STOCK
 }));
+
+export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' = 'ES'): string {
+  const isEn = language === 'EN';
+
+  if (product.id.includes('gemini')) {
+    return isEn
+      ? 'Official family group invitation linked directly to your personal Google account (Gmail). No password required.'
+      : 'Invitación oficial a grupo familiar de Google vinculada directamente a tu cuenta personal (Gmail). Sin necesidad de contraseñas.';
+  }
+  if (product.id === 'prod-canva-pro') {
+    return isEn
+      ? 'Official email invitation directly to your personal Canva account.'
+      : 'Invitación oficial por correo electrónico a tu cuenta personal de Canva.';
+  }
+  if (product.id === 'prod-duolingo-super') {
+    return isEn
+      ? 'Official activation invitation linked to your personal Duolingo account.'
+      : 'Invitación oficial de activación vinculada a tu cuenta personal de Duolingo.';
+  }
+  if (product.id === 'prod-microsoft-365' || product.isAccountAccess) {
+    return isEn
+      ? 'Official dedicated access account (1 Year) with 100 GB OneDrive cloud storage (password customizable).'
+      : 'Cuenta de acceso oficial exclusiva (1 Año) con 100 GB en OneDrive (puedes cambiar tu contraseña).';
+  }
+  if (product.id.includes('-tel')) {
+    return isEn
+      ? 'Official Microsoft automated phone activation guide + direct installer link.'
+      : 'Guía paso a paso para activación telefónica automatizada ante Microsoft + instalador directo.';
+  }
+  if (product.id === 'prod-mcafee-antivirus') {
+    return isEn
+      ? 'Official 25-character digital activation key redeemable at mcafee.com/activate.'
+      : 'Clave digital oficial de 25 caracteres canjeable directamente en la web mcafee.com/activate.';
+  }
+  if (product.id === 'prod-coreldraw-2024-mac') {
+    return isEn
+      ? 'Official lifetime digital license for 1 Mac + official DMG installer.'
+      : 'Clave de licencia digital permanente para 1 Mac + instalador oficial (.dmg).';
+  }
+  if (product.id === 'prod-adobe-acrobat-pro-2018') {
+    return isEn
+      ? 'Official lifetime digital product key + full installer included.'
+      : 'Clave digital oficial permanente de por vida + instalador completo incluido.';
+  }
+  if (product.category === 'combos') {
+    return isEn
+      ? 'Independent official 25-character digital product keys for each suite + official direct installers.'
+      : 'Claves digitales oficiales independientes de 25 caracteres para cada software + instaladores directos.';
+  }
+  if (product.category === 'windows') {
+    return isEn
+      ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for activation in Settings > System > Activation.'
+      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación en Ajustes > Sistema > Activación.';
+  }
+  return isEn
+    ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for direct activation.'
+    : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación directa en tu suite.';
+}
 
