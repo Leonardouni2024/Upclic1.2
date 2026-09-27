@@ -21,6 +21,8 @@ import { HelpModal } from './components/HelpModal.tsx';
 import { CartReminder } from './components/CartReminder.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 import { RegionLanguageModal } from './components/RegionLanguageModal.tsx';
+import { FloatingComparisonBar } from './components/FloatingComparisonBar.tsx';
+import { ProductComparisonModal } from './components/ProductComparisonModal.tsx';
 
 const AppContent: React.FC = () => {
   const { currentPath, currentProductSlug, activeCategory } = useCart();
@@ -117,6 +119,12 @@ const AppContent: React.FC = () => {
 
         <UserOrdersModal isOpen={isUserOrdersModalOpen} onClose={() => setIsUserOrdersModalOpen(false)} />
         <RegionLanguageModal />
+
+      {/* Floating Product Comparison Dock */}
+      <FloatingComparisonBar />
+
+      {/* Side-by-Side Product Comparison Modal */}
+      <ProductComparisonModal />
 
     </div>
   );

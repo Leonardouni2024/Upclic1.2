@@ -292,8 +292,8 @@ export const CheckoutPage: React.FC = () => {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          origin: window.location.origin,
-          returnUrl: `${window.location.origin}/checkout?status=return&cart=open`,
+          origin: 'https://upclic.store',
+          returnUrl: 'https://upclic.store/checkout?status=return&cart=open',
           items,
           discountAmount,
           discountReason,

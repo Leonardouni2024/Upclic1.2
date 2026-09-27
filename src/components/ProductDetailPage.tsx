@@ -26,6 +26,7 @@ import {
   Send,
   Download,
   ExternalLink,
+  Scale,
 } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -37,6 +38,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     addItem, 
     navigateToHome, 
     navigateToCheckout, 
+    isInComparison,
+    toggleComparison,
+    setIsComparisonModalOpen,
     t, 
     currency, 
     language,
@@ -56,6 +60,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const product = getProductBySlug(slug) || products[0];
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
+  const isCompared = isInComparison(product.id);
   const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
     product.variants && product.variants.length > 0 ? product.variants[0].id : 'oem'
   );
@@ -209,6 +214,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
               <div className="relative w-full max-w-[480px] aspect-square rounded-xl bg-white p-6 sm:p-8 border border-slate-700/60 shadow-lg flex items-center justify-center group overflow-hidden">
+                {/* Compare Button on Top-Left of the image */}
+                <button
+                  type="button"
+                  onClick={() => toggleComparison(product)}
+                  className={`absolute top-3.5 left-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border shadow-sm transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 backdrop-blur-sm ${
+                    isCompared
+                      ? 'bg-blue-600 text-white border-blue-700'
+                      : 'bg-slate-900/10 hover:bg-slate-900/20 text-[#0B1F3A] border-slate-200'
+                  }`}
+                  title={isCompared ? t('compareRemove') : t('compareAdd')}
+                  aria-label={isCompared ? t('compareRemove') : t('compareAdd')}
+                >
+                  <Scale className={`w-3.5 h-3.5 ${isCompared ? 'text-white' : 'text-blue-600'}`} />
+                  <span className="text-[11px] sm:text-xs font-bold">{isCompared ? t('compareAdded') : t('compare')}</span>
+                </button>
+
                 {/* Share Button on Top-Right of the image */}
                 <button
                   type="button"
@@ -463,6 +484,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       <span>{t('buyNow')}</span>
                     </button>
                   </div>
+
+                  {/* Secondary Compare Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!isCompared) {
+                        toggleComparison(product);
+                      }
+                      setIsComparisonModalOpen(true);
+                    }}
+                    className="w-full py-2.5 px-4 rounded-lg bg-white/10 hover:bg-white/15 text-slate-200 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer border border-white/10 active:scale-98"
+                  >
+                    <Scale className="w-4 h-4 text-blue-400" />
+                    <span>{isCompared ? t('compareNow') : t('compareTitle')}</span>
+                  </button>
 
                   {/* Scarcity & Trust Indicators */}
                   <div className="flex flex-col gap-3 my-4">

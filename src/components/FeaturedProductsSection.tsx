@@ -3,12 +3,14 @@ import { products, WHATSAPP_NUMBER } from '../products.ts';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
-import { MessageCircle, ShoppingCart, Star, ArrowRight, ShieldCheck, Check } from 'lucide-react';
+import { MessageCircle, ShoppingCart, Star, ArrowRight, ShieldCheck, Check, Scale } from 'lucide-react';
 
 export const FeaturedProductsSection: React.FC = () => {
   const { 
     addItem, 
     navigateToProduct, 
+    isInComparison,
+    toggleComparison,
     formatPrice, 
     t, 
     currency, 
@@ -93,16 +95,37 @@ export const FeaturedProductsSection: React.FC = () => {
                 key={product.id}
                 className="group bg-white rounded-xl border border-slate-200 hover:border-[#0067B8] hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden relative"
               >
-                {/* Top Badge & Discount */}
+                {/* Top Badge & Discount & Compare */}
                 <div className="p-4 pb-0 flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0067B8] border border-blue-200 uppercase tracking-wider truncate max-w-[170px]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0067B8] border border-blue-200 uppercase tracking-wider truncate max-w-[150px]">
                     {badge}
                   </span>
-                  {discountPercent > 0 && (
-                    <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200">
-                      -{discountPercent}%
-                    </span>
-                  )}
+                  
+                  <div className="flex items-center gap-1.5">
+                    {/* Compare button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleComparison(product);
+                      }}
+                      className={`p-1.5 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border ${
+                        isInComparison(product.id)
+                          ? 'bg-blue-600 text-white border-blue-700 shadow-xs'
+                          : 'bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-blue-600 border-slate-200'
+                      }`}
+                      title={isInComparison(product.id) ? t('compareRemove') : t('compareAdd')}
+                      aria-label={isInComparison(product.id) ? t('compareRemove') : t('compareAdd')}
+                    >
+                      <Scale className="w-3.5 h-3.5" />
+                    </button>
+
+                    {discountPercent > 0 && (
+                      <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200">
+                        -{discountPercent}%
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Product Image */}

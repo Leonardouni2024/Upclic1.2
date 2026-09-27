@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
-import { calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS, formatPrice } from '../products.ts';
+import { products, calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS, formatPrice } from '../products.ts';
 import { 
   getTranslation, 
   translations, 
@@ -14,7 +14,7 @@ import {
 
 interface ToastData {
   id: string;
-  type: 'added' | 'discount' | 'info' | 'coupon';
+  type: 'added' | 'discount' | 'info' | 'coupon' | 'warning' | 'success';
   title: string;
   message?: string;
 }
@@ -75,6 +75,15 @@ interface CartContextType {
   getProductCompatibility: (product: { id: string; compatibility?: string }) => string;
   getDurationLabel: (duration: string) => string;
   getBadgeLabel: (badge?: string) => string | undefined;
+  // Product Comparison System (up to 3 products)
+  comparisonList: Product[];
+  addToComparison: (product: Product) => boolean;
+  removeFromComparison: (productId: string) => void;
+  toggleComparison: (product: Product) => void;
+  clearComparison: () => void;
+  isInComparison: (productId: string) => boolean;
+  isComparisonModalOpen: boolean;
+  setIsComparisonModalOpen: (open: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -135,6 +144,77 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch(e) {}
     return null;
   });
+
+  // Product Comparison System (max 3 products)
+  const COMPARISON_STORAGE_KEY = 'upclic_comparison_v1';
+  const [comparisonList, setComparisonList] = useState<Product[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem(COMPARISON_STORAGE_KEY);
+      if (saved) {
+        const ids: string[] = JSON.parse(saved);
+        if (Array.isArray(ids)) {
+          return ids
+            .map(id => products.find(p => p.id === id))
+            .filter(Boolean) as Product[];
+        }
+      }
+    } catch {}
+    return [];
+  });
+  const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
+
+  // Sync comparison list with localStorage
+  useEffect(() => {
+    try {
+      const ids = comparisonList.map(p => p.id);
+      localStorage.setItem(COMPARISON_STORAGE_KEY, JSON.stringify(ids));
+    } catch {}
+  }, [comparisonList]);
+
+  const addToComparison = (product: Product): boolean => {
+    if (comparisonList.some(p => p.id === product.id)) {
+      return true;
+    }
+    if (comparisonList.length >= 3) {
+      addToast({
+        type: 'warning',
+        title: language === 'ES' ? 'Límite de comparación' : 'Comparison limit',
+        message: getTranslation(language, 'compareMaxLimit')
+      });
+      return false;
+    }
+    setComparisonList(prev => [...prev, product]);
+    addToast({
+      type: 'success',
+      title: language === 'ES' ? 'Agregado al comparador' : 'Added to comparator',
+      message: `${getProductName(product, language)} ${language === 'ES' ? 'ha sido agregado.' : 'has been added.'}`
+    });
+    return true;
+  };
+
+  const removeFromComparison = (productId: string) => {
+    setComparisonList(prev => prev.filter(p => p.id !== productId));
+  };
+
+  const toggleComparison = (product: Product) => {
+    if (comparisonList.some(p => p.id === product.id)) {
+      removeFromComparison(product.id);
+    } else {
+      addToComparison(product);
+    }
+  };
+
+  const clearComparison = () => {
+    setComparisonList([]);
+    try {
+      localStorage.removeItem(COMPARISON_STORAGE_KEY);
+    } catch {}
+  };
+
+  const isInComparison = (productId: string): boolean => {
+    return comparisonList.some(p => p.id === productId);
+  };
 
   // Region, Language & Currency State
   const [currency, setCurrencyState] = useState<Currency>(() => {
@@ -808,7 +888,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getProductFeatures: (p: { id: string; features?: string[] }) => getProductFeatures(p, language),
         getProductCompatibility: (p: { id: string; compatibility?: string }) => getProductCompatibility(p, language),
         getDurationLabel: (d: string) => getDurationLabel(d, language),
-        getBadgeLabel: (b?: string) => getBadgeLabel(b, language)
+        getBadgeLabel: (b?: string) => getBadgeLabel(b, language),
+        comparisonList,
+        addToComparison,
+        removeFromComparison,
+        toggleComparison,
+        clearComparison,
+        isInComparison,
+        isComparisonModalOpen,
+        setIsComparisonModalOpen
       }}
     >
       {children}

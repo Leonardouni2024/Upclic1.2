@@ -9,6 +9,8 @@ import {
   Eye,
   AlertCircle,
   MessageCircle,
+  Scale,
+  Check
 } from 'lucide-react';
 
 interface ProductCardProps {
@@ -16,7 +18,17 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addItem, navigateToProduct, navigateToCheckout, t, getProductName, getBadgeLabel, getDurationLabel } = useCart();
+  const { 
+    addItem, 
+    navigateToProduct, 
+    navigateToCheckout, 
+    isInComparison, 
+    toggleComparison, 
+    t, 
+    getProductName, 
+    getBadgeLabel, 
+    getDurationLabel 
+  } = useCart();
   const { getProductStats } = useReviews();
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
@@ -28,6 +40,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const productName = getProductName(product);
   const badgeText = getBadgeLabel(product.badge);
   const durationText = getDurationLabel(product.duration);
+  const isCompared = isInComparison(product.id);
 
   useEffect(() => {
     setImgSrc(product.imageUrl);
@@ -82,6 +95,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           onClick={() => navigateToProduct(product.slug)}
           className="relative w-full aspect-square p-5 sm:p-6 bg-slate-50 flex items-center justify-center cursor-pointer overflow-hidden border-b border-slate-100"
         >
+          {/* Compare Toggle Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleComparison(product);
+            }}
+            className={`absolute top-2.5 right-2.5 z-10 px-2 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border shadow-xs ${
+              isCompared
+                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                : 'bg-white/90 hover:bg-white text-slate-700 hover:text-blue-600 border-slate-200 backdrop-blur-xs'
+            }`}
+            title={isCompared ? t('compareRemove') : t('compareAdd')}
+            aria-label={isCompared ? t('compareRemove') : t('compareAdd')}
+          >
+            <Scale className="w-3.5 h-3.5" />
+            <span className="hidden xs:inline">{isCompared ? t('compareAdded') : t('compare')}</span>
+          </button>
+
           <img
             src={imgSrc}
             alt={productName}

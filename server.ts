@@ -778,19 +778,9 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       };
     });
 
-    // Derive real public URL from body origin, APP_URL env, request origin/referer, or default to production domain
-    const clientOrigin = req.body.origin || req.body.returnUrl;
-    const originHeader = clientOrigin || req.get('origin') || req.get('referer');
+    // Real public URL must always return to official domain https://upclic.store
     let appUrl = process.env.APP_URL;
-    if (!appUrl && originHeader) {
-      try {
-        const parsed = new URL(originHeader);
-        appUrl = `${parsed.protocol}//${parsed.host}`;
-      } catch (e) {
-        // ignore
-      }
-    }
-    if (!appUrl || appUrl.includes('localhost')) {
+    if (!appUrl || appUrl.includes('sevalla.app') || appUrl.includes('localhost') || appUrl.includes('.run.app') || appUrl.includes('github.io')) {
       appUrl = 'https://upclic.store';
     }
     appUrl = appUrl.replace(/\/$/, '');
