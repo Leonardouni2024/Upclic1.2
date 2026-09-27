@@ -9,7 +9,6 @@ import {
   Eye,
   AlertCircle,
   MessageCircle,
-  Scale,
   Check
 } from 'lucide-react';
 
@@ -22,9 +21,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     addItem, 
     navigateToProduct, 
     navigateToCheckout, 
-    isInComparison, 
-    toggleComparison, 
-    setIsComparisonModalOpen,
     t, 
     getProductName, 
     getBadgeLabel, 
@@ -41,7 +37,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const productName = getProductName(product);
   const badgeText = getBadgeLabel(product.badge);
   const durationText = getDurationLabel(product.duration);
-  const isCompared = isInComparison(product.id);
+  const stockCount = product.stock ?? 30;
 
   useEffect(() => {
     setImgSrc(product.imageUrl);
@@ -96,27 +92,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           onClick={() => navigateToProduct(product.slug)}
           className="relative w-full aspect-square p-5 sm:p-6 bg-slate-50 flex items-center justify-center cursor-pointer overflow-hidden border-b border-slate-100"
         >
-          {/* Compare Toggle Button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              toggleComparison(product);
-              setIsComparisonModalOpen(true);
-            }}
-            className={`absolute top-2.5 right-2.5 z-20 px-2 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border shadow-sm ${
-              isCompared
-                ? 'bg-blue-600 text-white border-blue-700'
-                : 'bg-white/95 hover:bg-white text-slate-800 hover:text-blue-600 border-slate-300 backdrop-blur-sm'
-            }`}
-            title={isCompared ? t('compareRemove') : t('compareAdd')}
-            aria-label={isCompared ? t('compareRemove') : t('compareAdd')}
-          >
-            <Scale className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline">{isCompared ? t('compareAdded') : t('compare')}</span>
-          </button>
-
           <img
             src={imgSrc}
             alt={productName}
@@ -156,7 +131,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </h3>
 
             {/* Stars Rating and Duration */}
-            <div className="mt-2.5 mb-2 flex items-center justify-between text-xs">
+            <div className="mt-2.5 mb-1.5 flex items-center justify-between text-xs">
               <div className="flex items-center gap-1 text-amber-400">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -177,6 +152,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </div>
               <span className="text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                 {durationText}
+              </span>
+            </div>
+
+            {/* Stock indicator badge */}
+            <div className="mb-2 flex items-center justify-between text-[11px]">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/80 text-[10.5px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Stock: {stockCount} unid.</span>
               </span>
             </div>
           </div>

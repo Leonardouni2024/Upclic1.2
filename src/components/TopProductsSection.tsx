@@ -3,16 +3,13 @@ import { products , formatPrice } from '../products.ts';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
-import { Trophy, Star, Check, ShoppingCart, ArrowRight, Scale } from 'lucide-react';
+import { Trophy, Star, Check, ShoppingCart, ArrowRight } from 'lucide-react';
 
 export const TopProductsSection: React.FC = () => {
   const {
     addItem,
     navigateToProduct,
     navigateToCheckout,
-    isInComparison,
-    toggleComparison,
-    setIsComparisonModalOpen,
     t,
     getProductName,
     getProductDesc,
@@ -51,38 +48,21 @@ export const TopProductsSection: React.FC = () => {
             const stats = getProductStats(item.id);
             const badgeText = getBadgeLabel(item.badge) || item.badge || t('topFeatured') || 'TOP DESTACADO';
             const features = getProductFeatures(item);
+            const stockCount = item.stock ?? 30;
             return (
             <div
               key={item.id}
               className="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center relative overflow-hidden group"
             >
-              {/* Top badge & Compare Button */}
-              <div className="absolute top-4 left-4 z-10">
+              {/* Top badge */}
+              <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
                 <span className="px-3 py-1 text-xs font-black rounded-lg bg-blue-600 text-white uppercase tracking-wider shadow-md border border-blue-700">
                   {badgeText}
                 </span>
-              </div>
-
-              <div className="absolute top-4 right-4 z-10">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    toggleComparison(item);
-                    setIsComparisonModalOpen(true);
-                  }}
-                  className={`p-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border shadow-sm ${
-                    isInComparison(item.id)
-                      ? 'bg-blue-600 text-white border-blue-700'
-                      : 'bg-white/95 hover:bg-white text-slate-700 hover:text-blue-600 border-slate-300'
-                  }`}
-                  title={isInComparison(item.id) ? t('compareRemove') : t('compareAdd')}
-                  aria-label={isInComparison(item.id) ? t('compareRemove') : t('compareAdd')}
-                >
-                  <Scale className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline text-[11px]">{isInComparison(item.id) ? t('compareAdded') : t('compare')}</span>
-                </button>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/80 text-[10.5px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Stock: {stockCount} unid.</span>
+                </span>
               </div>
 
               {/* 1:1 Large Image */}

@@ -260,7 +260,9 @@ export const TELEPHONE_ACTIVATION_STEPS = [
   'El sistema automatizado de Microsoft verificará los datos y te entregará tu Identificador de Confirmación (bloques de la A a la H). Ingrésalos en la pantalla y el software quedará activado de por vida con garantía total.'
 ];
 
-export const products: Product[] = [
+export const DEFAULT_PRODUCT_STOCK = 30;
+
+const rawProducts: Product[] = [
   // --- OFFICE CLAVES DIRECTAS ---
   {
     id: 'prod-office-2024',
@@ -1249,8 +1251,8 @@ export const products: Product[] = [
     oldPrice: 180.00,
     duration: 'Permanente (De por vida)',
     category: 'combos',
-    imageUrl: '/products/combo-win11-office2024.webp',
-    fallbackImage: '/products/combo-win11-office2024.png',
+    imageUrl: '/products/combo-win10-office2024.webp',
+    fallbackImage: '/products/combo-win10-office2024.png',
     rating: 4.95,
     reviews: 178,
     features: [
@@ -1854,4 +1856,9 @@ export const products: Product[] = [
     ]
   }
 ];
+
+export const products: Product[] = rawProducts.map(p => ({
+  ...p,
+  stock: p.stock ?? DEFAULT_PRODUCT_STOCK
+}));
 

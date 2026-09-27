@@ -3,15 +3,12 @@ import { products, WHATSAPP_NUMBER } from '../products.ts';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
-import { MessageCircle, ShoppingCart, Star, ArrowRight, ShieldCheck, Check, Scale } from 'lucide-react';
+import { MessageCircle, ShoppingCart, Star, ArrowRight, ShieldCheck, Check } from 'lucide-react';
 
 export const FeaturedProductsSection: React.FC = () => {
   const { 
     addItem, 
     navigateToProduct, 
-    isInComparison,
-    toggleComparison,
-    setIsComparisonModalOpen,
     formatPrice, 
     t, 
     currency, 
@@ -96,39 +93,17 @@ export const FeaturedProductsSection: React.FC = () => {
                 key={product.id}
                 className="group bg-white rounded-xl border border-slate-200 hover:border-[#0067B8] hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden relative"
               >
-                {/* Top Badge & Discount & Compare */}
+                {/* Top Badge & Discount */}
                 <div className="p-4 pb-0 flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0067B8] border border-blue-200 uppercase tracking-wider truncate max-w-[150px]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0067B8] border border-blue-200 uppercase tracking-wider truncate max-w-[170px]">
                     {badge}
                   </span>
                   
-                  <div className="flex items-center gap-1.5">
-                    {/* Compare button */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        toggleComparison(product);
-                        setIsComparisonModalOpen(true);
-                      }}
-                      className={`p-1.5 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer border ${
-                        isInComparison(product.id)
-                          ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-blue-600 border-slate-300'
-                      }`}
-                      title={isInComparison(product.id) ? t('compareRemove') : t('compareAdd')}
-                      aria-label={isInComparison(product.id) ? t('compareRemove') : t('compareAdd')}
-                    >
-                      <Scale className="w-3.5 h-3.5" />
-                    </button>
-
-                    {discountPercent > 0 && (
-                      <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200">
-                        -{discountPercent}%
-                      </span>
-                    )}
-                  </div>
+                  {discountPercent > 0 && (
+                    <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200">
+                      -{discountPercent}%
+                    </span>
+                  )}
                 </div>
 
                 {/* Product Image */}
@@ -182,6 +157,14 @@ export const FeaturedProductsSection: React.FC = () => {
                     <p className="mt-1 text-xs text-slate-500 line-clamp-2 leading-relaxed">
                       {desc}
                     </p>
+
+                    {/* Stock indicator badge */}
+                    <div className="mt-2 flex items-center justify-between text-[11px]">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/80 text-[10.5px]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Stock: {product.stock ?? 30} unid.</span>
+                      </span>
+                    </div>
                   </div>
 
                   {/* Pricing & Call to Actions */}

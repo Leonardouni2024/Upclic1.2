@@ -49,6 +49,7 @@ export interface Product {
   isoFormat?: string;
   installationSteps: string[];
   variants?: ProductVariant[];
+  stock?: number;
 }
 
 export interface PromoCoupon {

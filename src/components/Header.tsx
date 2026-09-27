@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory, Product } from '../types.ts';
 import { searchProducts } from '../products.ts';
-import { Search, Menu, X, Star, ArrowRight, Layers, ShoppingCart, User, Globe, ChevronDown, Check, Scale } from 'lucide-react';
+import { Search, Menu, X, Star, ArrowRight, Layers, ShoppingCart, User, Globe, ChevronDown, Check } from 'lucide-react';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
 interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: boolean) => void; setIsHelpModalOpen?: (open: boolean) => void; }
@@ -12,8 +12,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
   const {
     totalQuantity,
     setIsCartOpen,
-    comparisonList,
-    setIsComparisonModalOpen,
     activeCategory,
     setActiveCategory,
     searchQuery,
@@ -416,23 +414,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               >
                 <Search className="w-5 h-5" />
               </button>
-
-              {/* Product Comparison Header Button */}
-              {comparisonList.length > 0 && (
-                <button
-                  id="compare-header-btn"
-                  onClick={() => setIsComparisonModalOpen(true)}
-                  className="relative flex items-center justify-center p-2.5 sm:px-3 sm:py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 border border-slate-700 shrink-0"
-                  aria-label={`Comparar productos: ${comparisonList.length} seleccionados`}
-                  title={`Comparar: ${comparisonList.length} productos`}
-                >
-                  <Scale className="w-4 h-4 text-amber-400" />
-                  <span className="hidden lg:inline ml-1 text-xs">{t('compare')}</span>
-                  <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-md border border-slate-900 tabular-nums">
-                    {comparisonList.length}
-                  </span>
-                </button>
-              )}
 
               {/* Shopping Cart Button */}
               <button

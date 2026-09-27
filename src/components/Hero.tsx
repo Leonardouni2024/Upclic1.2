@@ -1,10 +1,10 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { formatPrice } from '../products.ts';
-import { ArrowRight, ShieldCheck, Zap, Headphones, CheckCircle2, Check, ExternalLink } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Zap, Headphones, CheckCircle2 } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { setActiveCategory, navigateToHome, navigateToProduct, currentPath, t } = useCart();
+  const { setActiveCategory, navigateToHome, currentPath, t } = useCart();
 
   const handleScrollTo = (sectionId: string, category?: 'office' | 'windows' | 'combos' | 'all') => {
     if (category) {

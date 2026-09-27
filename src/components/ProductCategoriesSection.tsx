@@ -140,19 +140,21 @@ export const ProductCategoriesSection: React.FC = () => {
                 </p>
               </div>
 
-              {/* Product Visual Container */}
+              {/* Product Visual Container - Standardized dimensions and padding */}
               <div
                 onClick={() => handleSelectCategory(cat.categoryKey)}
-                className="mx-5 my-2 aspect-[4/3] bg-slate-50 rounded-lg border border-slate-100 p-4 flex items-center justify-center cursor-pointer group-hover:bg-blue-50/40 transition-colors"
+                className="mx-5 my-2 h-44 bg-slate-50 rounded-xl border border-slate-100 p-4 flex items-center justify-center cursor-pointer group-hover:bg-blue-50/40 transition-colors"
               >
-                <img
-                  src={cat.image}
-                  alt={cat.title}
-                  className="max-h-full max-w-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-200"
-                  onError={(e) => {
-                    e.currentTarget.src = '/products/office-2024.png';
-                  }}
-                />
+                <div className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center bg-white rounded-lg p-2 shadow-xs border border-slate-200/60 group-hover:scale-105 transition-transform duration-200">
+                  <img
+                    src={cat.image}
+                    alt={cat.title}
+                    className="w-full h-full object-contain drop-shadow-xs mix-blend-multiply"
+                    onError={(e) => {
+                      e.currentTarget.src = '/products/office-2024.png';
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Card Body: Short Description & Bullet points */}
