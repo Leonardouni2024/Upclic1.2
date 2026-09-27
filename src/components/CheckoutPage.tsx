@@ -692,32 +692,6 @@ export const CheckoutPage: React.FC = () => {
 
               {/* Coupon input on Checkout */}
               <div className="pt-4 border-t border-slate-700">
-                {!appliedCoupon && (
-                  <div className="mb-3.5 p-3 rounded-xl bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-blue-900/40 border border-blue-500/40 flex items-center justify-between gap-2 shadow-sm">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-400/30 flex items-center justify-center shrink-0">
-                        <Tag className="w-4 h-4 text-amber-400" />
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold text-white block">
-                          {language === 'ES' ? 'Código de Descuento Oficial: ' : 'Official Discount Code: '}
-                          <strong className="font-mono bg-blue-500/20 text-yellow-300 px-1.5 py-0.5 rounded border border-yellow-400/30">UPCLIC10</strong>
-                        </span>
-                        <span className="text-[11px] text-blue-200/90 block">
-                          {language === 'ES' ? 'Ahorra 10% adicional en todo tu pedido.' : 'Save an extra 10% on your entire order.'}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => applyCoupon('UPCLIC10')}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-black transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
-                    >
-                      {language === 'ES' ? 'Aplicar 10%' : 'Apply 10%'}
-                    </button>
-                  </div>
-                )}
-
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <Tag className="w-3.5 h-3.5 text-yellow-400" />
