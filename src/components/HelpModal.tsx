@@ -40,7 +40,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">What warranty do the licenses have?</h4>
               <p className="text-slate-600 leading-relaxed">
-                They come with a 1-year official activation warranty. If any issue arises during installation or redemption, our technical team will assist you immediately or provide a replacement key.
+                They come with an official 6-month activation warranty (1-month warranty for automated phone activation). If any issue arises during installation or redemption, our technical team will assist you immediately or provide a replacement key.
               </p>
             </div>
             <div>
@@ -49,7 +49,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
                 <p>• <strong className="text-slate-800">Windows OEM:</strong> Tied to the motherboard. You can reformat and reinstall as many times as needed on the same PC.</p>
                 <p>• <strong className="text-slate-800">Windows Retail:</strong> Tied to your Microsoft Account and can be transferred to another PC in the future.</p>
                 <p>• <strong className="text-slate-800">Microsoft Office 365:</strong> Reinstallable by logging in with your credentials on portal.office.com on up to 5 devices.</p>
-                <p>• <strong className="text-slate-800">Perpetual Office:</strong> Lifetime license for 1 PC with no additional payments.</p>
+                <p>• <strong className="text-slate-800">Office, Project & Visio:</strong> Keys are not reinstallable; the permanent lifetime license is maintained on your PC as long as you do not format it.</p>
               </div>
             </div>
             <div>
@@ -83,7 +83,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tienen las licencias?</h4>
               <p className="text-slate-600 leading-relaxed">
-                Cuentan con garantía oficial de activación de 1 año y soporte técnico especializado. Ante cualquier problema técnico durante la instalación o validación, te asistimos de inmediato o te proporcionamos una clave de reemplazo.
+                Cuentan con garantía oficial de activación de 6 meses (para productos con activación telefónica la garantía es de 1 mes) y soporte técnico especializado. Ante cualquier problema técnico durante la instalación o validación, te asistimos de inmediato o te proporcionamos una clave de reemplazo.
               </p>
             </div>
             <div>
@@ -92,7 +92,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
                 <p>• <strong className="text-slate-800">Windows OEM:</strong> Queda asociada a la placa madre de tu PC, permitiéndote formatear y reinstalar todas las veces que desees sin perder la activación.</p>
                 <p>• <strong className="text-slate-800">Windows Retail:</strong> Se vincula a tu cuenta Microsoft y es transferible a otro equipo en el futuro.</p>
                 <p>• <strong className="text-slate-800">Microsoft Office 365:</strong> Reinstalable iniciando sesión con tus credenciales en portal.office.com en hasta 5 dispositivos.</p>
-                <p>• <strong className="text-slate-800">Office Perpetuo (2024 / 2021):</strong> Licencia permanente de por vida para 1 PC sin costos recurrentes.</p>
+                <p>• <strong className="text-slate-800">Office, Project y Visio:</strong> Las claves no son reinstalables; la licencia se mantiene permanente de por vida en tu equipo siempre y cuando no lo formatees.</p>
               </div>
             </div>
             <div>
@@ -165,14 +165,14 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
             <h4 className="font-bold text-slate-900">General Sales and Delivery Terms:</h4>
             <p>1. All licenses sold by UpClic are 100% genuine and backed by official activation warranty.</p>
             <p>2. Delivery is carried out 100% digitally to your registered email address within <strong>10 to 30 minutes</strong> following payment confirmation via Mercado Pago.</p>
-            <p>3. Official warranty: in case of any technical verification issue, our team provides immediate support or key replacement.</p>
+            <p>3. Official warranty: 6-month warranty (1-month warranty for automated phone activation). In case of any technical verification issue, our team provides immediate support or key replacement.</p>
           </div>
         ) : (
           <div className="space-y-3 text-xs sm:text-sm text-slate-600">
             <h4 className="font-bold text-slate-900">Condiciones de Venta y Entrega:</h4>
             <p>1. Todas las licencias comercializadas por UpClic corresponden a claves digitales 100% originales y cuentan con garantía oficial de activación.</p>
             <p>2. La entrega se efectúa de manera 100% digital a tu correo electrónico en un lapso estimado de <strong>10 a 30 minutos</strong> tras la confirmación del pago en Mercado Pago.</p>
-            <p>3. Garantía oficial de activación de 1 año: ante cualquier inconveniente técnico durante la activación, brindamos asistencia inmediata o reemplazo de clave sin costo.</p>
+            <p>3. Garantía oficial de activación de 6 meses (1 mes para activación telefónica): ante cualquier inconveniente técnico durante la activación, brindamos asistencia inmediata o reemplazo de clave sin costo.</p>
           </div>
         );
       case 'privacy':

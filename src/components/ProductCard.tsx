@@ -1,4 +1,4 @@
-import { formatPrice } from '../products.ts';
+import { formatPrice, getProductDeviceTag } from '../products.ts';
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
@@ -13,7 +13,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     addItem, 
     navigateToProduct, 
     getProductName, 
-    getDurationLabel 
+    getDurationLabel,
+    language
   } = useCart();
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
   const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
@@ -59,10 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isYear = product.duration?.toLowerCase().includes('año') || product.duration?.toLowerCase().includes('12 meses');
   const durationTag = isPermanent ? 'Permanente' : (isYear ? '1 año' : getDurationLabel(product.duration));
   
-  let deviceTag = '1 PC';
-  if (product.id.includes('3pc')) deviceTag = '3 PC';
-  if (product.id.includes('365')) deviceTag = '5 Dispositivos';
-  if (product.id.includes('mac')) deviceTag = '1 Mac';
+  const deviceTag = getProductDeviceTag(product, language);
 
   return (
     <article

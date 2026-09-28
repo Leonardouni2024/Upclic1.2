@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types.ts';
-import { products, getProductBySlug, getProductDeliveryType, WHATSAPP_DISPLAY, WHATSAPP_NUMBER , formatPrice } from '../products.ts';
+import { products, getProductBySlug, getProductDeliveryType, getProductDeviceTag, WHATSAPP_DISPLAY, WHATSAPP_NUMBER , formatPrice } from '../products.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
 import { ProductCard } from './ProductCard.tsx';
@@ -157,16 +157,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     if (product.id === 'prod-gemini-ai-pro') {
       return [
         {
-          q: isEn ? 'How do I receive my Gemini AI Pro (18 Months) account?' : '¿Cómo recibo mi cuenta completa de Gemini AI Pro (18 Meses)?',
+          q: isEn ? 'How do I receive and activate Gemini AI Pro (18 Months)?' : '¿Cómo recibo y activo mi suscripción a Gemini AI Pro (18 Meses)?',
           a: isEn
-            ? 'You will receive the official credentials for your complete Google account (email and temporary password) via email and WhatsApp. You can customize the password and security options immediately.'
-            : 'Recibirás en tu correo y WhatsApp las credenciales de tu cuenta completa de Google (correo y contraseña). Puedes cambiar la contraseña y configurar tus métodos de seguridad personales inmediatamente.'
+            ? 'You will receive the subscription activation link sent directly to your personal Gmail account. Clicking the link binds the 18 months of Gemini Pro to your personal Gmail without temporary passwords.'
+            : 'Recibirás en tu correo personal Gmail el link oficial de activación suscripción de Google. Solo abres el link con tu sesión de Gmail personal para vincular los 18 meses directamente, sin contraseñas provisionales.'
         },
         {
-          q: isEn ? 'Can I share the subscription with other users?' : '¿Puedo compartir la cuenta con otras personas?',
+          q: isEn ? 'Can I share the subscription with other users?' : '¿Puedo compartir la cuenta con otros usuarios?',
           a: isEn
-            ? 'Yes! Being the owner of the complete account with the Google One plan, you can invite and share the benefits with up to 5 additional users via family invitation to their personal Gmail.'
-            : '¡Sí! Al ser el dueño de la cuenta completa con plan Google One, puedes invitar y compartir el beneficio hasta con 5 usuarios más mediante invitación directa a sus correos Gmail.'
+            ? 'Yes! You can share the plan with up to 5 additional users on their devices via family invitation from Google One.'
+            : '¡Sí! Puedes compartir el beneficio hasta con 5 usuarios más en sus dispositivos mediante invitación de grupo familiar desde Google One.'
         },
         {
           q: isEn ? 'Is the 5 TB cloud storage private for each user?' : '¿El almacenamiento de 5 TB es privado para cada miembro?',
@@ -183,8 +183,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'Does it include technical support and warranty?' : '¿Cuenta con soporte técnico y garantía?',
           a: isEn
-            ? 'Yes, your complete account includes full official warranty and technical support throughout the entire 18 months.'
-            : 'Sí, tu cuenta completa cuenta con garantía de funcionamiento total y soporte técnico durante los 18 meses completos.'
+            ? 'Yes, your subscription includes an official 6-month warranty and dedicated priority support.'
+            : 'Sí, tu suscripción cuenta con garantía oficial de 6 meses y soporte técnico prioritario.'
         }
       ];
     }
@@ -194,8 +194,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'How do I receive and activate Gemini AI Pro (12 Months)?' : '¿Cómo recibo y activo mi suscripción a Gemini AI Pro (12 Meses)?',
           a: isEn
-            ? 'You will receive the official Google family group invitation link via email and WhatsApp. Open the link with your personal Gmail account and accept the invite. No passwords are ever required.'
-            : 'Recibirás en tu correo electrónico y WhatsApp el enlace oficial de invitación de Google para unirte al grupo familiar. Solo debes abrir el enlace con tu cuenta de Gmail personal iniciada y aceptar unirte. No necesitas entregar contraseñas.'
+            ? 'You will receive the official email invitation sent to your personal Gmail account (1 user on multiple devices). Open the invite link and accept to activate.'
+            : 'Recibirás la invitación a correo oficial enviada a tu cuenta personal de Gmail (1 usuario en múltiples dispositivos). Abres el enlace de invitación y aceptas unirte.'
         },
         {
           q: isEn ? 'Is my 5 TB cloud storage private and independent?' : '¿Es privado mi almacenamiento de 5 TB en Google One?',
@@ -218,8 +218,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'Does it include technical support and warranty?' : '¿Cuenta con soporte técnico y garantía?',
           a: isEn
-            ? 'Yes, your subscription includes full technical warranty and support throughout the entire 12 months.'
-            : 'Sí, tu suscripción cuenta con garantía de funcionamiento total y soporte técnico durante los 12 meses completos.'
+            ? 'Yes, your subscription includes an official 6-month warranty and continuous technical support.'
+            : 'Sí, tu suscripción cuenta con garantía oficial de 6 meses y soporte técnico continuo.'
         }
       ];
     }
@@ -229,8 +229,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'How do I receive Canva Pro?' : '¿Cómo recibo mi acceso a Canva Pro?',
           a: isEn
-            ? 'We will send an official Canva invitation link to your personal email. Accepting it upgrades your personal Canva account to Pro for 12 months.'
-            : 'Te enviaremos una invitación oficial de Canva directamente a tu correo electrónico personal. Al aceptarla, tu cuenta personal pasa automáticamente a contar con todas las funciones de Canva Pro por 12 meses.'
+            ? 'We will send an official email invitation to your personal Canva account (1 user on your devices). Accepting it upgrades your personal Canva account to Pro for 12 months.'
+            : 'Te enviaremos una invitación a correo oficial directamente a tu cuenta personal de Canva (1 usuario en tus dispositivos). Al aceptarla, tu cuenta pasa automáticamente a contar con Canva Pro por 12 meses.'
         },
         {
           q: isEn ? 'Will I keep my existing designs?' : '¿Conservaré mis proyectos y diseños anteriores?',
@@ -253,8 +253,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'Is it guaranteed?' : '¿Tiene garantía de uso?',
           a: isEn
-            ? 'Yes, 12 months full warranty with immediate replacement support if needed.'
-            : 'Sí, cuenta con garantía total durante los 12 meses completos con asistencia inmediata.'
+            ? 'Yes, official 6-month warranty with immediate replacement support if needed.'
+            : 'Sí, cuenta con garantía oficial de 6 meses con asistencia inmediata.'
         }
       ];
     }
@@ -264,8 +264,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'How is Duolingo Super activated?' : '¿Cómo se activa Duolingo Super?',
           a: isEn
-            ? 'You will receive an official activation invitation for your personal Duolingo account. Clicking the link enables Super benefits on your account.'
-            : 'Recibirás la invitación oficial para tu cuenta personal de Duolingo (correo personal). Al hacer clic en el enlace, tu cuenta se actualiza al plan Super de inmediato.'
+            ? 'You will receive an official email invitation for your personal Duolingo account (1 user on your devices). Clicking the link enables Super benefits on your account.'
+            : 'Recibirás una invitación a correo oficial para tu cuenta personal de Duolingo (1 usuario en tus dispositivos). Al hacer clic en el enlace, tu cuenta se actualiza al plan Super de inmediato.'
         },
         {
           q: isEn ? 'What benefits do I get with Duolingo Super?' : '¿Qué ventajas obtengo con Duolingo Super?',
@@ -288,14 +288,25 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'How long is the subscription?' : '¿Por cuánto tiempo está activo?',
           a: isEn
-            ? '12 months continuous service with full warranty.'
-            : '12 meses continuos de servicio con garantía total.'
+            ? '12 months continuous service with official 6-month warranty.'
+            : '12 meses continuos de servicio con garantía oficial de 6 meses.'
         }
       ];
     }
 
+    const isOffice = product.category === 'office' && !product.isAccountAccess;
+    const isProjectVisio = product.category === 'project-visio';
+    const isCombo = product.category === 'combos';
+    const isOfficeProjectVisio = isOffice || isProjectVisio || isCombo || product.id.includes('office') || product.id.includes('project') || product.id.includes('visio');
+
     if (product.id.includes('-tel')) {
       return [
+        {
+          q: isEn ? 'What does the delivery include?' : '¿Qué incluye la entrega?',
+          a: isEn
+            ? 'The delivery includes your official activation key + step-by-step phone activation guide, and direct download link for the official Microsoft installer.'
+            : 'La entrega incluye tu clave de activación oficial + guía de activación ilustrada paso a paso y el enlace directo al instalador oficial de Microsoft.'
+        },
         {
           q: isEn ? 'How does automated phone activation work?' : '¿Cómo funciona la activación telefónica automatizada?',
           a: isEn
@@ -317,14 +328,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'Can I reinstall if needed?' : '¿Se puede reinstalar en la misma PC?',
           a: isEn
-            ? 'Yes, the activation remains permanent for that PC.'
-            : 'Sí, la activación es de por vida para esa computadora.'
+            ? (isOfficeProjectVisio
+                ? 'No, Office product keys are not reinstallable. The permanent license is maintained on your computer as long as you do not format it.'
+                : 'Yes, the activation remains permanent for that PC.')
+            : (isOfficeProjectVisio
+                ? 'No, las claves de Office no son reinstalables. La licencia se mantiene permanente en tu computadora de por vida mientras no la formatees.'
+                : 'Sí, la activación es de por vida para esa computadora.')
         },
         {
           q: isEn ? 'Do I get technical support?' : '¿Incluye soporte técnico?',
           a: isEn
-            ? 'Yes, full activation warranty and priority support.'
-            : 'Sí, garantía total de activación y soporte prioritario por WhatsApp.'
+            ? 'Yes, official 1-month activation warranty (30 days) and priority support by WhatsApp.'
+            : 'Sí, garantía oficial de activación de 1 mes (30 días) y soporte prioritario por WhatsApp.'
         }
       ];
     }
@@ -351,7 +366,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
       },
       {
         q: t('productFaqTitle4'),
-        a: t('productFaqAns4')
+        a: product.id.includes('-tel')
+          ? (isEn
+              ? 'You have an official 1-month activation warranty (30 days). In case of any technical question, our team assists you immediately by WhatsApp.'
+              : 'Cuentas con garantía oficial de activación de 1 mes (30 días). Ante cualquier duda técnica, nuestro equipo te asiste de inmediato por WhatsApp.')
+          : (isEn
+              ? 'You have an official 6-month warranty. In case of any technical issue during activation or use, we assist you immediately or provide a replacement.'
+              : 'Cuentas con garantía oficial de 6 meses. Ante cualquier inconveniente técnico durante la activación o uso, te asistimos de inmediato o te proporcionamos un reemplazo.')
       },
       {
         q: t('productFaqTitle5'),
@@ -359,6 +380,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           ? t('productFaqAns5M365')
           : product.category === 'windows'
           ? t('productFaqAns5Windows')
+          : isCombo
+          ? t('productFaqAns5Combo')
+          : isOfficeProjectVisio
+          ? t('productFaqAns5Office')
           : t('productFaqAns5Default')
       }
     ];
@@ -720,10 +745,33 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 </div>
                 <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
                   <span className="font-bold text-slate-900 block mb-1">
+                    {language === 'ES' ? 'Dispositivos / Usuarios' : 'Devices / Users'}
+                  </span>
+                  <span className="font-semibold text-[#0070ba]">
+                    {getProductDeviceTag(product, language)}
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 sm:col-span-2">
+                  <span className="font-bold text-slate-900 block mb-1">
                     {t('deliveryTypeLabel')}
                   </span>
                   <span>
                     {getProductDeliveryType(product, language)}
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 sm:col-span-2 flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-slate-900 block mb-0.5">
+                      {language === 'ES' ? 'Garantía Oficial' : 'Official Warranty'}
+                    </span>
+                    <span className="text-slate-600">
+                      {product.id.includes('-tel')
+                        ? (language === 'ES' ? '1 mes de garantía para activación telefónica (asistencia personalizada)' : '1-month warranty for automated phone activation')
+                        : (language === 'ES' ? '6 meses de garantía oficial y soporte técnico continuo' : '6-month official warranty and continuous support')}
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                    {product.id.includes('-tel') ? '1 Mes' : '6 Meses'}
                   </span>
                 </div>
               </div>

@@ -257,7 +257,7 @@ export const TELEPHONE_ACTIVATION_STEPS = [
   'Abre cualquier aplicación (Word, Excel o en Configuración > Activación de Windows) y selecciona la opción "Deseo activar el software por teléfono".',
   'El asistente de activación oficial de Microsoft generará tu Identificador de Instalación (ID de instalación compuesto por varios bloques de números).',
   'Accede al portal web oficial de activación telefónica de Microsoft (o a la línea telefónica gratuita) e introduce tu Identificador de Instalación.',
-  'El sistema automatizado de Microsoft verificará los datos y te entregará tu Identificador de Confirmación (bloques de la A a la H). Ingrésalos en la pantalla y el software quedará activado de por vida con garantía total.'
+  'El sistema automatizado de Microsoft verificará los datos y te entregará tu Identificador de Confirmación (bloques de la A a la H). Ingrésalos en la pantalla y el software quedará activado de por vida con garantía de activación de 1 mes.'
 ];
 
 export const DEFAULT_PRODUCT_STOCK = 30;
@@ -323,10 +323,11 @@ const rawProducts: Product[] = [
     reviews: 178,
     badge: '📞 POR TELÉFONO • S/ 13',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Activación telefónica automatizada Microsoft',
       'Word, Excel, PowerPoint, Outlook, OneNote, Access y Publisher 2024',
       'Licencia permanente de pago único para 1 PC',
-      'Guía paso a paso ilustrada incluida'
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 10 / Windows 11 (32 & 64 Bit)',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2024Retail&platform=x64&language=es-es&version=O16GA',
@@ -348,10 +349,11 @@ const rawProducts: Product[] = [
     reviews: 142,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Activación telefónica oficial Microsoft',
       'Word, Excel, PowerPoint, Outlook, Access 2021',
-      'Licencia permanente sin cuotas mensuales',
-      'Guía de instalación y activación incluida'
+      'Licencia permanente sin cuotas mensuales para 1 PC',
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 10 / Windows 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2021Retail&platform=x64&language=es-es&version=O16GA',
@@ -373,9 +375,10 @@ const rawProducts: Product[] = [
     reviews: 96,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Word 2019, Excel 2019, PowerPoint 2019, Outlook 2019',
       'Activación telefónica de por vida para 1 PC',
-      'Instrucciones paso a paso de fácil ejecución'
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 10 / Windows 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlus2019Retail&platform=x64&language=es-es&version=O16GA',
@@ -397,9 +400,11 @@ const rawProducts: Product[] = [
     reviews: 88,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Word, Excel, PowerPoint, Outlook 2016',
       'Excelente compatibilidad con PCs de recursos moderados',
-      'Licencia permanente de activación telefónica'
+      'Licencia permanente de activación telefónica para 1 PC',
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 7 / 8.1 / 10 / 11',
     downloadUrl: 'https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=ProPlusRetail&platform=x64&language=es-es&version=O16GA',
@@ -1012,10 +1017,11 @@ const rawProducts: Product[] = [
     reviews: 165,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Activación telefónica oficial automatizada Microsoft',
       'BitLocker, Remote Desktop, Hyper-V y Windows Sandbox',
       'Licencia permanente de por vida para 1 PC',
-      'Guía paso a paso ilustrada incluida'
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 11 (64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
@@ -1037,9 +1043,11 @@ const rawProducts: Product[] = [
     reviews: 112,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Activación telefónica oficial Microsoft',
       'Interfaz moderna, soporte para DirectX 12 y Widgets',
-      'Licencia de por vida para 1 equipo'
+      'Licencia de por vida para 1 equipo',
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 11 (64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?linkid=2156295',
@@ -1061,9 +1069,10 @@ const rawProducts: Product[] = [
     reviews: 189,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Activación telefónica de por vida para 1 PC',
       'Soporte completo para Remote Desktop y BitLocker',
-      'Instrucciones sencillas garantizadas'
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
@@ -1085,9 +1094,10 @@ const rawProducts: Product[] = [
     reviews: 94,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
+      'Incluye clave de activación + guía de activación paso a paso',
       'Activación telefónica económica y legal',
-      'Ideal para uso doméstico y estudio',
-      'Sin vencimiento'
+      'Ideal para uso doméstico y estudio (sin vencimiento)',
+      'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
     downloadUrl: 'https://go.microsoft.com/fwlink/?LinkId=691209',
@@ -1623,17 +1633,19 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/duolingo-super.png',
     rating: 4.96,
     reviews: 245,
-    badge: 'CUENTA PREMIUM',
+    badge: '1 USUARIO',
     isAccountAccess: true,
-    accountNotice: 'Activación mediante invitación oficial a tu cuenta personal de Duolingo (correo personal). Sin necesidad de entregar contraseñas.',
+    accountNotice: 'Tipo de entrega: Invitación oficial a correo personal de Duolingo (1 usuario). Sin necesidad de entregar contraseñas.',
     features: [
-      'Vidas infinitas para practicar sin interrupciones',
+      'Acceso completo a Duolingo Super para 1 usuario',
+      'Vidas infinitas para practicar idiomas sin interrupciones',
       'Cero anuncios para máxima concentración',
       'Repaso personalizado de errores cometidos',
-      'Activación en tu cuenta personal de Duolingo',
-      'Garantía total durante los 12 meses'
+      'Activación mediante invitación oficial a tu correo personal',
+      'Compatible con múltiples dispositivos (Android, iOS y Web)',
+      'Garantía oficial durante 6 meses'
     ],
-    compatibility: 'Android, iOS, iPad, Web (PC y Mac)',
+    compatibility: 'Android, iOS, iPad, Web (Dispositivos móviles y PC/Mac)',
     downloadUrl: 'https://www.duolingo.com',
     downloadLabel: 'Acceder a Duolingo Web',
     downloadOptions: [
@@ -1655,7 +1667,7 @@ const rawProducts: Product[] = [
     id: 'prod-canva-pro',
     slug: 'canva-pro-12-meses',
     name: 'Canva Pro (12 Meses)',
-    description: 'Suscripción a Canva Pro por 12 meses para diseño gráfico profesional. Activación directa por invitación oficial a tu correo personal. Acceso ilimitado a más de 100 millones de fotos, videos, gráficos, plantillas premium, quitafondos mágico de imágenes y videos en un clic, y herramientas de Inteligencia Artificial (Magic Studio).',
+    description: 'Suscripción a Canva Pro por 12 meses para 1 usuario en múltiples dispositivos. Activación directa por invitación oficial a tu correo personal. Acceso ilimitado a más de 100 millones de fotos, videos, gráficos, plantillas premium, quitafondos mágico de imágenes y videos en un clic, y herramientas de Inteligencia Artificial (Magic Studio).',
     price: 20.00,
     oldPrice: 79.00,
     duration: '12 meses',
@@ -1664,17 +1676,19 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/canva-pro.png',
     rating: 4.98,
     reviews: 312,
-    badge: 'PRO INVITACIÓN',
+    badge: '1 USUARIO',
     isAccountAccess: true,
-    accountNotice: 'Activación mediante invitación oficial directa a tu correo personal de Canva. Sin necesidad de entregar contraseñas.',
+    accountNotice: 'Tipo de entrega: Invitación oficial a correo personal de Canva (1 usuario). Sin necesidad de entregar contraseñas.',
     features: [
-      'Acceso total a biblioteca de 100M+ recursos premium (fotos, audio, video)',
+      'Acceso total a Canva Pro por 12 meses para 1 usuario',
+      'Activación por invitación oficial directa a tu correo personal de Canva',
+      'Acceso a biblioteca de 100M+ recursos premium (fotos, audio, video)',
       'Herramientas IA Magic Studio y quitafondos instantáneo con un clic',
       'Kits de marca con paletas de colores, fuentes y logos ilimitados',
-      'Redimensionamiento mágico inteligente a cualquier formato de red social',
-      'Activación por invitación directa a tu correo electrónico personal'
+      'Uso en múltiples dispositivos (Web, App móvil Android e iOS, iPad)',
+      'Garantía oficial durante 6 meses'
     ],
-    compatibility: 'Web (PC y Mac), App móvil Android e iOS, iPad',
+    compatibility: 'Web (PC y Mac), App móvil Android e iOS, iPad (Múltiples dispositivos)',
     downloadUrl: 'https://www.canva.com',
     downloadLabel: 'Acceder a Canva Web',
     downloadOptions: [
@@ -1696,7 +1710,7 @@ const rawProducts: Product[] = [
     id: 'prod-gemini-ai-pro',
     slug: 'google-gemini-ia-pro-18-meses',
     name: 'Gemini AI Pro (18 Meses)',
-    description: 'Cuenta completa de Google con suscripción a Gemini AI Pro / Advanced por 18 meses. Entrega de cuenta completa exclusiva (correo y contraseña personalizables). Incluye 5 TB de almacenamiento en la nube de Google One y la opción de compartir hasta con 5 usuarios más por invitación.',
+    description: 'Suscripción oficial a Gemini AI Pro / Advanced por 18 meses activable mediante link de activación directo a tu correo personal Gmail. Permite compartir con hasta 5 usuarios más en sus dispositivos e incluye 5 TB de almacenamiento en la nube de Google One.',
     price: 35.00,
     oldPrice: 120.00,
     duration: '18 meses',
@@ -1705,19 +1719,20 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/gemini-ai-pro.png',
     rating: 4.97,
     reviews: 184,
-    badge: 'CUENTA COMPLETA',
+    badge: 'HASTA 5 USUARIOS',
     cloudStorage: '5 TB Google One Cloud',
     isAccountAccess: true,
-    accountNotice: 'Tipo de entrega: Cuenta completa exclusiva (correo y contraseña propios). Puedes cambiar la contraseña y datos de seguridad, y compartir el plan con hasta 5 usuarios más mediante invitación.',
+    accountNotice: 'Tipo de entrega: Link de activación suscripción (a tu correo personal Gmail). Hasta en 5 usuarios en sus dispositivos.',
     features: [
-      'Cuenta completa de Google con acceso exclusivo y privado (correo y contraseña personalizables)',
-      'Suscripción activa a Gemini AI Pro / Advanced durante 18 meses completos',
-      'Incluye 5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
-      'Puedes compartir hasta con 5 usuarios más por invitación a grupo familiar',
+      'Link de activación a su correo personal Gmail',
+      'Hasta en 5 usuarios (puedes compartir por invitación hasta con 5 usuarios más)',
+      'Suscripción oficial a Gemini AI Pro / Advanced durante 18 meses completos',
+      'Incluye 5 TB de almacenamiento seguro en la nube de Google One (privado e independiente)',
       'IA integrada de manera nativa en Google Docs, Sheets, Slides y Gmail',
-      'Garantía total de funcionamiento y soporte continuo durante los 18 meses'
+      'Compatible con múltiples dispositivos (Android, iOS, PC, Mac, tablets)',
+      'Garantía oficial y soporte técnico durante 6 meses'
     ],
-    compatibility: 'Navegadores Web, Windows, macOS, Android e iOS',
+    compatibility: 'Navegadores Web, Windows, macOS, Android e iOS (Múltiples dispositivos)',
     downloadUrl: 'https://gemini.google.com',
     downloadLabel: 'Acceder a Google Gemini Web',
     downloadOptions: [
@@ -1726,21 +1741,21 @@ const rawProducts: Product[] = [
         name: 'Portal Oficial Google Gemini IA',
         url: 'https://gemini.google.com',
         badge: 'Portal Oficial Google',
-        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta completa activada.'
+        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta personal activada.'
       }
     ],
     installationSteps: [
-      'Recibirás en tu correo y WhatsApp las credenciales de tu cuenta completa de Google (correo y contraseña provisional).',
-      'Inicia sesión en google.com o gemini.google.com y personaliza tu contraseña y opciones de seguridad.',
-      'Desde la administración de Google One puedes invitar y compartir el beneficio hasta con 5 usuarios o familiares más.',
-      '¡Listo! Disfruta de Gemini AI Pro y los 5 TB de almacenamiento con total privacidad.'
+      'Recibirás en tu correo personal Gmail el link oficial de activación de suscripción de Google.',
+      'Abre el link de activación con tu cuenta personal de Gmail para vincular los 18 meses de Gemini Pro.',
+      'Desde la administración de Google One puedes invitar y compartir el beneficio hasta con 5 usuarios o familiares más en sus dispositivos.',
+      '¡Listo! Disfruta de Gemini AI Pro y los 5 TB de almacenamiento con total privacidad en todos tus dispositivos.'
     ]
   },
   {
     id: 'prod-gemini-ai-pro-12m',
     slug: 'gemini-ai-pro-12-meses',
     name: 'Gemini AI Pro (12 Meses)',
-    description: 'Suscripción a Gemini AI Pro / Advanced por 12 meses mediante invitación oficial a grupo familiar de Google. Incluye modelos avanzados de IA, 5 TB de almacenamiento en la nube de Google One de forma compartida y totalmente privada, e integración nativa en Google Docs, Sheets y Gmail.',
+    description: 'Suscripción a Gemini AI Pro / Advanced por 12 meses para 1 usuario mediante invitación oficial a correo Gmail personal. Incluye modelos avanzados de IA, 5 TB de almacenamiento en la nube de Google One de forma compartida y totalmente privada, e integración nativa en Google Docs, Sheets y Gmail.',
     price: 20.00,
     oldPrice: 80.00,
     duration: '12 meses',
@@ -1749,18 +1764,20 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/gemini-ai-pro.png',
     rating: 4.95,
     reviews: 130,
-    badge: 'INVITACIÓN FAMILIAR',
+    badge: '1 USUARIO',
     cloudStorage: '5 TB Google One Cloud (Compartido y Privado)',
     isAccountAccess: true,
-    accountNotice: 'Tipo de entrega: Activación mediante invitación oficial a grupo familiar de Google (Gmail personal). Sin necesidad de entregar contraseñas.',
+    accountNotice: 'Tipo de entrega: Invitación a correo (a tu correo personal Gmail, 1 usuario en sus dispositivos). Sin necesidad de entregar contraseñas.',
     features: [
+      'Tipo de entrega: Invitación a correo (a su correo personal Gmail)',
+      'Acceso exclusivo para 1 usuario en sus dispositivos',
       'Acceso a modelos de vanguardia de Inteligencia Artificial (Gemini Pro / Advanced)',
-      'Tipo de entrega: Activación por invitación oficial a grupo familiar en tu cuenta personal de Google (Gmail)',
-      'Incluye 5 TB de almacenamiento en la nube de Google One de forma compartida (tus archivos son 100% privados e independientes)',
+      'Incluye 5 TB de almacenamiento en la nube de Google One (tus archivos son 100% privados e independientes)',
       'IA integrada de forma nativa en Google Docs, Sheets, Slides y Gmail',
-      'Garantía total de 12 meses continuos de servicio'
+      'Uso en múltiples dispositivos (celulares Android, iPhone, iPad, PC y Mac)',
+      'Garantía oficial y soporte técnico durante 6 meses'
     ],
-    compatibility: 'Web, Windows, macOS, Android e iOS',
+    compatibility: 'Web, Windows, macOS, Android e iOS (Dispositivos móviles y computadoras)',
     downloadUrl: 'https://gemini.google.com',
     downloadLabel: 'Acceder a Plataforma IA',
     downloadOptions: [
@@ -1773,9 +1790,9 @@ const rawProducts: Product[] = [
       }
     ],
     installationSteps: [
-      'Recibirás en tu correo o WhatsApp el enlace oficial de invitación de Google para unirte al grupo familiar.',
+      'Recibirás en tu correo o WhatsApp la invitación oficial de Google enviada directamente a tu correo Gmail personal.',
       'Abre el enlace con tu sesión de Gmail personal iniciada y acepta unirte al grupo familiar.',
-      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en la nube de forma compartida y privada.'
+      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en la nube en todos tus dispositivos.'
     ]
   },
   {
@@ -1798,7 +1815,7 @@ const rawProducts: Product[] = [
       'Navegación web segura y protección bancaria anti-phishing',
       'Firewall bidireccional avanzado y optimizador de rendimiento para PC',
       'Clave oficial de 25 caracteres canjeable directamente en mcafee.com/activate',
-      'Actualizaciones automáticas diarias de seguridad y soporte técnico'
+      'Actualizaciones automáticas de seguridad y garantía oficial de 6 meses'
     ],
     compatibility: 'Windows 11 y Windows 10 (32 y 64 bits)',
     downloadUrl: 'https://www.mcafee.com/activate',
@@ -1823,7 +1840,7 @@ const rawProducts: Product[] = [
     id: 'prod-adobe-acrobat-pro-2018',
     slug: 'adobe-acrobat-pro-dc-2018-licencia-permanente',
     name: 'Adobe Acrobat Pro DC 2018 (Licencia Permanente)',
-    description: 'Licencia digital oficial permanente de Adobe Acrobat Pro DC 2018 para Windows. Incluye clave de activación vitalicia, instalador completo y guía paso a paso. Crea, edita, convierte, firma, protege y combina documentos PDF profesionales sin suscripciones ni mensualidades.',
+    description: 'Licencia digital oficial permanente de Adobe Acrobat Pro DC 2018 para 1 PC (Windows). Incluye clave de activación vitalicia, instalador completo y guía paso a paso. Crea, edita, convierte, firma, protege y combina documentos PDF profesionales sin suscripciones ni mensualidades.',
     price: 50.00,
     oldPrice: 160.00,
     duration: 'Permanente (De por vida)',
@@ -1832,14 +1849,14 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/adobe-acrobat-pro-2018.png',
     rating: 4.96,
     reviews: 148,
-    badge: 'PERMANENTE • PDF PRO',
+    badge: '1 PC • PERMANENTE',
     features: [
-      'Licencia permanente de por vida (un solo pago, sin mensualidades)',
+      'Licencia permanente de por vida para 1 PC (un solo pago, sin mensualidades)',
       'Clave de activación digital oficial + instalador completo incluido',
       'Edición completa de texto e imágenes directamente en archivos PDF',
       'Conversión precisa de PDF a Word, Excel, PowerPoint y viceversa',
       'Firma electrónica, protección con contraseña y permisos de seguridad',
-      'Guía paso a paso de instalación y soporte técnico garantizado'
+      'Guía paso a paso de instalación y garantía oficial de 6 meses'
     ],
     compatibility: 'Windows 10, Windows 11, Windows 8.1 y Windows 7 (32/64 bits)',
     downloadUrl: 'https://helpx.adobe.com/es/acrobat/kb/acrobat-downloads.html',
@@ -1867,66 +1884,105 @@ export const products: Product[] = rawProducts.map(p => ({
   stock: p.stock ?? DEFAULT_PRODUCT_STOCK
 }));
 
+export function getProductDeviceTag(product: Product, language: 'ES' | 'EN' = 'ES'): string {
+  const isEn = language === 'EN';
+
+  if (product.id === 'prod-gemini-ai-pro') {
+    return isEn ? 'Up to 5 users' : 'Hasta 5 usuarios';
+  }
+  if (product.id === 'prod-gemini-ai-pro-12m') {
+    return isEn ? '1 user' : '1 usuario';
+  }
+  if (product.id === 'prod-canva-pro') {
+    return isEn ? '1 user' : '1 usuario';
+  }
+  if (product.id === 'prod-duolingo-super') {
+    return isEn ? '1 user' : '1 usuario';
+  }
+  if (product.id === 'prod-mcafee-antivirus' || product.id.includes('mcafee')) {
+    return '1 PC';
+  }
+  if (product.id === 'prod-adobe-acrobat-pro-2018' || product.id.includes('adobe')) {
+    return '1 PC';
+  }
+  if (product.id.includes('365-family') || product.id.includes('family')) {
+    return isEn ? '6 users' : 'Hasta 6 usuarios';
+  }
+  if (product.id.includes('365') || product.id.includes('m365')) {
+    return isEn ? '5 devices' : '5 dispositivos';
+  }
+  if (product.category === 'apps' && product.isAccountAccess) {
+    return isEn ? '1 user' : '1 usuario';
+  }
+  if (product.id.includes('3pc')) {
+    return '3 PC';
+  }
+  if (product.id.includes('mac')) {
+    return '1 Mac';
+  }
+  return '1 PC';
+}
+
 export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' = 'ES'): string {
   const isEn = language === 'EN';
 
   if (product.id === 'prod-gemini-ai-pro') {
     return isEn
-      ? 'Complete official Google account (18 Months) with 5 TB Google One. You can share with up to 5 additional users via invitation.'
-      : 'Cuenta completa oficial de Google (18 Meses) con 5 TB en Google One. Puedes compartir con hasta 5 usuarios más por invitación.';
+      ? 'Subscription activation link sent to your personal Gmail account (up to 5 users on your devices).'
+      : 'Link de activación suscripción (enviado a tu correo personal Gmail, hasta 5 usuarios en sus dispositivos).';
   }
   if (product.id === 'prod-gemini-ai-pro-12m') {
     return isEn
-      ? 'Official family group invitation linked directly to your personal Google account (Gmail). No password required.'
-      : 'Invitación oficial a grupo familiar de Google vinculada directamente a tu cuenta personal (Gmail). Sin necesidad de contraseñas.';
+      ? 'Official email invitation sent to your personal Gmail account (1 user on your devices).'
+      : 'Invitación a correo (enviada a tu correo personal Gmail, 1 usuario en sus dispositivos).';
   }
   if (product.id === 'prod-canva-pro') {
     return isEn
-      ? 'Official email invitation directly to your personal Canva account.'
-      : 'Invitación oficial por correo electrónico a tu cuenta personal de Canva.';
+      ? 'Official email invitation to your personal Canva account (1 user on your devices).'
+      : 'Invitación a correo oficial a tu cuenta personal de Canva (1 usuario en sus dispositivos).';
   }
   if (product.id === 'prod-duolingo-super') {
     return isEn
-      ? 'Official activation invitation linked to your personal Duolingo account.'
-      : 'Invitación oficial de activación vinculada a tu cuenta personal de Duolingo.';
+      ? 'Official email invitation to your personal Duolingo account (1 user on your devices).'
+      : 'Invitación a correo oficial para tu cuenta personal de Duolingo (1 usuario en sus dispositivos).';
   }
   if (product.id === 'prod-microsoft-365' || product.isAccountAccess) {
     return isEn
-      ? 'Official dedicated access account (1 Year) with 100 GB OneDrive cloud storage (password customizable).'
-      : 'Cuenta de acceso oficial exclusiva (1 Año) con 100 GB en OneDrive (puedes cambiar tu contraseña).';
+      ? 'Official dedicated access account (1 Year) with 100 GB OneDrive cloud storage across 5 devices.'
+      : 'Cuenta de acceso oficial exclusiva (1 Año) con 100 GB en OneDrive para hasta 5 dispositivos.';
   }
   if (product.id.includes('-tel')) {
     return isEn
-      ? 'Official Microsoft automated phone activation guide + direct installer link.'
-      : 'Guía paso a paso para activación telefónica automatizada ante Microsoft + instalador directo.';
+      ? 'Includes activation key + step-by-step phone activation guide (Official Microsoft automated phone activation, 1-month warranty) + direct installer link.'
+      : 'Incluye clave de activación + guía de activación (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.';
   }
   if (product.id === 'prod-mcafee-antivirus') {
     return isEn
-      ? 'Official 25-character digital activation key redeemable at mcafee.com/activate.'
-      : 'Clave digital oficial de 25 caracteres canjeable directamente en la web mcafee.com/activate.';
+      ? 'Official 25-character digital activation key for 1 PC redeemable at mcafee.com/activate (6-month warranty).'
+      : 'Clave digital oficial de 25 caracteres para 1 PC canjeable en mcafee.com/activate (Garantía de 6 meses).';
   }
   if (product.id === 'prod-coreldraw-2024-mac') {
     return isEn
-      ? 'Official lifetime digital license for 1 Mac + official DMG installer.'
-      : 'Clave de licencia digital permanente para 1 Mac + instalador oficial (.dmg).';
+      ? 'Official lifetime digital license for 1 Mac + official DMG installer (6-month warranty).'
+      : 'Clave de licencia digital permanente para 1 Mac + instalador oficial (.dmg) (Garantía de 6 meses).';
   }
   if (product.id === 'prod-adobe-acrobat-pro-2018') {
     return isEn
-      ? 'Official lifetime digital product key + full installer included.'
-      : 'Clave digital oficial permanente de por vida + instalador completo incluido.';
+      ? 'Official lifetime digital product key for 1 PC + full installer included (6-month warranty).'
+      : 'Clave digital oficial permanente de por vida para 1 PC + instalador completo incluido (Garantía de 6 meses).';
   }
   if (product.category === 'combos') {
     return isEn
-      ? 'Independent official 25-character digital product keys for each suite + official direct installers.'
-      : 'Claves digitales oficiales independientes de 25 caracteres para cada software + instaladores directos.';
+      ? 'Independent official 25-character digital product keys for each suite + official direct installers (6-month warranty).'
+      : 'Claves digitales oficiales independientes de 25 caracteres para cada software + instaladores directos (Garantía de 6 meses).';
   }
   if (product.category === 'windows') {
     return isEn
-      ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for activation in Settings > System > Activation.'
-      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación en Ajustes > Sistema > Activación.';
+      ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for activation in Settings > System > Activation (6-month warranty).'
+      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación en Ajustes > Sistema > Activación (Garantía de 6 meses).';
   }
   return isEn
-    ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for direct activation.'
-    : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación directa en tu suite.';
+    ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for direct activation (6-month warranty).'
+    : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación directa en tu suite (Garantía de 6 meses).';
 }
 

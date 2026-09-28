@@ -16,7 +16,7 @@ export const TrustSection: React.FC = () => {
     },
     {
       title: 'Garantía Escrita de Activación',
-      description: 'Respaldamos tu compra con soporte personalizado y reposición inmediata si se requiere.'
+      description: 'Respaldamos tu compra con garantía oficial de 6 meses (1 mes para activación telefónica) y soporte prioritario.'
     },
     {
       title: 'Referencias',
@@ -49,7 +49,7 @@ export const TrustSection: React.FC = () => {
           <div className="lg:col-span-6 space-y-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-bold tracking-wide uppercase">
               <ShieldCheck className="w-4 h-4 text-blue-400" />
-              <span>Garantía UpClic • También en Mercado Libre</span>
+              <span>Garantía Oficial de 6 Meses (Telefónica 1 Mes) • UpClic</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">

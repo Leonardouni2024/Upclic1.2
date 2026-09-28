@@ -928,7 +928,7 @@ export const CheckoutPage: React.FC = () => {
                     {language === 'ES' ? 'Compra Segura 100%' : '100% Secure Purchase'}
                   </h4>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    {language === 'ES' ? 'Garantía oficial y soporte continuo' : 'Official warranty & ongoing support'}
+                    {language === 'ES' ? 'Garantía de 6 meses (telefónica 1 mes)' : '6-month warranty (phone 1 month)'}
                   </p>
                 </div>
               </div>

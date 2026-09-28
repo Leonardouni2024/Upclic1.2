@@ -1,5 +1,5 @@
 import React from 'react';
-import { products } from '../products.ts';
+import { products, getProductDeviceTag } from '../products.ts';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { ShoppingCart, Zap, ChevronDown } from 'lucide-react';
@@ -11,7 +11,8 @@ export const FeaturedProductsSection: React.FC = () => {
     formatPrice, 
     setActiveCategory,
     navigateToHome,
-    currentPath
+    currentPath,
+    language
   } = useCart();
 
   // Curated flagship featured products
@@ -56,10 +57,7 @@ export const FeaturedProductsSection: React.FC = () => {
     const isYear = product.duration?.toLowerCase().includes('año') || product.duration?.toLowerCase().includes('12 meses');
     const durationTag = isPermanent ? 'Permanente' : (isYear ? '1 año' : product.duration);
     
-    let deviceTag = '1 PC';
-    if (product.id.includes('3pc')) deviceTag = '3 PC';
-    if (product.id.includes('365')) deviceTag = '5 Dispositivos';
-    if (product.id.includes('mac')) deviceTag = '1 Mac';
+    const deviceTag = getProductDeviceTag(product, language);
     
     return [durationTag, deviceTag];
   };

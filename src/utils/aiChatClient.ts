@@ -100,8 +100,8 @@ export function generateLocalChatReply(
   ) {
     return {
       reply: isEn
-        ? `Quick troubleshooting procedure for key validation:\n\n1. **Edition Verification:** If you purchased *Windows 11 Pro*, ensure your PC is not running an un-upgraded *Home* or *Single Language* build.\n2. **Network Connection:** Ensure active internet access for token validation with official Microsoft servers.\n3. **Command Prompt Verification (cmd):**\n   - Open cmd as Administrator.\n   - Enter: \`slmgr.vbs /ipk YOUR-25-DIGIT-KEY\` and press Enter.\n   - Enter: \`slmgr.vbs /ato\` to force online activation.\n4. **For Microsoft Office:** Uninstall any previous trial or unauthorized packages before applying the new license.\n\nAll licenses come with a 1-year replacement warranty. If any code persists, send us the exact message for immediate support.`
-        : `Procedimiento de diagnóstico rápido para la validación de clave:\n\n1. **Verificación de edición:** Si adquirió *Windows 11 Pro*, compruebe que no posea una compilación *Home* o *Single Language* sin actualizar.\n2. **Conexión de red:** Asegúrese de contar con acceso a Internet para la validación de tokens con los servidores de Microsoft.\n3. **Comando de validación por consola (cmd):**\n   - Inicie la consola como Administrador.\n   - Ingrese: \`slmgr.vbs /ipk SU-CLAVE-DE-25-DIGITOS\` y presione Enter.\n   - Ingrese: \`slmgr.vbs /ato\` para forzar la activación online.\n4. **Para Microsoft Office:** Desinstale cualquier paquete de prueba previo antes de validar la clave final.\n\nTodas nuestras licencias disponen de garantía de soporte técnico de 1 año. Si el código de error persiste, comuníquenos el mensaje exacto para realizar el reemplazo de token de inmediato.`,
+        ? `Quick troubleshooting procedure for key validation:\n\n1. **Edition Verification:** If you purchased *Windows 11 Pro*, ensure your PC is not running an un-upgraded *Home* or *Single Language* build.\n2. **Network Connection:** Ensure active internet access for token validation with official Microsoft servers.\n3. **Command Prompt Verification (cmd):**\n   - Open cmd as Administrator.\n   - Enter: \`slmgr.vbs /ipk YOUR-25-DIGIT-KEY\` and press Enter.\n   - Enter: \`slmgr.vbs /ato\` to force online activation.\n4. **For Microsoft Office:** Uninstall any previous trial or unauthorized packages before applying the new license.\n\nAll licenses come with an official 6-month warranty (1-month for phone activation). If any code persists, send us the exact message for immediate support.`
+        : `Procedimiento de diagnóstico rápido para la validación de clave:\n\n1. **Verificación de edición:** Si adquirió *Windows 11 Pro*, compruebe que no posea una compilación *Home* o *Single Language* sin actualizar.\n2. **Conexión de red:** Asegúrese de contar con acceso a Internet para la validación de tokens con los servidores de Microsoft.\n3. **Comando de validación por consola (cmd):**\n   - Inicie la consola como Administrador.\n   - Ingrese: \`slmgr.vbs /ipk SU-CLAVE-DE-25-DIGITOS\` y presione Enter.\n   - Ingrese: \`slmgr.vbs /ato\` para forzar la activación online.\n4. **Para Microsoft Office:** Desinstale cualquier paquete de prueba previo antes de validar la clave final.\n\nTodas nuestras licencias disponen de garantía de 6 meses (activación telefónica 1 mes). Si el código de error persiste, comuníquenos el mensaje exacto para realizar el reemplazo de token de inmediato.`,
       suggestedProducts: [],
       showAdminWhatsApp: false,
     };
@@ -155,6 +155,25 @@ export function generateLocalChatReply(
         imageUrl: p.fallbackImage || p.imageUrl,
         badge: p.badge,
       })),
+      showAdminWhatsApp: false,
+    };
+  }
+
+  // 5b. Questions about reinstallation and formatting
+  if (
+    norm.includes('reinstalar') ||
+    norm.includes('formatear') ||
+    norm.includes('formateo') ||
+    norm.includes('si formateo') ||
+    norm.includes('reinstall') ||
+    norm.includes('re-install') ||
+    norm.includes('format pc')
+  ) {
+    return {
+      reply: isEn
+        ? `**Reinstallation and PC Formatting Policy:**\n\n• **Microsoft Office, Project & Visio:** Product keys are **not reinstallable**. The permanent lifetime license remains active on your PC as long as you do not format it.\n• **Windows OEM:** Tied directly to your motherboard; you can format and reinstall as many times as needed on the same PC.\n• **Microsoft 365:** Reinstallable by signing in with your account at portal.office.com on up to 5 devices.`
+        : `**Política de Reinstalación y Formateo de PC:**\n\n• **Microsoft Office, Project y Visio:** Las claves **no son reinstalables**. La licencia se mantiene permanente de por vida en tu equipo siempre y cuando **no lo formatees**.\n• **Windows OEM:** Se vincula a la placa madre de tu PC, permitiéndote formatear y reinstalar todas las veces que desees en el mismo equipo.\n• **Microsoft 365:** Reinstalable iniciando sesión con tus credenciales en portal.office.com en hasta 5 dispositivos.`,
+      suggestedProducts: [],
       showAdminWhatsApp: false,
     };
   }
