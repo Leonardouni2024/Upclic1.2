@@ -201,8 +201,8 @@ export const UpClicLogo: React.FC<UpClicLogoProps> = ({
       {/* Typography: Up in Blue, Clic in Orange with Sparkle on the 'i' */}
       <div className="flex flex-col justify-center shrink-0 overflow-visible">
         <div className={`flex items-baseline font-black tracking-tight leading-none overflow-visible ${currentConfig.text}`}>
-          {/* 'Up' in bold Blue */}
-          <span className="text-[#0062E0] font-black tracking-tight">Up</span>
+          {/* 'Up' in bold Blue or White on dark backgrounds */}
+          <span className={`${theme === 'dark' ? 'text-white' : 'text-[#0062E0]'} font-black tracking-tight`}>Up</span>
 
           {/* 'Clic' in vibrant Orange */}
           <span className="relative text-[#FF6A00] font-black tracking-tight ml-0.5 overflow-visible">
@@ -226,7 +226,7 @@ export const UpClicLogo: React.FC<UpClicLogoProps> = ({
         {/* Small subtitle tag */}
         <span
           className={`${currentConfig.subtitle} font-bold uppercase tracking-wider sm:tracking-widest leading-none mt-0.5 whitespace-nowrap ${
-            theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+            theme === 'dark' ? 'text-cyan-100' : 'text-slate-500'
           }`}
         >
           Tienda Online

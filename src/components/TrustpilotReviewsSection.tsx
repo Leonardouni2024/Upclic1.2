@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrustpilotLogo, TrustpilotStars, TrustpilotStarIcon } from './TrustpilotWidget.tsx';
+import { TrustpilotLogo, TrustpilotStars } from './TrustpilotWidget.tsx';
 import { CheckCircle2, ExternalLink } from 'lucide-react';
 
 interface TrustpilotReview {

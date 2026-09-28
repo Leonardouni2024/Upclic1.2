@@ -1624,6 +1624,8 @@ const rawProducts: Product[] = [
     rating: 4.96,
     reviews: 245,
     badge: 'CUENTA PREMIUM',
+    isAccountAccess: true,
+    accountNotice: 'Activación mediante invitación oficial a tu cuenta personal de Duolingo (correo personal). Sin necesidad de entregar contraseñas.',
     features: [
       'Vidas infinitas para practicar sin interrupciones',
       'Cero anuncios para máxima concentración',
@@ -1663,6 +1665,8 @@ const rawProducts: Product[] = [
     rating: 4.98,
     reviews: 312,
     badge: 'PRO INVITACIÓN',
+    isAccountAccess: true,
+    accountNotice: 'Activación mediante invitación oficial directa a tu correo personal de Canva. Sin necesidad de entregar contraseñas.',
     features: [
       'Acceso total a biblioteca de 100M+ recursos premium (fotos, audio, video)',
       'Herramientas IA Magic Studio y quitafondos instantáneo con un clic',
@@ -1692,7 +1696,7 @@ const rawProducts: Product[] = [
     id: 'prod-gemini-ai-pro',
     slug: 'google-gemini-ia-pro-18-meses',
     name: 'Gemini AI Pro (18 Meses)',
-    description: 'Suscripción a Gemini AI Pro / Advanced por 18 meses. Activación oficial con link directo a tu cuenta personal de Google (Gmail). Incluye modelos avanzados, 5 TB de almacenamiento en la nube (Google One) e integración en Docs, Gmail y Drive.',
+    description: 'Cuenta completa de Google con suscripción a Gemini AI Pro / Advanced por 18 meses. Entrega de cuenta completa exclusiva (correo y contraseña personalizables). Incluye 5 TB de almacenamiento en la nube de Google One y la opción de compartir hasta con 5 usuarios más por invitación.',
     price: 35.00,
     oldPrice: 120.00,
     duration: '18 meses',
@@ -1701,16 +1705,17 @@ const rawProducts: Product[] = [
     fallbackImage: '/products/gemini-ai-pro.png',
     rating: 4.97,
     reviews: 184,
-    badge: 'GOOGLE AI ADVANCED',
+    badge: 'CUENTA COMPLETA',
     cloudStorage: '5 TB Google One Cloud',
     isAccountAccess: true,
-    accountNotice: 'Activación mediante link directo oficial a tu cuenta personal de Google (Gmail). Sin necesidad de entregar contraseñas.',
+    accountNotice: 'Tipo de entrega: Cuenta completa exclusiva (correo y contraseña propios). Puedes cambiar la contraseña y datos de seguridad, y compartir el plan con hasta 5 usuarios más mediante invitación.',
     features: [
-      'Acceso a modelos de vanguardia de Inteligencia Artificial',
-      'Link de activación oficial vinculado directamente a tu cuenta personal de Google',
-      '5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
+      'Cuenta completa de Google con acceso exclusivo y privado (correo y contraseña personalizables)',
+      'Suscripción activa a Gemini AI Pro / Advanced durante 18 meses completos',
+      'Incluye 5 TB de almacenamiento seguro en la nube (Drive, Fotos y Gmail)',
+      'Puedes compartir hasta con 5 usuarios más por invitación a grupo familiar',
       'IA integrada de manera nativa en Google Docs, Sheets, Slides y Gmail',
-      'Garantía total de funcionamiento durante los 18 meses completos'
+      'Garantía total de funcionamiento y soporte continuo durante los 18 meses'
     ],
     compatibility: 'Navegadores Web, Windows, macOS, Android e iOS',
     downloadUrl: 'https://gemini.google.com',
@@ -1721,14 +1726,14 @@ const rawProducts: Product[] = [
         name: 'Portal Oficial Google Gemini IA',
         url: 'https://gemini.google.com',
         badge: 'Portal Oficial Google',
-        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta personal activada.'
+        description: 'Acceso directo a la plataforma de IA de Google con tu cuenta completa activada.'
       }
     ],
     installationSteps: [
-      'Recibirás en tu correo o WhatsApp el enlace oficial de invitación y activación directa para tu cuenta Google.',
-      'Abre el enlace mientras tienes iniciada tu sesión en tu cuenta de Google (Gmail personal).',
-      'Acepta la activación del plan Gemini Pro / Advanced de 18 meses.',
-      '¡Listo! Tu cuenta tendrá habilitado de inmediato Gemini Pro y los 5 TB de almacenamiento en Google One.'
+      'Recibirás en tu correo y WhatsApp las credenciales de tu cuenta completa de Google (correo y contraseña provisional).',
+      'Inicia sesión en google.com o gemini.google.com y personaliza tu contraseña y opciones de seguridad.',
+      'Desde la administración de Google One puedes invitar y compartir el beneficio hasta con 5 usuarios o familiares más.',
+      '¡Listo! Disfruta de Gemini AI Pro y los 5 TB de almacenamiento con total privacidad.'
     ]
   },
   {
@@ -1865,7 +1870,12 @@ export const products: Product[] = rawProducts.map(p => ({
 export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' = 'ES'): string {
   const isEn = language === 'EN';
 
-  if (product.id.includes('gemini')) {
+  if (product.id === 'prod-gemini-ai-pro') {
+    return isEn
+      ? 'Complete official Google account (18 Months) with 5 TB Google One. You can share with up to 5 additional users via invitation.'
+      : 'Cuenta completa oficial de Google (18 Meses) con 5 TB en Google One. Puedes compartir con hasta 5 usuarios más por invitación.';
+  }
+  if (product.id === 'prod-gemini-ai-pro-12m') {
     return isEn
       ? 'Official family group invitation linked directly to your personal Google account (Gmail). No password required.'
       : 'Invitación oficial a grupo familiar de Google vinculada directamente a tu cuenta personal (Gmail). Sin necesidad de contraseñas.';

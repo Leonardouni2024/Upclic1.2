@@ -888,14 +888,15 @@ export const PRODUCT_TRANSLATIONS_EN: Record<string, ProductTranslationData> = {
   },
   'prod-gemini-ai-pro': {
     name: 'Google Gemini AI Pro / Advanced (18 Months)',
-    description: 'Subscription to Google Gemini AI Pro / Advanced for 18 months. Official activation with direct link to your personal Google account (Gmail). Includes state-of-the-art 1.5 Pro and 2.0 Flash models, 5 TB of cloud storage in Google One, and Gemini integrated into Docs, Gmail, and Drive.',
+    description: 'Complete Google account with Gemini AI Pro / Advanced subscription for 18 months. Exclusive full account delivery (customizable email and password). Includes 5 TB of Google One cloud storage and can be shared with up to 5 additional users via invitation.',
     duration: '18 Months',
-    badge: '5 TB CLOUD • 18M',
+    badge: 'COMPLETE ACCOUNT',
     compatibility: 'Web Browsers, Windows, macOS, Android, and iOS',
     features: [
-      'Access to state-of-the-art Gemini 1.5 Pro & 2.0 Flash models',
-      'Official direct activation link tied to your personal Google account',
-      '5 TB of secure cloud storage (Drive, Photos, and Gmail)',
+      'Complete Google account with full private access (customizable credentials)',
+      'Active Gemini AI Pro / Advanced subscription for 18 full months',
+      'Includes 5 TB of cloud storage (Drive, Photos, and Gmail)',
+      'Can be shared with up to 5 additional users via family invitation',
       'Gemini natively integrated into Google Docs, Sheets, Slides, and Gmail',
       'Full warranty coverage throughout the complete 18 months'
     ]

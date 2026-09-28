@@ -154,10 +154,45 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const getDynamicFaqs = () => {
     const isEn = language === 'EN';
 
-    if (product.id.includes('gemini')) {
+    if (product.id === 'prod-gemini-ai-pro') {
       return [
         {
-          q: isEn ? 'How do I receive and activate Gemini AI Pro?' : '¿Cómo recibo y activo mi suscripción a Gemini AI Pro?',
+          q: isEn ? 'How do I receive my Gemini AI Pro (18 Months) account?' : '¿Cómo recibo mi cuenta completa de Gemini AI Pro (18 Meses)?',
+          a: isEn
+            ? 'You will receive the official credentials for your complete Google account (email and temporary password) via email and WhatsApp. You can customize the password and security options immediately.'
+            : 'Recibirás en tu correo y WhatsApp las credenciales de tu cuenta completa de Google (correo y contraseña). Puedes cambiar la contraseña y configurar tus métodos de seguridad personales inmediatamente.'
+        },
+        {
+          q: isEn ? 'Can I share the subscription with other users?' : '¿Puedo compartir la cuenta con otras personas?',
+          a: isEn
+            ? 'Yes! Being the owner of the complete account with the Google One plan, you can invite and share the benefits with up to 5 additional users via family invitation to their personal Gmail.'
+            : '¡Sí! Al ser el dueño de la cuenta completa con plan Google One, puedes invitar y compartir el beneficio hasta con 5 usuarios más mediante invitación directa a sus correos Gmail.'
+        },
+        {
+          q: isEn ? 'Is the 5 TB cloud storage private for each user?' : '¿El almacenamiento de 5 TB es privado para cada miembro?',
+          a: isEn
+            ? '100% private. Files in Google Drive, personal Google Photos, and Gmail emails are strictly confidential and never accessible to other group members.'
+            : 'Totalmente privado e independiente. Cada usuario accede con su propio perfil y ningún otro miembro puede ver sus archivos de Drive, fotos ni correos electrónicos.'
+        },
+        {
+          q: isEn ? 'Which AI models and features are included?' : '¿Qué funciones y modelos de IA incluye?',
+          a: isEn
+            ? 'You get full access to Google’s most advanced multimodal AI models (Gemini Pro / Advanced), native AI assistance in Google Docs, Sheets, Slides, and Gmail, and high-speed processing.'
+            : 'Incluye acceso completo a los modelos más avanzados de Inteligencia Artificial de Google (Gemini Pro / Advanced), asistencia integrada de IA en Google Docs, Sheets, Slides y Gmail, y máxima velocidad de procesamiento.'
+        },
+        {
+          q: isEn ? 'Does it include technical support and warranty?' : '¿Cuenta con soporte técnico y garantía?',
+          a: isEn
+            ? 'Yes, your complete account includes full official warranty and technical support throughout the entire 18 months.'
+            : 'Sí, tu cuenta completa cuenta con garantía de funcionamiento total y soporte técnico durante los 18 meses completos.'
+        }
+      ];
+    }
+
+    if (product.id === 'prod-gemini-ai-pro-12m') {
+      return [
+        {
+          q: isEn ? 'How do I receive and activate Gemini AI Pro (12 Months)?' : '¿Cómo recibo y activo mi suscripción a Gemini AI Pro (12 Meses)?',
           a: isEn
             ? 'You will receive the official Google family group invitation link via email and WhatsApp. Open the link with your personal Gmail account and accept the invite. No passwords are ever required.'
             : 'Recibirás en tu correo electrónico y WhatsApp el enlace oficial de invitación de Google para unirte al grupo familiar. Solo debes abrir el enlace con tu cuenta de Gmail personal iniciada y aceptar unirte. No necesitas entregar contraseñas.'
@@ -183,8 +218,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {
           q: isEn ? 'Does it include technical support and warranty?' : '¿Cuenta con soporte técnico y garantía?',
           a: isEn
-            ? `Yes, your subscription includes full technical warranty and support throughout the entire ${product.duration}.`
-            : `Sí, tu suscripción cuenta con garantía de funcionamiento total y soporte técnico durante los ${product.duration} completos.`
+            ? 'Yes, your subscription includes full technical warranty and support throughout the entire 12 months.'
+            : 'Sí, tu suscripción cuenta con garantía de funcionamiento total y soporte técnico durante los 12 meses completos.'
         }
       ];
     }
@@ -332,38 +367,38 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const faqs = getDynamicFaqs();
 
   return (
-    <div id="product-detail-view" className="py-10 sm:py-14 bg-[#0f172a] text-white min-h-screen">
+    <div id="product-detail-view" className="py-10 sm:py-14 bg-slate-50 text-slate-800 min-h-screen font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back navigation breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs sm:text-sm font-bold text-white hover:text-blue-400 hover:border-blue-500 shadow-sm transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#00A3E0] hover:border-[#00A3E0] shadow-xs transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4 text-blue-400" />
+            <ArrowLeft className="w-4 h-4 text-[#00A3E0]" />
             <span>{t('backToStore')}</span>
           </button>
 
-          <span className="text-xs font-semibold text-slate-300 hidden sm:inline">
+          <span className="text-xs font-semibold text-slate-500 hidden sm:inline">
             {t('home')} / {product.category.toUpperCase()} / {productName}
           </span>
         </div>
 
         {/* Main Product Box */}
-        <div className="bg-[#1e293b] rounded-lg border border-slate-800 shadow-md p-6 sm:p-10 mb-12">
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-10 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-xl bg-white p-6 sm:p-8 border border-slate-700/60 shadow-lg flex items-center justify-center group overflow-hidden">
+              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-white p-6 sm:p-8 border border-slate-200 shadow-xs flex items-center justify-center group overflow-hidden">
                 {/* Share Button on Top-Right of the image */}
                 <button
                   type="button"
                   onClick={() => setShowShareModal(true)}
-                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/10 hover:bg-slate-900/20 text-[#0B1F3A] border border-slate-200 shadow-sm transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share backdrop-blur-sm"
+                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 shadow-xs transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share"
                   title={t('productShareTitle')}
                   aria-label={t('productShareTitle')}
                 >
-                  <Share2 className="w-3.5 h-3.5 text-blue-600" />
+                  <Share2 className="w-3.5 h-3.5 text-[#00A3E0]" />
                   <span className="text-[11px] sm:text-xs font-bold">{t('share')}</span>
                 </button>
 
@@ -376,18 +411,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       setImgSrc(product.fallbackImage);
                     }
                   }}
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xs"
                 />
               </div>
 
               {/* Trust Badge under image */}
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-300">
-                <span className="flex items-center gap-1.5 text-white">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-600">
+                <span className="flex items-center gap-1.5 text-slate-700">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
                   {t('officialActivationGuaranteed')}
                 </span>
-                <span className="flex items-center gap-1.5 text-white">
-                  <Lock className="w-4 h-4 text-yellow-400" />
+                <span className="flex items-center gap-1.5 text-slate-700">
+                  <Lock className="w-4 h-4 text-amber-500" />
                   {currency === 'PEN' ? t('securePaymentMercadoPago') : (language === 'ES' ? 'Pago seguro garantizado' : 'Secure payment guaranteed')}
                 </span>
               </div>
@@ -398,8 +433,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               <div>
                 {/* Warning notice if legacy version */}
                 {product.warning && (
-                  <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-400/30">
-                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="mb-3 inline-flex items-center gap-2 text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
                     <span>{product.warning}</span>
                   </div>
                 )}
@@ -420,38 +455,38 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                         className={`w-4 h-4 ${
                           star <= Math.round(stats.averageRating)
                             ? 'fill-amber-400 text-amber-400'
-                            : 'text-white/20'
+                            : 'text-slate-200'
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="font-extrabold text-sm text-white tabular-nums group-hover:text-yellow-400 transition-colors">
+                  <span className="font-extrabold text-sm text-slate-900 tabular-nums group-hover:text-[#00A3E0] transition-colors">
                     {stats.averageRating.toFixed(1)} / 5.0
                   </span>
-                  <span className="text-xs text-slate-400 group-hover:text-yellow-400 underline underline-offset-2 transition-colors">
+                  <span className="text-xs text-slate-500 group-hover:text-[#00A3E0] underline underline-offset-2 transition-colors">
                     ({stats.totalReviews} {t('productVerifiedRatings')})
                   </span>
                 </div>
 
                 {/* Product Name */}
-                <h1 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+                <h1 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight">
                   {productName}
                 </h1>
 
                 {/* License Tag & Cloud pill & Stock */}
                 <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-slate-800 text-slate-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-700">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-slate-200">
                     {t('modeLabel')} {durationLabel}
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] sm:text-xs font-bold border border-emerald-200/80 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <span>Stock: {product.stock ?? 30} unid.</span>
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/30 flex items-center gap-1">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-blue-50 text-[#00A3E0] text-[11px] sm:text-xs font-bold border border-blue-200 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{t('license100Original')}</span>
                   </span>
-                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-blue-500/20 text-blue-300 text-[11px] sm:text-xs font-bold border border-blue-500/30 flex items-center gap-1">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-cyan-50 text-cyan-700 text-[11px] sm:text-xs font-bold border border-cyan-200 flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{t('instantDigitalDeliveryPill')}</span>
                   </span>
@@ -459,12 +494,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Variant Selector (OEM vs Retail) for Windows products */}
                 {product.variants && product.variants.length > 0 && (
-                  <div className="mt-5 p-4 rounded-lg bg-[#0f172a] border border-slate-700">
+                  <div className="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center justify-between mb-2.5">
-                      <span className="text-xs font-black uppercase text-slate-300 tracking-wider">
+                      <span className="text-xs font-black uppercase text-slate-700 tracking-wider">
                         {t('selectKeyType')}
                       </span>
-                      <span className="text-[11px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-md border border-blue-500">
+                      <span className="text-[11px] font-bold text-white bg-[#00A3E0] px-2 py-0.5 rounded-md">
                         {currentVariant?.name} ({formatPrice(activePrice)})
                       </span>
                     </div>
@@ -477,10 +512,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                             key={v.id}
                             type="button"
                             onClick={() => setSelectedVariantId(v.id)}
-                            className={`p-3 rounded-lg text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                            className={`p-3 rounded-xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
                               isSelected
-                                ? 'bg-blue-600/20 border-blue-500 shadow-md'
-                                : 'bg-white/5 border-slate-700 hover:border-slate-600 hover:bg-white/10'
+                                ? 'bg-cyan-50/60 border-[#00A3E0] shadow-xs'
+                                : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -488,25 +523,25 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                                 <div
                                   className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                                     isSelected
-                                      ? 'border-blue-500 bg-blue-600'
-                                      : 'border-white/30 bg-transparent'
+                                      ? 'border-[#00A3E0] bg-[#00A3E0]'
+                                      : 'border-slate-300 bg-transparent'
                                   }`}
                                 >
                                   {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                                 </div>
-                                <span className={`text-xs font-black ${isSelected ? 'text-blue-400' : 'text-white'}`}>
+                                <span className={`text-xs font-black ${isSelected ? 'text-[#0070ba]' : 'text-slate-800'}`}>
                                   {v.name}
                                 </span>
                               </div>
                               {v.badge && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-slate-300">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
                                   {v.badge}
                                 </span>
                               )}
                             </div>
 
                             <div className="flex items-baseline gap-1.5 mt-0.5">
-                              <span className="text-sm font-black text-blue-400">
+                              <span className="text-sm font-black text-[#0070ba]">
                                 {formatPrice(v.price)}
                               </span>
                               {v.oldPrice && (
@@ -516,7 +551,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                               )}
                             </div>
 
-                            <p className="text-[11px] text-slate-300 leading-snug font-medium">
+                            <p className="text-[11px] text-slate-500 leading-snug font-medium">
                               {v.shortDesc}
                             </p>
                           </button>
@@ -528,7 +563,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Price Display */}
                 <div className="mt-5 sm:mt-6 flex flex-wrap items-baseline gap-2.5 sm:gap-3">
-                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-blue-400 tabular-nums tracking-tight">
+                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-[#0070ba] tabular-nums tracking-tight">
                     {formatPrice(activePrice)}
                   </div>
                   {activeOldPrice && (
@@ -540,14 +575,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Quantity selector */}
                 <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <span className="text-xs font-bold uppercase text-slate-300 tracking-wider">
+                  <span className="text-xs font-bold uppercase text-slate-700 tracking-wider">
                     {language === 'ES' ? 'Cantidad:' : 'Quantity:'}
                   </span>
-                  <div className="flex items-center rounded-lg border border-slate-600 bg-white/10 p-0.5 shadow-xs">
+                  <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5 shadow-xs">
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+                      className="w-8 h-8 rounded-lg text-slate-700 hover:bg-slate-200 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
                       aria-label={t('decrease') || 'Decrease'}
                       title={t('decrease') || 'Decrease'}
                     >
@@ -571,13 +606,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                           setQuantity(1);
                         }
                       }}
-                      className="w-12 text-center font-black text-sm text-white bg-transparent focus:bg-white/20 focus:outline-none rounded py-1 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-12 text-center font-black text-sm text-slate-900 bg-transparent focus:bg-slate-100 focus:outline-none rounded py-1 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       aria-label={language === 'ES' ? 'Cantidad deseada' : 'Desired quantity'}
                     />
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.min(99, quantity + 1))}
-                      className="w-8 h-8 rounded-lg text-white hover:bg-white/20 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+                      className="w-8 h-8 rounded-lg text-slate-700 hover:bg-slate-200 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
                       aria-label={t('increase') || 'Increase'}
                       title={t('increase') || 'Increase'}
                     >
@@ -586,28 +621,28 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   </div>
 
                   {quantity > 1 && (
-                    <span className="text-xs font-semibold text-blue-300 bg-blue-500/15 border border-blue-400/30 px-2.5 py-1 rounded-md">
-                      Subtotal: <strong className="text-white font-black">{formatPrice(activePrice * quantity)}</strong>
+                    <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md">
+                      Subtotal: <strong className="text-slate-900 font-black">{formatPrice(activePrice * quantity)}</strong>
                     </span>
                   )}
                 </div>
 
-                {/* Primary Action Buttons & Installation Guide Button */}
+                {/* Primary Action Buttons */}
                 <div className="mt-6 flex flex-col gap-2.5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       id="detail-add-to-cart-btn"
                       onClick={handleAddToCart}
-                      className="py-3.5 px-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-600"
+                      className="py-3.5 px-6 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-300"
                     >
-                      <ShoppingCart className="w-4 h-4 text-slate-300" />
+                      <ShoppingCart className="w-4 h-4 text-slate-600" />
                       <span>{t('addToCart')}</span>
                     </button>
 
                     <button
                       id="detail-buy-now-btn"
                       onClick={handleBuyNow}
-                      className="py-3.5 px-6 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500"
+                      className="py-3.5 px-6 rounded-xl bg-[#00A3E0] hover:bg-[#0092cc] text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-[#0092cc]"
                     >
                       <Zap className="w-4 h-4 text-white fill-white" />
                       <span>{t('buyNow')}</span>
@@ -616,21 +651,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                   {/* Scarcity & Trust Indicators */}
                   <div className="flex flex-col gap-3 my-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-300">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                         <span>{t('purchaseWarranty')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                         <span>{t('instantEmailDelivery')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                         <span>{t('freeRemoteSupport')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                         <span>{t('secureEncryptedPayment')}</span>
                       </div>
                     </div>
@@ -646,22 +681,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           {/* Description & Features (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product Description */}
-            <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white">
-              <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-yellow-400" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm text-slate-700">
+              <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-[#00A3E0]" />
                 <span>{t('productDescriptionTitle')}</span>
               </h3>
-              <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed">
+              <p className="text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed">
                 {productDesc}
               </p>
 
-              <h4 className="font-extrabold text-amber-300 text-xs sm:text-sm mt-6 mb-3 uppercase tracking-wider">
+              <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm mt-6 mb-3 uppercase tracking-wider">
                 {t('keyFeaturesTitle')}
               </h4>
               <ul className="space-y-2.5">
                 {productFeatures.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-purple-100">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -669,22 +704,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             </div>
 
             {/* Compatibility & License details */}
-            <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white">
-              <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-yellow-400" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm text-slate-700">
+              <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-[#00A3E0]" />
                 <span>{t('compatibilityAndRequirements')}</span>
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 font-medium mb-4 bg-[#0f172a] p-4 rounded-lg border border-slate-700">
+              <p className="text-xs sm:text-sm text-slate-600 font-medium mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 {productCompat}
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-300">
-                <div className="p-3.5 rounded-lg border border-slate-700 bg-[#0f172a]">
-                  <span className="font-bold text-white block mb-1">{t('licenseDurationLabel')}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700">
+                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                  <span className="font-bold text-slate-900 block mb-1">{t('licenseDurationLabel')}</span>
                   <span>{durationLabel}</span>
                 </div>
-                <div className="p-3.5 rounded-lg border border-slate-700 bg-[#0f172a]">
-                  <span className="font-bold text-white block mb-1">
+                <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                  <span className="font-bold text-slate-900 block mb-1">
                     {t('deliveryTypeLabel')}
                   </span>
                   <span>
@@ -696,9 +731,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
           </div>
 
           {/* FAQs Accordion Column (1 col) */}
-          <div className="bg-[#1e293b] rounded-lg border border-slate-700 p-6 sm:p-8 shadow-md text-white h-fit">
-            <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-yellow-400" />
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm text-slate-700 h-fit">
+            <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-[#00A3E0]" />
               <span>{t('frequentlyAskedQuestions')}</span>
             </h3>
 
@@ -706,20 +741,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
               {faqs.map((faq, idx) => {
                 const isOpen = activeFaq === idx;
                 return (
-                  <div key={idx} className="border border-slate-700 rounded-lg overflow-hidden bg-[#0f172a]">
+                  <div key={idx} className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
                     <button
                       onClick={() => setActiveFaq(isOpen ? null : idx)}
-                      className="w-full text-left p-3.5 text-xs sm:text-sm font-bold text-white hover:bg-white/5 flex items-center justify-between gap-2 transition-colors cursor-pointer"
+                      className="w-full text-left p-3.5 text-xs sm:text-sm font-bold text-slate-900 hover:bg-slate-100 flex items-center justify-between gap-2 transition-colors cursor-pointer"
                     >
                       <span>{faq.q}</span>
                       <ChevronDown
                         className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
-                          isOpen ? 'transform rotate-180 text-yellow-400' : ''
+                          isOpen ? 'transform rotate-180 text-[#00A3E0]' : ''
                         }`}
                       />
                     </button>
                     {isOpen && (
-                      <div className="p-3.5 pt-0 text-xs text-slate-300 leading-relaxed bg-white/5 border-t border-slate-700">
+                      <div className="p-3.5 pt-0 text-xs text-slate-600 leading-relaxed bg-white border-t border-slate-200">
                         {faq.a}
                       </div>
                     )}
@@ -736,12 +771,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         {/* Related Products Section */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               {t('relatedProductsTitle')}
             </h3>
             <button
               onClick={navigateToHome}
-              className="text-xs sm:text-sm font-bold text-yellow-400 hover:underline cursor-pointer"
+              className="text-xs sm:text-sm font-bold text-[#00A3E0] hover:underline cursor-pointer"
             >
               {t('viewAllCatalogArrow')}
             </button>

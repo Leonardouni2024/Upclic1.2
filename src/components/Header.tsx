@@ -10,6 +10,7 @@ interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: bo
 
 export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
   const {
+    total,
     totalQuantity,
     setIsCartOpen,
     activeCategory,
@@ -113,9 +114,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
   };
 
   return (
-    <header id="main-header" className="sticky top-0 z-40 text-slate-200 shadow-md transition-all font-sans">
-      {/* Top Header Row */}
-      <div className="bg-[#0B1F3A] border-b border-[#173256]">
+    <header id="main-header" className="sticky top-0 z-40 text-white shadow-md transition-all font-sans">
+      {/* Top Header Row in Celeste & Blue UpClic Gradient */}
+      <div className="bg-[#0088cc] bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#0092d6] border-b border-[#0070ba]/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6">
             {/* Mobile menu toggle button */}
@@ -123,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               <button
                 id="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 -ml-2 rounded-xl text-slate-200 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+                className="p-2 -ml-2 rounded-xl text-white hover:bg-white/15 transition-all cursor-pointer"
                 aria-label="Abrir menú"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -142,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               </button>
             </div>
 
-            {/* Central Search Bar */}
+            {/* Central Search Bar in Clean Crisp White */}
             <div ref={searchContainerRef} className="flex-1 max-w-2xl relative hidden sm:block">
               <div className="relative">
                 <input
@@ -156,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                     if (currentPath !== '/') navigateToHome();
                   }}
                   placeholder={t('searchPlaceholder')}
-                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-medium rounded-lg bg-[#132A4C] hover:bg-[#18345E] focus:bg-[#132A4C] border border-[#214373] focus:border-[#0067B8] text-white placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-medium rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none shadow-sm focus:ring-2 focus:ring-cyan-300 transition-all border border-transparent"
                 />
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 {searchQuery && (
@@ -165,7 +166,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                       setSearchQuery('');
                       setIsSearchFocused(false);
                     }}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs p-1 rounded cursor-pointer"
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700 text-xs p-1 rounded cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -257,10 +258,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               <div ref={regionDropdownRef} className="relative">
                 <button
                   onClick={() => setRegionDropdownOpen(!regionDropdownOpen)}
-                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold border border-white/25 transition-all cursor-pointer shadow-xs active:scale-95 backdrop-blur-xs"
                   title={t("changeRegionCurrency")}
                 >
-                  <Globe className="w-3.5 h-3.5 text-blue-400" />
+                  <Globe className="w-3.5 h-3.5 text-cyan-200" />
                   <span className="hidden sm:inline">
                     {currency === 'PEN' && 'PE | Español (S/)'}
                     {currency === 'COP' && 'CO | Español ($ COP)'}
@@ -275,12 +276,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                     {currency === 'USD' && language === 'ES' && '🌎 USD'}
                     {currency === 'USD' && language === 'EN' && '🇺🇸 USD'}
                   </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-white/80 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Dropdown Menu */}
+                {/* Dropdown Menu in White */}
                 {regionDropdownOpen && (
-                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[240px] sm:w-[260px] bg-[#0f172a] rounded-xl shadow-2xl border border-slate-700 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-2 divide-y divide-slate-800 origin-top-right">
+                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[240px] sm:w-[260px] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-2 divide-y divide-slate-100 origin-top-right text-slate-800">
                     <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                       <span>{t('regionCurrencyLangLabel')}</span>
                     </div>
@@ -295,15 +296,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'PEN'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                            ? 'bg-[#00A3E0] text-white shadow-sm'
+                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇵🇪</span>
                           <div>
-                            <div className="text-white font-bold leading-none">Perú</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">Soles (S/ PEN) • ES</div>
+                            <div className="font-bold leading-none">Perú</div>
+                            <div className={`text-[10px] mt-0.5 ${currency === 'PEN' ? 'text-cyan-100' : 'text-slate-400'}`}>Soles (S/ PEN) • ES</div>
                           </div>
                         </div>
                         {currency === 'PEN' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -318,15 +319,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'COP'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                            ? 'bg-[#00A3E0] text-white shadow-sm'
+                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇨🇴</span>
                           <div>
-                            <div className="text-white font-bold leading-none">Colombia</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">Pesos ($ COP) • ES</div>
+                            <div className="font-bold leading-none">Colombia</div>
+                            <div className={`text-[10px] mt-0.5 ${currency === 'COP' ? 'text-cyan-100' : 'text-slate-400'}`}>Pesos ($ COP) • ES</div>
                           </div>
                         </div>
                         {currency === 'COP' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -341,15 +342,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'MXN'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                            ? 'bg-[#00A3E0] text-white shadow-sm'
+                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇲🇽</span>
                           <div>
-                            <div className="text-white font-bold leading-none">México</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">Pesos ($ MXN) • ES</div>
+                            <div className="font-bold leading-none">México</div>
+                            <div className={`text-[10px] mt-0.5 ${currency === 'MXN' ? 'text-cyan-100' : 'text-slate-400'}`}>Pesos ($ MXN) • ES</div>
                           </div>
                         </div>
                         {currency === 'MXN' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -364,15 +365,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'USD' && language === 'ES'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                            ? 'bg-[#00A3E0] text-white shadow-sm'
+                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🌎</span>
                           <div>
-                            <div className="text-white font-bold leading-none">Sudamérica & LatAm</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">Dólares ($ USD) • ES</div>
+                            <div className="font-bold leading-none">Sudamérica & LatAm</div>
+                            <div className={`text-[10px] mt-0.5 ${currency === 'USD' && language === 'ES' ? 'text-cyan-100' : 'text-slate-400'}`}>Dólares ($ USD) • ES</div>
                           </div>
                         </div>
                         {currency === 'USD' && language === 'ES' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -387,15 +388,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
                           currency === 'USD' && language === 'EN'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                            ? 'bg-[#00A3E0] text-white shadow-sm'
+                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-lg">🇺🇸</span>
                           <div>
-                            <div className="text-white font-bold leading-none">Global / USA</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">Dollars ($ USD) • EN</div>
+                            <div className="font-bold leading-none">Global / USA</div>
+                            <div className={`text-[10px] mt-0.5 ${currency === 'USD' && language === 'EN' ? 'text-cyan-100' : 'text-slate-400'}`}>Dollars ($ USD) • EN</div>
                           </div>
                         </div>
                         {currency === 'USD' && language === 'EN' && <Check className="w-4 h-4 stroke-[3]" />}
@@ -409,7 +410,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               <button
                 id="search-toggle-mobile"
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="sm:hidden p-2 rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                className="sm:hidden p-2 rounded-xl text-white hover:bg-white/15 transition-colors cursor-pointer"
                 aria-label="Buscar productos"
               >
                 <Search className="w-5 h-5" />
@@ -419,13 +420,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               <button
                 id="cart-header-btn"
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center justify-center p-2.5 sm:px-3.5 sm:py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 border border-slate-700 shrink-0"
+                className="relative flex items-center justify-center p-2 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-cyan-50 text-[#0070ba] font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 shadow-sm border border-white/40 shrink-0"
                 aria-label={`Ver carrito: ${totalQuantity} productos`}
                 title={`Carrito: ${totalQuantity} productos`}
               >
-                <ShoppingCart className="w-4.5 h-4.5 text-blue-400" />
+                <ShoppingCart className="w-4.5 h-4.5 text-[#0070ba]" />
                 {totalQuantity > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10.5px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md border border-slate-900 tabular-nums">
+                  <span className="absolute -top-1.5 -right-1.5 bg-[#FF6A00] text-white text-[10.5px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white tabular-nums">
                     {totalQuantity}
                   </span>
                 )}
@@ -434,10 +435,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
               {/* User Account / Orders Button */}
               <button
                 onClick={() => onOpenUserOrders && onOpenUserOrders()}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer border border-white/15 shrink-0"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer border border-white/25 shrink-0 backdrop-blur-xs"
                 title={t('myOrders')}
               >
-                <User className="w-4 h-4 text-slate-300" />
+                <User className="w-4 h-4 text-white/90" />
                 <span className="hidden md:inline">{t('myOrders')}</span>
               </button>
             </div>
@@ -445,16 +446,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
         </div>
       </div>
 
-      {/* Second Navigation Bar - Professional Category Bar */}
-      <div className="bg-[#0E2442] border-b border-[#1A3864] shadow-xs">
+      {/* Second Navigation Bar in Harmonious Celeste */}
+      <div className="bg-[#0070ba] border-b border-[#00609e] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-2 no-scrollbar text-xs sm:text-sm font-bold">
           {/* Categorías Button */}
           <button
             onClick={() => handleCategoryClick('all')}
-            className={`px-3.5 py-1.5 rounded-md flex items-center gap-2 cursor-pointer shrink-0 transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer shrink-0 transition-all font-bold ${
               activeCategory === 'all' && currentPath === '/'
-                ? 'bg-[#0067B8] text-white font-black'
-                : 'bg-[#18345E] hover:bg-[#20447A] text-white border border-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'bg-white/15 hover:bg-white/25 text-white border border-white/20'
             }`}
           >
             <Menu className="w-4 h-4" />
@@ -464,24 +465,21 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
           {/* Category Chips */}
           <button
             onClick={() => handleCategoryClick('combos')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'combos'
-                ? 'bg-blue-600 text-white font-black'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
-            <span>{t('combos')}</span>
-            <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
-              {t('saleBadge')}
-            </span>
+            {t('combos')}
           </button>
 
           <button
             onClick={() => handleCategoryClick('office')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'office'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
             {t('office')}
@@ -489,10 +487,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           <button
             onClick={() => handleCategoryClick('windows')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'windows'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
             {t('windows')}
@@ -500,38 +498,32 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           <button
             onClick={() => handleCategoryClick('project-visio')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'project-visio'
-                ? 'bg-blue-600 text-white font-black'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
-            <span>{t('projectVisio')}</span>
-            <span className="bg-emerald-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
-              {t('newBadge')}
-            </span>
+            {t('projectVisio')}
           </button>
 
           <button
             onClick={() => handleCategoryClick('apps')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'apps'
-                ? 'bg-blue-600 text-white font-black'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
-            <span>{t('apps')}</span>
-            <span className="bg-indigo-400 text-white text-[10px] font-black px-1.5 py-0.2 rounded uppercase">
-              HOT
-            </span>
+            {t('apps')}
           </button>
 
           <button
             onClick={handleTopClick}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'top'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
             {t('topLicenses')}
@@ -539,10 +531,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           <button
             onClick={handleBestSellersClick}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'bestsellers'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
             {t('bestSellers')}
@@ -550,10 +542,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           <button
             onClick={() => handleCategoryClick('offers')}
-            className={`px-3 py-1.5 rounded-md cursor-pointer shrink-0 transition-all ${
+            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
               activeCategory === 'offers'
-                ? 'bg-white/20 text-white font-extrabold border border-white/30'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-[#0070ba] font-black shadow-xs'
+                : 'text-cyan-50 hover:text-white hover:bg-white/15'
             }`}
           >
             {t('deals')}
@@ -561,9 +553,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
         </div>
       </div>
 
-      {/* Mobile Search Bar Drawer */}
+      {/* Mobile Search Bar Drawer in Celeste */}
       {mobileSearchOpen && (
-        <div ref={mobileSearchRef} className="sm:hidden bg-[#0f172a] p-3 border-b border-slate-800">
+        <div ref={mobileSearchRef} className="sm:hidden bg-[#0070ba] p-3 border-b border-[#00609e]">
           <div className="relative">
             <input
               id="search-input-mobile"
@@ -575,13 +567,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                 if (currentPath !== '/') navigateToHome();
               }}
               placeholder={t("searchPlaceholderMobile")}
-              className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+              className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-300 shadow-sm border border-transparent"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2 text-slate-400 hover:text-white text-sm font-bold"
+                className="absolute right-3 top-2 text-slate-400 hover:text-slate-700 text-sm font-bold"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -590,7 +582,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
           {/* Mobile Live Results */}
           {searchQuery.trim().length > 0 && (
-            <div className="mt-2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden divide-y divide-slate-100">
+            <div className="mt-2 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden divide-y divide-slate-100">
               {liveResults.length === 0 ? (
                 <div className="p-3 text-center text-xs text-slate-500">
                   No encontramos coincidencias para "{searchQuery}"
@@ -621,74 +613,72 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
         </div>
       )}
 
-      {/* Mobile Navigation Dropdown Menu */}
+      {/* Mobile Navigation Dropdown Menu in Celeste */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0f172a] py-3 border-b border-slate-800 flex flex-col space-y-1 px-4">
+        <div className="lg:hidden bg-[#0070ba] py-3 border-b border-[#00609e] flex flex-col space-y-1 px-4 text-white">
           <button
             onClick={() => {
               setActiveCategory('all');
               navigateToHome();
               setMobileMenuOpen(false);
             }}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
             {t('home')}
           </button>
           <button
             onClick={() => handleCategoryClick('combos')}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white flex items-center justify-between"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
-            <span>{t('combos')}</span>
-            <span className="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded">{t('saleBadge')}</span>
+            {t('combos')}
           </button>
           <button
             onClick={() => handleCategoryClick('office')}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
             {t('office')}
           </button>
           <button
             onClick={() => handleCategoryClick('windows')}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
             {t('windows')}
           </button>
           <button
             onClick={() => handleCategoryClick('project-visio')}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white flex items-center justify-between"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
-            <span>{t('projectVisio')}</span>
-            <span className="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded">{t('newBadge')}</span>
+            {t('projectVisio')}
           </button>
           <button
             onClick={handleTopClick}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
             {t('topLicenses')}
           </button>
           <button
             onClick={handleBestSellersClick}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
             {t('bestSellers')}
           </button>
           <button
             onClick={() => handleCategoryClick('offers')}
-            className="w-full text-left py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white"
+            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
           >
             {t('deals')}
           </button>
 
-          <div className="pt-2 border-t border-white/15 mt-1">
+          <div className="pt-2 border-t border-white/20 mt-1">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 setIsRegionModalOpen(true);
               }}
-              className="w-full text-left py-2.5 text-xs font-bold text-blue-400 hover:text-white flex items-center justify-between cursor-pointer"
+              className="w-full text-left py-2.5 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-between cursor-pointer"
             >
               <span className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-blue-400" />
+                <Globe className="w-4 h-4 text-cyan-200" />
                 <span>
                   {currency === 'PEN' && '🇵🇪 Perú (S/ PEN)'}
                   {currency === 'COP' && '🇨🇴 Colombia ($ COP)'}
@@ -697,7 +687,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
                   {currency === 'USD' && language === 'EN' && '🇺🇸 Global / USA ($ USD)'}
                 </span>
               </span>
-              <span className="text-[11px] underline text-slate-300 hover:text-white">
+              <span className="text-[11px] underline text-cyan-100 hover:text-white">
                 {language === 'ES' ? 'Cambiar país/moneda' : 'Change country/currency'}
               </span>
             </button>

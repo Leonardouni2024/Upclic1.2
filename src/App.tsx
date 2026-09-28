@@ -83,7 +83,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-600 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-700 font-sans">
       {/* Sticky Header with Navigation, Live Search and Cart Counter */}
       <Header onOpenUserOrders={() => setIsUserOrdersModalOpen(true)} />
 

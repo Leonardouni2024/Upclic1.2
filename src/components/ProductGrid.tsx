@@ -3,7 +3,7 @@ import { products, searchProducts } from '../products.ts';
 import { ProductCard } from './ProductCard.tsx';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory } from '../types.ts';
-import { Sparkles, SearchX } from 'lucide-react';
+import { SearchX } from 'lucide-react';
 
 export const ProductGrid: React.FC = () => {
   const { activeCategory, setActiveCategory, searchQuery, setSearchQuery, t } = useCart();
@@ -47,7 +47,7 @@ export const ProductGrid: React.FC = () => {
   ];
 
   return (
-    <section id="catalogo-section" className="py-14 bg-slate-50 text-slate-900 border-b border-slate-200">
+    <section id="catalogo-section" className="py-14 bg-slate-50 text-slate-900 border-b border-slate-200 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -66,7 +66,7 @@ export const ProductGrid: React.FC = () => {
           {/* Results count pill */}
           <div className="text-[11px] sm:text-xs font-semibold text-slate-600 bg-white px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-200 shadow-xs self-start md:self-auto flex items-center gap-1.5">
             <span>Mostrando</span>
-            <span className="font-bold text-white bg-[#0067B8] px-2 py-0.5 rounded-md tabular-nums">
+            <span className="font-bold text-white bg-[#00A3E0] px-2 py-0.5 rounded-md tabular-nums">
               {filteredProducts.length}
             </span>
             <span>licencias</span>
@@ -85,7 +85,7 @@ export const ProductGrid: React.FC = () => {
                 onClick={() => setActiveCategory(cat.key)}
                 className={`px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-all duration-150 cursor-pointer font-bold ${
                   isActive
-                    ? 'bg-[#0067B8] text-white font-bold shadow-xs border border-transparent'
+                    ? 'bg-[#00A3E0] text-white font-bold shadow-xs border border-transparent'
                     : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
                 }`}
               >
@@ -116,7 +116,7 @@ export const ProductGrid: React.FC = () => {
                 setSearchQuery('');
                 setActiveCategory('all');
               }}
-              className="mt-6 px-5 py-2.5 rounded-lg bg-blue-600 text-white text-xs sm:text-sm font-black hover:bg-blue-700 shadow-sm transition-all cursor-pointer border border-blue-700"
+              className="mt-6 px-5 py-2.5 rounded-lg bg-[#00A3E0] text-white text-xs sm:text-sm font-black hover:bg-[#0092cc] shadow-sm transition-all cursor-pointer border border-[#00A3E0]"
             >
               {t('viewAllCatalog')}
             </button>
