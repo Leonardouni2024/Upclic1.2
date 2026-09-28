@@ -977,14 +977,13 @@ export const CheckoutPage: React.FC = () => {
                 </div>
 
                 {hasDiscount && (
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-emerald-300 font-bold bg-emerald-500/20 px-2.5 py-1.5 rounded-lg border border-emerald-500/30">
-                      <span className="flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                        {language === 'ES' ? 'Descuento' : 'Discount'} {Math.round(discountRate * 100)}%:
-                      </span>
-                      <span className="tabular-nums">-{formatPrice(discountAmount)}</span>
-                    </div>
+                  <div className="flex justify-between items-baseline py-0.5 text-emerald-400 font-semibold text-xs">
+                    <span>
+                      {isMultiItemDiscount
+                        ? (language === 'ES' ? 'Descuento 10%:' : 'Discount 10%:')
+                        : `${language === 'ES' ? 'Descuento' : 'Discount'} ${Math.round(discountRate * 100)}%:`}
+                    </span>
+                    <span className="tabular-nums font-bold">-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
 

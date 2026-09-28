@@ -21,9 +21,10 @@ import { HelpModal } from './components/HelpModal.tsx';
 import { CartReminder } from './components/CartReminder.tsx';
 import { UserOrdersModal } from './components/UserOrdersModal.tsx';
 import { RegionLanguageModal } from './components/RegionLanguageModal.tsx';
+import { DiscountPopup } from './components/DiscountPopup.tsx';
 
 const AppContent: React.FC = () => {
-  const { currentPath, currentProductSlug, activeCategory } = useCart();
+  const { currentPath, currentProductSlug, activeCategory, isDiscountPopupOpen, handleDiscountPopupComplete } = useCart();
   const [helpTopic, setHelpTopic] = useState<string | null>(null);
   const [isUserOrdersModalOpen, setIsUserOrdersModalOpen] = useState(false);
 
@@ -111,6 +112,12 @@ const AppContent: React.FC = () => {
 
       {/* Real-time Toast Notifications */}
       <ToastContainer />
+
+      {/* 7-Second Animated 10% Discount Popup */}
+      <DiscountPopup
+        isOpen={isDiscountPopupOpen}
+        onComplete={handleDiscountPopupComplete}
+      />
 
       {/* Help, FAQs & Legal Modal */}
       <HelpModal topic={helpTopic} onClose={() => setHelpTopic(null)} />

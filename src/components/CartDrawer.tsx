@@ -1,7 +1,7 @@
 import { formatPrice } from '../products.ts';
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext.tsx';
-import { X, Trash2, Plus, Minus, ArrowRight, Sparkles, ShoppingBag, ShieldCheck, Tag, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Tag, CheckCircle2, AlertCircle } from 'lucide-react';
 
 
 export const CartDrawer: React.FC = () => {
@@ -91,31 +91,6 @@ export const CartDrawer: React.FC = () => {
               </button>
             </div>
           </div>
-
-          {/* Promotion / Discount Status Banner */}
-          {items.length > 0 && hasDiscount && (
-            <div
-              className={`px-4 py-2.5 text-xs font-bold transition-all border-b ${
-                  isMultiItemDiscount
-                    ? 'bg-amber-50 text-amber-900 border-amber-200'
-                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-              }`}
-            >
-                <div className="flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-extrabold text-[12px] leading-tight">
-                      {isMultiItemDiscount
-                        ? t('discountApplied')
-                        : t('couponApplied')}
-                    </div>
-                    <div className="text-[10px] font-normal text-slate-600 mt-0.5">
-                      -{Math.round(discountRate * 100)}%
-                    </div>
-                  </div>
-                </div>
-            </div>
-          )}
 
           {/* Cart Item List */}
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 divide-y divide-slate-100">
@@ -345,14 +320,13 @@ export const CartDrawer: React.FC = () => {
                 </div>
 
                 {hasDiscount && (
-                  <div className="space-y-1 my-1">
-                    <div className="flex justify-between items-center text-emerald-700 font-bold bg-emerald-100/70 px-2.5 py-1.5 rounded-lg border border-emerald-200/60">
-                      <span className="flex items-center gap-1 text-xs">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        {t('discount')} {Math.round(discountRate * 100)}%:
-                      </span>
-                      <span className="tabular-nums font-black text-sm">-{formatPrice(discountAmount)}</span>
-                    </div>
+                  <div className="flex justify-between items-baseline py-0.5 text-emerald-600 font-semibold text-xs">
+                    <span>
+                      {isMultiItemDiscount
+                        ? (language === 'ES' ? 'Descuento 10%' : 'Discount 10%')
+                        : `${t('discount')} ${Math.round(discountRate * 100)}%`}:
+                    </span>
+                    <span className="tabular-nums font-bold text-sm">-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
 

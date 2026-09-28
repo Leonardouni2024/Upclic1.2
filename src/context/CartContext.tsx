@@ -38,6 +38,10 @@ interface CartContextType {
   discountReason?: string;
   isMultiItemDiscount: boolean;
   isCouponApplied: boolean;
+  isDiscountPopupOpen: boolean;
+  setIsDiscountPopupOpen: (open: boolean) => void;
+  isMultiItemDiscountActive: boolean;
+  handleDiscountPopupComplete: () => void;
   // Promo Coupon System
   appliedCoupon: string;
   applyCoupon: (code: string) => { success: boolean; message: string };
@@ -129,6 +133,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch(e) {}
     return null;
   });
+
+  const [isMultiItemDiscountActive, setIsMultiItemDiscountActive] = useState<boolean>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('upclic_multi_discount_active') === 'true';
+      }
+    } catch {}
+    return false;
+  });
+
+  const [isDiscountPopupOpen, setIsDiscountPopupOpen] = useState(false);
 
   // Region, Language & Currency State
   const [currency, setCurrencyState] = useState<Currency>(() => {
@@ -687,7 +702,39 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems([]);
   };
 
-  const totals: CartTotals = calculateCartTotals(items, appliedCoupon || dynamicCoupon?.code, dynamicCoupon || undefined);
+  useEffect(() => {
+    const qty = items.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+    if (qty < 2) {
+      if (isMultiItemDiscountActive) {
+        setIsMultiItemDiscountActive(false);
+        try {
+          localStorage.removeItem('upclic_multi_discount_active');
+        } catch {}
+      }
+      if (isDiscountPopupOpen) {
+        setIsDiscountPopupOpen(false);
+      }
+    } else if (qty >= 2) {
+      if (!isMultiItemDiscountActive && !isDiscountPopupOpen) {
+        setIsDiscountPopupOpen(true);
+      }
+    }
+  }, [items, isMultiItemDiscountActive, isDiscountPopupOpen]);
+
+  const handleDiscountPopupComplete = () => {
+    setIsDiscountPopupOpen(false);
+    setIsMultiItemDiscountActive(true);
+    try {
+      localStorage.setItem('upclic_multi_discount_active', 'true');
+    } catch {}
+  };
+
+  const totals: CartTotals = calculateCartTotals(
+    items,
+    appliedCoupon || dynamicCoupon?.code,
+    dynamicCoupon || undefined,
+    isMultiItemDiscountActive
+  );
 
   const navigateToProduct = (slug: string) => {
     const target = `/producto/${slug}`;
@@ -749,6 +796,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         discountReason: totals.discountReason,
         isMultiItemDiscount: totals.isMultiItemDiscount,
         isCouponApplied: totals.isCouponApplied,
+        isDiscountPopupOpen,
+        setIsDiscountPopupOpen,
+        isMultiItemDiscountActive,
+        handleDiscountPopupComplete,
         appliedCoupon,
         applyCoupon,
         removeCoupon,

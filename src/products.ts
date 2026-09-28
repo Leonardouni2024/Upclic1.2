@@ -104,7 +104,8 @@ export const DYNAMIC_COUPONS: DynamicCoupon[] = [
 export function calculateCartTotals(
   items: { product: Product; quantity: number; unitPrice?: number }[],
   couponCode?: string,
-  dynamicCoupon?: { code: string, discountPercent: number, expiresAt?: number }
+  dynamicCoupon?: { code: string, discountPercent: number, expiresAt?: number },
+  isMultiItemDiscountActive: boolean = true
 ): CartTotals {
   const subtotal = items.reduce((acc, item) => {
     const unitPrice = Number(item.unitPrice ?? item.product?.price) || 0;
@@ -152,7 +153,7 @@ export function calculateCartTotals(
     }
   }
 
-  const isMultiItemDiscount = totalQuantity >= 2 && discountRate < 0.10 && !(appliedCoupon && appliedCoupon.code === 'PROVECLIC1');
+  const isMultiItemDiscount = isMultiItemDiscountActive && totalQuantity >= 2 && discountRate < 0.10 && !(appliedCoupon && appliedCoupon.code === 'PROVECLIC1');
   if (isMultiItemDiscount) {
     discountRate = 0.10;
   }

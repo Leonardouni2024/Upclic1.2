@@ -1,7 +1,7 @@
 import { formatPrice } from '../products.ts';
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
-import { ShoppingCart, Sparkles, ChevronRight } from 'lucide-react';
+import { ShoppingCart, ChevronRight } from 'lucide-react';
 
 export const FloatingMobileCart: React.FC = () => {
   const { totalQuantity, total, hasDiscount, setIsCartOpen, currentPath, t } = useCart();
