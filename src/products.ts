@@ -1006,7 +1006,7 @@ const rawProducts: Product[] = [
     id: 'prod-win11-pro-tel',
     slug: 'windows-11-pro-activacion-telefono',
     name: 'Windows 11 Professional (Activación por Teléfono)',
-    description: 'Alternativa económica y práctica para activar Windows 11 Pro en tu equipo. Incluye guía paso a paso e instrucciones claras para activación telefónica automatizada ante Microsoft. Licencia permanente de por vida.',
+    description: 'Alternativa económica y práctica para activar Windows 11 Pro en tu equipo con clave oficial tipo OEM. Incluye guía paso a paso e instrucciones claras para activación telefónica automatizada ante Microsoft. Licencia permanente para tu PC.',
     price: 12.00,
     oldPrice: 60.00,
     duration: 'Permanente (De por vida)',
@@ -1017,10 +1017,10 @@ const rawProducts: Product[] = [
     reviews: 165,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
-      'Incluye clave de activación + guía de activación paso a paso',
+      'Incluye clave de activación tipo OEM + guía de activación paso a paso',
+      'Clave tipo OEM enlazada a la placa madre (reinstalable en la misma PC)',
       'Activación telefónica oficial automatizada Microsoft',
       'BitLocker, Remote Desktop, Hyper-V y Windows Sandbox',
-      'Licencia permanente de por vida para 1 PC',
       'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 11 (64 Bit)',
@@ -1032,7 +1032,7 @@ const rawProducts: Product[] = [
     id: 'prod-win11-home-tel',
     slug: 'windows-11-home-activacion-telefono',
     name: 'Windows 11 Home (Activación por Teléfono)',
-    description: 'Activación telefónica rápida y económica para Windows 11 Home. Ideal para computadoras personales y entretenimiento en el hogar.',
+    description: 'Activación telefónica rápida y económica para Windows 11 Home con clave tipo OEM. Ideal para computadoras personales y entretenimiento en el hogar.',
     price: 12.00,
     oldPrice: 55.00,
     duration: 'Permanente (De por vida)',
@@ -1043,10 +1043,10 @@ const rawProducts: Product[] = [
     reviews: 112,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
-      'Incluye clave de activación + guía de activación paso a paso',
-      'Activación telefónica oficial Microsoft',
+      'Incluye clave de activación tipo OEM + guía de activación paso a paso',
+      'Clave tipo OEM vinculada a la placa madre de tu computadora',
+      'Activación telefónica oficial automatizada Microsoft',
       'Interfaz moderna, soporte para DirectX 12 y Widgets',
-      'Licencia de por vida para 1 equipo',
       'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 11 (64 Bit)',
@@ -1058,7 +1058,7 @@ const rawProducts: Product[] = [
     id: 'prod-win10-pro-tel',
     slug: 'windows-10-pro-activacion-telefono',
     name: 'Windows 10 Professional (Activación por Teléfono)',
-    description: 'La opción más económica para activar Windows 10 Pro de por vida mediante llamada o asistente telefónico de Microsoft. Compatible con cualquier PC.',
+    description: 'La opción más económica para activar Windows 10 Pro de por vida mediante clave oficial tipo OEM y asistente telefónico de Microsoft. Compatible con cualquier PC.',
     price: 12.00,
     oldPrice: 55.00,
     duration: 'Permanente (De por vida)',
@@ -1069,8 +1069,9 @@ const rawProducts: Product[] = [
     reviews: 189,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
-      'Incluye clave de activación + guía de activación paso a paso',
-      'Activación telefónica de por vida para 1 PC',
+      'Incluye clave de activación tipo OEM + guía de activación paso a paso',
+      'Clave tipo OEM enlazada a la placa madre (reinstalable en el mismo equipo)',
+      'Activación telefónica automatizada oficial Microsoft',
       'Soporte completo para Remote Desktop y BitLocker',
       'Garantía oficial de activación de 1 mes'
     ],
@@ -1083,7 +1084,7 @@ const rawProducts: Product[] = [
     id: 'prod-win10-home-tel',
     slug: 'windows-10-home-activacion-telefono',
     name: 'Windows 10 Home (Activación por Teléfono)',
-    description: 'Alternativa económica para activar Windows 10 Home de forma permanente en laptops o PCs de escritorio.',
+    description: 'Alternativa económica para activar Windows 10 Home con clave tipo OEM en laptops o PCs de escritorio.',
     price: 12.00,
     oldPrice: 50.00,
     duration: 'Permanente (De por vida)',
@@ -1094,9 +1095,10 @@ const rawProducts: Product[] = [
     reviews: 94,
     badge: '📞 POR TELÉFONO • S/ 12',
     features: [
-      'Incluye clave de activación + guía de activación paso a paso',
-      'Activación telefónica económica y legal',
-      'Ideal para uso doméstico y estudio (sin vencimiento)',
+      'Incluye clave de activación tipo OEM + guía de activación paso a paso',
+      'Clave tipo OEM vinculada a tu placa madre (sin vencimiento)',
+      'Activación telefónica económica y legal ante Microsoft',
+      'Ideal para uso doméstico, estudio y oficina',
       'Garantía oficial de activación de 1 mes'
     ],
     compatibility: 'Windows 10 (32 & 64 Bit)',
@@ -1952,9 +1954,14 @@ export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' =
       : 'Cuenta de acceso oficial exclusiva (1 Año) con 100 GB en OneDrive para hasta 5 dispositivos.';
   }
   if (product.id.includes('-tel')) {
+    const isWindowsTel = product.category === 'windows';
     return isEn
-      ? 'Includes activation key + step-by-step phone activation guide (Official Microsoft automated phone activation, 1-month warranty) + direct installer link.'
-      : 'Incluye clave de activación + guía de activación (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.';
+      ? (isWindowsTel
+          ? 'Includes official OEM-type activation key + step-by-step phone activation guide (Official Microsoft automated phone activation, 1-month warranty) + direct installer link.'
+          : 'Includes activation key + step-by-step phone activation guide (Official Microsoft automated phone activation, 1-month warranty) + direct installer link.')
+      : (isWindowsTel
+          ? 'Incluye clave de activación tipo OEM + guía de activación (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.'
+          : 'Incluye clave de activación + guía de activación (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.');
   }
   if (product.id === 'prod-mcafee-antivirus') {
     return isEn

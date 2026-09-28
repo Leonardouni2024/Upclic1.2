@@ -300,12 +300,27 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
     const isOfficeProjectVisio = isOffice || isProjectVisio || isCombo || product.id.includes('office') || product.id.includes('project') || product.id.includes('visio');
 
     if (product.id.includes('-tel')) {
+      const isWindowsTel = product.category === 'windows';
       return [
         {
           q: isEn ? 'What does the delivery include?' : '¿Qué incluye la entrega?',
           a: isEn
-            ? 'The delivery includes your official activation key + step-by-step phone activation guide, and direct download link for the official Microsoft installer.'
-            : 'La entrega incluye tu clave de activación oficial + guía de activación ilustrada paso a paso y el enlace directo al instalador oficial de Microsoft.'
+            ? (isWindowsTel
+                ? 'The delivery includes your official OEM-type activation key + step-by-step phone activation guide, and direct download link for the official Microsoft Windows installer.'
+                : 'The delivery includes your official activation key + step-by-step phone activation guide, and direct download link for the official Microsoft installer.')
+            : (isWindowsTel
+                ? 'La entrega incluye tu clave de activación oficial tipo OEM + guía de activación telefónica ilustrada paso a paso y el enlace directo al instalador oficial de Microsoft Windows.'
+                : 'La entrega incluye tu clave de activación oficial + guía de activación telefónica ilustrada paso a paso y el enlace directo al instalador oficial de Microsoft.')
+        },
+        {
+          q: isEn ? 'What type of license key is it?' : '¿Qué tipo de clave es?',
+          a: isEn
+            ? (isWindowsTel
+                ? 'For Windows automated phone activation, the keys are OEM-type, which bind directly and permanently to your PC motherboard.'
+                : 'These are genuine Microsoft automated phone activation product keys for 1 PC.')
+            : (isWindowsTel
+                ? 'Las claves de activación telefónica para Windows son tipo OEM, las cuales se asocian de forma permanente a la placa madre de tu computadora.'
+                : 'Son claves oficiales de activación telefónica automatizada ante Microsoft para 1 PC.')
         },
         {
           q: isEn ? 'How does automated phone activation work?' : '¿Cómo funciona la activación telefónica automatizada?',
@@ -314,32 +329,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
             : 'Descargas el instalador oficial de Microsoft e introduces los bloques numéricos en el sistema telefónico o portal web automatizado de Microsoft para recibir tu ID de confirmación de por vida.'
         },
         {
-          q: isEn ? 'Is it a genuine Microsoft activation?' : '¿Es una activación 100% original de Microsoft?',
+          q: isEn ? 'Can I reinstall if I format my PC?' : '¿Puedo reinstalar si formateo mi PC?',
           a: isEn
-            ? 'Yes, it is validated directly on official Microsoft activation servers with permanent lifetime validity.'
-            : 'Sí, queda validada directamente en los servidores de Microsoft de por vida para 1 equipo.'
+            ? (isWindowsTel
+                ? 'Yes, because Windows phone activation keys are OEM-type, the license binds to your motherboard, allowing you to format and reinstall on the same PC without losing activation.'
+                : 'No, Office activation keys (including automated phone activation of Office) are not reinstallable. The permanent license is maintained on your computer only as long as you do not format it.')
+            : (isWindowsTel
+                ? 'Sí, debido a que las claves de Windows por teléfono son de tipo OEM, la licencia se vincula a tu placa madre, permitiéndote formatear y reinstalar en la misma PC sin perder la activación.'
+                : 'No, las claves de activación de Office (incluyendo la activación telefónica de Office) no son reinstalables. Solo se mantiene la licencia permanente en tu computadora mientras no la formatees.')
         },
         {
-          q: isEn ? 'Is it easy to do?' : '¿Es fácil realizar el proceso?',
-          a: isEn
-            ? 'Very simple! We include an illustrated step-by-step guide and our technical team is available on WhatsApp to assist you.'
-            : '¡Muy sencillo! Incluye guía paso a paso ilustrada y nuestro equipo técnico te acompaña por WhatsApp ante cualquier duda.'
-        },
-        {
-          q: isEn ? 'Can I reinstall if needed?' : '¿Se puede reinstalar en la misma PC?',
-          a: isEn
-            ? (isOfficeProjectVisio
-                ? 'No, Office product keys are not reinstallable. The permanent license is maintained on your computer as long as you do not format it.'
-                : 'Yes, the activation remains permanent for that PC.')
-            : (isOfficeProjectVisio
-                ? 'No, las claves de Office no son reinstalables. La licencia se mantiene permanente en tu computadora de por vida mientras no la formatees.'
-                : 'Sí, la activación es de por vida para esa computadora.')
-        },
-        {
-          q: isEn ? 'Do I get technical support?' : '¿Incluye soporte técnico?',
+          q: isEn ? 'Do I get technical support?' : '¿Incluye soporte técnico y garantía?',
           a: isEn
             ? 'Yes, official 1-month activation warranty (30 days) and priority support by WhatsApp.'
-            : 'Sí, garantía oficial de activación de 1 mes (30 días) y soporte prioritario por WhatsApp.'
+            : 'Sí, garantía oficial de activación de 1 mes (30 días) y soporte técnico prioritario por WhatsApp.'
         }
       ];
     }
