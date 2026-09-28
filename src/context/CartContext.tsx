@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
 import { products, calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS, formatPrice } from '../products.ts';
 import { 
@@ -411,6 +411,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+  const couponFeedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showCouponFeedback = (feedback: { type: 'success' | 'error' | 'info'; message: string } | null, durationMs: number = 4000) => {
+    if (couponFeedbackTimerRef.current) {
+      clearTimeout(couponFeedbackTimerRef.current);
+      couponFeedbackTimerRef.current = null;
+    }
+    setCouponFeedback(feedback);
+    if (feedback) {
+      couponFeedbackTimerRef.current = setTimeout(() => {
+        setCouponFeedback(null);
+        couponFeedbackTimerRef.current = null;
+      }, durationMs);
+    }
+  };
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [activeCategory, setActiveCategory] = useState<ProductCategory>('all');
@@ -521,7 +537,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const clean = code.trim().toUpperCase();
     if (!clean) {
       const msg = 'Por favor ingresa un código promocional.';
-      setCouponFeedback({ type: 'error', message: msg });
+      showCouponFeedback({ type: 'error', message: msg }, 4000);
       return { success: false, message: msg };
     }
     
@@ -534,11 +550,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch {}
         
         const msg = `¡Cupón de ${dynamicCoupon.discountPercent}% aplicado correctamente!`;
-        setCouponFeedback({ type: 'success', message: msg });
+        showCouponFeedback({ type: 'success', message: msg }, 5000);
         return { success: true, message: msg };
       } else {
         const msg = 'El cupón especial ha expirado.';
-        setCouponFeedback({ type: 'error', message: msg });
+        showCouponFeedback({ type: 'error', message: msg }, 4000);
         return { success: false, message: msg };
       }
     }
@@ -551,7 +567,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const currentTotalQty = items.reduce((sum, item) => sum + item.quantity, 0);
         if (matchedStatic.minItems && currentTotalQty < matchedStatic.minItems) {
           const msg = `Este cupón requiere al menos ${matchedStatic.minItems} productos en el carrito.`;
-          setCouponFeedback({ type: 'error', message: msg });
+          showCouponFeedback({ type: 'error', message: msg }, 4500);
           return { success: false, message: msg };
         }
         setAppliedCoupon(clean);
@@ -559,17 +575,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.setItem(COUPON_STORAGE_KEY, clean);
         } catch {}
         const msg = `¡Cupón ${clean} (${matchedStatic.discountPercent}% OFF) aplicado correctamente!`;
-        setCouponFeedback({ type: 'success', message: msg });
+        showCouponFeedback({ type: 'success', message: msg }, 5000);
         return { success: true, message: msg };
       } else {
         const msg = 'El cupón promocional ha expirado.';
-        setCouponFeedback({ type: 'error', message: msg });
+        showCouponFeedback({ type: 'error', message: msg }, 4000);
         return { success: false, message: msg };
       }
     }
     
     const msg = `El código "${code}" no es válido o ha expirado.`;
-    setCouponFeedback({ type: 'error', message: msg });
+    showCouponFeedback({ type: 'error', message: msg }, 4500);
     return { success: false, message: msg };
   };
 
@@ -578,7 +594,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       localStorage.removeItem(COUPON_STORAGE_KEY);
     } catch {}
-    setCouponFeedback(null);
+    showCouponFeedback(null);
   };
 
   const getItemKey = (productId: string, variantId?: string) => {

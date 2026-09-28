@@ -741,18 +741,18 @@ export const CheckoutPage: React.FC = () => {
 
                 {couponFeedback && (
                   <div
-                    className={`mt-2 text-[11px] p-2 rounded-lg flex items-start gap-1.5 ${
+                    className={`mt-2 text-[11px] p-2.5 rounded-lg flex items-start gap-2 transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
                       couponFeedback.type === 'success'
                         ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30'
                         : couponFeedback.type === 'info'
                         ? 'bg-slate-700/50 text-slate-300 border border-slate-700'
-                        : 'bg-red-500/20 text-red-200 border border-red-500/30'
+                        : 'bg-red-500/20 text-red-200 border border-red-500/30 shadow-xs'
                     }`}
                   >
                     {couponFeedback.type === 'error' ? (
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-300" />
                     ) : (
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-300" />
                     )}
                     <span className="leading-snug">{couponFeedback.message}</span>
                   </div>

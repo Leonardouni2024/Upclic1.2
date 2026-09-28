@@ -294,18 +294,18 @@ export const CartDrawer: React.FC = () => {
                 {/* Feedback message */}
                 {couponFeedback && (
                   <div
-                    className={`mt-2 text-[11px] p-2 rounded-lg flex items-start gap-1.5 ${
+                    className={`mt-2 text-[11px] p-2.5 rounded-lg flex items-start gap-2 transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
                       couponFeedback.type === 'success'
                         ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                         : couponFeedback.type === 'info'
                         ? 'bg-blue-50 text-blue-800 border border-blue-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                        : 'bg-red-50 text-red-700 border border-red-200 shadow-xs'
                     }`}
                   >
                     {couponFeedback.type === 'error' ? (
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-600" />
                     ) : (
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />
                     )}
                     <span className="leading-snug">{couponFeedback.message}</span>
                   </div>
