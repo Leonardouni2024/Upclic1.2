@@ -25,13 +25,14 @@ export const PayPalCheckoutPage: React.FC = () => {
     isMultiItemDiscount,
     navigateToCheckout,
     language,
-    getProductName
+    getProductName,
+    exchangeRate
   } = useCart();
 
   const isEn = language === 'EN';
 
-  // Exchange rate calculation to USD
-  const penRate = 3.75;
+  // Synchronized exchange rate with the store
+  const penRate = exchangeRate || 3.75;
   const totalUSD = (total / penRate).toFixed(2);
   const subtotalUSD = (subtotal / penRate).toFixed(2);
   const discountAmountUSD = (discountAmount / penRate).toFixed(2);
@@ -160,7 +161,7 @@ export const PayPalCheckoutPage: React.FC = () => {
           }
           if (pollInterval) clearInterval(pollInterval);
 
-          // Observe changes inside container to update title to "Pago PayPal" and fill amount
+          // Observe changes inside container to update title to product name and fill amount
           observer = new MutationObserver(() => {
             fixProductTitleAndFillAmount();
           });
@@ -241,7 +242,7 @@ export const PayPalCheckoutPage: React.FC = () => {
         #paypal-container-9W56EUJ67HRS4 p,
         #paypal-container-9W56EUJ67HRS4 div[style*="text-align"] {
           font-weight: 800 !important;
-          font-size: 15px !important;
+          font-size: 14px !important;
           color: #0f172a !important;
           text-align: center !important;
           margin-bottom: 6px !important;
@@ -389,8 +390,9 @@ export const PayPalCheckoutPage: React.FC = () => {
 
               <div className="divide-y divide-slate-700/60 max-h-72 overflow-y-auto pr-1">
                 {items.map((item, idx) => {
-                  const itemUnitPrice = Number(item.unitPrice ?? item.product?.price) || 0;
-                  const itemTotalPEN = itemUnitPrice * item.quantity;
+                  const itemUnitPricePEN = Number(item.unitPrice ?? item.product?.price) || 0;
+                  const itemUnitPriceUSD = (itemUnitPricePEN / penRate).toFixed(2);
+                  const itemTotalPEN = itemUnitPricePEN * item.quantity;
                   const itemTotalUSD = (itemTotalPEN / penRate).toFixed(2);
 
                   return (
@@ -419,7 +421,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                             </p>
                           )}
                           <p className="text-[11px] text-slate-400">
-                            {isEn ? 'Qty:' : 'Cant:'} {item.quantity} × {formatPrice(itemUnitPrice)}
+                            {isEn ? 'Qty:' : 'Cant:'} {item.quantity} × ${itemUnitPriceUSD} USD
                           </p>
                         </div>
                       </div>
@@ -429,7 +431,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                           ${itemTotalUSD} USD
                         </div>
                         <div className="text-[10px] text-slate-400 tabular-nums">
-                          ({formatPrice(itemTotalPEN)})
+                          ({formatPrice(itemTotalPEN, 'PEN')})
                         </div>
                       </div>
                     </div>
@@ -462,7 +464,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                       ${totalUSD} USD
                     </span>
                     <div className="text-[10px] text-slate-400 font-normal">
-                      ({formatPrice(total)})
+                      ({formatPrice(total, 'PEN')})
                     </div>
                   </div>
                 </div>

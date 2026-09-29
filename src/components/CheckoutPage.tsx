@@ -55,11 +55,12 @@ export const CheckoutPage: React.FC = () => {
     navigateToPayPal,
     t,
     language,
-    getProductName
+    getProductName,
+    exchangeRate
  } = useCart();
 
   const isEn = language === 'EN';
-  const penRate = 3.75;
+  const penRate = exchangeRate || 3.75;
   const totalUSD = (total / penRate).toFixed(2);
 
   const [selectedPaymentGateway, setSelectedPaymentGateway] = useState<'mercadopago' | 'paypal'>('mercadopago');
