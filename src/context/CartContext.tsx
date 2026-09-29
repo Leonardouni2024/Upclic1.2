@@ -84,17 +84,29 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'upclic_cart_v1';
-const COUPON_STORAGE_KEY = 'upclic_coupon_v1';
+const LOCAL_STORAGE_KEY = 'upclic_cart_v3';
+const COUPON_STORAGE_KEY = 'upclic_coupon_v2';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+      if (typeof window !== 'undefined') {
+        // One-time cleanup of legacy test carts from previous test versions on any device/mobile browser
+        if (!localStorage.getItem('upclic_cart_v3_init')) {
+          localStorage.removeItem('upclic_cart_v1');
+          localStorage.removeItem('upclic_cart_v2');
+          localStorage.removeItem('upclic_cart');
+          localStorage.removeItem('upclic_last_order');
+          localStorage.setItem('upclic_cart_v3_init', 'true');
+          return [];
+        }
+
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
         }
       }
     } catch (e) {
