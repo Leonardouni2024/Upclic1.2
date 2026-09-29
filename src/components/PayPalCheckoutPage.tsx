@@ -10,7 +10,9 @@ import {
   Mail,
   User,
   Phone,
-  Loader2
+  Loader2,
+  RefreshCw,
+  Sparkles
 } from 'lucide-react';
 
 export const PayPalCheckoutPage: React.FC = () => {
@@ -73,8 +75,11 @@ export const PayPalCheckoutPage: React.FC = () => {
   });
 
   const [isScriptLoading, setIsScriptLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [scriptError, setScriptError] = useState<string | null>(null);
   const hasRenderedRef = useRef(false);
+  const hasBeenClickedRef = useRef(false);
+  const forceFreshRenderButtonRef = useRef<() => void>(() => {});
 
   const handleEmailChange = (val: string) => {
     setCustomerEmail(val);
@@ -156,68 +161,90 @@ export const PayPalCheckoutPage: React.FC = () => {
       });
     };
 
-    const handleWindowFocusOrReturn = () => {
-      fixProductTitleAndFillAmount();
-      setTimeout(fixProductTitleAndFillAmount, 50);
-      setTimeout(fixProductTitleAndFillAmount, 150);
-      setTimeout(fixProductTitleAndFillAmount, 350);
-      setTimeout(fixProductTitleAndFillAmount, 700);
-      setTimeout(fixProductTitleAndFillAmount, 1200);
-    };
-
     const attachContainerInterceptors = () => {
       const container = document.getElementById('paypal-container-9W56EUJ67HRS4');
       if (!container) return;
 
-      // Capture click, mousedown, touchstart before PayPal reads the input
-      container.addEventListener('click', fixProductTitleAndFillAmount, true);
-      container.addEventListener('pointerdown', fixProductTitleAndFillAmount, true);
-      container.addEventListener('touchstart', fixProductTitleAndFillAmount, true);
+      const onUserInteraction = () => {
+        fixProductTitleAndFillAmount();
+        hasBeenClickedRef.current = true;
+      };
+
+      container.addEventListener('click', onUserInteraction, true);
+      container.addEventListener('pointerdown', onUserInteraction, true);
+      container.addEventListener('touchstart', onUserInteraction, true);
       container.addEventListener('mouseenter', fixProductTitleAndFillAmount, true);
+    };
+
+    const renderPayPalButtonInstance = () => {
+      const targetEl = document.getElementById('paypal-container-9W56EUJ67HRS4');
+      if (!targetEl || !(window as any).paypal?.HostedButtons) return false;
+
+      try {
+        targetEl.innerHTML = '';
+        (window as any).paypal.HostedButtons({
+          hostedButtonId: "9W56EUJ67HRS4",
+        }).render("#paypal-container-9W56EUJ67HRS4");
+
+        hasRenderedRef.current = true;
+        hasBeenClickedRef.current = false;
+        if (isMounted) {
+          setIsScriptLoading(false);
+          setScriptError(null);
+          setIsRefreshing(false);
+        }
+
+        if (observer) observer.disconnect();
+        observer = new MutationObserver(() => {
+          fixProductTitleAndFillAmount();
+        });
+        observer.observe(targetEl, { childList: true, subtree: true, characterData: true });
+
+        attachContainerInterceptors();
+
+        setTimeout(fixProductTitleAndFillAmount, 50);
+        setTimeout(fixProductTitleAndFillAmount, 150);
+        setTimeout(fixProductTitleAndFillAmount, 300);
+        setTimeout(fixProductTitleAndFillAmount, 600);
+        setTimeout(fixProductTitleAndFillAmount, 1200);
+        return true;
+      } catch (err: any) {
+        console.error('Error rendering PayPal button:', err);
+        if (isMounted) {
+          setIsScriptLoading(false);
+          setIsRefreshing(false);
+          setScriptError('Hubo un error al inicializar el botón de PayPal.');
+        }
+        return false;
+      }
+    };
+
+    forceFreshRenderButtonRef.current = () => {
+      setIsRefreshing(true);
+      renderPayPalButtonInstance();
+      setTimeout(() => {
+        if (isMounted) setIsRefreshing(false);
+      }, 500);
+    };
+
+    const handleWindowFocusOrReturn = () => {
+      // If payment was previously clicked and user returns to tab, refresh button session
+      if (hasBeenClickedRef.current) {
+        renderPayPalButtonInstance();
+      } else {
+        fixProductTitleAndFillAmount();
+        setTimeout(fixProductTitleAndFillAmount, 50);
+        setTimeout(fixProductTitleAndFillAmount, 150);
+        setTimeout(fixProductTitleAndFillAmount, 350);
+      }
     };
 
     const tryRenderButton = () => {
       if (!isMounted || hasRenderedRef.current) return;
-      const targetEl = document.getElementById('paypal-container-9W56EUJ67HRS4');
-      
-      if (targetEl && (window as any).paypal?.HostedButtons) {
-        try {
-          targetEl.innerHTML = '';
-          (window as any).paypal.HostedButtons({
-            hostedButtonId: "9W56EUJ67HRS4",
-          }).render("#paypal-container-9W56EUJ67HRS4");
-          
-          hasRenderedRef.current = true;
-          if (isMounted) {
-            setIsScriptLoading(false);
-            setScriptError(null);
-          }
-          if (pollInterval) clearInterval(pollInterval);
-
-          // Observe changes inside container
-          observer = new MutationObserver(() => {
-            fixProductTitleAndFillAmount();
-          });
-          observer.observe(targetEl, { childList: true, subtree: true, characterData: true });
-
-          attachContainerInterceptors();
-
-          // Continuous sync interval every 200ms so it never resets to 0 when returning to the tab
-          continuousSyncInterval = setInterval(fixProductTitleAndFillAmount, 200);
-
-          setTimeout(fixProductTitleAndFillAmount, 50);
-          setTimeout(fixProductTitleAndFillAmount, 150);
-          setTimeout(fixProductTitleAndFillAmount, 300);
-          setTimeout(fixProductTitleAndFillAmount, 600);
-          setTimeout(fixProductTitleAndFillAmount, 1200);
-        } catch (err: any) {
-          console.error('Error rendering PayPal button:', err);
-          if (isMounted) {
-            setIsScriptLoading(false);
-            setScriptError('Hubo un error al inicializar el botón de PayPal.');
-          }
-          if (pollInterval) clearInterval(pollInterval);
-        }
+      const success = renderPayPalButtonInstance();
+      if (success) {
+        if (pollInterval) clearInterval(pollInterval);
+        continuousSyncInterval = setInterval(fixProductTitleAndFillAmount, 200);
       }
     };
 
@@ -547,6 +574,28 @@ export const PayPalCheckoutPage: React.FC = () => {
 
               {/* White High-Contrast Card for PayPal Hosted Button */}
               <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200 min-h-[160px] flex flex-col items-center justify-center">
+                {/* Price Bar & Quick Refresh Button */}
+                <div className="w-full flex items-center justify-between bg-blue-50/80 border border-blue-100 rounded-xl px-3.5 py-2 mb-4">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold truncate">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span className="truncate">
+                      {isEn ? 'Amount to pay:' : 'Monto:'}{' '}
+                      <strong className="text-blue-700 font-black">${totalUSD} USD</strong>
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => forceFreshRenderButtonRef.current?.()}
+                    disabled={isRefreshing}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-white hover:bg-blue-100/60 border border-blue-200 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-xs shrink-0"
+                    title={isEn ? 'Sync PayPal price' : 'Sincronizar precio de PayPal'}
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+                    <span>{isRefreshing ? (isEn ? 'Syncing...' : 'Actualizando...') : (isEn ? 'Sync price' : 'Sincronizar')}</span>
+                  </button>
+                </div>
+
                 {isScriptLoading && (
                   <div className="flex flex-col items-center justify-center gap-3 py-6 text-slate-600">
                     <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -560,7 +609,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                   <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 text-center w-full">
                     <p className="font-bold mb-1">{scriptError}</p>
                     <button
-                      onClick={() => window.location.reload()}
+                      onClick={() => forceFreshRenderButtonRef.current?.()}
                       className="mt-2 text-[11px] font-bold underline text-blue-600 hover:text-blue-800"
                     >
                       {isEn ? 'Reload' : 'Recargar'}
