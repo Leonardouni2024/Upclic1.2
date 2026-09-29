@@ -992,6 +992,31 @@ app.post("/api/paypal/create_order", express.json(), async (req, res) => {
       channel: "paypal"
     });
 
+    console.log("\n=======================================================");
+    console.log("🔔 [NOTIFICACIÓN UPCLIC] NUEVA INTENCIÓN DE COMPRA VÍA PAYPAL REGISTRADA");
+    console.log(`📧 Correo del Cliente: ${trimmedEmail}`);
+    if (customerName) console.log(`👤 Nombre: ${customerName}`);
+    if (customerPhone) console.log(`📱 Teléfono: ${customerPhone}`);
+    console.log(`💰 Monto a Pagar: USD $${usdTotal.toFixed(2)} (S/ ${penTotal.toFixed(2)})`);
+    console.log(`🆔 ID de Orden: ${recordedOrder.id}`);
+    console.log(`⏰ Fecha: ${new Date().toISOString()}`);
+    console.log("=======================================================\n");
+
+    // Dispatch automated confirmation email to customer and notification to admin
+    sendOrderEmails({
+      orderId: recordedOrder.id,
+      customerEmail: trimmedEmail,
+      customerName: customerName?.trim() || null,
+      customerPhone: customerPhone?.trim() || null,
+      total: penTotal,
+      usdTotal: usdTotal,
+      items: recordedOrder.items,
+      channel: "paypal",
+      status: "intent_paypal",
+      discountAmount: discountAmount || 0,
+      createdAt: recordedOrder.createdAt
+    }).catch(err => console.error("Error al despachar correos PayPal intent:", err));
+
     // If official PayPal Client ID & Secret are set, call PayPal REST API
     if (clientId && clientSecret && clientId !== "sb" && clientId.trim().length > 5) {
       try {
@@ -1106,6 +1131,7 @@ app.post("/api/paypal/confirm_payment", express.json(), async (req, res) => {
       customerName: customerName || null,
       customerPhone: customerPhone || null,
       total: penTotal,
+      usdTotal: recorded.usdTotal,
       items: recorded.items,
       channel: "paypal",
       status: "approved",

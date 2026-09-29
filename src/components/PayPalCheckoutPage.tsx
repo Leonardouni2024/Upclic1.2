@@ -12,7 +12,8 @@ import {
   Phone,
   Loader2,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  MessageCircle
 } from 'lucide-react';
 
 export const PayPalCheckoutPage: React.FC = () => {
@@ -74,6 +75,27 @@ export const PayPalCheckoutPage: React.FC = () => {
     }
   });
 
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [registeredOrderId, setRegisteredOrderId] = useState<string | null>(null);
+  const [isRegisteringOrder, setIsRegisteringOrder] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const customerEmailRef = useRef(customerEmail);
+  const customerNameRef = useRef(customerName);
+  const customerPhoneRef = useRef(customerPhone);
+
+  useEffect(() => {
+    customerEmailRef.current = customerEmail;
+  }, [customerEmail]);
+
+  useEffect(() => {
+    customerNameRef.current = customerName;
+  }, [customerName]);
+
+  useEffect(() => {
+    customerPhoneRef.current = customerPhone;
+  }, [customerPhone]);
+
   const [isScriptLoading, setIsScriptLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [scriptError, setScriptError] = useState<string | null>(null);
@@ -83,6 +105,10 @@ export const PayPalCheckoutPage: React.FC = () => {
 
   const handleEmailChange = (val: string) => {
     setCustomerEmail(val);
+    customerEmailRef.current = val;
+    if (emailError && val.includes('@') && val.includes('.')) {
+      setEmailError(null);
+    }
     try {
       localStorage.setItem('upclic_customer_email', val);
     } catch {}
@@ -90,6 +116,7 @@ export const PayPalCheckoutPage: React.FC = () => {
 
   const handleNameChange = (val: string) => {
     setCustomerName(val);
+    customerNameRef.current = val;
     try {
       localStorage.setItem('upclic_customer_name', val);
     } catch {}
@@ -97,9 +124,83 @@ export const PayPalCheckoutPage: React.FC = () => {
 
   const handlePhoneChange = (val: string) => {
     setCustomerPhone(val);
+    customerPhoneRef.current = val;
     try {
       localStorage.setItem('upclic_customer_phone', val);
     } catch {}
+  };
+
+  // Register order snapshot & dispatch confirmation email to customer before/during payment
+  const registerOrderBeforePayment = async () => {
+    const trimmedEmail = customerEmailRef.current.trim();
+    if (!trimmedEmail || !trimmedEmail.includes('@') || !trimmedEmail.includes('.')) {
+      return null;
+    }
+
+    try {
+      setIsRegisteringOrder(true);
+      // Save order snapshot in localStorage so return flow has complete details
+      try {
+        localStorage.setItem('upclic_last_order', JSON.stringify({
+          items: items.map(it => ({
+            product: it.product,
+            quantity: it.quantity,
+            unitPrice: it.unitPrice,
+            variantName: it.variantName
+          })),
+          total,
+          usdTotal: totalUSD,
+          discountAmount,
+          customerEmail: trimmedEmail,
+          customerName: customerNameRef.current.trim(),
+          customerPhone: customerPhoneRef.current.trim(),
+          channel: 'paypal',
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.error('Error saving last order to localStorage', e);
+      }
+
+      const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
+        (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
+          ? 'https://upclic12-rypnq.sevalla.app'
+          : '');
+
+      const response = await fetch(`${apiBase}/api/paypal/create_order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          items,
+          discountAmount,
+          total,
+          usdTotal: totalUSD,
+          customerEmail: trimmedEmail,
+          customerName: customerNameRef.current.trim(),
+          customerPhone: customerPhoneRef.current.trim(),
+          channel: 'paypal'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.orderId) {
+          setRegisteredOrderId(data.orderId);
+          try {
+            const rawStored = localStorage.getItem('upclic_last_order');
+            const stored = rawStored ? JSON.parse(rawStored) : {};
+            stored.orderId = data.orderId;
+            localStorage.setItem('upclic_last_order', JSON.stringify(stored));
+          } catch {}
+        }
+      }
+    } catch (err) {
+      console.error('Error al registrar orden PayPal en backend:', err);
+    } finally {
+      setIsRegisteringOrder(false);
+    }
   };
 
   // Initialization and continuous amount & product title sync
@@ -165,9 +266,27 @@ export const PayPalCheckoutPage: React.FC = () => {
       const container = document.getElementById('paypal-container-9W56EUJ67HRS4');
       if (!container) return;
 
-      const onUserInteraction = () => {
+      const onUserInteraction = (e: Event) => {
+        const trimmedEmail = customerEmailRef.current.trim();
+        if (!trimmedEmail || !trimmedEmail.includes('@') || !trimmedEmail.includes('.')) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          setEmailTouched(true);
+          setEmailError(
+            isEn
+              ? 'Please enter your email address above before paying so we can deliver your digital license.'
+              : 'Por favor ingresa tu correo electrónico arriba antes de pagar para que podamos enviarte tu licencia.'
+          );
+          emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          emailInputRef.current?.focus();
+          return;
+        }
+
+        setEmailError(null);
         fixProductTitleAndFillAmount();
         hasBeenClickedRef.current = true;
+        registerOrderBeforePayment();
       };
 
       container.addEventListener('click', onUserInteraction, true);
@@ -404,25 +523,66 @@ export const PayPalCheckoutPage: React.FC = () => {
               </h3>
 
               <div className="space-y-1.5">
-                <label htmlFor="paypal-customer-email" className="block text-xs font-bold text-slate-300">
+                <label htmlFor="paypal-customer-email" className="block text-xs font-bold text-slate-300 flex items-center justify-between">
                   <span>{isEn ? 'Email address (Where you will receive the product key)' : 'Correo Electrónico (donde recibirás la clave y descarga)'} *</span>
+                  {emailError && (
+                    <span className="text-[11px] text-red-400 font-bold flex items-center gap-1">
+                      ⚠️ {isEn ? 'Email required' : 'Correo requerido'}
+                    </span>
+                  )}
                 </label>
                 <div className="relative">
                   <input
+                    ref={emailInputRef}
                     id="paypal-customer-email"
                     type="email"
                     value={customerEmail}
                     onChange={e => handleEmailChange(e.target.value)}
+                    onBlur={() => {
+                      setEmailTouched(true);
+                      if (!customerEmail.trim() || !customerEmail.includes('@') || !customerEmail.includes('.')) {
+                        setEmailError(
+                          isEn
+                            ? 'Please enter a valid email address so we can send your digital key.'
+                            : 'Por favor ingresa un correo electrónico válido para enviarte tu clave.'
+                        );
+                      } else {
+                        setEmailError(null);
+                        registerOrderBeforePayment();
+                      }
+                    }}
                     placeholder="ej: tuemail@gmail.com"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-medium"
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-lg text-sm border ${
+                      emailError
+                        ? 'border-red-500 bg-red-950/20 text-white placeholder-red-300 focus:ring-1 focus:ring-red-500'
+                        : 'border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                    } focus:outline-none font-medium transition-colors`}
                   />
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
+                  <Mail className={`w-4 h-4 absolute left-3.5 top-3 pointer-events-none ${emailError ? 'text-red-400' : 'text-slate-400'}`} />
                 </div>
-                <p className="text-[11px] text-slate-400">
-                  {isEn
-                    ? 'Your official activation key, direct Microsoft installer and support guide will be sent here.'
-                    : 'A este correo te llegará tu clave digital original, enlaces de descarga oficiales y guía de instalación paso a paso.'}
-                </p>
+
+                {emailError ? (
+                  <p className="text-[11px] text-red-400 font-medium">
+                    {emailError}
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-slate-400">
+                    {isEn
+                      ? 'Your official activation key, direct Microsoft installer and support guide will be sent here.'
+                      : 'A este correo te llegará tu clave digital original, enlaces de descarga oficiales y guía de instalación paso a paso.'}
+                  </p>
+                )}
+
+                {registeredOrderId && (
+                  <div className="mt-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 rounded-lg flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>
+                      {isEn
+                        ? `Delivery email registered. Your product keys and setup guide will arrive at ${customerEmail}`
+                        : `Datos registrados. Tu licencia digital y guía de instalación llegarán a ${customerEmail}`}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
@@ -597,6 +757,24 @@ export const PayPalCheckoutPage: React.FC = () => {
                   id="paypal-container-9W56EUJ67HRS4"
                   className="w-full text-slate-900"
                 />
+              </div>
+
+              {/* Direct WhatsApp Button to Notify Seller */}
+              <div className="mt-4 pt-3 text-center">
+                <a
+                  href={`https://wa.me/51983204384?text=Hola%20UpClic,%20acabo%20de%20realizar%20mi%20pago%20por%20PayPal%20para%20mi%20licencia.%20Mi%20correo%20es:%20${encodeURIComponent(customerEmail || '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98] cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 text-white shrink-0" />
+                  <span>{isEn ? 'Notify seller on WhatsApp (I already paid)' : 'Notificar al vendedor por WhatsApp que ya pagué'}</span>
+                </a>
+                <p className="text-[11px] text-slate-400 mt-1.5">
+                  {isEn
+                    ? 'Click here after completing payment on PayPal to speed up immediate delivery.'
+                    : 'Haz clic aquí después de pagar en PayPal para coordinar la entrega inmediata.'}
+                </p>
               </div>
 
               {/* Guarantees & Features */}

@@ -18,6 +18,7 @@ export interface OrderEmailPayload {
   customerName?: string | null;
   customerPhone?: string | null;
   total: number;
+  usdTotal?: number;
   items: OrderItemPayload[];
   channel: "mercado_pago" | "paypal" | "whatsapp" | "email_registration";
   status: string;
@@ -286,9 +287,19 @@ export async function diagnoseEmailStrategies(): Promise<Record<string, { ok: bo
 
 // Generate styled HTML receipt for customer (Deliverability & anti-spam optimized)
 function generateCustomerEmailHtml(order: OrderEmailPayload): string {
+  const isPayPal = order.channel === "paypal";
+  const penRate = 3.75;
+  const usdTotal = order.usdTotal || Number((order.total / penRate).toFixed(2));
+
   const itemsHtml = order.items
     .map(
-      (item) => `
+      (item) => {
+        const itemUnitPrice = isPayPal ? Number((item.unitPrice / penRate).toFixed(2)) : item.unitPrice;
+        const itemSubtotal = isPayPal
+          ? `$ ${(itemUnitPrice * item.quantity).toFixed(2)} USD`
+          : `S/ ${(item.unitPrice * item.quantity).toFixed(2)}`;
+
+        return `
       <tr style="border-bottom: 1px solid #e2e8f0;">
         <td style="padding: 10px 8px; font-size: 13px; color: #1e293b; font-weight: 600;">
           ${item.name} ${item.variantName ? `<span style="color: #64748b; font-size: 12px; font-weight: normal;">(${item.variantName})</span>` : ""}
@@ -297,23 +308,26 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
           ${item.quantity}
         </td>
         <td style="padding: 10px 8px; font-size: 13px; color: #0f172a; text-align: right; font-weight: 700;">
-          S/ ${(item.unitPrice * item.quantity).toFixed(2)}
+          ${itemSubtotal}
         </td>
-      </tr>`
+      </tr>`;
+      }
     )
     .join("");
 
   const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
+  const formattedTotal = isPayPal ? `$ ${usdTotal.toFixed(2)} USD` : `S/ ${order.total.toFixed(2)}`;
+  const waPaymentUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20acabo%20de%20realizar%20mi%20pago%20por%20PayPal%20para%20mi%20licencia.%20Mi%20correo%20es:%20${encodeURIComponent(order.customerEmail)}`;
 
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${isPaid ? 'Comprobante de compra UpClic Store' : 'Detalles de pedido UpClic Store'}</title>
+  <title>${isPaid ? 'Comprobante de compra UpClic Store' : 'Detalles de compra UpClic Store'}</title>
 </head>
 <body style="margin: 0; padding: 24px 12px; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.6;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 4px solid ${isPaid ? '#059669' : '#0066FF'}; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 4px solid ${isPayPal ? '#0070ba' : (isPaid ? '#059669' : '#0066FF')}; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
     <!-- Top Header -->
     <tr>
       <td style="padding: 24px 24px 16px; text-align: left; border-bottom: 1px solid #f1f5f9;">
@@ -324,8 +338,8 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
               <span style="display: block; font-size: 12px; color: #64748b; margin-top: 2px;">Software y Licencias Digitales</span>
             </td>
             <td style="text-align: right;">
-              <span style="display: inline-block; padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; ${isPaid ? 'background-color: #d1fae5; color: #065f46;' : 'background-color: #fef3c7; color: #92400e;'}">
-                ${isPaid ? 'Pago aprobado' : 'Pendiente de pago'}
+              <span style="display: inline-block; padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 6px; ${isPayPal ? 'background-color: #e0f2fe; color: #0369a1;' : (isPaid ? 'background-color: #d1fae5; color: #065f46;' : 'background-color: #fef3c7; color: #92400e;')}">
+                ${isPayPal ? 'PayPal (USD)' : (isPaid ? 'Pago aprobado' : 'Pendiente de pago')}
               </span>
             </td>
           </tr>
@@ -341,32 +355,36 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
         </p>
         <p style="font-size: 14px; margin: 0 0 20px; color: #475569; line-height: 1.5;">
           ${
-            isPaid
-              ? 'Te confirmamos que hemos recibido tu pago a través de Mercado Pago. A continuación encuentras los detalles de tu compra:'
-              : 'Hemos registrado tu pedido en UpClic Store. Puedes concluir tu pago con Mercado Pago para recibir tus licencias:'
+            isPayPal
+              ? 'Hemos registrado tu solicitud de compra a través de la pasarela internacional de <strong>PayPal</strong>. A continuación encuentras los detalles de tu pedido:'
+              : (isPaid
+                  ? 'Te confirmamos que hemos recibido tu pago a través de Mercado Pago. A continuación encuentras los detalles de tu compra:'
+                  : 'Hemos registrado tu pedido en UpClic Store. Puedes concluir tu pago con Mercado Pago para recibir tus licencias:')
           }
         </p>
 
         <!-- Order Metadata Box -->
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; margin-bottom: 22px;">
           <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size: 13px;">
+            ${!isPayPal ? `
             <tr>
               <td style="color: #64748b; padding-bottom: 6px;">Número de pedido:</td>
               <td style="color: #0f172a; font-weight: 700; text-align: right; padding-bottom: 6px; font-family: monospace;">${order.orderId}</td>
-            </tr>
-            ${order.paymentId ? `
-            <tr>
-              <td style="color: #64748b; padding-bottom: 6px;">Transacción ${order.channel === 'paypal' ? 'PayPal' : 'Mercado Pago'}:</td>
-              <td style="color: #0f172a; font-weight: 600; text-align: right; padding-bottom: 6px; font-family: monospace;">#${order.paymentId}</td>
             </tr>` : ''}
             <tr>
               <td style="color: #64748b; padding-bottom: 6px;">Correo de entrega:</td>
               <td style="color: #0f172a; font-weight: 600; text-align: right; padding-bottom: 6px;">${order.customerEmail}</td>
             </tr>
             <tr>
+              <td style="color: #64748b; padding-bottom: 6px;">Método de pago:</td>
+              <td style="color: #0f172a; font-weight: 600; text-align: right; padding-bottom: 6px;">
+                ${isPayPal ? 'PayPal ($ USD)' : 'Mercado Pago'}
+              </td>
+            </tr>
+            <tr>
               <td style="color: #64748b;">Estado:</td>
-              <td style="color: ${isPaid ? '#059669' : '#d97706'}; font-weight: 700; text-align: right;">
-                ${isPaid ? 'Pagado' : 'Pendiente'}
+              <td style="color: ${isPaid ? '#059669' : '#0369a1'}; font-weight: 700; text-align: right;">
+                ${isPaid ? 'Pagado' : (isPayPal ? 'Registrado para entrega' : 'Pendiente')}
               </td>
             </tr>
           </table>
@@ -395,20 +413,17 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             order.discountAmount && order.discountAmount > 0
               ? `<tr>
                   <td style="padding: 8px 14px; font-size: 13px; color: #16a34a; font-weight: 600;">Descuento aplicado:</td>
-                  <td style="padding: 8px 14px; font-size: 13px; color: #16a34a; font-weight: 700; text-align: right;">- S/ ${order.discountAmount.toFixed(2)}</td>
+                  <td style="padding: 8px 14px; font-size: 13px; color: #16a34a; font-weight: 700; text-align: right;">- ${isPayPal ? `$ ${(order.discountAmount / penRate).toFixed(2)} USD` : `S/ ${order.discountAmount.toFixed(2)}`}</td>
                 </tr>`
               : ''
           }
           <tr>
             <td style="padding: 12px 14px; font-size: 14px; color: #0f172a; font-weight: 700; border-top: 1px solid #e2e8f0;">${isPaid ? 'Total pagado:' : 'Total a pagar:'}</td>
-            <td style="padding: 12px 14px; font-size: 16px; color: ${isPaid ? '#059669' : '#0066FF'}; font-weight: 800; text-align: right; border-top: 1px solid #e2e8f0;">S/ ${order.total.toFixed(2)}</td>
+            <td style="padding: 12px 14px; font-size: 16px; color: ${isPayPal ? '#0070ba' : (isPaid ? '#059669' : '#0066FF')}; font-weight: 800; text-align: right; border-top: 1px solid #e2e8f0;">${formattedTotal}</td>
           </tr>
         </table>
 
-        ${
-          isPaid
-            ? `
-        <!-- Delivery Notice 10-30 min for Paid Order -->
+        <!-- Delivery Notice 10-30 min -->
         <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
           <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #166534;">
             Entrega de tu licencia digital:
@@ -418,12 +433,24 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.
           </p>
         </div>
-        `
-            : `
-        <!-- Pending Payment Link Button -->
+
         ${
-          order.paymentUrl
+          isPayPal
             ? `
+        <!-- Direct WhatsApp button for PayPal Buyer -->
+        <div style="text-align: center; margin: 24px 0 16px;">
+          <a href="${waPaymentUrl}" 
+             style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 800; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
+            💬 Notificar al vendedor por WhatsApp que ya pagué
+          </a>
+          <p style="margin: 8px 0 0; font-size: 12px; color: #64748b;">
+            Haz clic en el botón verde para avisar al vendedor por WhatsApp y agilizar la entrega inmediata.
+          </p>
+        </div>
+        `
+            : (
+              !isPaid && order.paymentUrl
+                ? `
         <div style="text-align: center; margin: 22px 0 16px;">
           <a href="${order.paymentUrl}" 
              style="display: inline-block; background-color: #009EE3; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 14px;">
@@ -431,16 +458,7 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
           </a>
         </div>
         `
-            : ''
-        }
-        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 18px; text-align: center;">
-          <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.4;">
-            Si necesitas pagar con Yape o transferencia bancaria, puedes contactar a nuestro equipo de soporte.
-          </p>
-        </div>
-        `
-        }
-
+                : `
         <!-- Support CTA Button -->
         <div style="text-align: center; margin: 16px 0 8px;">
           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20mi%20pedido%20es%20${encodeURIComponent(order.orderId)}" 
@@ -448,6 +466,9 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             Contactar soporte
           </a>
         </div>
+        `
+            )
+        }
       </td>
     </tr>
 
@@ -455,7 +476,7 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
     <tr>
       <td style="padding: 16px 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b; line-height: 1.5;">
         UpClic Store • Lima, Perú • Atención: ${WHATSAPP_DISPLAY}<br/>
-        Este mensaje es un comprobante de tu pedido en upclic.store.
+        Este mensaje es un comprobante de tu compra en upclic.store.
       </td>
     </tr>
   </table>
@@ -466,10 +487,47 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
 // Generate plain-text fallback (clean, no all-caps spam patterns)
 function generateCustomerEmailText(order: OrderEmailPayload): string {
   const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
+  const isPayPal = order.channel === "paypal";
+  const penRate = 3.75;
+  const usdTotal = order.usdTotal || Number((order.total / penRate).toFixed(2));
 
   const itemsText = order.items
-    .map((item) => `- ${item.name}${item.variantName ? ` (${item.variantName})` : ''} x${item.quantity} : S/ ${(item.unitPrice * item.quantity).toFixed(2)}`)
+    .map((item) => {
+      const price = isPayPal ? `$ ${(item.unitPrice / penRate).toFixed(2)} USD` : `S/ ${(item.unitPrice * item.quantity).toFixed(2)}`;
+      return `- ${item.name}${item.variantName ? ` (${item.variantName})` : ''} x${item.quantity} : ${price}`;
+    })
     .join('\n');
+
+  const formattedTotal = isPayPal ? `$ ${usdTotal.toFixed(2)} USD` : `S/ ${order.total.toFixed(2)}`;
+  const waPaymentUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20acabo%20de%20realizar%20mi%20pago%20por%20PayPal%20para%20mi%20licencia.%20Mi%20correo%20es:%20${encodeURIComponent(order.customerEmail)}`;
+
+  if (isPayPal) {
+    return `Hola${order.customerName ? ` ${order.customerName}` : ''},
+
+Hemos registrado tu compra por PayPal en UpClic Store.
+
+Detalles de tu compra:
+- Correo de entrega: ${order.customerEmail}
+- Método de pago: PayPal ($ USD)
+- Estado: Registrado para entrega
+- Fecha: ${new Date().toLocaleDateString('es-PE')}
+
+Productos:
+${itemsText}
+
+Total: ${formattedTotal}
+
+Entrega de tu licencia:
+Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.
+Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.
+
+Notificar al vendedor por WhatsApp que ya pagué:
+${waPaymentUrl}
+
+Atentamente,
+UpClic Store
+Lima, Perú`;
+  }
 
   if (isPaid) {
     return `Hola${order.customerName ? ` ${order.customerName}` : ''},
@@ -477,8 +535,7 @@ function generateCustomerEmailText(order: OrderEmailPayload): string {
 Confirmamos la recepción de tu pago en UpClic Store.
 
 Detalles de tu compra:
-- Número de pedido: ${order.orderId}
-${order.paymentId ? `- Transacción Mercado Pago: #${order.paymentId}\n` : ''}- Correo de entrega: ${order.customerEmail}
+- Correo de entrega: ${order.customerEmail}
 - Estado: Pagado
 - Fecha: ${new Date().toLocaleDateString('es-PE')}
 
@@ -582,14 +639,17 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
   let adminSent = false;
 
   // 1. Send confirmation email to customer
+  const isPayPal = order.channel === "paypal";
   if (order.customerEmail && order.customerEmail.includes("@")) {
     const custResult = await sendEmailWithFallback({
       from: `"UpClic Store" <${fromEmail}>`,
       to: order.customerEmail,
       replyTo: `"UpClic Soporte" <${adminEmail}>`,
-      subject: isPaid
-        ? `Comprobante de compra UpClic Store (Pedido ${order.orderId})`
-        : `Detalles de tu pedido en UpClic Store (Pedido ${order.orderId})`,
+      subject: isPayPal
+        ? `Confirmación de compra en UpClic Store (PayPal USD)`
+        : (isPaid
+            ? `Comprobante de compra UpClic Store (Pedido ${order.orderId})`
+            : `Detalles de tu pedido en UpClic Store (Pedido ${order.orderId})`),
       text: generateCustomerEmailText(order),
       html: generateCustomerEmailHtml(order),
       headers: {
