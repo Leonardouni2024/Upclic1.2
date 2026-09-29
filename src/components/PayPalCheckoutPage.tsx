@@ -465,9 +465,6 @@ export const PayPalCheckoutPage: React.FC = () => {
                   <ShoppingBag className="w-4 h-4 text-blue-400" />
                   {isEn ? 'Order Items' : 'Detalle de tu Pedido'} ({totalQuantity})
                 </span>
-                <span className="text-xs text-slate-400 font-medium">
-                  Tipo de cambio ref: 1 USD ≈ S/ {penRate.toFixed(2)} PEN
-                </span>
               </h3>
 
               <div className="divide-y divide-slate-700/60 max-h-72 overflow-y-auto pr-1">
@@ -574,28 +571,6 @@ export const PayPalCheckoutPage: React.FC = () => {
 
               {/* White High-Contrast Card for PayPal Hosted Button */}
               <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200 min-h-[160px] flex flex-col items-center justify-center">
-                {/* Price Bar & Quick Refresh Button */}
-                <div className="w-full flex items-center justify-between bg-blue-50/80 border border-blue-100 rounded-xl px-3.5 py-2 mb-4">
-                  <div className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold truncate">
-                    <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                    <span className="truncate">
-                      {isEn ? 'Amount to pay:' : 'Monto:'}{' '}
-                      <strong className="text-blue-700 font-black">${totalUSD} USD</strong>
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => forceFreshRenderButtonRef.current?.()}
-                    disabled={isRefreshing}
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-white hover:bg-blue-100/60 border border-blue-200 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-xs shrink-0"
-                    title={isEn ? 'Sync PayPal price' : 'Sincronizar precio de PayPal'}
-                  >
-                    <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
-                    <span>{isRefreshing ? (isEn ? 'Syncing...' : 'Actualizando...') : (isEn ? 'Sync price' : 'Sincronizar')}</span>
-                  </button>
-                </div>
-
                 {isScriptLoading && (
                   <div className="flex flex-col items-center justify-center gap-3 py-6 text-slate-600">
                     <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />

@@ -193,17 +193,6 @@ export const CheckoutPage: React.FC = () => {
     return null;
   })();
 
-  // Auto-restore items from last order if cart was empty when returning
-  useEffect(() => {
-    if (items.length === 0 && lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0 && !paymentResult?.isSuccess) {
-      lastOrderSnapshot.items.forEach((it: any) => {
-        if (it.product) {
-          addItem(it.product, it.quantity || 1, it.selectedVariant);
-        }
-      });
-    }
-  }, [items.length, lastOrderSnapshot, paymentResult?.isSuccess, addItem]);
-
   const paidOrderItems = (lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0)
     ? lastOrderSnapshot.items
     : items;

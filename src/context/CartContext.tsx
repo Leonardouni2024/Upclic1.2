@@ -97,21 +97,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return parsed;
         }
       }
-      // If cart key is empty, check if there are saved items in upclic_last_order (e.g. user returned from Mercado Pago)
-      const lastOrder = localStorage.getItem('upclic_last_order');
-      if (lastOrder) {
-        const parsedOrder = JSON.parse(lastOrder);
-        if (Array.isArray(parsedOrder.items) && parsedOrder.items.length > 0) {
-          return parsedOrder.items.map((it: any) => ({
-            id: it.id || (it.product?.id ? `${it.product.id}${it.variantName ? `-${it.variantName}` : ''}` : Math.random().toString(36)),
-            product: it.product,
-            quantity: Math.max(1, Number(it.quantity) || 1),
-            selectedVariant: it.selectedVariant,
-            variantName: it.variantName,
-            unitPrice: Number(it.unitPrice ?? it.product?.price) || 0,
-          }));
-        }
-      }
     } catch (e) {
       console.error('Error loading cart from localStorage', e);
     }
@@ -726,6 +711,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => {
     setItems([]);
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      localStorage.removeItem('upclic_last_order');
+    } catch {}
   };
 
   useEffect(() => {
