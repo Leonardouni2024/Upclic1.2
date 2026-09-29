@@ -1,0 +1,569 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { useCart } from '../context/CartContext.tsx';
+import { formatPrice } from '../products.ts';
+import {
+  ShieldCheck,
+  CheckCircle2,
+  ArrowLeft,
+  ShoppingBag,
+  Clock,
+  Mail,
+  User,
+  Phone,
+  Loader2
+} from 'lucide-react';
+
+export const PayPalCheckoutPage: React.FC = () => {
+  const {
+    items,
+    totalQuantity,
+    subtotal,
+    hasDiscount,
+    discountRate,
+    discountAmount,
+    total,
+    isMultiItemDiscount,
+    navigateToCheckout,
+    language,
+    getProductName
+  } = useCart();
+
+  const isEn = language === 'EN';
+
+  // Exchange rate calculation to USD
+  const penRate = 3.75;
+  const totalUSD = (total / penRate).toFixed(2);
+  const subtotalUSD = (subtotal / penRate).toFixed(2);
+  const discountAmountUSD = (discountAmount / penRate).toFixed(2);
+
+  // Dynamic product title summary based on cart items
+  const productTitleSummary = items.length === 1
+    ? `${getProductName(items[0].product)}${items[0].selectedVariant ? ` (${items[0].selectedVariant.name})` : ''}`
+    : (items.length > 1
+        ? items.map(it => `${it.quantity > 1 ? `${it.quantity}x ` : ''}${getProductName(it.product)}`).join(' + ')
+        : 'Licencia Digital UpClic');
+
+  // Customer contact state for digital delivery
+  const [customerEmail, setCustomerEmail] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      return localStorage.getItem('upclic_customer_email') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const [customerName, setCustomerName] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      return localStorage.getItem('upclic_customer_name') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const [customerPhone, setCustomerPhone] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      return localStorage.getItem('upclic_customer_phone') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const [isScriptLoading, setIsScriptLoading] = useState(true);
+  const [scriptError, setScriptError] = useState<string | null>(null);
+  const hasRenderedRef = useRef(false);
+
+  const handleEmailChange = (val: string) => {
+    setCustomerEmail(val);
+    try {
+      localStorage.setItem('upclic_customer_email', val);
+    } catch {}
+  };
+
+  const handleNameChange = (val: string) => {
+    setCustomerName(val);
+    try {
+      localStorage.setItem('upclic_customer_name', val);
+    } catch {}
+  };
+
+  const handlePhoneChange = (val: string) => {
+    setCustomerPhone(val);
+    try {
+      localStorage.setItem('upclic_customer_phone', val);
+    } catch {}
+  };
+
+  // Initialization and automatic text & amount auto-population
+  useEffect(() => {
+    let isMounted = true;
+    let pollInterval: NodeJS.Timeout | null = null;
+    let observer: MutationObserver | null = null;
+    let attempts = 0;
+    const maxAttempts = 50;
+
+    const fixProductTitleAndFillAmount = () => {
+      const container = document.getElementById('paypal-container-9W56EUJ67HRS4');
+      if (!container) return;
+
+      // 1. Replace default hosted text with the selected product name
+      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+      let node: Node | null;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue && (/pavor/i.test(node.nodeValue) || /pago por servicio/i.test(node.nodeValue) || /servicio upclic/i.test(node.nodeValue) || /pago paypal/i.test(node.nodeValue))) {
+          node.nodeValue = productTitleSummary;
+        }
+      }
+
+      // Also check direct text containers
+      const allTextElements = container.querySelectorAll('p, div, span, label, font');
+      allTextElements.forEach(el => {
+        if (el.children.length === 0 && el.textContent && (/pavor/i.test(el.textContent) || /servicio upclic/i.test(el.textContent) || /pago paypal/i.test(el.textContent))) {
+          el.textContent = productTitleSummary;
+        }
+      });
+
+      // 2. Set price in USD automatically into the amount input
+      const input = container.querySelector('input[type="text"], input[type="number"]') as HTMLInputElement | null;
+      if (input && input.value !== totalUSD) {
+        const nativeSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          'value'
+        )?.set;
+        if (nativeSetter) {
+          nativeSetter.call(input, totalUSD);
+        } else {
+          input.value = totalUSD;
+        }
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    };
+
+    const tryRenderButton = () => {
+      if (!isMounted || hasRenderedRef.current) return;
+      const targetEl = document.getElementById('paypal-container-9W56EUJ67HRS4');
+      
+      if (targetEl && (window as any).paypal?.HostedButtons) {
+        try {
+          targetEl.innerHTML = '';
+          (window as any).paypal.HostedButtons({
+            hostedButtonId: "9W56EUJ67HRS4",
+          }).render("#paypal-container-9W56EUJ67HRS4");
+          
+          hasRenderedRef.current = true;
+          if (isMounted) {
+            setIsScriptLoading(false);
+            setScriptError(null);
+          }
+          if (pollInterval) clearInterval(pollInterval);
+
+          // Observe changes inside container to update title to "Pago PayPal" and fill amount
+          observer = new MutationObserver(() => {
+            fixProductTitleAndFillAmount();
+          });
+          observer.observe(targetEl, { childList: true, subtree: true, characterData: true });
+
+          // Run progressively after rendering
+          setTimeout(fixProductTitleAndFillAmount, 100);
+          setTimeout(fixProductTitleAndFillAmount, 300);
+          setTimeout(fixProductTitleAndFillAmount, 700);
+          setTimeout(fixProductTitleAndFillAmount, 1500);
+        } catch (err: any) {
+          console.error('Error rendering PayPal button:', err);
+          if (isMounted) {
+            setIsScriptLoading(false);
+            setScriptError('Hubo un error al inicializar el botón de PayPal.');
+          }
+          if (pollInterval) clearInterval(pollInterval);
+        }
+      }
+    };
+
+    const scriptSrc = 'https://www.paypal.com/sdk/js?client-id=BAAGKblPRgZljGBu-t-j6EMM8p9xxfAXtlhAujiETAiUqep6rE0mxDoHMSv7vPkQUahF1LJMJMdGP8vuBA&components=hosted-buttons&disable-funding=venmo&currency=USD';
+    let scriptTag = document.querySelector(`script[src*="hosted-buttons"]`) as HTMLScriptElement | null;
+
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.src = scriptSrc;
+      scriptTag.async = true;
+      scriptTag.onload = () => {
+        tryRenderButton();
+      };
+      scriptTag.onerror = () => {
+        if (isMounted) {
+          setIsScriptLoading(false);
+          setScriptError('No se pudo conectar con el servidor de PayPal.');
+        }
+      };
+      document.body.appendChild(scriptTag);
+    } else {
+      scriptTag.addEventListener('load', tryRenderButton);
+    }
+
+    tryRenderButton();
+
+    pollInterval = setInterval(() => {
+      attempts++;
+      if (hasRenderedRef.current || attempts > maxAttempts) {
+        if (pollInterval) clearInterval(pollInterval);
+        if (attempts > maxAttempts && !hasRenderedRef.current && isMounted) {
+          setIsScriptLoading(false);
+          setScriptError('El botón de PayPal tardó en responder. Por favor haz clic en recargar.');
+        }
+        return;
+      }
+      tryRenderButton();
+    }, 200);
+
+    return () => {
+      isMounted = false;
+      if (pollInterval) clearInterval(pollInterval);
+      if (observer) observer.disconnect();
+    };
+  }, [totalUSD, productTitleSummary]);
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] py-8 sm:py-12 text-slate-200">
+      {/* Clean scoped styles for PayPal container layout */}
+      <style>{`
+        #paypal-container-9W56EUJ67HRS4 {
+          width: 100% !important;
+          max-width: 360px !important;
+          margin: 0 auto !important;
+          min-height: 120px !important;
+        }
+        #paypal-container-9W56EUJ67HRS4 * {
+          box-sizing: border-box !important;
+        }
+        #paypal-container-9W56EUJ67HRS4 p,
+        #paypal-container-9W56EUJ67HRS4 div[style*="text-align"] {
+          font-weight: 800 !important;
+          font-size: 15px !important;
+          color: #0f172a !important;
+          text-align: center !important;
+          margin-bottom: 6px !important;
+        }
+        #paypal-container-9W56EUJ67HRS4 form {
+          width: 100% !important;
+          margin: 0 auto !important;
+        }
+      `}</style>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Navigation Breadcrumb */}
+        <div className="mb-6 flex items-center justify-between">
+          <button
+            onClick={navigateToCheckout}
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors cursor-pointer bg-slate-800/80 hover:bg-slate-700/80 px-3.5 py-2 rounded-lg border border-slate-700"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{isEn ? 'Back to Payment Options' : 'Volver a Opciones de Pago'}</span>
+          </button>
+
+          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>{isEn ? 'Official PayPal Gateway' : 'Pasarela Oficial de PayPal'}</span>
+          </div>
+        </div>
+
+        {/* Top Header Banner */}
+        <div className="bg-[#1e293b] rounded-2xl border border-slate-700/80 p-5 sm:p-7 mb-8 shadow-xl relative overflow-hidden">
+          <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md p-2 shrink-0 border border-slate-300">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                  alt="PayPal"
+                  className="h-6 w-auto object-contain"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                    {isEn ? 'International Payment' : 'Pago Internacional'}
+                  </span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    USD ($)
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black text-white mt-1">
+                  {isEn ? 'PayPal Checkout (US Dollars)' : 'Pagar con PayPal (Dólares USD)'}
+                </h1>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {isEn
+                    ? 'Official encrypted checkout in US Dollars ($ USD)'
+                    : 'Pasarela oficial de cobro en Dólares Estadounidenses ($ USD)'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Grid: Left Order Breakdown & Email / Right PayPal Buttons */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column (7 cols): Products breakdown + Delivery Information */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Delivery Contact Information */}
+            <div className="bg-[#1e293b] rounded-xl border border-slate-700 p-5 sm:p-6 text-white space-y-4 shadow-md">
+              <h3 className="text-sm font-bold text-white flex items-center justify-between border-b border-slate-700 pb-3">
+                <span className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-blue-400" />
+                  {isEn ? 'License Delivery Information' : 'Datos para el Envío de tu Licencia'}
+                </span>
+                <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" />
+                  {isEn ? 'Delivery in 10-30 min' : 'Entrega en 10-30 min'}
+                </span>
+              </h3>
+
+              <div className="space-y-1.5">
+                <label htmlFor="paypal-customer-email" className="block text-xs font-bold text-slate-300">
+                  <span>{isEn ? 'Email address (Where you will receive the product key)' : 'Correo Electrónico (donde recibirás la clave y descarga)'} *</span>
+                </label>
+                <div className="relative">
+                  <input
+                    id="paypal-customer-email"
+                    type="email"
+                    value={customerEmail}
+                    onChange={e => handleEmailChange(e.target.value)}
+                    placeholder="ej: tuemail@gmail.com"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-medium"
+                  />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  {isEn
+                    ? 'Your official activation key, direct Microsoft installer and support guide will be sent here.'
+                    : 'A este correo te llegará tu clave digital original, enlaces de descarga oficiales y guía de instalación paso a paso.'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                <div className="space-y-1.5">
+                  <label htmlFor="paypal-customer-name" className="block text-xs font-bold text-slate-300 flex items-center gap-1">
+                    <User className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{isEn ? 'Customer Name (optional)' : 'Nombre (opcional)'}</span>
+                  </label>
+                  <input
+                    id="paypal-customer-name"
+                    type="text"
+                    value={customerName}
+                    onChange={e => handleNameChange(e.target.value)}
+                    placeholder={isEn ? 'e.g. John Doe' : 'ej: Roberto M.'}
+                    className="w-full px-3.5 py-2 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="paypal-customer-phone" className="block text-xs font-bold text-slate-300 flex items-center gap-1">
+                    <Phone className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{isEn ? 'WhatsApp / Phone (optional)' : 'WhatsApp / Teléfono (opcional)'}</span>
+                  </label>
+                  <input
+                    id="paypal-customer-phone"
+                    type="tel"
+                    value={customerPhone}
+                    onChange={e => handlePhoneChange(e.target.value)}
+                    placeholder="+51 987 654 321"
+                    className="w-full px-3.5 py-2 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Cart Items Summary */}
+            <div className="bg-[#1e293b] rounded-xl border border-slate-700 p-5 sm:p-6 text-white space-y-4 shadow-md">
+              <h3 className="text-sm font-bold text-white flex items-center justify-between border-b border-slate-700 pb-3">
+                <span className="flex items-center gap-2">
+                  <ShoppingBag className="w-4 h-4 text-blue-400" />
+                  {isEn ? 'Order Items' : 'Detalle de tu Pedido'} ({totalQuantity})
+                </span>
+                <span className="text-xs text-slate-400 font-medium">
+                  Tipo de cambio ref: 1 USD ≈ S/ {penRate.toFixed(2)} PEN
+                </span>
+              </h3>
+
+              <div className="divide-y divide-slate-700/60 max-h-72 overflow-y-auto pr-1">
+                {items.map((item, idx) => {
+                  const itemUnitPrice = Number(item.unitPrice ?? item.product?.price) || 0;
+                  const itemTotalPEN = itemUnitPrice * item.quantity;
+                  const itemTotalUSD = (itemTotalPEN / penRate).toFixed(2);
+
+                  return (
+                    <div key={idx} className="py-3 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-12 h-12 rounded-lg bg-[#0f172a] p-1.5 border border-slate-700 shrink-0 flex items-center justify-center shadow-md">
+                          <img
+                            src={item.product?.imageUrl || item.product?.fallbackImage}
+                            alt={getProductName(item.product)}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              if (item.product?.fallbackImage && e.currentTarget.src !== item.product.fallbackImage) {
+                                e.currentTarget.src = item.product.fallbackImage;
+                              }
+                            }}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="font-bold text-white truncate text-xs">
+                            {getProductName(item.product)}
+                          </h4>
+                          {item.selectedVariant && (
+                            <p className="text-[11px] text-blue-300 truncate">
+                              {item.selectedVariant.name}
+                            </p>
+                          )}
+                          <p className="text-[11px] text-slate-400">
+                            {isEn ? 'Qty:' : 'Cant:'} {item.quantity} × {formatPrice(itemUnitPrice)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <div className="font-bold text-emerald-400 tabular-nums text-sm">
+                          ${itemTotalUSD} USD
+                        </div>
+                        <div className="text-[10px] text-slate-400 tabular-nums">
+                          ({formatPrice(itemTotalPEN)})
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pricing Breakdown in USD */}
+              <div className="pt-3 border-t border-slate-700 space-y-2 text-xs text-slate-300">
+                <div className="flex justify-between items-center">
+                  <span>{isEn ? 'Subtotal:' : 'Subtotal:'}</span>
+                  <span className="font-bold text-white tabular-nums">${subtotalUSD} USD</span>
+                </div>
+
+                {hasDiscount && (
+                  <div className="flex justify-between items-center text-emerald-400 font-semibold">
+                    <span>
+                      {isMultiItemDiscount
+                        ? (isEn ? '10% Multi-product Discount:' : 'Descuento 10% por 2+ productos:')
+                        : (isEn ? `Discount ${Math.round(discountRate * 100)}%:` : `Descuento ${Math.round(discountRate * 100)}%:`)}
+                    </span>
+                    <span className="font-bold tabular-nums">-${discountAmountUSD} USD</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-baseline text-sm sm:text-base font-black text-white pt-2.5 border-t border-slate-700">
+                  <span>{isEn ? 'Total in US Dollars ($ USD):' : 'Total a pagar en Dólares ($ USD):'}</span>
+                  <div className="text-right">
+                    <span className="text-emerald-400 text-xl sm:text-2xl font-black tabular-nums">
+                      ${totalUSD} USD
+                    </span>
+                    <div className="text-[10px] text-slate-400 font-normal">
+                      ({formatPrice(total)})
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (5 cols): Official PayPal Hosted Button Container */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-xl p-6 sm:p-7 sticky top-24 text-white">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-5">
+                <div>
+                  <h3 className="font-bold text-white text-sm">
+                    {isEn ? 'PayPal Payment' : 'Pago PayPal'}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    {isEn ? 'Instant & secure gateway' : 'Pasarela instantánea y segura'}
+                  </p>
+                </div>
+
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                  Seguro SSL
+                </span>
+              </div>
+
+              {/* White High-Contrast Card for PayPal Hosted Button */}
+              <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200 min-h-[160px] flex flex-col items-center justify-center">
+                {isScriptLoading && (
+                  <div className="flex flex-col items-center justify-center gap-3 py-6 text-slate-600">
+                    <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                    <span className="text-xs font-bold text-slate-700">
+                      {isEn ? 'Loading PayPal buttons...' : 'Cargando botones de PayPal...'}
+                    </span>
+                  </div>
+                )}
+
+                {scriptError && (
+                  <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 text-center w-full">
+                    <p className="font-bold mb-1">{scriptError}</p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="mt-2 text-[11px] font-bold underline text-blue-600 hover:text-blue-800"
+                    >
+                      {isEn ? 'Reload' : 'Recargar'}
+                    </button>
+                  </div>
+                )}
+
+                {/* The Official Hosted PayPal Container */}
+                <div
+                  id="paypal-container-9W56EUJ67HRS4"
+                  className="w-full text-slate-900"
+                />
+              </div>
+
+              {/* Guarantees & Features */}
+              <div className="mt-6 pt-4 border-t border-slate-700 text-xs text-slate-300 space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="text-[11px] leading-relaxed">
+                    {isEn
+                      ? 'PayPal Buyer Protection: transaction is encrypted and guaranteed.'
+                      : 'Protección al Comprador de PayPal: tu compra está 100% garantizada.'}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span className="text-[11px] leading-relaxed">
+                    {isEn
+                      ? 'Direct digital delivery to your email in 10 to 30 minutes.'
+                      : 'Entrega digital garantizada a tu correo en 10 a 30 minutos.'}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                  <span className="text-[11px] leading-relaxed">
+                    {isEn
+                      ? 'Includes installation guide and technical support.'
+                      : 'Incluye instalador original y soporte técnico especializado.'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Alternative gateway link */}
+              <div className="mt-6 pt-4 border-t border-slate-700 text-center">
+                <button
+                  onClick={navigateToCheckout}
+                  className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1.5 font-medium"
+                >
+                  <span>{isEn ? 'Prefer local currency (PEN, COP, MXN)?' : '¿Prefieres pagar en Soles (Yape/Plin)?'}</span>
+                  <span className="text-blue-400 underline font-bold">
+                    {isEn ? 'Use Mercado Pago' : 'Usar Mercado Pago'}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

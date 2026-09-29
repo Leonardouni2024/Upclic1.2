@@ -52,11 +52,17 @@ export const CheckoutPage: React.FC = () => {
     addItem,
     clearCart,
     navigateToHome,
+    navigateToPayPal,
     t,
     language,
     getProductName
  } = useCart();
 
+  const isEn = language === 'EN';
+  const penRate = 3.75;
+  const totalUSD = (total / penRate).toFixed(2);
+
+  const [selectedPaymentGateway, setSelectedPaymentGateway] = useState<'mercadopago' | 'paypal'>('mercadopago');
   const [inputCoupon, setInputCoupon] = useState('');
 
   // Only recommend coupon if the cart meets the requirements:
@@ -989,61 +995,139 @@ export const CheckoutPage: React.FC = () => {
 
                 <div className="flex justify-between items-baseline text-base font-black text-white pt-3 border-t border-slate-700">
                   <span>{t('totalLabel')}</span>
-                  <span className="text-blue-400 text-xl sm:text-2xl font-black tabular-nums tracking-tight">
-                    {formatPrice(total)}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-blue-400 text-xl sm:text-2xl font-black tabular-nums tracking-tight">
+                      {formatPrice(total)}
+                    </span>
+                    <div className="text-[11px] text-slate-400 font-medium">
+                      ≈ ${totalUSD} USD
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-5 pt-2">
-                {/* Official Gateway Badge */}
-                <div className="mb-3 p-2.5 rounded-lg bg-white border border-slate-700 flex items-center justify-between gap-3 shadow-xs">
-                  <div className="flex items-center gap-2">
+              {/* Payment Method Selector Tabs */}
+              <div className="mt-5 pt-3 border-t border-slate-700 space-y-3">
+                <label className="block text-xs font-bold text-slate-300">
+                  {isEn ? 'Select Payment Method:' : 'Selecciona el Método de Pago:'}
+                </label>
+                
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPaymentGateway('mercadopago')}
+                    className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                      selectedPaymentGateway === 'mercadopago'
+                        ? 'bg-blue-600/20 border-blue-500 ring-2 ring-blue-500/40 text-white'
+                        : 'bg-slate-800/60 border-slate-700 hover:border-slate-600 text-slate-300'
+                    }`}
+                  >
                     <img
                       src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
                       alt="Mercado Pago"
-                      className="h-6 w-auto object-contain"
+                      className="h-5 w-auto object-contain"
                     />
-                    <span className="text-[11px] font-bold text-slate-800">Pasarela Oficial</span>
-                  </div>
-                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    100% Seguro
-                  </span>
+                    <span className="text-[11px] font-bold">Mercado Pago</span>
+                    <span className="text-[9px] text-slate-400 font-medium">Soles, Yape, Plin, Tarjeta</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => navigateToPayPal()}
+                    className="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-800/60 hover:bg-[#003087]/30 border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white"
+                  >
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                      alt="PayPal"
+                      className="h-5 w-auto object-contain"
+                    />
+                    <span className="text-[11px] font-bold">PayPal (USD)</span>
+                    <span className="text-[9px] text-amber-300 font-medium">${totalUSD} USD →</span>
+                  </button>
                 </div>
+              </div>
 
-                {emailError && (
-                  <div className="p-3 mb-4 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold">{t('requiredFieldNotice')}</p>
-                      <p className="mt-0.5 text-[11px] leading-relaxed">{emailError}</p>
+              <div className="mt-4 pt-1">
+                {selectedPaymentGateway === 'paypal' ? (
+                  /* PayPal Option Details */
+                  <div className="space-y-3">
+                    <button
+                      id="paypal-go-btn"
+                      onClick={navigateToPayPal}
+                      className="w-full py-3.5 px-4 rounded-xl bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-black text-sm sm:text-base shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
+                    >
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                        alt="PayPal"
+                        className="h-5 w-auto object-contain"
+                      />
+                      <span>{isEn ? `Pay $ ${totalUSD} USD with PayPal` : `Continuar a PayPal ($ ${totalUSD} USD)`}</span>
+                      <ExternalLink className="w-4 h-4 ml-0.5 opacity-90 text-[#003087]" />
+                    </button>
+                  </div>
+                ) : (
+                  /* Mercado Pago Option */
+                  <div>
+                    {/* Official Gateway Badge */}
+                    <div className="mb-3 p-2.5 rounded-lg bg-white border border-slate-700 flex items-center justify-between gap-3 shadow-xs">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                          alt="Mercado Pago"
+                          className="h-6 w-auto object-contain"
+                        />
+                        <span className="text-[11px] font-bold text-slate-800">Pasarela Oficial</span>
+                      </div>
+                      <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        100% Seguro
+                      </span>
+                    </div>
+
+                    {emailError && (
+                      <div className="p-3 mb-4 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold">{t('requiredFieldNotice')}</p>
+                          <p className="mt-0.5 text-[11px] leading-relaxed">{emailError}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {paymentError && (
+                      <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold">{t('paymentErrorNotice')}</p>
+                          <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
+                          <p className="mt-1 text-[10px] text-red-300 font-medium">
+                            {t('contactSupportIfPersists')}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      id="mercado-pago-pay-btn"
+                      onClick={handleMercadoPago}
+                      disabled={isCreatingPreference}
+                      className="w-full py-3.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      <CreditCard className="w-4.5 h-4.5 text-white" />
+                      <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
+                      <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
+                    </button>
+
+                    <div className="mt-2.5 text-center">
+                      <button
+                        type="button"
+                        onClick={navigateToPayPal}
+                        className="text-[11px] text-amber-300 hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <span>{isEn ? `Or pay with PayPal ($ ${totalUSD} USD) →` : `O pagar en Dólares con PayPal ($ ${totalUSD} USD) →`}</span>
+                      </button>
                     </div>
                   </div>
                 )}
-
-                {paymentError && (
-                  <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold">{t('paymentErrorNotice')}</p>
-                      <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
-                      <p className="mt-1 text-[10px] text-red-300 font-medium">
-                        {t('contactSupportIfPersists')}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  id="mercado-pago-pay-btn"
-                  onClick={handleMercadoPago}
-                  disabled={isCreatingPreference}
-                  className="w-full py-3.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  <CreditCard className="w-4.5 h-4.5 text-white" />
-                  <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
-                  <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
-                </button>
               </div>
 
               {/* Security guarantee footnote */}

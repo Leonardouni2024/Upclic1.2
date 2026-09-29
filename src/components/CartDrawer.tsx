@@ -27,6 +27,7 @@ export const CartDrawer: React.FC = () => {
     removeCoupon,
     couponFeedback,
     navigateToCheckout,
+    navigateToPayPal,
     t,
     language,
     getProductName,
@@ -336,23 +337,44 @@ export const CartDrawer: React.FC = () => {
                 </div>
               </div>
 
-              {/* Checkout Button */}
-              <button
-                id="cart-go-to-checkout-btn"
-                onClick={navigateToCheckout}
-                className="w-full py-3.5 px-4 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white font-black text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
-              >
-                <span>{t('proceedToCheckout')}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Checkout Buttons */}
+              <div className="space-y-2">
+                <button
+                  id="cart-go-to-checkout-btn"
+                  onClick={navigateToCheckout}
+                  className="w-full py-3.5 px-4 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white font-black text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
+                >
+                  <span>{t('proceedToCheckout')}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
 
-              <div className="mt-3 flex items-center justify-center">
-                <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200/80 shadow-2xs">
-                  <span className="text-[10px] font-semibold text-slate-500">{language === 'ES' ? 'Pagas con:' : 'Pay with:'}</span>
+                <button
+                  id="cart-go-to-paypal-btn"
+                  onClick={navigateToPayPal}
+                  className="w-full py-2.5 px-4 rounded-lg bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-extrabold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                    alt="PayPal"
+                    className="h-4 w-auto object-contain"
+                  />
+                  <span>{language === 'ES' ? 'Pagar con PayPal ($ USD)' : 'Pay with PayPal ($ USD)'}</span>
+                </button>
+              </div>
+
+              <div className="mt-3 flex items-center justify-center gap-2">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200/80 shadow-2xs">
+                  <span className="text-[10px] font-semibold text-slate-500">{language === 'ES' ? 'Aceptamos:' : 'Accepted:'}</span>
                   <img
                     src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
                     alt="Mercado Pago"
-                    className="h-4 w-auto object-contain"
+                    className="h-3.5 w-auto object-contain"
+                  />
+                  <span className="text-slate-300">|</span>
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                    alt="PayPal"
+                    className="h-3 w-auto object-contain"
                   />
                 </div>
               </div>

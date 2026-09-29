@@ -57,6 +57,7 @@ interface CartContextType {
   navigateToProduct: (slug: string) => void;
   navigateToHome: () => void;
   navigateToCheckout: () => void;
+  navigateToPayPal: () => void;
   currentPath: string;
   currentProductSlug?: string;
   // Region, Currency & Language System
@@ -439,6 +440,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (hash.startsWith('#/producto/')) {
         return hash.replace('#', '');
       }
+      if (hash.includes('/checkout/paypal') || hash.includes('/paypal')) {
+        return '/checkout/paypal';
+      }
       if (hash === '#/checkout' || hash === '#checkout' || hash.startsWith('#/checkout?') || hash.startsWith('#checkout?')) {
         return '/checkout';
       }
@@ -446,6 +450,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const search = window.location.search || '';
       if (search.startsWith('?/')) {
         const raw = search.slice(2).split('&')[0];
+        if (raw.includes('checkout/paypal') || raw.includes('paypal')) {
+          return '/checkout/paypal';
+        }
         if (raw.includes('producto/') || raw === 'checkout' || raw === '/checkout') {
           return raw.startsWith('/') ? raw : `/${raw}`;
         }
@@ -455,6 +462,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const prodIndex = path.indexOf('/producto/');
       if (prodIndex !== -1) {
         return path.slice(prodIndex);
+      }
+      if (path.includes('/checkout/paypal') || path.includes('/paypal')) {
+        return '/checkout/paypal';
       }
       if (path.endsWith('/checkout') || path === '/checkout' || path.includes('/checkout')) {
         return '/checkout';
@@ -784,6 +794,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const navigateToPayPal = () => {
+    setIsCartOpen(false);
+    setCurrentPath('/checkout/paypal');
+    try {
+      window.history.pushState(null, '', '/checkout/paypal');
+    } catch {
+      window.location.hash = '#/checkout/paypal';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const currentProductSlug = (() => {
     if (!currentPath.includes('/producto/')) return undefined;
     const prodIndex = currentPath.indexOf('/producto/');
@@ -829,6 +850,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigateToProduct,
         navigateToHome,
         navigateToCheckout,
+        navigateToPayPal,
         currentPath,
         currentProductSlug,
         currency,

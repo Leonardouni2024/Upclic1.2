@@ -171,30 +171,40 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
         {/* Single Unified Payment & Security Assurance Bar */}
         <div className="py-6 border-b border-[#173256] flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-            <div className="px-3.5 py-1.5 bg-white rounded-lg border border-slate-700/80 shadow-sm flex items-center justify-center shrink-0">
-              <img
-                src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                alt="Mercado Pago"
-                className="h-6 sm:h-7 w-auto object-contain"
-                loading="lazy"
-              />
+            <div className="flex items-center gap-2">
+              <div className="px-3.5 py-1.5 bg-white rounded-lg border border-slate-700/80 shadow-sm flex items-center justify-center shrink-0">
+                <img
+                  src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                  alt="Mercado Pago"
+                  className="h-6 sm:h-7 w-auto object-contain"
+                  loading="lazy"
+                />
+              </div>
+              <div className="px-3 py-1.5 bg-white rounded-lg border border-slate-700/80 shadow-sm flex items-center justify-center shrink-0">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                  alt="PayPal"
+                  className="h-5 sm:h-6 w-auto object-contain"
+                  loading="lazy"
+                />
+              </div>
             </div>
             <div>
               <p className="text-xs font-bold text-white flex items-center justify-center sm:justify-start gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>{language === 'ES' ? 'Pagos procesados y protegidos por Mercado Pago' : 'Payments processed and secured by Mercado Pago'}</span>
+                <span>{language === 'ES' ? 'Pagos procesados y protegidos por Mercado Pago y PayPal' : 'Payments processed and secured by Mercado Pago & PayPal'}</span>
               </p>
               <p className="text-[11px] text-slate-400 mt-0.5 font-normal">
-                {language === 'ES' ? 'Transacciones encriptadas SSL de 256 bits con acreditación inmediata' : '256-bit SSL encrypted transactions with instant confirmation'}
+                {language === 'ES' ? 'Transacciones internacionales encriptadas SSL de 256 bits con acreditación inmediata' : '256-bit SSL encrypted international transactions with instant confirmation'}
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-slate-400">
+            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">PayPal USD</span>
             <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Visa</span>
             <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Mastercard</span>
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">American Express</span>
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Débito</span>
+            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Yape / Plin</span>
             <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Transferencias</span>
           </div>
         </div>

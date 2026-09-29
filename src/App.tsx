@@ -11,6 +11,7 @@ import { TrustpilotReviewsSection } from './components/TrustpilotReviewsSection.
 import { ProductGrid } from './components/ProductGrid.tsx';
 import { ProductDetailPage } from './components/ProductDetailPage.tsx';
 import { CheckoutPage } from './components/CheckoutPage.tsx';
+import { PayPalCheckoutPage } from './components/PayPalCheckoutPage.tsx';
 import { CartDrawer } from './components/CartDrawer.tsx';
 import { FloatingMobileCart } from './components/FloatingMobileCart.tsx';
 import { WhatsAppButton } from './components/WhatsAppButton.tsx';
@@ -44,6 +45,10 @@ const AppContent: React.FC = () => {
           </button>
         </div>
       );
+    }
+
+    if (currentPath === '/checkout/paypal' || currentPath === '/paypal') {
+      return <PayPalCheckoutPage />;
     }
 
     if (currentPath === '/checkout') {
