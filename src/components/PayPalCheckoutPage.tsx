@@ -97,10 +97,11 @@ export const PayPalCheckoutPage: React.FC = () => {
     } catch {}
   };
 
-  // Initialization and automatic text & amount auto-population
+  // Initialization and continuous amount & product title sync
   useEffect(() => {
     let isMounted = true;
     let pollInterval: NodeJS.Timeout | null = null;
+    let continuousSyncInterval: NodeJS.Timeout | null = null;
     let observer: MutationObserver | null = null;
     let attempts = 0;
     const maxAttempts = 50;
@@ -118,29 +119,61 @@ export const PayPalCheckoutPage: React.FC = () => {
         }
       }
 
-      // Also check direct text containers
-      const allTextElements = container.querySelectorAll('p, div, span, label, font');
+      const allTextElements = container.querySelectorAll('p, div, span, label, font, h1, h2, h3, h4');
       allTextElements.forEach(el => {
         if (el.children.length === 0 && el.textContent && (/pavor/i.test(el.textContent) || /servicio upclic/i.test(el.textContent) || /pago paypal/i.test(el.textContent))) {
           el.textContent = productTitleSummary;
         }
       });
 
-      // 2. Set price in USD automatically into the amount input
-      const input = container.querySelector('input[type="text"], input[type="number"]') as HTMLInputElement | null;
-      if (input && input.value !== totalUSD) {
-        const nativeSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype,
-          'value'
-        )?.set;
-        if (nativeSetter) {
-          nativeSetter.call(input, totalUSD);
-        } else {
-          input.value = totalUSD;
+      // 2. Set price in USD automatically into all inputs inside the container
+      const allInputs = container.querySelectorAll('input, textarea, select');
+      allInputs.forEach((element) => {
+        const input = element as HTMLInputElement;
+        if (input.type === 'hidden') {
+          if (input.name === 'amount' || input.name?.includes('price') || input.name?.includes('total') || input.name === 'item_number') {
+            input.value = totalUSD;
+          }
+          if (input.name === 'item_name') {
+            input.value = productTitleSummary;
+          }
+        } else if (input.type === 'text' || input.type === 'number' || !input.type || input.tagName === 'INPUT') {
+          // Always keep amount field synced with the order total in USD
+          if (input.value !== totalUSD || input.value === '' || input.value === '0' || input.value === '0.00') {
+            const proto = window.HTMLInputElement.prototype;
+            const nativeSetter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+            if (nativeSetter) {
+              nativeSetter.call(input, totalUSD);
+            } else {
+              input.value = totalUSD;
+            }
+            input.setAttribute('value', totalUSD);
+            input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            input.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
+          }
         }
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-      }
+      });
+    };
+
+    const handleWindowFocusOrReturn = () => {
+      fixProductTitleAndFillAmount();
+      setTimeout(fixProductTitleAndFillAmount, 50);
+      setTimeout(fixProductTitleAndFillAmount, 150);
+      setTimeout(fixProductTitleAndFillAmount, 350);
+      setTimeout(fixProductTitleAndFillAmount, 700);
+      setTimeout(fixProductTitleAndFillAmount, 1200);
+    };
+
+    const attachContainerInterceptors = () => {
+      const container = document.getElementById('paypal-container-9W56EUJ67HRS4');
+      if (!container) return;
+
+      // Capture click, mousedown, touchstart before PayPal reads the input
+      container.addEventListener('click', fixProductTitleAndFillAmount, true);
+      container.addEventListener('pointerdown', fixProductTitleAndFillAmount, true);
+      container.addEventListener('touchstart', fixProductTitleAndFillAmount, true);
+      container.addEventListener('mouseenter', fixProductTitleAndFillAmount, true);
     };
 
     const tryRenderButton = () => {
@@ -161,17 +194,22 @@ export const PayPalCheckoutPage: React.FC = () => {
           }
           if (pollInterval) clearInterval(pollInterval);
 
-          // Observe changes inside container to update title to product name and fill amount
+          // Observe changes inside container
           observer = new MutationObserver(() => {
             fixProductTitleAndFillAmount();
           });
           observer.observe(targetEl, { childList: true, subtree: true, characterData: true });
 
-          // Run progressively after rendering
-          setTimeout(fixProductTitleAndFillAmount, 100);
+          attachContainerInterceptors();
+
+          // Continuous sync interval every 200ms so it never resets to 0 when returning to the tab
+          continuousSyncInterval = setInterval(fixProductTitleAndFillAmount, 200);
+
+          setTimeout(fixProductTitleAndFillAmount, 50);
+          setTimeout(fixProductTitleAndFillAmount, 150);
           setTimeout(fixProductTitleAndFillAmount, 300);
-          setTimeout(fixProductTitleAndFillAmount, 700);
-          setTimeout(fixProductTitleAndFillAmount, 1500);
+          setTimeout(fixProductTitleAndFillAmount, 600);
+          setTimeout(fixProductTitleAndFillAmount, 1200);
         } catch (err: any) {
           console.error('Error rendering PayPal button:', err);
           if (isMounted) {
@@ -217,12 +255,29 @@ export const PayPalCheckoutPage: React.FC = () => {
         return;
       }
       tryRenderButton();
-    }, 200);
+    }, 150);
+
+    // Event listeners when returning to tab/window and before user interaction
+    window.addEventListener('focus', handleWindowFocusOrReturn);
+    window.addEventListener('pageshow', handleWindowFocusOrReturn);
+    document.addEventListener('visibilitychange', handleWindowFocusOrReturn);
+    window.addEventListener('pointerdown', fixProductTitleAndFillAmount, true);
+    window.addEventListener('mousedown', fixProductTitleAndFillAmount, true);
+    window.addEventListener('touchstart', fixProductTitleAndFillAmount, true);
+    window.addEventListener('click', fixProductTitleAndFillAmount, true);
 
     return () => {
       isMounted = false;
       if (pollInterval) clearInterval(pollInterval);
+      if (continuousSyncInterval) clearInterval(continuousSyncInterval);
       if (observer) observer.disconnect();
+      window.removeEventListener('focus', handleWindowFocusOrReturn);
+      window.removeEventListener('pageshow', handleWindowFocusOrReturn);
+      document.removeEventListener('visibilitychange', handleWindowFocusOrReturn);
+      window.removeEventListener('pointerdown', fixProductTitleAndFillAmount, true);
+      window.removeEventListener('mousedown', fixProductTitleAndFillAmount, true);
+      window.removeEventListener('touchstart', fixProductTitleAndFillAmount, true);
+      window.removeEventListener('click', fixProductTitleAndFillAmount, true);
     };
   }, [totalUSD, productTitleSummary]);
 
