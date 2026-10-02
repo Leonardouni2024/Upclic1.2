@@ -31,10 +31,6 @@ export const FeaturedProductsSection: React.FC = () => {
     .map(id => products.find(p => p.id === id))
     .filter(Boolean) as Product[];
 
-  if (featuredItems.length === 0) {
-    return null;
-  }
-
   const handleViewAll = () => {
     setActiveCategory('all');
     if (currentPath !== '/') {

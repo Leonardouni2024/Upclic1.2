@@ -1,0 +1,208 @@
+import { useCart } from '../context/CartContext.tsx';
+import { formatPrice } from '../products.ts';
+import React, { useState } from 'react';
+import { X, Search, Package, Clock, CheckCircle2, AlertCircle, ShoppingBag, ExternalLink, Zap, Copy, Check } from 'lucide-react';
+
+interface UserOrdersModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClose }) => {
+  const { currency, t } = useCart();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+
+    setLoading(true);
+    setHasSearched(true);
+    try {
+      const isEmail = searchTerm.includes('@');
+      const param = isEmail ? `email=${encodeURIComponent(searchTerm)}` : `id=${encodeURIComponent(searchTerm)}`;
+      
+      const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || '';
+      const res = await fetch(`${apiBase}/api/orders/lookup?${param}`);
+      const data = await res.json();
+      
+      if (data.success && data.orders) {
+        setOrders(data.orders);
+      } else {
+        setOrders([]);
+      }
+    } catch (err) {
+      console.error(err);
+      setOrders([]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
+      
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[90vh]">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+              <ShoppingBag className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">{t('myOrdersTitle')}</h2>
+              <p className="text-xs text-slate-500 font-medium">{t('myOrdersSubtitle')}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 flex-1 overflow-y-auto">
+          <form onSubmit={handleSearch} className="mb-8">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={t('searchOrdersPlaceholder')}
+                className="w-full pl-10 pr-[88px] sm:pl-12 sm:pr-32 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
+              />
+              <Search className="w-5 h-5 text-slate-400 absolute left-3 sm:left-4 top-3 sm:top-4" />
+              <button
+                type="submit"
+                disabled={loading || !searchTerm.trim()}
+                className="absolute right-1.5 sm:right-2 top-1.5 sm:top-2 bottom-1.5 sm:bottom-2 px-4 sm:px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
+              >
+                {loading ? t('searchingOrders') : t('searchBtn')}
+              </button>
+            </div>
+          </form>
+
+          {hasSearched && !loading && orders.length === 0 && (
+            <div className="text-center py-12 px-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+              <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-slate-700 mb-1">{t('noOrdersFoundTitle')}</h3>
+              <p className="text-sm text-slate-500">
+                {t('noOrdersFoundSub')}
+              </p>
+            </div>
+          )}
+
+          {orders.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                {t('foundOrdersCount').replace('{{count}}', orders.length.toString())}
+              </h3>
+              
+              {orders.map((order, idx) => (
+                <div key={order.id || idx} className="bg-white border border-slate-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-md transition-all">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('orderLabel')}</span>
+                        <span className="text-sm font-mono font-bold text-slate-700">{order.id}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                        <Clock className="w-3.5 h-3.5" />
+                        {new Date(order.createdAt).toLocaleString('es-PE', { 
+                          dateStyle: 'medium', 
+                          timeStyle: 'short' 
+                        })}
+                      </div>
+                    </div>
+                    
+                    <div className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0 ${
+                      order.status === 'paid' ? 'bg-green-50 text-green-700 border border-green-200' :
+                      ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                      'bg-slate-50 text-slate-700 border border-slate-200'
+                    }`}>
+                      {order.status === 'paid' ? <CheckCircle2 className="w-3.5 h-3.5" /> : 
+                       ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? <Clock className="w-3.5 h-3.5" /> : 
+                       <AlertCircle className="w-3.5 h-3.5" />}
+                      {order.status === 'paid' ? t('paidAndDeliveredStatus') : 
+                       ['pending', 'order_registered', 'intent_whatsapp', 'intent_mercadopago'].includes(order.status) ? t('pendingPaymentStatus') : t('cancelledStatus')}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-4">
+                    {order.items?.map((item: any, i: number) => (
+                      <div key={i} className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                            <Package className="w-4 h-4 text-slate-400" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
+                            <p className="text-xs font-medium text-slate-500">
+                              {t('quantityLabel')} {item.quantity} {item.variantName ? `• ${item.variantName}` : ''}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-sm font-bold text-slate-700 shrink-0">
+                          {formatPrice((item.unitPrice * item.quantity))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {order.deliveredCredentials && order.deliveredCredentials.length > 0 && (
+                    <div className="mb-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+                        <Zap className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
+                        <span>Credenciales Entregadas al Instante:</span>
+                      </div>
+                      {order.deliveredCredentials.map((c: any, cIdx: number) => {
+                        const isPrime = c.productSlug?.includes('prime') || c.serviceName?.toLowerCase().includes('prime');
+                        const targetUrl = c.loginUrl || (isPrime ? 'https://www.primevideo.com/' : 'https://www.crunchyroll.com/');
+                        return (
+                          <div key={cIdx} className="bg-white rounded-lg p-3 border border-emerald-200 text-xs space-y-1.5">
+                            <div className="flex items-center justify-between font-bold text-slate-800">
+                              <span>{c.serviceName} ({c.months || 1}M)</span>
+                              <span className="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-mono font-bold">{c.id || 'Activo'}</span>
+                            </div>
+                            <div className="text-slate-600 font-mono text-[11px] space-y-0.5">
+                              <p><strong>Usuario:</strong> {c.email}</p>
+                              <p><strong>Contraseña:</strong> {c.password}</p>
+                              {c.profilePin && <p><strong>PIN / Perfil:</strong> {c.profilePin}</p>}
+                            </div>
+                            <a
+                              href={targetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`mt-2 inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg text-white font-bold text-xs shadow-xs transition-all ${
+                                isPrime ? 'bg-[#00A8E1] hover:bg-[#0092c4]' : 'bg-[#F47521] hover:bg-[#e06412]'
+                              }`}
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              <span>{isPrime ? 'Lanzar Prime Video' : 'Lanzar Crunchyroll'}</span>
+                            </a>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="bg-slate-50 rounded-lg p-3 flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500">{t('orderTotalLabel')}</span>
+                    <span className="text-lg font-black text-[#0066FF]">{formatPrice(order.total ?? 0)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

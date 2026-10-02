@@ -1,0 +1,919 @@
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
+import { products, calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS, formatPrice } from '../products.ts';
+import { 
+  getTranslation, 
+  translations, 
+  getProductName, 
+  getProductDesc, 
+  getProductFeatures, 
+  getProductCompatibility, 
+  getDurationLabel, 
+  getBadgeLabel 
+} from '../utils/i18n.ts';
+
+interface ToastData {
+  id: string;
+  type: 'added' | 'discount' | 'info' | 'coupon' | 'warning' | 'success';
+  title: string;
+  message?: string;
+}
+
+interface CartContextType {
+  items: CartItem[];
+  addItem: (product: Product, quantity?: number, selectedVariant?: string) => void;
+  removeItem: (itemKeyOrProductId: string, variantId?: string) => void;
+  updateQuantity: (itemKeyOrProductId: string, delta: number, variantId?: string) => void;
+  setQuantity: (itemKeyOrProductId: string, quantity: number, variantId?: string) => void;
+  clearCart: () => void;
+  isCartOpen: boolean;
+  setIsCartOpen: (open: boolean) => void;
+  // Totals & Discount details
+  totalQuantity: number;
+  subtotal: number;
+  hasDiscount: boolean;
+  discountRate: number;
+  discountAmount: number;
+  total: number;
+  discountReason?: string;
+  isMultiItemDiscount: boolean;
+  isCouponApplied: boolean;
+  isDiscountPopupOpen: boolean;
+  setIsDiscountPopupOpen: (open: boolean) => void;
+  isMultiItemDiscountActive: boolean;
+  handleDiscountPopupComplete: () => void;
+  // Promo Coupon System
+  appliedCoupon: string;
+  applyCoupon: (code: string) => { success: boolean; message: string };
+  removeCoupon: () => void;
+  couponFeedback: { type: 'success' | 'error' | 'info'; message: string } | null;
+  toasts: ToastData[];
+  removeToast: (id: string) => void;
+  // Navigation & Filtering
+  activeCategory: ProductCategory;
+  setActiveCategory: (cat: ProductCategory) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  navigateToProduct: (slug: string) => void;
+  navigateToHome: () => void;
+  navigateToCheckout: () => void;
+  navigateToPayPal: () => void;
+  currentPath: string;
+  currentProductSlug?: string;
+  // Region, Currency & Language System
+  currency: Currency;
+  setCurrency: (currency: Currency, manual?: boolean, newLang?: 'ES' | 'EN') => void;
+  language: 'ES' | 'EN';
+  setLanguage: (language: 'ES' | 'EN') => void;
+  exchangeRate: number;
+  setExchangeRate: (rate: number) => void;
+  detectedCountry: string | null;
+  isDetectingCountry: boolean;
+  detectUserCountry: (force?: boolean) => Promise<string | null>;
+  isRegionModalOpen: boolean;
+  setIsRegionModalOpen: (open: boolean) => void;
+  formatPrice: (priceInPEN: number) => string;
+  t: (key: keyof typeof translations['ES']) => string;
+  getProductName: (product: { id: string; name: string }) => string;
+  getProductDesc: (product: { id: string; description: string }) => string;
+  getProductFeatures: (product: { id: string; features?: string[] }) => string[];
+  getProductCompatibility: (product: { id: string; compatibility?: string }) => string;
+  getDurationLabel: (duration: string) => string;
+  getBadgeLabel: (badge?: string) => string | undefined;
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+const LOCAL_STORAGE_KEY = 'upclic_cart_v3';
+const COUPON_STORAGE_KEY = 'upclic_coupon_v2';
+
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [items, setItems] = useState<CartItem[]>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        // One-time cleanup of legacy test carts from previous test versions on any device/mobile browser
+        if (!localStorage.getItem('upclic_cart_v3_init')) {
+          localStorage.removeItem('upclic_cart_v1');
+          localStorage.removeItem('upclic_cart_v2');
+          localStorage.removeItem('upclic_cart');
+          localStorage.removeItem('upclic_last_order');
+          localStorage.setItem('upclic_cart_v3_init', 'true');
+          return [];
+        }
+
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error loading cart from localStorage', e);
+    }
+    return [];
+  });
+
+  const [appliedCoupon, setAppliedCoupon] = useState<string>(() => {
+    try {
+      return localStorage.getItem(COUPON_STORAGE_KEY) || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const [dynamicCoupon, setDynamicCoupon] = useState<DynamicCoupon | null>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('upclic_dynamic_coupon');
+      }
+    } catch(e) {}
+    return null;
+  });
+
+  const [isMultiItemDiscountActive, setIsMultiItemDiscountActive] = useState<boolean>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('upclic_multi_discount_active') === 'true';
+      }
+    } catch {}
+    return false;
+  });
+
+  const [isDiscountPopupOpen, setIsDiscountPopupOpen] = useState(false);
+
+  // Region, Language & Currency State
+  const [currency, setCurrencyState] = useState<Currency>(() => {
+    if (typeof window !== 'undefined') {
+      const c = localStorage.getItem('upclic_currency') as Currency;
+      if (['PEN', 'USD', 'COP', 'MXN'].includes(c)) return c;
+    }
+    return 'PEN';
+  });
+
+  const [language, setLanguageState] = useState<'ES' | 'EN'>(() => {
+    if (typeof window !== 'undefined') {
+      const l = localStorage.getItem('upclic_language');
+      if (l === 'EN' || l === 'ES') return l;
+    }
+    return 'ES';
+  });
+
+  const [exchangeRate, setExchangeRateState] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const r = localStorage.getItem('upclic_exchange_rate');
+      if (r) {
+        const parsed = parseFloat(r);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    }
+    return 3.75;
+  });
+
+  const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
+  const [detectedCountry, setDetectedCountry] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('upclic_detected_country');
+    }
+    return null;
+  });
+  const [isDetectingCountry, setIsDetectingCountry] = useState(false);
+
+  const setCurrency = (c: Currency, manual: boolean = true, newLang?: 'ES' | 'EN') => {
+    setCurrencyState(c);
+    let targetLang = language;
+    if (newLang) {
+      targetLang = newLang;
+    } else if (c === 'PEN' || c === 'COP' || c === 'MXN') {
+      targetLang = 'ES';
+    }
+    setLanguageState(targetLang);
+    try {
+      localStorage.setItem('upclic_currency', c);
+      localStorage.setItem('upclic_language', targetLang);
+      if (manual) {
+        const currentCountry = localStorage.getItem('upclic_detected_country') || 'MANUAL';
+        localStorage.setItem('upclic_currency_manual_for_country', currentCountry);
+      }
+    } catch {}
+  };
+
+  const setLanguage = (l: 'ES' | 'EN') => {
+    setLanguageState(l);
+    try {
+      localStorage.setItem('upclic_language', l);
+      const currentCountry = localStorage.getItem('upclic_detected_country') || 'MANUAL';
+      localStorage.setItem('upclic_currency_manual_for_country', currentCountry);
+    } catch {}
+  };
+
+  const setExchangeRate = (r: number) => {
+    setExchangeRateState(r);
+    try {
+      localStorage.setItem('upclic_exchange_rate', r.toString());
+    } catch {}
+  };
+
+  // Fetch real-time exchange rates from API
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function fetchLiveRates() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.rates) {
+            const pen = parseFloat(data.rates.PEN) || 3.75;
+            const cop = parseFloat(data.rates.COP) || 4100;
+            const mxn = parseFloat(data.rates.MXN) || 19.8;
+            if (isMounted) {
+              setExchangeRateState(pen);
+              try {
+                localStorage.setItem('upclic_exchange_rate', pen.toString());
+                localStorage.setItem(
+                  'upclic_rates',
+                  JSON.stringify({ PEN: pen, COP: cop, MXN: mxn })
+                );
+              } catch {}
+            }
+          }
+        }
+      } catch {
+        // Fallback silently
+      }
+    }
+    
+    fetchLiveRates();
+    return () => { isMounted = false; };
+  }, []);
+
+  // Resilient Country & Currency Auto-Detection
+  const detectUserCountry = async (force: boolean = false): Promise<string | null> => {
+    if (typeof window === 'undefined') return null;
+
+    setIsDetectingCountry(true);
+    let detected: string | null = null;
+
+    // 1. Primary: backend /api/geo (with server-side IP extraction, caching & multiple providers)
+    try {
+      const res = await fetch('/api/geo');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
+          detected = data.country.toUpperCase();
+        }
+      }
+    } catch {}
+
+    // 2. Direct client fallback 1: country.is
+    if (!detected) {
+      try {
+        const res = await fetch('https://api.country.is/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
+            detected = data.country.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    // 3. Direct client fallback 2: ipwho.is
+    if (!detected) {
+      try {
+        const res = await fetch('https://ipwho.is/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && data.country_code && data.country_code.length === 2) {
+            detected = data.country_code.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    // 4. Direct client fallback 3: ipinfo.io
+    if (!detected) {
+      try {
+        const res = await fetch('https://ipinfo.io/json');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country && data.country.length === 2) {
+            detected = data.country.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    // 5. Direct client fallback 4: ipapi.co
+    if (!detected) {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country_code && data.country_code.length === 2) {
+            detected = data.country_code.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    // 6. Direct client fallback 5: freeipapi.com
+    if (!detected) {
+      try {
+        const res = await fetch('https://freeipapi.com/api/json');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.countryCode && data.countryCode.length === 2) {
+            detected = data.countryCode.toUpperCase();
+          }
+        }
+      } catch {}
+    }
+
+    setIsDetectingCountry(false);
+
+    if (!detected) {
+      return null;
+    }
+
+    setDetectedCountry(detected);
+    try {
+      localStorage.setItem('upclic_detected_country', detected);
+    } catch {}
+
+    const LATAM_COUNTRIES = [
+      'AR', 'BO', 'BR', 'CL', 'EC', 'FK', 'GF', 'GY', 'PY', 'SR', 'UY', 'VE',
+      'CR', 'CU', 'DO', 'GT', 'HN', 'NI', 'PA', 'PR', 'SV', 'BZ'
+    ];
+
+    if (detected === 'PE') {
+      setCurrencyState('PEN');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'PEN');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (detected === 'CO') {
+      setCurrencyState('COP');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'COP');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (detected === 'MX') {
+      setCurrencyState('MXN');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'MXN');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (LATAM_COUNTRIES.includes(detected)) {
+      setCurrencyState('USD');
+      setLanguageState('ES');
+      try {
+        localStorage.setItem('upclic_currency', 'USD');
+        localStorage.setItem('upclic_language', 'ES');
+      } catch {}
+    } else if (['US', 'CA', 'GB', 'AU', 'NZ', 'IE'].includes(detected)) {
+      setCurrencyState('USD');
+      setLanguageState('EN');
+      try {
+        localStorage.setItem('upclic_currency', 'USD');
+        localStorage.setItem('upclic_language', 'EN');
+      } catch {}
+    } else {
+      const isSpanish = typeof navigator !== 'undefined' && (
+        navigator.language?.toLowerCase().startsWith('es') ||
+        (Array.isArray(navigator.languages) && navigator.languages.some(l => l.toLowerCase().startsWith('es')))
+      );
+      setCurrencyState('USD');
+      setLanguageState(isSpanish ? 'ES' : 'EN');
+      try {
+        localStorage.setItem('upclic_currency', 'USD');
+        localStorage.setItem('upclic_language', isSpanish ? 'ES' : 'EN');
+      } catch {}
+    }
+
+    return detected;
+  };
+
+  // Run country detection on mount
+  useEffect(() => {
+    detectUserCountry(false);
+  }, []);
+
+  const formatPriceLocal = (priceInPEN: number): string => {
+    return formatPrice(priceInPEN, currency, exchangeRate);
+  };
+
+  const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+  const couponFeedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showCouponFeedback = (feedback: { type: 'success' | 'error' | 'info'; message: string } | null, durationMs: number = 4000) => {
+    if (couponFeedbackTimerRef.current) {
+      clearTimeout(couponFeedbackTimerRef.current);
+      couponFeedbackTimerRef.current = null;
+    }
+    setCouponFeedback(feedback);
+    if (feedback) {
+      couponFeedbackTimerRef.current = setTimeout(() => {
+        setCouponFeedback(null);
+        couponFeedbackTimerRef.current = null;
+      }, durationMs);
+    }
+  };
+
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toasts, setToasts] = useState<ToastData[]>([]);
+  const [activeCategory, setActiveCategory] = useState<ProductCategory>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const resolvePath = (): string => {
+    if (typeof window === 'undefined') return '/';
+    try {
+      const hash = window.location.hash || '';
+      if (hash.startsWith('#/producto/')) {
+        return hash.replace('#', '');
+      }
+      if (hash.includes('/checkout/paypal') || hash.includes('/paypal')) {
+        return '/checkout/paypal';
+      }
+      if (hash === '#/checkout' || hash === '#checkout' || hash.startsWith('#/checkout?') || hash.startsWith('#checkout?')) {
+        return '/checkout';
+      }
+
+      const search = window.location.search || '';
+      if (search.startsWith('?/')) {
+        const raw = search.slice(2).split('&')[0];
+        if (raw.includes('checkout/paypal') || raw.includes('paypal')) {
+          return '/checkout/paypal';
+        }
+        if (raw.includes('producto/') || raw === 'checkout' || raw === '/checkout') {
+          return raw.startsWith('/') ? raw : `/${raw}`;
+        }
+      }
+
+      const path = window.location.pathname || '/';
+      const prodIndex = path.indexOf('/producto/');
+      if (prodIndex !== -1) {
+        return path.slice(prodIndex);
+      }
+      if (path.includes('/checkout/paypal') || path.includes('/paypal')) {
+        return '/checkout/paypal';
+      }
+      if (path.endsWith('/checkout') || path === '/checkout' || path.includes('/checkout')) {
+        return '/checkout';
+      }
+    } catch {
+      // ignore
+    }
+    return '/';
+  };
+
+  // Routing state
+  const [currentPath, setCurrentPath] = useState<string>(resolvePath);
+
+  // Auto-detect returning from Mercado Pago / payment gateway
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const search = window.location.search;
+      if (!search) return;
+      const params = new URLSearchParams(search);
+      const status = params.get('status') || params.get('collection_status');
+
+      if (status === 'return' || status === 'failure' || status === 'null' || params.get('cart') === 'open') {
+        // User returned from Mercado Pago without completing payment
+        // Keep their cart open and intact
+        setIsCartOpen(true);
+      }
+    } catch {}
+  }, []);
+
+  // Keep localStorage updated for cart
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items));
+    } catch (e) {
+      console.error('Error saving cart to localStorage', e);
+    }
+  }, [items]);
+
+  // Keep localStorage updated for coupon
+  useEffect(() => {
+    try {
+      if (appliedCoupon) {
+        localStorage.setItem(COUPON_STORAGE_KEY, appliedCoupon);
+      } else {
+        localStorage.removeItem(COUPON_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error('Error saving coupon to localStorage', e);
+    }
+  }, [appliedCoupon]);
+
+  // Sync with browser back/forward buttons and hash changes
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(resolvePath());
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, []);
+
+  const addToast = (toast: Omit<ToastData, 'id'>) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts(prev => [...prev.slice(-3), { ...toast, id }]);
+    setTimeout(() => {
+      removeToast(id);
+    }, 4500);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  const applyCoupon = (code: string): { success: boolean; message: string } => {
+    const clean = code.trim().toUpperCase();
+    if (!clean) {
+      const msg = 'Por favor ingresa un código promocional.';
+      showCouponFeedback({ type: 'error', message: msg }, 4000);
+      return { success: false, message: msg };
+    }
+    
+    // Check if it's the dynamic coupon
+    if (dynamicCoupon && clean === dynamicCoupon.code.toUpperCase()) {
+      if (dynamicCoupon.expiresAt > Date.now()) {
+        setAppliedCoupon(clean);
+        try {
+          localStorage.setItem(COUPON_STORAGE_KEY, clean);
+        } catch {}
+        
+        const msg = `¡Cupón de ${dynamicCoupon.discountPercent}% aplicado correctamente!`;
+        showCouponFeedback({ type: 'success', message: msg }, 5000);
+        return { success: true, message: msg };
+      } else {
+        const msg = 'El cupón especial ha expirado.';
+        showCouponFeedback({ type: 'error', message: msg }, 4000);
+        return { success: false, message: msg };
+      }
+    }
+
+    // Check static DYNAMIC_COUPONS
+    const matchedStatic = DYNAMIC_COUPONS.find(c => c.code.toUpperCase() === clean);
+    if (matchedStatic) {
+      const isNotExpired = !matchedStatic.expiresAt || Date.now() <= matchedStatic.expiresAt;
+      if (isNotExpired) {
+        const currentTotalQty = items.reduce((sum, item) => sum + item.quantity, 0);
+        if (matchedStatic.minItems && currentTotalQty < matchedStatic.minItems) {
+          const msg = `Este cupón requiere al menos ${matchedStatic.minItems} productos en el carrito.`;
+          showCouponFeedback({ type: 'error', message: msg }, 4500);
+          return { success: false, message: msg };
+        }
+        setAppliedCoupon(clean);
+        try {
+          localStorage.setItem(COUPON_STORAGE_KEY, clean);
+        } catch {}
+        const msg = `¡Cupón ${clean} (${matchedStatic.discountPercent}% OFF) aplicado correctamente!`;
+        showCouponFeedback({ type: 'success', message: msg }, 5000);
+        return { success: true, message: msg };
+      } else {
+        const msg = 'El cupón promocional ha expirado.';
+        showCouponFeedback({ type: 'error', message: msg }, 4000);
+        return { success: false, message: msg };
+      }
+    }
+    
+    const msg = `El código "${code}" no es válido o ha expirado.`;
+    showCouponFeedback({ type: 'error', message: msg }, 4500);
+    return { success: false, message: msg };
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon('');
+    try {
+      localStorage.removeItem(COUPON_STORAGE_KEY);
+    } catch {}
+    showCouponFeedback(null);
+  };
+
+  const getItemKey = (productId: string, variantId?: string) => {
+    return variantId ? `${productId}-${variantId}` : productId;
+  };
+
+  const addItem = (product: Product, quantity: number = 1, selectedVariant?: string) => {
+    // Automatically open the cart drawer when adding a product as requested
+    setIsCartOpen(true);
+
+    const maxStock = typeof product.stock === 'number' && product.stock > 0 ? product.stock : 99;
+    const safeQuantity = Math.max(1, Math.min(maxStock, Math.floor(Number(quantity) || 1)));
+
+    const variant = product.variants
+      ? (product.variants.find(v => v.id === selectedVariant) || product.variants[0])
+      : undefined;
+
+    const variantKey = variant ? variant.id : undefined;
+    const itemKey = getItemKey(product.id, variantKey);
+    const itemPrice = Number(variant ? variant.price : product.price) || product.price;
+    const variantName = variant ? variant.name : undefined;
+
+    setItems(prevItems => {
+      const existingIndex = prevItems.findIndex(
+        item => (item.id === itemKey) || (!item.id && item.product.id === product.id && item.selectedVariant === variantKey)
+      );
+      let updated: CartItem[];
+
+      if (existingIndex > -1) {
+        const itemStock = typeof prevItems[existingIndex].product?.stock === 'number' && prevItems[existingIndex].product.stock > 0
+          ? prevItems[existingIndex].product.stock
+          : maxStock;
+        updated = prevItems.map((item, idx) =>
+          idx === existingIndex
+            ? { ...item, quantity: Math.min(itemStock, Math.max(1, (Number(item.quantity) || 1) + safeQuantity)) }
+            : item
+        );
+      } else {
+        updated = [
+          ...prevItems,
+          {
+            id: itemKey,
+            product,
+            quantity: safeQuantity,
+            selectedVariant: variantKey,
+            variantName,
+            unitPrice: itemPrice
+          }
+        ];
+      }
+
+      return updated;
+    });
+  };
+
+  const removeItem = (itemKeyOrProductId: string, variantId?: string) => {
+    setItems(prev => {
+      return prev.filter(item => {
+        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+        if (itemKey === itemKeyOrProductId || item.id === itemKeyOrProductId) return false;
+        if (variantId) {
+          return !(item.product.id === itemKeyOrProductId && item.selectedVariant === variantId);
+        }
+        return item.product.id !== itemKeyOrProductId;
+      });
+    });
+  };
+
+  const updateQuantity = (itemKeyOrProductId: string, delta: number, variantId?: string) => {
+    const safeDelta = Number(delta) || 0;
+    setItems(prev => {
+      const updated = prev
+        .map(item => {
+          const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+          const isMatch =
+            itemKey === itemKeyOrProductId ||
+            item.id === itemKeyOrProductId ||
+            (variantId
+              ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
+              : item.product.id === itemKeyOrProductId);
+
+          if (isMatch) {
+            const currentQty = Number(item.quantity) || 1;
+            const itemStock = typeof item.product?.stock === 'number' && item.product.stock > 0
+              ? item.product.stock
+              : 99;
+            const newQty = currentQty + safeDelta;
+            if (newQty <= 0) {
+              return null;
+            }
+            return { ...item, quantity: Math.min(itemStock, Math.max(1, Math.floor(newQty))) };
+          }
+          return item;
+        })
+        .filter(Boolean) as CartItem[];
+
+      return updated;
+    });
+  };
+
+  const setQuantity = (itemKeyOrProductId: string, quantity: number, variantId?: string) => {
+    const rawNum = Number(quantity);
+    if (isNaN(rawNum) || rawNum <= 0) {
+      removeItem(itemKeyOrProductId, variantId);
+      return;
+    }
+
+    setItems(prev => {
+      const updated = prev.map(item => {
+        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
+        const isMatch =
+          itemKey === itemKeyOrProductId ||
+          item.id === itemKeyOrProductId ||
+          (variantId
+            ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
+            : item.product.id === itemKeyOrProductId);
+
+        if (!isMatch) return item;
+
+        const itemStock = typeof item.product?.stock === 'number' && item.product.stock > 0
+          ? item.product.stock
+          : 99;
+        const validQty = Math.min(itemStock, Math.max(1, Math.floor(rawNum)));
+
+        return { ...item, quantity: validQty };
+      });
+
+      return updated;
+    });
+  };
+
+  const clearCart = () => {
+    setItems([]);
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      localStorage.removeItem('upclic_last_order');
+    } catch {}
+  };
+
+  useEffect(() => {
+    const qty = items.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+    if (qty < 2) {
+      if (isMultiItemDiscountActive) {
+        setIsMultiItemDiscountActive(false);
+        try {
+          localStorage.removeItem('upclic_multi_discount_active');
+        } catch {}
+      }
+      if (isDiscountPopupOpen) {
+        setIsDiscountPopupOpen(false);
+      }
+    } else if (qty >= 2) {
+      if (!isMultiItemDiscountActive && !isDiscountPopupOpen) {
+        setIsDiscountPopupOpen(true);
+      }
+    }
+  }, [items, isMultiItemDiscountActive, isDiscountPopupOpen]);
+
+  const handleDiscountPopupComplete = () => {
+    setIsDiscountPopupOpen(false);
+    setIsMultiItemDiscountActive(true);
+    try {
+      localStorage.setItem('upclic_multi_discount_active', 'true');
+    } catch {}
+  };
+
+  const totals: CartTotals = calculateCartTotals(
+    items,
+    appliedCoupon || dynamicCoupon?.code,
+    dynamicCoupon || undefined,
+    isMultiItemDiscountActive
+  );
+
+  const navigateToProduct = (slug: string) => {
+    const target = `/producto/${slug}`;
+    setCurrentPath(target);
+    try {
+      window.history.pushState(null, '', target);
+    } catch {
+      window.location.hash = `#${target}`;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToHome = () => {
+    setCurrentPath('/');
+    try {
+      window.history.pushState(null, '', '/');
+    } catch {
+      window.location.hash = '';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToCheckout = () => {
+    setIsCartOpen(false);
+    setCurrentPath('/checkout');
+    try {
+      window.history.pushState(null, '', '/checkout');
+    } catch {
+      window.location.hash = '#/checkout';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToPayPal = () => {
+    // Crunchyroll and Amazon Prime Video only accept Mercado Pago
+    const hasStreamingOnly = items.some(it => {
+      const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
+      const name = (it.product?.name || (it as any).name || '').toLowerCase();
+      return (
+        slug.includes('prime') ||
+        slug.includes('crunchy') ||
+        name.includes('prime') ||
+        name.includes('crunchy') ||
+        Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
+      );
+    });
+
+    if (hasStreamingOnly) {
+      navigateToCheckout();
+      return;
+    }
+
+    setIsCartOpen(false);
+    setCurrentPath('/checkout/paypal');
+    try {
+      window.history.pushState(null, '', '/checkout/paypal');
+    } catch {
+      window.location.hash = '#/checkout/paypal';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const currentProductSlug = (() => {
+    if (!currentPath.includes('/producto/')) return undefined;
+    const prodIndex = currentPath.indexOf('/producto/');
+    const raw = currentPath.slice(prodIndex + '/producto/'.length);
+    const clean = raw.replace(/\/+$/, '').split('?')[0].split('#')[0];
+    return clean ? decodeURIComponent(clean) : undefined;
+  })();
+
+  return (
+    <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        setQuantity,
+        clearCart,
+        isCartOpen,
+        setIsCartOpen,
+        totalQuantity: totals.totalQuantity,
+        subtotal: totals.subtotal,
+        hasDiscount: totals.hasDiscount,
+        discountRate: totals.discountRate,
+        discountAmount: totals.discountAmount,
+        total: totals.total,
+        discountReason: totals.discountReason,
+        isMultiItemDiscount: totals.isMultiItemDiscount,
+        isCouponApplied: totals.isCouponApplied,
+        isDiscountPopupOpen,
+        setIsDiscountPopupOpen,
+        isMultiItemDiscountActive,
+        handleDiscountPopupComplete,
+        appliedCoupon,
+        applyCoupon,
+        removeCoupon,
+        couponFeedback,
+        toasts,
+        removeToast,
+        activeCategory,
+        setActiveCategory,
+        searchQuery,
+        setSearchQuery,
+        navigateToProduct,
+        navigateToHome,
+        navigateToCheckout,
+        navigateToPayPal,
+        currentPath,
+        currentProductSlug,
+        currency,
+        setCurrency,
+        language,
+        setLanguage,
+        exchangeRate,
+        setExchangeRate,
+        detectedCountry,
+        isDetectingCountry,
+        detectUserCountry,
+        isRegionModalOpen,
+        setIsRegionModalOpen,
+        formatPrice: formatPriceLocal,
+        t: (key: keyof typeof translations['ES']) => getTranslation(language, key),
+        getProductName: (p: { id: string; name: string }) => getProductName(p, language),
+        getProductDesc: (p: { id: string; description: string }) => getProductDesc(p, language),
+        getProductFeatures: (p: { id: string; features?: string[] }) => getProductFeatures(p, language),
+        getProductCompatibility: (p: { id: string; compatibility?: string }) => getProductCompatibility(p, language),
+        getDurationLabel: (d: string) => getDurationLabel(d, language),
+        getBadgeLabel: (b?: string) => getBadgeLabel(b, language)
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+};
