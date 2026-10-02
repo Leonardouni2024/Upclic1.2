@@ -1,5 +1,5 @@
 import "dotenv/config";
-import nodemailer, { Transporter } from "nodemailer";
+import nodemailer, { type Transporter } from "nodemailer";
 
 // Variable de atención UpClic para WhatsApp oficial (autónomo para evitar dependencias cruzadas con el cliente)
 export const WHATSAPP_NUMBER = "51983204384";
@@ -10,6 +10,21 @@ export interface OrderItemPayload {
   variantName?: string | null;
   quantity: number;
   unitPrice: number;
+  slug?: string;
+  id?: string;
+  product?: any;
+}
+
+export interface DeliveredCredentialsPayload {
+  id?: string;
+  serviceName: string;
+  productSlug: string;
+  email: string;
+  password?: string;
+  profilePin?: string;
+  months?: number;
+  loginUrl?: string;
+  deliveredAt?: string;
 }
 
 export interface OrderEmailPayload {
@@ -28,6 +43,7 @@ export interface OrderEmailPayload {
   createdAt?: string;
   paymentUrl?: string;
   isPaid?: boolean;
+  deliveredCredentials?: DeliveredCredentialsPayload[];
 }
 
 export interface EmailSendOptions {
@@ -70,10 +86,13 @@ export function getTransporter(): Transporter | null {
   });
 }
 
+// Cache status of Resend API key to prevent repeated 401 attempts
+let isResendKeyActive = true;
+
 /**
  * Robust multi-strategy email dispatcher.
  * Handles cloud environments (like Sevalla, AWS, Kinsta) where port 465 or certain SMTP ports may be blocked or reset:
- * 1. Resend REST API (HTTPS port 443 - zero block risk, if RESEND_API_KEY is configured)
+ * 1. Resend REST API (HTTPS port 443 - zero block risk, if valid RESEND_API_KEY is configured)
  * 2. Port 587 with STARTTLS (official submission port RFC 6409)
  * 3. Nodemailer service: 'gmail'
  * 4. Port 465 with direct SSL
@@ -90,7 +109,7 @@ export async function sendEmailWithFallback(options: EmailSendOptions): Promise<
   const resendApiKey = process.env.RESEND_API_KEY?.trim();
 
   // Strategy 0: Resend REST API (over HTTPS Port 443 - cannot be blocked by host firewalls)
-  if (resendApiKey) {
+  if (isResendKeyActive && resendApiKey && resendApiKey.startsWith("re_") && resendApiKey.length > 20) {
     try {
       const cleanFrom = options.from.replace(/"/g, "").trim();
       const fromAddress = cleanFrom.includes("<") ? cleanFrom : `UpClic Store <${cleanFrom}>`;
@@ -115,11 +134,12 @@ export async function sendEmailWithFallback(options: EmailSendOptions): Promise<
         console.log(`✅ [EMAIL] Correo enviado exitosamente vía Resend REST API (HTTPS): ${data.id}`);
         return { success: true, strategyUsed: "resend_api" };
       } else {
-        const errText = await res.text();
-        console.warn(`⚠️ [EMAIL] Resend API respondió con error (${res.status}): ${errText}. Intentando SMTP...`);
+        if (res.status === 401) {
+          isResendKeyActive = false;
+        }
       }
-    } catch (err: any) {
-      console.warn(`⚠️ [EMAIL] Falló llamada a Resend API: ${err?.message || err}. Probando SMTP...`);
+    } catch {
+      isResendKeyActive = false;
     }
   }
 
@@ -286,7 +306,7 @@ export async function diagnoseEmailStrategies(): Promise<Record<string, { ok: bo
 }
 
 // Generate styled HTML receipt for customer (Deliverability & anti-spam optimized)
-function generateCustomerEmailHtml(order: OrderEmailPayload): string {
+export function generateCustomerEmailHtml(order: OrderEmailPayload): string {
   const isPayPal = order.channel === "paypal";
   const penRate = 3.75;
   const usdTotal = order.usdTotal || Number((order.total / penRate).toFixed(2));
@@ -324,10 +344,10 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${isPaid ? 'Comprobante de compra UpClic Store' : 'Detalles de compra UpClic Store'}</title>
+  <title>${isPaid ? '¡Pago Aprobado! Se completó su compra - UpClic Store' : 'Pedido Registrado (Pendiente de Pago) - UpClic Store'}</title>
 </head>
 <body style="margin: 0; padding: 24px 12px; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.6;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 4px solid ${isPayPal ? '#0070ba' : (isPaid ? '#059669' : '#0066FF')}; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 4px solid ${isPayPal ? '#0070ba' : (isPaid ? '#059669' : '#f59e0b')}; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
     <!-- Top Header -->
     <tr>
       <td style="padding: 24px 24px 16px; text-align: left; border-bottom: 1px solid #f1f5f9;">
@@ -358,8 +378,8 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             isPayPal
               ? 'Hemos registrado tu solicitud de compra a través de la pasarela internacional de <strong>PayPal</strong>. A continuación encuentras los detalles de tu pedido:'
               : (isPaid
-                  ? 'Te confirmamos que hemos recibido tu pago a través de Mercado Pago. A continuación encuentras los detalles de tu compra:'
-                  : 'Hemos registrado tu pedido en UpClic Store. Puedes concluir tu pago con Mercado Pago para recibir tus licencias:')
+                  ? '¡Se completó tu compra con éxito! Te confirmamos que tu pago ha sido recibido y <strong>aprobado</strong> a través de Mercado Pago. A continuación encuentras los detalles de tu compra y tus credenciales de acceso:'
+                  : 'Hemos registrado tu pedido en UpClic Store. Tu orden se encuentra <strong>pendiente de pago</strong>. Por favor completa tu pago ingresando en el enlace de Mercado Pago para procesar y entregar tus accesos:')
           }
         </p>
 
@@ -383,8 +403,8 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             </tr>
             <tr>
               <td style="color: #64748b;">Estado:</td>
-              <td style="color: ${isPaid ? '#059669' : '#0369a1'}; font-weight: 700; text-align: right;">
-                ${isPaid ? 'Pagado' : (isPayPal ? 'Registrado para entrega' : 'Pendiente')}
+              <td style="color: ${isPaid ? '#059669' : '#d97706'}; font-weight: 700; text-align: right;">
+                ${isPaid ? 'Pago aprobado' : (isPayPal ? 'Registrado para entrega' : 'Pendiente de pago')}
               </td>
             </tr>
           </table>
@@ -423,16 +443,124 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
           </tr>
         </table>
 
-        <!-- Delivery Notice 10-30 min -->
-        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
-          <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #166534;">
-            Entrega de tu licencia digital:
+        <!-- Section: Credentials if PAID vs Payment Link if PENDING -->
+        ${isPaid ? (
+          order.deliveredCredentials && order.deliveredCredentials.length > 0 ? `
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 2px solid #10b981; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);">
+            <div style="margin-bottom: 12px;">
+              <span style="display: inline-block; background-color: #059669; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-bottom: 6px;">
+                ⚡ Entrega Inmediata Completada (Pago Aprobado)
+              </span>
+              <h3 style="margin: 4px 0 0; color: #065f46; font-size: 16px; font-weight: 800;">
+                Tus Credenciales de Acceso Oficiales:
+              </h3>
+            </div>
+            ${order.deliveredCredentials.map(c => `
+            <div style="background-color: #ffffff; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;">
+              <p style="margin: 0 0 8px; font-size: 14px; font-weight: 700; color: #065f46;">
+                📺 ${c.serviceName} (${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'}) • 1 Perfil (1 Dispositivo)
+              </p>
+
+              <!-- Important single device warning -->
+              <div style="background-color: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: #92400e;">
+                <strong>⚠️ REGLA OBLIGATORIA:</strong> Iniciar sesión únicamente en el 1 dispositivo que va a utilizar.<br/>
+                Este perfil es para 1 solo dispositivo y cuenta con garantía según lo alquilado (${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'}). No abras la cuenta en múltiples pantallas en simultáneo para preservar la garantía.
+              </div>
+
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size: 13px; color: #1e293b;">
+                <tr>
+                  <td style="color: #64748b; padding: 4px 0; width: 130px;"><strong>Usuario / Correo:</strong></td>
+                  <td style="padding: 4px 0; font-family: monospace; font-weight: 700; color: #0f172a;">${c.email}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 4px 0;"><strong>Contraseña:</strong></td>
+                  <td style="padding: 4px 0; font-family: monospace; font-weight: 700; color: #059669;">${c.password || 'Asignada'}</td>
+                </tr>
+                ${c.profilePin ? `
+                <tr>
+                  <td style="color: #64748b; padding: 4px 0;"><strong>Perfil / PIN:</strong></td>
+                  <td style="padding: 4px 0; font-weight: 700; color: #0f172a;">${c.profilePin}</td>
+                </tr>` : ''}
+                <tr>
+                  <td style="color: #64748b; padding: 4px 0;"><strong>Dispositivo:</strong></td>
+                  <td style="padding: 4px 0; font-weight: 700; color: #0f172a;">1 Dispositivo (uso personal)</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 4px 0;"><strong>Garantía:</strong></td>
+                  <td style="padding: 4px 0; font-weight: 700; color: #059669;">${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'} (según lo alquilado)</td>
+                </tr>
+              </table>
+              ${c.loginUrl ? `
+              <div style="margin-top: 12px; text-align: right;">
+                <a href="${c.loginUrl}" style="display: inline-block; background-color: #059669; color: #ffffff; font-size: 12px; font-weight: 700; text-decoration: none; padding: 7px 16px; border-radius: 6px;">
+                  Iniciar Sesión en ${c.serviceName} →
+                </a>
+              </div>` : ''}
+            </div>
+            `).join('')}
+            <p style="margin: 0; font-size: 12px; color: #047857; line-height: 1.4;">
+              * Inicia sesión con estos datos en la aplicación oficial o sitio web y selecciona tu perfil asignado.
+            </p>
+          </div>
+          ` : (order.items && order.items.some(it => {
+              const slug = (it.slug || it.id || (it as any).product?.slug || (it as any).product?.id || it.name || '').toLowerCase();
+              return slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
+            })) ? `
+          <!-- Out-of-Stock Profile WhatsApp Notice ONLY when payment was approved -->
+          <div style="background-color: #fffbeb; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+            <span style="display: inline-block; background-color: #d97706; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-bottom: 6px;">
+              Pago Aprobado • Coordinar Entrega de Perfil
+            </span>
+            <h3 style="margin: 4px 0 6px; font-size: 16px; font-weight: 800; color: #78350f;">
+              Solicita tu Perfil Adquirido al Administrador
+            </h3>
+            <p style="margin: 0 0 14px; font-size: 13.5px; color: #92400e; line-height: 1.5;">
+              Confirmamos tu pago exitosamente. Debido a la gran demanda, los perfiles de entrega automática inmediata de este lote ya fueron asignados. Por favor presiona el botón a continuación para hablar directamente con el Administrador por WhatsApp y recibir tu perfil para 1 dispositivo con tu garantía según lo alquilado.
+            </p>
+            <div style="text-align: center;">
+              <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola Administrador de UpClic, realicé mi pago con éxito para el pedido #${order.orderId}. Solicito por favor la entrega de mi perfil para 1 dispositivo que adquirí.`)}"
+                 style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 800; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
+                💬 Solicitar mi Perfil al Administrador por WhatsApp
+              </a>
+            </div>
+          </div>
+          ` : `
+          <!-- Delivery Notice 10-30 min when payment was approved -->
+          <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
+            <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #166534;">
+              Entrega de tu licencia digital:
+            </h3>
+            <p style="margin: 0; font-size: 13.5px; color: #15803d; line-height: 1.5;">
+              <strong>Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.</strong><br/>
+              Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.
+            </p>
+          </div>
+          `
+        ) : `
+        <!-- Box when payment is PENDING (initial email when clicking Finalizar compra) -->
+        <div style="background-color: #fffbeb; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
+          <span style="display: inline-block; background-color: #d97706; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-bottom: 8px;">
+            ⏳ Pedido Registrado • Pendiente de Pago
+          </span>
+          <h3 style="margin: 4px 0 8px; font-size: 16px; font-weight: 800; color: #78350f;">
+            Completa tu pago para recibir tus accesos
           </h3>
-          <p style="margin: 0; font-size: 13.5px; color: #15803d; line-height: 1.5;">
-            <strong>Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.</strong><br/>
-            Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.
+          <p style="margin: 0 0 16px; font-size: 13.5px; color: #92400e; line-height: 1.5;">
+            Tu pedido está registrado pero <strong>aún no ha sido pagado</strong>. Para completar tu compra y recibir tus accesos oficiales de forma inmediata, por favor haz clic en el botón de pago seguro de Mercado Pago:
           </p>
+          ${order.paymentUrl ? `
+          <div style="margin: 16px 0 12px;">
+            <a href="${order.paymentUrl}" 
+               style="display: inline-block; background-color: #009EE3; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 800; font-size: 15px; box-shadow: 0 2px 5px rgba(0,158,227,0.3);">
+              👉 Pagar ahora en Mercado Pago (S/ ${order.total.toFixed(2)})
+            </a>
+          </div>
+          <p style="margin: 0; font-size: 12px; color: #b45309;">
+            * Tus credenciales de acceso oficiales y confirmación se entregarán automáticamente una vez que ingreses al link de pago y concluyas tu compra en Mercado Pago.
+          </p>
+          ` : ''}
         </div>
+        `}
 
         ${
           isPayPal
@@ -476,7 +604,7 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
     <tr>
       <td style="padding: 16px 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b; line-height: 1.5;">
         UpClic Store • Lima, Perú • Atención: ${WHATSAPP_DISPLAY}<br/>
-        Este mensaje es un comprobante de tu compra en upclic.store.
+        ${isPaid ? 'Este mensaje es un comprobante oficial de tu compra con pago aprobado en upclic.store.' : 'Este mensaje es una notificación de tu pedido pendiente de pago en upclic.store.'}
       </td>
     </tr>
   </table>
@@ -485,7 +613,7 @@ function generateCustomerEmailHtml(order: OrderEmailPayload): string {
 }
 
 // Generate plain-text fallback (clean, no all-caps spam patterns)
-function generateCustomerEmailText(order: OrderEmailPayload): string {
+export function generateCustomerEmailText(order: OrderEmailPayload): string {
   const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
   const isPayPal = order.channel === "paypal";
   const penRate = 3.75;
@@ -530,23 +658,42 @@ Lima, Perú`;
   }
 
   if (isPaid) {
+    const credsText = order.deliveredCredentials && order.deliveredCredentials.length > 0
+      ? `\n⚡ TUS CREDENCIALES DE ACCESO ENTREGADAS AL INSTANTE:\n` +
+        order.deliveredCredentials.map(c => 
+          `- Servicio: ${c.serviceName} (${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'})\n  Usuario / Correo: ${c.email}\n  Contraseña: ${c.password || 'Asignada'}${c.profilePin ? `\n  Perfil / PIN: ${c.profilePin}` : ''}\n  Dispositivo: 1 solo dispositivo (uso personal)\n  Garantía: ${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'} (según lo alquilado)\n  ⚠️ REGLA OBLIGATORIA: Iniciar sesión únicamente en el 1 dispositivo que va a utilizar.\n  (No abrir en múltiples pantallas para no anular la garantía)${c.loginUrl ? `\n  Iniciar sesión: ${c.loginUrl}` : ''}`
+        ).join('\n\n') + '\n\n'
+      : '';
+
+    const hasImmediateWithoutCreds = (!order.deliveredCredentials || order.deliveredCredentials.length === 0) &&
+      (order.items || []).some(it => {
+        const slug = (it.slug || it.id || (it as any).product?.slug || (it as any).product?.id || it.name || '').toLowerCase();
+        return slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
+      });
+
     return `Hola${order.customerName ? ` ${order.customerName}` : ''},
 
-Confirmamos la recepción de tu pago en UpClic Store.
+¡Se completó su compra con éxito! Te confirmamos que tu pago ha sido recibido y aprobado a través de Mercado Pago en UpClic Store.
 
 Detalles de tu compra:
 - Correo de entrega: ${order.customerEmail}
-- Estado: Pagado
+- Estado: Pago Aprobado
 - Fecha: ${new Date().toLocaleDateString('es-PE')}
-
+${credsText}
 Productos:
 ${itemsText}
 
 ${order.discountAmount ? `Descuento: - S/ ${order.discountAmount.toFixed(2)}\n` : ''}Total pagado: S/ ${order.total.toFixed(2)}
 
-Entrega de tu licencia:
+${order.deliveredCredentials && order.deliveredCredentials.length > 0 
+  ? 'Tus credenciales ya se encuentran activas y listas para usar. Recuerda iniciar sesión en un solo dispositivo.' 
+  : hasImmediateWithoutCreds
+    ? `COORDINACIÓN DE ENTREGA DE PERFIL CON EL ADMINISTRADOR:
+Tu pago ha sido confirmado exitosamente. Debido a la gran demanda, los perfiles de entrega automática inmediata de este lote ya fueron asignados. Por favor presiona el siguiente enlace para hablar directamente con el Administrador por WhatsApp y recibir tu perfil adquirido para 1 dispositivo con tu garantía según lo alquilado:
+https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola Administrador de UpClic, realicé mi pago con éxito para el pedido #${order.orderId}. Solicito por favor la entrega de mi perfil para 1 dispositivo que adquirí.`)}`
+    : `Entrega de tu licencia:
 Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.
-Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.
+Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.`}
 
 Soporte y atención al cliente:
 Para contactar soporte por WhatsApp: https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20mi%20pedido%20es%20${encodeURIComponent(order.orderId)}
@@ -564,15 +711,15 @@ Hemos registrado tu pedido en UpClic Store.
 Detalles del pedido:
 - Número de pedido: ${order.orderId}
 - Correo: ${order.customerEmail}
-- Estado: Pendiente de pago
+- Estado: PENDIENTE DE PAGO (Aún no pagado)
 - Fecha: ${new Date().toLocaleDateString('es-PE')}
 
-Productos:
+Productos solicitados:
 ${itemsText}
 
 ${order.discountAmount ? `Descuento: - S/ ${order.discountAmount.toFixed(2)}\n` : ''}Total a pagar: S/ ${order.total.toFixed(2)}
 
-${order.paymentUrl ? `Concluir pago con Mercado Pago:\nPuedes pagar tu pedido en el siguiente enlace:\n${order.paymentUrl}\n\n` : ''}Soporte:
+${order.paymentUrl ? `👉 Para completar tu pago con Mercado Pago y recibir tus credenciales oficiales de acceso, ingresa al siguiente enlace de pago:\n${order.paymentUrl}\n\nNota: Tus credenciales oficiales de acceso se emitirán automáticamente una vez que ingreses al link de pago y concluyas tu compra.\n\n` : ''}Soporte:
 Para contactar soporte por WhatsApp: https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20mi%20pedido%20es%20${encodeURIComponent(order.orderId)}
 Teléfono: ${WHATSAPP_DISPLAY}
 
@@ -613,6 +760,15 @@ function generateAdminEmailHtml(order: OrderEmailPayload): string {
       ${itemsList}
     </ul>
 
+    ${order.deliveredCredentials && order.deliveredCredentials.length > 0 ? `
+    <div style="background-color: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px;">
+      <h4 style="margin: 0 0 6px; color: #065f46;">⚡ Credenciales Entregadas Automáticamente (Stock Excel):</h4>
+      ${order.deliveredCredentials.map(c => `
+      <p style="margin: 4px 0;"><strong>${c.serviceName} (${c.months || 1}M):</strong> User: <code>${c.email}</code> | Pass: <code>${c.password}</code> ${c.profilePin ? `| Pin: ${c.profilePin}` : ''}</p>
+      `).join('')}
+    </div>
+    ` : ''}
+
     <p style="font-size: 12px; color: #64748b; margin-top: 20px;">
       Destinatario de entrega: ${order.customerEmail}
     </p>
@@ -620,6 +776,20 @@ function generateAdminEmailHtml(order: OrderEmailPayload): string {
 </body>
 </html>`;
 }
+
+// Deduplication tracker to prevent duplicate emails for the same sale/order
+const recentEmailDispatches = new Map<string, number>();
+const inFlightDispatches = new Map<string, Promise<{ customerSent: boolean; adminSent: boolean; reason?: string }>>();
+
+// Clean up entries older than 20 minutes periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, timestamp] of recentEmailDispatches.entries()) {
+    if (now - timestamp > 20 * 60 * 1000) {
+      recentEmailDispatches.delete(key);
+    }
+  }
+}, 5 * 60 * 1000).unref();
 
 /**
  * Dispatches transactional emails:
@@ -631,55 +801,107 @@ export async function sendOrderEmails(order: OrderEmailPayload): Promise<{
   adminSent: boolean;
   reason?: string;
 }> {
-  const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
+  const adminEmail = (process.env.ADMIN_EMAIL || "leoch5829@gmail.com").toLowerCase().trim();
   const fromEmail = process.env.FROM_EMAIL || "upclic@upclic.store";
   const isPaid = Boolean(order.isPaid || order.status === "paid" || order.status === "approved");
 
-  let customerSent = false;
-  let adminSent = false;
+  const cleanEmail = (order.customerEmail || "").toLowerCase().trim();
+  const now = Date.now();
 
-  // 1. Send confirmation email to customer
-  const isPayPal = order.channel === "paypal";
-  if (order.customerEmail && order.customerEmail.includes("@")) {
-    const custResult = await sendEmailWithFallback({
-      from: `"UpClic Store" <${fromEmail}>`,
-      to: order.customerEmail,
-      replyTo: `"UpClic Soporte" <${adminEmail}>`,
-      subject: isPayPal
-        ? `Confirmación de compra en UpClic Store (PayPal USD)`
-        : (isPaid
-            ? `Comprobante de compra UpClic Store (Pedido ${order.orderId})`
-            : `Detalles de tu pedido en UpClic Store (Pedido ${order.orderId})`),
-      text: generateCustomerEmailText(order),
-      html: generateCustomerEmailHtml(order),
-      headers: {
-        "X-Entity-Ref-ID": order.orderId,
-        "X-Priority": "3",
-        "X-MSMail-Priority": "Normal",
-        "Importance": "Normal",
-        "List-Unsubscribe": `<mailto:${adminEmail}?subject=desuscribir>`,
-      },
-    });
+  // Deduplication check: Prevent multiple duplicate emails for the exact same order or customer transaction
+  const orderIdKey = order.orderId ? `order_id_${order.orderId}` : null;
+  const contentKey = `client_${cleanEmail}_${order.channel}_${Math.round((order.total || 0) * 100)}_${isPaid ? "paid" : "intent"}`;
+  const generalClientKey = `client_${cleanEmail}_${order.channel}_${isPaid ? "paid" : "intent"}`;
 
-    if (custResult.success) {
-      customerSent = true;
-      console.log(`✅ [EMAIL] Correo enviado exitosamente al cliente (${isPaid ? 'PAGADO' : 'PENDIENTE'} vía ${custResult.strategyUsed}): ${order.customerEmail}`);
-    } else {
-      console.error(`❌ [EMAIL] Error al enviar correo al cliente (${order.customerEmail}):`, custResult.error);
+  // 1. Check if dispatch already finished recently
+  if (orderIdKey && recentEmailDispatches.has(orderIdKey)) {
+    const lastSent = recentEmailDispatches.get(orderIdKey)!;
+    if (now - lastSent < 20 * 60 * 1000) {
+      console.log(`⏭️ [EMAIL] Omitiendo correo duplicado por orderId: ${order.orderId}`);
+      return { customerSent: true, adminSent: true, reason: "duplicate_order_id_skipped" };
     }
   }
 
-  // 2. Send notification email to admin
-  if (adminEmail && adminEmail.includes("@")) {
-    const adminResult = await sendEmailWithFallback({
-      from: `"UpClic Notificaciones" <${fromEmail}>`,
-      to: adminEmail,
-      replyTo: order.customerEmail,
-      subject: isPaid
-        ? `[UpClic Pagado] ${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`
-        : `[UpClic Pedido] ${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`,
-      text: `Nuevo evento registrado en UpClic:
-Estado: ${isPaid ? "PAGADO" : "PENDIENTE"}
+  if (recentEmailDispatches.has(contentKey)) {
+    const lastSent = recentEmailDispatches.get(contentKey)!;
+    if (now - lastSent < 10 * 60 * 1000) {
+      console.log(`⏭️ [EMAIL] Omitiendo correo duplicado por contenido/cliente: ${cleanEmail} (${order.channel})`);
+      return { customerSent: true, adminSent: true, reason: "duplicate_content_skipped" };
+    }
+  }
+
+  if (recentEmailDispatches.has(generalClientKey)) {
+    const lastSent = recentEmailDispatches.get(generalClientKey)!;
+    // Allow maximum 1 intent email per 3 minutes for the same customer and channel
+    if (now - lastSent < 3 * 60 * 1000) {
+      console.log(`⏭️ [EMAIL] Omitiendo correo duplicado de intención para el mismo cliente en ventana corta: ${cleanEmail}`);
+      return { customerSent: true, adminSent: true, reason: "duplicate_short_window_skipped" };
+    }
+  }
+
+  // 2. Check if a dispatch with the same key is currently IN-FLIGHT (parallel concurrent requests)
+  const lockKey = orderIdKey || contentKey;
+  if (inFlightDispatches.has(lockKey)) {
+    console.log(`⏳ [EMAIL] Ya hay un despacho de correo en curso para esta orden/cliente (${lockKey}). Esperando resultado sin duplicar...`);
+    try {
+      return await inFlightDispatches.get(lockKey)!;
+    } catch {
+      return { customerSent: false, adminSent: false, reason: "in_flight_error" };
+    }
+  }
+
+  // Register in deduplication map immediately to block parallel duplicate invocations
+  if (orderIdKey) recentEmailDispatches.set(orderIdKey, now);
+  recentEmailDispatches.set(contentKey, now);
+  recentEmailDispatches.set(generalClientKey, now);
+
+  const dispatchPromise = (async () => {
+    let customerSent = false;
+    let adminSent = false;
+    const isSameRecipient = cleanEmail.length > 0 && cleanEmail === adminEmail;
+
+    // 1. Send confirmation email to customer
+    const isPayPal = order.channel === "paypal";
+    if (order.customerEmail && order.customerEmail.includes("@")) {
+      const custResult = await sendEmailWithFallback({
+        from: `"UpClic Store" <${fromEmail}>`,
+        to: order.customerEmail,
+        replyTo: `"UpClic Soporte" <${adminEmail}>`,
+        subject: isPayPal
+          ? `Confirmación de compra en UpClic Store (PayPal USD)`
+          : (isPaid
+              ? `¡Pago Aprobado! Se completó su compra en UpClic Store (Pedido #${order.orderId})`
+              : `Pedido registrado - Pendiente de pago en UpClic Store (Pedido #${order.orderId})`),
+        text: generateCustomerEmailText(order),
+        html: generateCustomerEmailHtml(order),
+        headers: {
+          "X-Entity-Ref-ID": order.orderId,
+          "X-Priority": "3",
+          "X-MSMail-Priority": "Normal",
+          "Importance": "Normal",
+          "List-Unsubscribe": `<mailto:${adminEmail}?subject=desuscribir>`,
+        },
+      });
+
+      if (custResult.success) {
+        customerSent = true;
+        console.log(`✅ [EMAIL] Correo único enviado exitosamente al cliente (${isPaid ? 'PAGO APROBADO' : 'PENDIENTE DE PAGO'} vía ${custResult.strategyUsed}): ${order.customerEmail}`);
+      } else {
+        console.error(`❌ [EMAIL] Error al enviar correo al cliente (${order.customerEmail}):`, custResult.error);
+      }
+    }
+
+    // 2. Send notification email to admin ONLY IF admin is not the exact same recipient who already received the customer receipt
+    if (adminEmail && adminEmail.includes("@") && !isSameRecipient) {
+      const adminResult = await sendEmailWithFallback({
+        from: `"UpClic Notificaciones" <${fromEmail}>`,
+        to: adminEmail,
+        replyTo: order.customerEmail,
+        subject: isPaid
+          ? `[UpClic Pago Aprobado] Se completó la compra #${order.orderId} - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`
+          : `[UpClic Pendiente de Pago] Pedido #${order.orderId} registrado - S/ ${order.total.toFixed(2)} - ${order.customerEmail}`,
+        text: `Nuevo evento registrado en UpClic:
+Estado: ${isPaid ? "PAGO APROBADO (COMPRA COMPLETADA)" : "PENDIENTE DE PAGO (Aún no pagado)"}
 Pedido: ${order.orderId}
 Cliente: ${order.customerName || "No especificado"}
 Correo: ${order.customerEmail}
@@ -687,20 +909,32 @@ Telefono: ${order.customerPhone || "No especificado"}
 Monto: S/ ${order.total.toFixed(2)}
 Canal: ${order.channel}
 ${order.paymentId ? `Payment ID: ${order.paymentId}\n` : ''}`,
-      html: generateAdminEmailHtml(order),
-      headers: {
-        "X-Entity-Ref-ID": order.orderId,
-        "X-Priority": "3",
-      },
-    });
+        html: generateAdminEmailHtml(order),
+        headers: {
+          "X-Entity-Ref-ID": order.orderId,
+          "X-Priority": "3",
+        },
+      });
 
-    if (adminResult.success) {
+      if (adminResult.success) {
+        adminSent = true;
+        console.log(`✅ [EMAIL] Alerta enviada al administrador vía ${adminResult.strategyUsed}: ${adminEmail}`);
+      } else {
+        console.error(`❌ [EMAIL] Error al enviar alerta al admin (${adminEmail}):`, adminResult.error);
+      }
+    } else if (isSameRecipient) {
+      console.log(`ℹ️ [EMAIL] El comprador es el mismo administrador (${cleanEmail}). Se omite alerta duplicada para enviar exactamente 1 solo correo a la bandeja.`);
       adminSent = true;
-      console.log(`✅ [EMAIL] Alerta enviada al administrador vía ${adminResult.strategyUsed}: ${adminEmail}`);
-    } else {
-      console.error(`❌ [EMAIL] Error al enviar alerta al admin (${adminEmail}):`, adminResult.error);
     }
-  }
 
-  return { customerSent, adminSent };
+    return { customerSent, adminSent };
+  })();
+
+  inFlightDispatches.set(lockKey, dispatchPromise);
+  try {
+    const result = await dispatchPromise;
+    return result;
+  } finally {
+    inFlightDispatches.delete(lockKey);
+  }
 }

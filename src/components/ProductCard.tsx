@@ -17,7 +17,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     language
   } = useCart();
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
-  const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
+  const [selectedVariantId, setSelectedVariantId] = useState<string>(
     product.variants && product.variants.length > 0 ? product.variants[0].id : 'oem'
   );
 
@@ -70,10 +70,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div>
         {/* Top-left Cyan Pill: Envío Digital */}
         <div className="mb-2">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#00A3E0] text-white text-[10px] font-bold uppercase tracking-wider">
-            <Zap className="w-2.5 h-2.5 fill-white" />
-            <span>Envío Digital</span>
-          </span>
+          {product.isImmediateDelivery ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[10px] font-black uppercase tracking-wider shadow-xs">
+              <Zap className="w-2.5 h-2.5 fill-white" />
+              <span>Entrega Inmediata ⚡</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#00A3E0] text-white text-[10px] font-bold uppercase tracking-wider">
+              <Zap className="w-2.5 h-2.5 fill-white" />
+              <span>Envío Digital</span>
+            </span>
+          )}
         </div>
 
         {/* Product Image Section */}

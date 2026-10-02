@@ -2,13 +2,14 @@ export type ProductCategory = 'all' | 'office' | 'windows' | 'combos' | 'project
 export type Currency = 'PEN' | 'USD' | 'COP' | 'MXN';
 
 export interface ProductVariant {
-  id: 'oem' | 'retail';
-  name: string; // e.g. "Clave tipo OEM" | "Clave tipo Retail"
-  type: 'OEM' | 'Retail';
+  id: string; // e.g. 'oem' | 'retail' | '1-mes' | '3-meses' | '6-meses'
+  name: string; // e.g. "Clave tipo OEM" | "1 Mes"
+  type?: string;
   price: number;
   oldPrice?: number;
   badge?: string;
   shortDesc: string;
+  months?: number;
 }
 
 export interface ProductDownloadOption {
@@ -50,6 +51,22 @@ export interface Product {
   installationSteps: string[];
   variants?: ProductVariant[];
   stock?: number;
+  isImmediateDelivery?: boolean;
+  acceptedPaymentGateways?: ('mercadopago' | 'paypal')[];
+}
+
+export interface DeliveredCredentials {
+  id?: string;
+  serviceName: string;
+  productSlug: string;
+  email: string;
+  password?: string;
+  profilePin?: string;
+  months?: number;
+  loginUrl?: string;
+  deliveredAt?: string;
+  orderId?: string;
+  notes?: string;
 }
 
 export interface PromoCoupon {
@@ -76,7 +93,7 @@ export interface CartItem {
   id?: string;
   product: Product;
   quantity: number;
-  selectedVariant?: 'oem' | 'retail';
+  selectedVariant?: string;
   variantName?: string;
   unitPrice?: number;
 }

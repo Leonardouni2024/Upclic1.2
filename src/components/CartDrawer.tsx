@@ -36,6 +36,15 @@ export const CartDrawer: React.FC = () => {
 
   const [inputCoupon, setInputCoupon] = useState('');
 
+  // Check if PayPal is allowed for current cart (Crunchyroll and Amazon Prime Video only accept Mercado Pago)
+  const isPayPalAllowed = items.length > 0 && !items.some(it => {
+    const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
+    const name = (it.product?.name || (it as any).name || '').toLowerCase();
+    const isStreamingExclusive = slug.includes('prime') || slug.includes('crunchy') || name.includes('prime') || name.includes('crunchy');
+    const gateways = it.product?.acceptedPaymentGateways;
+    return isStreamingExclusive || Boolean(gateways && !gateways.includes('paypal'));
+  });
+
   // Only recommend coupon if the cart meets the requirements:
   // Not already applied, no multi-item 10% discount already active, and has at least 1 product >= S/ 40.00
   const isEligibleForCoupon =
@@ -168,47 +177,70 @@ export const CartDrawer: React.FC = () => {
                       {/* Quantity & Price Row */}
                       <div className="mt-2.5 flex items-center justify-between gap-2">
                         {/* Editable Stepper */}
-                        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(itemKey, -1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
-                            aria-label={t('decrease') || 'Decrease'}
-                            title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <input
-                            type="number"
-                            min="1"
-                            max="99"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const val = parseInt(e.target.value, 10);
-                              if (!isNaN(val)) {
-                                setQuantity(itemKey, Math.min(99, Math.max(1, val)));
-                              }
-                            }}
-                            onBlur={(e) => {
-                              const val = parseInt(e.target.value, 10);
-                              if (isNaN(val) || val < 1) {
-                                setQuantity(itemKey, 1);
-                              }
-                            }}
-                            className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            aria-label={t('editQuantity') || 'Edit quantity'}
-                            title={t('clickToEdit') || 'Click to edit quantity'}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(itemKey, 1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
-                            aria-label={t('increase') || 'Increase'}
-                            title={t('increase') || 'Increase'}
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
+                        {(() => {
+                          const itemMaxStock = typeof item.product?.stock === 'number' && item.product.stock > 0
+                            ? item.product.stock
+                            : 99;
+                          const isAtMax = item.quantity >= itemMaxStock;
+
+                          return (
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(itemKey, -1)}
+                                  className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
+                                  aria-label={t('decrease') || 'Decrease'}
+                                  title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
+                                >
+                                  <Minus className="w-3 h-3" />
+                                </button>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max={itemMaxStock}
+                                  value={item.quantity}
+                                  onChange={(e) => {
+                                    const val = parseInt(e.target.value, 10);
+                                    if (!isNaN(val)) {
+                                      setQuantity(itemKey, Math.min(itemMaxStock, Math.max(1, val)));
+                                    }
+                                  }}
+                                  onBlur={(e) => {
+                                    const val = parseInt(e.target.value, 10);
+                                    if (isNaN(val) || val < 1) {
+                                      setQuantity(itemKey, 1);
+                                    } else if (val > itemMaxStock) {
+                                      setQuantity(itemKey, itemMaxStock);
+                                    }
+                                  }}
+                                  className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  aria-label={t('editQuantity') || 'Edit quantity'}
+                                  title={t('clickToEdit') || 'Click to edit quantity'}
+                                />
+                                <button
+                                  type="button"
+                                  disabled={isAtMax}
+                                  onClick={() => updateQuantity(itemKey, 1)}
+                                  className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors font-bold ${
+                                    isAtMax
+                                      ? 'text-slate-300 bg-slate-100 cursor-not-allowed'
+                                      : 'hover:bg-white text-slate-700 hover:text-slate-900 cursor-pointer active:scale-95'
+                                  }`}
+                                  aria-label={t('increase') || 'Increase'}
+                                  title={isAtMax ? `Stock máximo alcanzado (${itemMaxStock})` : (t('increase') || 'Increase')}
+                                >
+                                  <Plus className="w-3 h-3" />
+                                </button>
+                              </div>
+                              {isAtMax && item.product?.stock && (
+                                <span className="text-[10px] font-bold text-amber-700">
+                                  Máx. {itemMaxStock}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         {/* Subtotal */}
                         <div className="text-right">
@@ -348,18 +380,20 @@ export const CartDrawer: React.FC = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
-                <button
-                  id="cart-go-to-paypal-btn"
-                  onClick={navigateToPayPal}
-                  className="w-full py-2.5 px-4 rounded-lg bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-extrabold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                    alt="PayPal"
-                    className="h-4 w-auto object-contain"
-                  />
-                  <span>{language === 'ES' ? 'Pagar con PayPal ($ USD)' : 'Pay with PayPal ($ USD)'}</span>
-                </button>
+                {isPayPalAllowed && (
+                  <button
+                    id="cart-go-to-paypal-btn"
+                    onClick={navigateToPayPal}
+                    className="w-full py-2.5 px-4 rounded-lg bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-extrabold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
+                  >
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                      alt="PayPal"
+                      className="h-4 w-auto object-contain"
+                    />
+                    <span>{language === 'ES' ? 'Pagar con PayPal ($ USD)' : 'Pay with PayPal ($ USD)'}</span>
+                  </button>
+                )}
               </div>
 
               <div className="mt-3 flex items-center justify-center gap-2">
@@ -370,12 +404,16 @@ export const CartDrawer: React.FC = () => {
                     alt="Mercado Pago"
                     className="h-3.5 w-auto object-contain"
                   />
-                  <span className="text-slate-300">|</span>
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                    alt="PayPal"
-                    className="h-3 w-auto object-contain"
-                  />
+                  {isPayPalAllowed && (
+                    <>
+                      <span className="text-slate-300">|</span>
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                        alt="PayPal"
+                        className="h-3 w-auto object-contain"
+                      />
+                    </>
+                  )}
                 </div>
               </div>
 

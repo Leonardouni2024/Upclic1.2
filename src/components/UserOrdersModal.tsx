@@ -1,7 +1,7 @@
 import { useCart } from '../context/CartContext.tsx';
 import { formatPrice } from '../products.ts';
 import React, { useState } from 'react';
-import { X, Search, Package, Clock, CheckCircle2, AlertCircle, ShoppingBag } from 'lucide-react';
+import { X, Search, Package, Clock, CheckCircle2, AlertCircle, ShoppingBag, ExternalLink, Zap, Copy, Check } from 'lucide-react';
 
 interface UserOrdersModalProps {
   isOpen: boolean;
@@ -155,6 +155,43 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                       </div>
                     ))}
                   </div>
+
+                  {order.deliveredCredentials && order.deliveredCredentials.length > 0 && (
+                    <div className="mb-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+                        <Zap className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
+                        <span>Credenciales Entregadas al Instante:</span>
+                      </div>
+                      {order.deliveredCredentials.map((c: any, cIdx: number) => {
+                        const isPrime = c.productSlug?.includes('prime') || c.serviceName?.toLowerCase().includes('prime');
+                        const targetUrl = c.loginUrl || (isPrime ? 'https://www.primevideo.com/' : 'https://www.crunchyroll.com/');
+                        return (
+                          <div key={cIdx} className="bg-white rounded-lg p-3 border border-emerald-200 text-xs space-y-1.5">
+                            <div className="flex items-center justify-between font-bold text-slate-800">
+                              <span>{c.serviceName} ({c.months || 1}M)</span>
+                              <span className="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-mono font-bold">{c.id || 'Activo'}</span>
+                            </div>
+                            <div className="text-slate-600 font-mono text-[11px] space-y-0.5">
+                              <p><strong>Usuario:</strong> {c.email}</p>
+                              <p><strong>Contraseña:</strong> {c.password}</p>
+                              {c.profilePin && <p><strong>PIN / Perfil:</strong> {c.profilePin}</p>}
+                            </div>
+                            <a
+                              href={targetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`mt-2 inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg text-white font-bold text-xs shadow-xs transition-all ${
+                                isPrime ? 'bg-[#00A8E1] hover:bg-[#0092c4]' : 'bg-[#F47521] hover:bg-[#e06412]'
+                              }`}
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              <span>{isPrime ? 'Lanzar Prime Video' : 'Lanzar Crunchyroll'}</span>
+                            </a>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   <div className="bg-slate-50 rounded-lg p-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-500">{t('orderTotalLabel')}</span>

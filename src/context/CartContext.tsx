@@ -21,7 +21,7 @@ interface ToastData {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number, selectedVariant?: 'oem' | 'retail') => void;
+  addItem: (product: Product, quantity?: number, selectedVariant?: string) => void;
   removeItem: (itemKeyOrProductId: string, variantId?: string) => void;
   updateQuantity: (itemKeyOrProductId: string, delta: number, variantId?: string) => void;
   setQuantity: (itemKeyOrProductId: string, quantity: number, variantId?: string) => void;
@@ -608,11 +608,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return variantId ? `${productId}-${variantId}` : productId;
   };
 
-  const addItem = (product: Product, quantity: number = 1, selectedVariant?: 'oem' | 'retail') => {
+  const addItem = (product: Product, quantity: number = 1, selectedVariant?: string) => {
     // Automatically open the cart drawer when adding a product as requested
     setIsCartOpen(true);
 
-    const safeQuantity = Math.max(1, Math.min(99, Math.floor(Number(quantity) || 1)));
+    const maxStock = typeof product.stock === 'number' && product.stock > 0 ? product.stock : 99;
+    const safeQuantity = Math.max(1, Math.min(maxStock, Math.floor(Number(quantity) || 1)));
 
     const variant = product.variants
       ? (product.variants.find(v => v.id === selectedVariant) || product.variants[0])
@@ -630,9 +631,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let updated: CartItem[];
 
       if (existingIndex > -1) {
+        const itemStock = typeof prevItems[existingIndex].product?.stock === 'number' && prevItems[existingIndex].product.stock > 0
+          ? prevItems[existingIndex].product.stock
+          : maxStock;
         updated = prevItems.map((item, idx) =>
           idx === existingIndex
-            ? { ...item, quantity: Math.min(99, Math.max(1, (Number(item.quantity) || 1) + safeQuantity)) }
+            ? { ...item, quantity: Math.min(itemStock, Math.max(1, (Number(item.quantity) || 1) + safeQuantity)) }
             : item
         );
       } else {
@@ -681,11 +685,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           if (isMatch) {
             const currentQty = Number(item.quantity) || 1;
+            const itemStock = typeof item.product?.stock === 'number' && item.product.stock > 0
+              ? item.product.stock
+              : 99;
             const newQty = currentQty + safeDelta;
             if (newQty <= 0) {
               return null;
             }
-            return { ...item, quantity: Math.min(99, Math.max(1, Math.floor(newQty))) };
+            return { ...item, quantity: Math.min(itemStock, Math.max(1, Math.floor(newQty))) };
           }
           return item;
         })
@@ -702,8 +709,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    const validQty = Math.min(99, Math.max(1, Math.floor(rawNum)));
-
     setItems(prev => {
       const updated = prev.map(item => {
         const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
@@ -714,7 +719,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
             : item.product.id === itemKeyOrProductId);
 
-        return isMatch ? { ...item, quantity: validQty } : item;
+        if (!isMatch) return item;
+
+        const itemStock = typeof item.product?.stock === 'number' && item.product.stock > 0
+          ? item.product.stock
+          : 99;
+        const validQty = Math.min(itemStock, Math.max(1, Math.floor(rawNum)));
+
+        return { ...item, quantity: validQty };
       });
 
       return updated;
@@ -796,6 +808,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const navigateToPayPal = () => {
+    // Crunchyroll and Amazon Prime Video only accept Mercado Pago
+    const hasStreamingOnly = items.some(it => {
+      const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
+      const name = (it.product?.name || (it as any).name || '').toLowerCase();
+      return (
+        slug.includes('prime') ||
+        slug.includes('crunchy') ||
+        name.includes('prime') ||
+        name.includes('crunchy') ||
+        Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
+      );
+    });
+
+    if (hasStreamingOnly) {
+      navigateToCheckout();
+      return;
+    }
+
     setIsCartOpen(false);
     setCurrentPath('/checkout/paypal');
     try {

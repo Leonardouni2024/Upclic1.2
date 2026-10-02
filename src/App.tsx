@@ -32,26 +32,11 @@ const AppContent: React.FC = () => {
   // Render main view based on current path
   const renderMainContent = () => {
     
-    if (currentPath === '/checkout/success') {
-      return (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center text-[#0B1F3A]">
-          <div className="w-16 h-16 bg-emerald-500/10 text-emerald-600 rounded-full flex items-center justify-center mb-4 border border-emerald-500/20">
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-          </div>
-          <h2 className="text-2xl font-black text-[#0B1F3A] mb-2">¡Pago Exitoso!</h2>
-          <p className="text-slate-600 mb-6 max-w-md">Tu pedido ha sido procesado correctamente. Recibirás tu clave de activación e instrucciones en tu correo y WhatsApp en un lapso de 5 a 15 minutos.</p>
-          <button onClick={() => window.location.href = '/'} className="px-6 py-3 bg-[#0067B8] hover:bg-[#005499] text-white font-bold rounded-lg transition-colors shadow-sm cursor-pointer">
-            Volver a la tienda
-          </button>
-        </div>
-      );
-    }
-
     if (currentPath === '/checkout/paypal' || currentPath === '/paypal') {
       return <PayPalCheckoutPage />;
     }
 
-    if (currentPath === '/checkout') {
+    if (currentPath === '/checkout' || currentPath === '/checkout/success') {
       return <CheckoutPage />;
     }
 

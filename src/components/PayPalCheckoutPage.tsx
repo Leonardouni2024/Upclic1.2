@@ -34,6 +34,19 @@ export const PayPalCheckoutPage: React.FC = () => {
 
   const isEn = language === 'EN';
 
+  // Check if cart contains any item that explicitly disallows PayPal (Crunchyroll and Amazon Prime Video)
+  const hasImmediateDeliveryItem = items.some(it => {
+    const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
+    const name = (it.product?.name || (it as any).name || '').toLowerCase();
+    return (
+      slug.includes('prime') ||
+      slug.includes('crunchy') ||
+      name.includes('prime') ||
+      name.includes('crunchy') ||
+      Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
+    );
+  });
+
   // Synchronized exchange rate with the store
   const penRate = exchangeRate || 3.75;
   const totalUSD = (total / penRate).toFixed(2);
@@ -102,10 +115,17 @@ export const PayPalCheckoutPage: React.FC = () => {
   const hasRenderedRef = useRef(false);
   const hasBeenClickedRef = useRef(false);
   const forceFreshRenderButtonRef = useRef<() => void>(() => {});
+  const isRegisteringOrderRef = useRef(false);
+  const hasRegisteredOrderRef = useRef(false);
+  const lastRegisteredKeyRef = useRef('');
+  const registeredOrderIdRef = useRef<string | null>(null);
+  const interceptorsAttachedRef = useRef(false);
 
   const handleEmailChange = (val: string) => {
     setCustomerEmail(val);
     customerEmailRef.current = val;
+    hasRegisteredOrderRef.current = false;
+    lastRegisteredKeyRef.current = '';
     if (emailError && val.includes('@') && val.includes('.')) {
       setEmailError(null);
     }
@@ -137,7 +157,15 @@ export const PayPalCheckoutPage: React.FC = () => {
       return null;
     }
 
+    const sessionKey = `${trimmedEmail}_${totalUSD}_${items.map(it => `${it.product.id}:${it.quantity}`).join(',')}`;
+    if (isRegisteringOrderRef.current || hasRegisteredOrderRef.current || lastRegisteredKeyRef.current === sessionKey) {
+      console.log('Orden PayPal ya registrada previamente en esta sesión. Omitiendo llamada duplicada.');
+      return registeredOrderIdRef.current;
+    }
+
     try {
+      isRegisteringOrderRef.current = true;
+      lastRegisteredKeyRef.current = sessionKey;
       setIsRegisteringOrder(true);
       // Save order snapshot in localStorage so return flow has complete details
       try {
@@ -180,13 +208,16 @@ export const PayPalCheckoutPage: React.FC = () => {
           customerEmail: trimmedEmail,
           customerName: customerNameRef.current.trim(),
           customerPhone: customerPhoneRef.current.trim(),
-          channel: 'paypal'
+          channel: 'paypal',
+          orderId: registeredOrderIdRef.current || undefined
         })
       });
 
       if (response.ok) {
         const data = await response.json();
         if (data?.orderId) {
+          registeredOrderIdRef.current = data.orderId;
+          hasRegisteredOrderRef.current = true;
           setRegisteredOrderId(data.orderId);
           try {
             const rawStored = localStorage.getItem('upclic_last_order');
@@ -199,12 +230,21 @@ export const PayPalCheckoutPage: React.FC = () => {
     } catch (err) {
       console.error('Error al registrar orden PayPal en backend:', err);
     } finally {
+      isRegisteringOrderRef.current = false;
       setIsRegisteringOrder(false);
     }
   };
 
+  useEffect(() => {
+    if (hasImmediateDeliveryItem) {
+      navigateToCheckout();
+    }
+  }, [hasImmediateDeliveryItem, navigateToCheckout]);
+
   // Initialization and continuous amount & product title sync
   useEffect(() => {
+    if (hasImmediateDeliveryItem) return;
+
     let isMounted = true;
     let pollInterval: NodeJS.Timeout | null = null;
     let continuousSyncInterval: NodeJS.Timeout | null = null;
@@ -264,9 +304,19 @@ export const PayPalCheckoutPage: React.FC = () => {
 
     const attachContainerInterceptors = () => {
       const container = document.getElementById('paypal-container-9W56EUJ67HRS4');
-      if (!container) return;
+      if (!container || interceptorsAttachedRef.current) return;
+      interceptorsAttachedRef.current = true;
+
+      let lastInteractionTimestamp = 0;
 
       const onUserInteraction = (e: Event) => {
+        const now = Date.now();
+        // Debounce interactions to prevent rapid multi-clicks or multi-event triggers
+        if (now - lastInteractionTimestamp < 1200) {
+          return;
+        }
+        lastInteractionTimestamp = now;
+
         const trimmedEmail = customerEmailRef.current.trim();
         if (!trimmedEmail || !trimmedEmail.includes('@') || !trimmedEmail.includes('.')) {
           e.preventDefault();
@@ -290,8 +340,6 @@ export const PayPalCheckoutPage: React.FC = () => {
       };
 
       container.addEventListener('click', onUserInteraction, true);
-      container.addEventListener('pointerdown', onUserInteraction, true);
-      container.addEventListener('touchstart', onUserInteraction, true);
       container.addEventListener('mouseenter', fixProductTitleAndFillAmount, true);
     };
 
@@ -425,7 +473,15 @@ export const PayPalCheckoutPage: React.FC = () => {
       window.removeEventListener('touchstart', fixProductTitleAndFillAmount, true);
       window.removeEventListener('click', fixProductTitleAndFillAmount, true);
     };
-  }, [totalUSD, productTitleSummary]);
+  }, [totalUSD, productTitleSummary, hasImmediateDeliveryItem]);
+
+  if (hasImmediateDeliveryItem) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] py-12 px-4 flex items-center justify-center text-slate-200">
+        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0f172a] py-8 sm:py-12 text-slate-200">

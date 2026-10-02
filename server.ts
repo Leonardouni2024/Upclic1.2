@@ -8,6 +8,13 @@ import { MercadoPagoConfig, Preference } from "mercadopago";
 import { GoogleGenAI } from "@google/genai";
 import { products, WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from "./src/products.ts";
 import { sendOrderEmails, getTransporter, sendEmailWithFallback, diagnoseEmailStrategies } from "./emailService.ts";
+import {
+  claimCredentialForOrder,
+  loadCredentialsInventory,
+  getCredentialsCsvContent,
+  getAvailableStock,
+  saveCredentialsInventory,
+} from "./credentialsService.ts";
 
 const app = express();
 const PORT = 3000;
@@ -126,12 +133,45 @@ function loadStoredOrders(): any[] {
   return [];
 }
 
-function saveOrderNotification(orderData: any) {
+function saveOrderNotification(orderData: any): any {
   ensureDataDirectory();
   try {
     const orders = loadStoredOrders();
+    const now = Date.now();
+    const cleanEmail = (orderData.customerEmail || "").toLowerCase().trim();
+    const total = Number(orderData.total || 0);
+    const channel = orderData.channel || "";
+
+    // 1. If an explicit ID is passed, check if it already exists to update instead of duplicating
+    if (orderData.id) {
+      const existingIdx = orders.findIndex((o: any) => o.id === orderData.id);
+      if (existingIdx >= 0) {
+        orders[existingIdx] = {
+          ...orders[existingIdx],
+          ...orderData,
+          updatedAt: new Date().toISOString()
+        };
+        fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 250), null, 2), "utf-8");
+        return { ...orders[existingIdx], isDuplicate: true };
+      }
+    }
+
+    // 2. Deduplicate: If an order for the same customer email, channel, and total was recorded in the last 60 seconds, reuse it!
+    const recentMatch = orders.find((o: any) => {
+      if ((o.customerEmail || "").toLowerCase().trim() !== cleanEmail) return false;
+      if (channel && o.channel !== channel) return false;
+      if (Math.abs(Number(o.total || 0) - total) > 0.05) return false;
+      const createdAtMs = new Date(o.createdAt).getTime();
+      return (now - createdAtMs) < 60 * 1000;
+    });
+
+    if (recentMatch) {
+      console.log(`♻️ [ORDEN] Reutilizando orden existente reciente (${recentMatch.id}) para evitar registros duplicados.`);
+      return { ...recentMatch, isDuplicate: true };
+    }
+
     const newRecord = {
-      id: orderData.id || `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      id: orderData.id || `ORD-${now}-${Math.floor(Math.random() * 1000)}`,
       createdAt: new Date().toISOString(),
       ...orderData
     };
@@ -778,12 +818,14 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       };
     });
 
-    // Real public URL must always return to official domain https://upclic.store
-    let appUrl = process.env.APP_URL;
-    if (!appUrl || appUrl.includes('sevalla.app') || appUrl.includes('localhost') || appUrl.includes('.run.app') || appUrl.includes('github.io')) {
-      appUrl = 'https://upclic.store';
+    // Determine appUrl for return redirects (prefer caller origin if HTTPS, otherwise official domain)
+    let appUrl = 'https://upclic.store';
+    const reqOrigin = req.body?.origin;
+    if (typeof reqOrigin === 'string' && reqOrigin.startsWith('https://')) {
+      appUrl = reqOrigin.replace(/\/$/, '');
+    } else if (process.env.APP_URL && process.env.APP_URL.startsWith('https://')) {
+      appUrl = process.env.APP_URL.replace(/\/$/, '');
     }
-    appUrl = appUrl.replace(/\/$/, '');
 
     const preferenceBody: any = {
       items: mpItems,
@@ -847,21 +889,25 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
     console.log("=======================================================\n");
 
     // Trigger automated email notification (customer confirmation + admin alert)
-    sendOrderEmails({
-      orderId: recordedOrder.id,
-      customerEmail: trimmedEmail,
-      customerName: trimmedName || null,
-      customerPhone: trimmedPhone || null,
-      total: finalTotal,
-      items: recordedOrder.items,
-      channel: "mercado_pago",
-      status: "intent_mercadopago",
-      paymentUrl: response.init_point,
-      isPaid: false,
-      discountAmount: discountAmount || 0,
-      discountReason: discountReason || null,
-      createdAt: recordedOrder.createdAt
-    }).catch(err => console.error("Error al despachar correos:", err));
+    if (!recordedOrder.isDuplicate) {
+      sendOrderEmails({
+        orderId: recordedOrder.id,
+        customerEmail: trimmedEmail,
+        customerName: trimmedName || null,
+        customerPhone: trimmedPhone || null,
+        total: finalTotal,
+        items: recordedOrder.items,
+        channel: "mercado_pago",
+        status: "intent_mercadopago",
+        paymentUrl: response.init_point,
+        isPaid: false,
+        discountAmount: discountAmount || 0,
+        discountReason: discountReason || null,
+        createdAt: recordedOrder.createdAt
+      }).catch(err => console.error("Error al despachar correos:", err));
+    } else {
+      console.log(`⏭️ [EMAIL] Omitiendo correo duplicado en create_preference (${recordedOrder.id})`);
+    }
 
     res.json({
       id: response.id,
@@ -922,17 +968,21 @@ app.post("/api/notify_checkout_intent", express.json(), (req, res) => {
     console.log("=======================================================\n");
 
     // Trigger automated email notification (customer confirmation + admin alert)
-    sendOrderEmails({
-      orderId: recorded.id,
-      customerEmail: trimmedEmail,
-      customerName: trimmedName || null,
-      customerPhone: trimmedPhone || null,
-      total: recorded.total,
-      items: recorded.items,
-      channel: "whatsapp",
-      status: "intent_whatsapp",
-      createdAt: recorded.createdAt
-    }).catch(err => console.error("Error al despachar correos:", err));
+    if (!recorded.isDuplicate) {
+      sendOrderEmails({
+        orderId: recorded.id,
+        customerEmail: trimmedEmail,
+        customerName: trimmedName || null,
+        customerPhone: trimmedPhone || null,
+        total: recorded.total,
+        items: recorded.items,
+        channel: "whatsapp",
+        status: "intent_whatsapp",
+        createdAt: recorded.createdAt
+      }).catch(err => console.error("Error al despachar correos:", err));
+    } else {
+      console.log(`⏭️ [EMAIL] Omitiendo correo duplicado en notify_checkout_intent (${recorded.id})`);
+    }
 
     return res.json({ success: true, order: recorded });
   } catch (err: any) {
@@ -962,10 +1012,22 @@ app.get("/api/paypal/config", (_req, res) => {
 // POST Create PayPal Order
 app.post("/api/paypal/create_order", express.json(), async (req, res) => {
   try {
-    const { items, discountAmount, total, customerEmail, customerName, customerPhone } = req.body;
+    const { items, discountAmount, total, customerEmail, customerName, customerPhone, orderId } = req.body;
     const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
     if (!trimmedEmail || !trimmedEmail.includes("@")) {
       return res.status(400).json({ error: "Por favor ingresa un correo electrónico válido." });
+    }
+
+    // Verify that cart does not contain streaming accounts that are strictly Mercado Pago exclusive (Crunchyroll, Amazon Prime Video)
+    const hasStreamingExclusive = Array.isArray(items) && items.some((it: any) => {
+      const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || "").toLowerCase();
+      return slug.includes("prime-video") || slug.includes("crunchyroll") || slug.includes("prime video") || slug.includes("crunchy");
+    });
+
+    if (hasStreamingExclusive) {
+      return res.status(400).json({
+        error: "Las cuentas de Crunchyroll y Amazon Prime Video solo aceptan pagos mediante Mercado Pago. Por favor utiliza Mercado Pago para continuar."
+      });
     }
 
     const exchangeRate = 3.75;
@@ -977,6 +1039,7 @@ app.post("/api/paypal/create_order", express.json(), async (req, res) => {
     const mode = process.env.PAYPAL_MODE || "sandbox";
 
     const recordedOrder = saveOrderNotification({
+      id: orderId || null,
       customerEmail: trimmedEmail,
       customerName: customerName?.trim() || null,
       customerPhone: customerPhone?.trim() || null,
@@ -1002,20 +1065,24 @@ app.post("/api/paypal/create_order", express.json(), async (req, res) => {
     console.log(`⏰ Fecha: ${new Date().toISOString()}`);
     console.log("=======================================================\n");
 
-    // Dispatch automated confirmation email to customer and notification to admin
-    sendOrderEmails({
-      orderId: recordedOrder.id,
-      customerEmail: trimmedEmail,
-      customerName: customerName?.trim() || null,
-      customerPhone: customerPhone?.trim() || null,
-      total: penTotal,
-      usdTotal: usdTotal,
-      items: recordedOrder.items,
-      channel: "paypal",
-      status: "intent_paypal",
-      discountAmount: discountAmount || 0,
-      createdAt: recordedOrder.createdAt
-    }).catch(err => console.error("Error al despachar correos PayPal intent:", err));
+    // Only dispatch automated confirmation email if this is NOT a duplicate order
+    if (!recordedOrder.isDuplicate) {
+      sendOrderEmails({
+        orderId: recordedOrder.id,
+        customerEmail: trimmedEmail,
+        customerName: customerName?.trim() || null,
+        customerPhone: customerPhone?.trim() || null,
+        total: penTotal,
+        usdTotal: usdTotal,
+        items: recordedOrder.items,
+        channel: "paypal",
+        status: "intent_paypal",
+        discountAmount: discountAmount || 0,
+        createdAt: recordedOrder.createdAt
+      }).catch(err => console.error("Error al despachar correos PayPal intent:", err));
+    } else {
+      console.log(`⏭️ [EMAIL] Se omitió envío de correo PayPal por orden/sesión duplicada (${recordedOrder.id})`);
+    }
 
     // If official PayPal Client ID & Secret are set, call PayPal REST API
     if (clientId && clientSecret && clientId !== "sb" && clientId.trim().length > 5) {
@@ -1267,6 +1334,50 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
       });
     }
 
+    // Check if order contains immediate delivery products (Prime Video or Crunchyroll) and auto-claim credentials from Excel inventory
+    const deliveredCredentials: any[] = recorded.deliveredCredentials || [];
+    const orderItems = recorded.items || [];
+    
+    if (deliveredCredentials.length === 0) {
+      for (const item of orderItems) {
+        const slug = (item.slug || item.id || item.product?.slug || item.product?.id || item.name || "").toLowerCase();
+        if (slug.includes("prime-video") || slug.includes("crunchyroll") || slug.includes("prime video") || slug.includes("crunchy")) {
+          const productSlug = slug.includes("crunchy") ? "crunchyroll-premium" : "amazon-prime-video";
+          
+          let months = 1;
+          const variantText = (item.variantName || item.selectedVariant || "").toLowerCase();
+          if (variantText.includes("6")) {
+            months = 6;
+          } else if (variantText.includes("3")) {
+            months = 3;
+          }
+
+          const qty = Math.max(1, Number(item.quantity) || 1);
+          for (let q = 0; q < qty; q++) {
+            const cred = claimCredentialForOrder({
+              productSlug,
+              months,
+              customerEmail: trimmedEmail,
+              orderId: recorded.id,
+            });
+            if (cred) {
+              deliveredCredentials.push(cred);
+            }
+          }
+        }
+      }
+
+      if (deliveredCredentials.length > 0) {
+        recorded.deliveredCredentials = deliveredCredentials;
+        const currentOrders = loadStoredOrders();
+        const oIdx = currentOrders.findIndex((o: any) => o.id === recorded.id);
+        if (oIdx >= 0) {
+          currentOrders[oIdx].deliveredCredentials = deliveredCredentials;
+          fs.writeFileSync(ORDERS_FILE, JSON.stringify(currentOrders.slice(0, 250), null, 2), "utf-8");
+        }
+      }
+    }
+
     console.log("\n=======================================================");
     console.log(`🎉 [PAGO CONFIRMADO MERCADO PAGO] PAGO APROBADO EXITOSAMENTE`);
     console.log(`🆔 ID Pedido: ${recorded.id}`);
@@ -1275,10 +1386,13 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
     if (trimmedName) console.log(`👤 Nombre: ${trimmedName}`);
     if (trimmedPhone) console.log(`📱 Teléfono: ${trimmedPhone}`);
     console.log(`💰 Total Pagado: S/ ${Number(recorded.total || 0).toFixed(2)}`);
+    if (deliveredCredentials.length > 0) {
+      console.log(`⚡ [ENTREGA INMEDIATA] Se asignaron y enviaron ${deliveredCredentials.length} credencial(es) automáticamente.`);
+    }
     console.log(`⏰ Fecha: ${new Date().toISOString()}`);
     console.log("=======================================================\n");
 
-    // Send confirmation email to customer (with 10-30 min notice & Contact button) + admin alert
+    // Send confirmation email to customer (including credentials if immediate delivery) + admin alert
     const emailResult = await sendOrderEmails({
       orderId: recorded.id,
       customerEmail: trimmedEmail,
@@ -1290,18 +1404,58 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
       status: "paid",
       isPaid: true,
       paymentId: cleanPaymentId,
+      deliveredCredentials: deliveredCredentials.length > 0 ? deliveredCredentials : undefined,
       createdAt: recorded.createdAt
     });
 
     return res.json({
       success: true,
       order: recorded,
+      deliveredCredentials,
       emailSentToCustomer: emailResult.customerSent,
       emailSentToAdmin: emailResult.adminSent
     });
   } catch (err: any) {
     console.error("Error en /api/confirm_payment_success:", err);
     return res.status(500).json({ error: "Error al confirmar pago de orden." });
+  }
+});
+
+// --- CREDENTIALS & EXCEL INVENTORY ENDPOINTS ---
+
+// GET Download Excel-compatible CSV of all credentials
+app.get("/api/credentials/excel", (_req, res) => {
+  try {
+    const csvContent = getCredentialsCsvContent();
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", 'attachment; filename="upclic_inventario_credenciales.csv"');
+    return res.send(csvContent);
+  } catch (err: any) {
+    console.error("Error al exportar inventario a Excel:", err);
+    return res.status(500).json({ error: "Error al generar archivo Excel/CSV." });
+  }
+});
+
+// GET View current credentials inventory
+app.get("/api/credentials/inventory", (_req, res) => {
+  try {
+    const inventory = loadCredentialsInventory();
+    const primeAvailable = inventory.filter((c) => c.productSlug.includes("prime-video") && c.estado === "Disponible").length;
+    const crunchyAvailable = inventory.filter((c) => c.productSlug.includes("crunchyroll") && c.estado === "Disponible").length;
+    return res.json({
+      success: true,
+      inventory,
+      summary: {
+        total: inventory.length,
+        disponibles: inventory.filter((c) => c.estado === "Disponible").length,
+        entregados: inventory.filter((c) => c.estado === "Entregado").length,
+        primeVideoDisponibles: primeAvailable,
+        crunchyrollDisponibles: crunchyAvailable,
+      },
+    });
+  } catch (err: any) {
+    console.error("Error al obtener inventario de credenciales:", err);
+    return res.status(500).json({ error: "Error al obtener inventario." });
   }
 });
 

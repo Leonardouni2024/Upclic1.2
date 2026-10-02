@@ -25,6 +25,7 @@ import {
   Send,
   Download,
   ExternalLink,
+  Tv,
 } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -55,7 +56,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
   const product = getProductBySlug(slug) || products[0];
   const stats = getProductStats(product.id);
   const [imgSrc, setImgSrc] = useState(product.imageUrl);
-  const [selectedVariantId, setSelectedVariantId] = useState<'oem' | 'retail'>(
+  const [selectedVariantId, setSelectedVariantId] = useState<string>(
     product.variants && product.variants.length > 0 ? product.variants[0].id : 'oem'
   );
   
@@ -518,6 +519,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <Clock className="w-3.5 h-3.5" />
                     <span>{t('instantDigitalDeliveryPill')}</span>
                   </span>
+                  {product.isImmediateDelivery && (
+                    <span className="px-2.5 sm:px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] sm:text-xs font-bold border border-indigo-200 flex items-center gap-1">
+                      <Tv className="w-3.5 h-3.5" />
+                      <span>{language === 'ES' ? '1 Perfil (1 dispositivo)' : '1 Profile (1 device)'}</span>
+                    </span>
+                  )}
                 </div>
 
                 {/* Variant Selector (OEM vs Retail) for Windows products */}
@@ -525,14 +532,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                   <div className="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-xs font-black uppercase text-slate-700 tracking-wider">
-                        {t('selectKeyType')}
+                        {product.isImmediateDelivery ? (language === 'ES' ? 'Selecciona el tiempo de suscripción:' : 'Select subscription duration:') : t('selectKeyType')}
                       </span>
                       <span className="text-[11px] font-bold text-white bg-[#00A3E0] px-2 py-0.5 rounded-md">
                         {currentVariant?.name} ({formatPrice(activePrice)})
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div className={`grid grid-cols-1 ${product.variants.length >= 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-2.5`}>
                       {product.variants.map((v) => {
                         const isSelected = selectedVariantId === v.id;
                         return (
@@ -602,58 +609,83 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                 </div>
 
                 {/* Quantity selector */}
-                <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <span className="text-xs font-bold uppercase text-slate-700 tracking-wider">
-                    {language === 'ES' ? 'Cantidad:' : 'Quantity:'}
-                  </span>
-                  <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5 shadow-xs">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-lg text-slate-700 hover:bg-slate-200 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
-                      aria-label={t('decrease') || 'Decrease'}
-                      title={t('decrease') || 'Decrease'}
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      min="1"
-                      max="99"
-                      value={quantity}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value, 10);
-                        if (!isNaN(val)) {
-                          setQuantity(Math.min(99, Math.max(1, val)));
-                        } else if (e.target.value === '') {
-                          setQuantity(1);
-                        }
-                      }}
-                      onBlur={() => {
-                        if (!quantity || quantity < 1) {
-                          setQuantity(1);
-                        }
-                      }}
-                      className="w-12 text-center font-black text-sm text-slate-900 bg-transparent focus:bg-slate-100 focus:outline-none rounded py-1 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      aria-label={language === 'ES' ? 'Cantidad deseada' : 'Desired quantity'}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(Math.min(99, quantity + 1))}
-                      className="w-8 h-8 rounded-lg text-slate-700 hover:bg-slate-200 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
-                      aria-label={t('increase') || 'Increase'}
-                      title={t('increase') || 'Increase'}
-                    >
-                      +
-                    </button>
-                  </div>
+                {(() => {
+                  const maxStock = typeof product.stock === 'number' && product.stock > 0 ? product.stock : 99;
+                  return (
+                    <div className="mt-6 flex flex-wrap items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase text-slate-700 tracking-wider">
+                          {language === 'ES' ? 'Cantidad:' : 'Quantity:'}
+                        </span>
+                        {product.stock && product.stock > 0 && (
+                          <span className="text-[11px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full">
+                            {language === 'ES' ? `Stock máx: ${product.stock}` : `Max stock: ${product.stock}`}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5 shadow-xs">
+                        <button
+                          type="button"
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          className="w-8 h-8 rounded-lg text-slate-700 hover:bg-slate-200 font-black text-base flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+                          aria-label={t('decrease') || 'Decrease'}
+                          title={t('decrease') || 'Decrease'}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          min="1"
+                          max={maxStock}
+                          value={quantity}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value, 10);
+                            if (!isNaN(val)) {
+                              setQuantity(Math.min(maxStock, Math.max(1, val)));
+                            } else if (e.target.value === '') {
+                              setQuantity(1);
+                            }
+                          }}
+                          onBlur={() => {
+                            if (!quantity || quantity < 1) {
+                              setQuantity(1);
+                            } else if (quantity > maxStock) {
+                              setQuantity(maxStock);
+                            }
+                          }}
+                          className="w-12 text-center font-black text-sm text-slate-900 bg-transparent focus:bg-slate-100 focus:outline-none rounded py-1 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          aria-label={language === 'ES' ? 'Cantidad deseada' : 'Desired quantity'}
+                        />
+                        <button
+                          type="button"
+                          disabled={quantity >= maxStock}
+                          onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
+                          className={`w-8 h-8 rounded-lg font-black text-base flex items-center justify-center transition-colors ${
+                            quantity >= maxStock
+                              ? 'text-slate-300 bg-slate-100 cursor-not-allowed'
+                              : 'text-slate-700 hover:bg-slate-200 cursor-pointer active:scale-95'
+                          }`}
+                          aria-label={t('increase') || 'Increase'}
+                          title={quantity >= maxStock ? `Límite de stock alcanzado (${maxStock} disponibles)` : (t('increase') || 'Increase')}
+                        >
+                          +
+                        </button>
+                      </div>
 
-                  {quantity > 1 && (
-                    <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md">
-                      Subtotal: <strong className="text-slate-900 font-black">{formatPrice(activePrice * quantity)}</strong>
-                    </span>
-                  )}
-                </div>
+                      {quantity > 1 && (
+                        <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md">
+                          Subtotal: <strong className="text-slate-900 font-black">{formatPrice(activePrice * quantity)}</strong>
+                        </span>
+                      )}
+
+                      {quantity >= maxStock && product.stock && (
+                        <span className="text-xs font-bold text-amber-700">
+                          {language === 'ES' ? `(Máximo ${maxStock} por stock disponible)` : `(Max ${maxStock} available)`}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Primary Action Buttons */}
                 <div className="mt-6 flex flex-col gap-2.5">
@@ -682,7 +714,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>{t('purchaseWarranty')}</span>
+                        <span>
+                          {product.isImmediateDelivery
+                            ? (language === 'ES' ? 'Garantía según lo alquilado' : 'Warranty for rental period')
+                            : t('purchaseWarranty')}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
@@ -768,13 +804,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                       {language === 'ES' ? 'Garantía Oficial' : 'Official Warranty'}
                     </span>
                     <span className="text-slate-600">
-                      {product.id.includes('-tel')
+                      {product.isImmediateDelivery
+                        ? (language === 'ES'
+                            ? `Garantía según lo alquilado (${currentVariant?.months || 1} ${(currentVariant?.months || 1) === 1 ? 'mes' : 'meses'} de cobertura completa)`
+                            : `Warranty for rental duration (${currentVariant?.months || 1} ${(currentVariant?.months || 1) === 1 ? 'month' : 'months'} full coverage)`)
+                        : product.id.includes('-tel')
                         ? (language === 'ES' ? '1 mes de garantía para activación telefónica (asistencia personalizada)' : '1-month warranty for automated phone activation')
                         : (language === 'ES' ? '6 meses de garantía oficial y soporte técnico continuo' : '6-month official warranty and continuous support')}
                     </span>
                   </div>
                   <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                    {product.id.includes('-tel') ? '1 Mes' : '6 Meses'}
+                    {product.isImmediateDelivery
+                      ? (currentVariant?.months ? `${currentVariant.months} ${currentVariant.months === 1 ? 'Mes' : 'Meses'}` : 'Según Alquilado')
+                      : product.id.includes('-tel') ? '1 Mes' : '6 Meses'}
                   </span>
                 </div>
               </div>

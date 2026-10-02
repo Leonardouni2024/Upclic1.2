@@ -27,7 +27,14 @@ import {
   User,
   Phone,
   RefreshCw,
-  X
+  X,
+  Copy,
+  Check,
+  Eye,
+  EyeOff,
+  Tv,
+  Key,
+  Zap
 } from 'lucide-react';
 
 export const CheckoutPage: React.FC = () => {
@@ -66,6 +73,60 @@ export const CheckoutPage: React.FC = () => {
   const [selectedPaymentGateway, setSelectedPaymentGateway] = useState<'mercadopago' | 'paypal'>('mercadopago');
   const [inputCoupon, setInputCoupon] = useState('');
 
+  // Check if any product in cart strictly requires Mercado Pago (Crunchyroll and Amazon Prime Video)
+  const hasOnlyMercadoPagoItem = items.some(it => {
+    const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
+    const name = (it.product?.name || (it as any).name || '').toLowerCase();
+    return (
+      slug.includes('prime') ||
+      slug.includes('crunchy') ||
+      name.includes('prime') ||
+      name.includes('crunchy') ||
+      Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
+    );
+  });
+
+  useEffect(() => {
+    if (hasOnlyMercadoPagoItem && selectedPaymentGateway !== 'mercadopago') {
+      setSelectedPaymentGateway('mercadopago');
+    }
+  }, [hasOnlyMercadoPagoItem, selectedPaymentGateway]);
+
+  // Delivered immediate credentials state (from server confirmation or stored order)
+  const [deliveredCredentials, setDeliveredCredentials] = useState<any[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const raw = localStorage.getItem('upclic_last_credentials');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return [];
+  });
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<Record<string, boolean>>({});
+
+  const copyToClipboard = (text: string, fieldId: string) => {
+    try {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCopiedField(fieldId);
+      setTimeout(() => setCopiedField(null), 2500);
+    } catch (e) {
+      console.error('Error copying text:', e);
+    }
+  };
+
+  const toggleShowPassword = (id: string) => {
+    setShowPassword(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   // Only recommend coupon if the cart meets the requirements:
   // Not already applied, no multi-item 10% discount already active, and has at least 1 product >= S/ 40.00
   const isEligibleForCoupon =
@@ -75,6 +136,9 @@ export const CheckoutPage: React.FC = () => {
 
   const [isCreatingPreference, setIsCreatingPreference] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  // Check if PayPal is allowed for current cart
+  const isPayPalAllowed = !hasOnlyMercadoPagoItem && items.length > 0;
 
   // Customer contact state for digital delivery and notification
   const [customerEmail, setCustomerEmail] = useState(() => {
@@ -157,8 +221,10 @@ export const CheckoutPage: React.FC = () => {
       const status = searchParams.get('status') || searchParams.get('collection_status') || hashParams?.get('status') || hashParams?.get('collection_status');
       const paymentId = searchParams.get('payment_id') || searchParams.get('collection_id') || hashParams?.get('payment_id') || hashParams?.get('collection_id');
 
-      if (status === 'success' || status === 'approved' || searchParams.get('collection_status') === 'approved') {
-        return { isSuccess: true, paymentId, status };
+      const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+
+      if (status === 'success' || status === 'approved' || searchParams.get('collection_status') === 'approved' || pathname.includes('/checkout/success')) {
+        return { isSuccess: true, paymentId, status: status || 'approved' };
       }
     } catch (e) {
       console.error('Error parsing payment status:', e);
@@ -182,6 +248,7 @@ export const CheckoutPage: React.FC = () => {
   });
 
   const hasConfirmedPaymentRef = useRef(false);
+  const isCreatingPreferenceRef = useRef(false);
 
   // Retrieve last order details saved before redirecting to Mercado Pago
   const lastOrderSnapshot = (() => {
@@ -232,14 +299,48 @@ export const CheckoutPage: React.FC = () => {
       .then(res => res.json())
       .then(data => {
         console.log('Confirmación de compra procesada y correo despachado:', data);
+        if (data?.deliveredCredentials && Array.isArray(data.deliveredCredentials) && data.deliveredCredentials.length > 0) {
+          setDeliveredCredentials(data.deliveredCredentials);
+          try {
+            localStorage.setItem('upclic_last_credentials', JSON.stringify(data.deliveredCredentials));
+          } catch {}
+        }
       })
       .catch(err => {
         console.error('Error al registrar confirmación de pago:', err);
       });
   }, [paymentResult?.isSuccess, paidCustomerEmail, paidCustomerName, paidCustomerPhone, paidOrderItems, paidTotal, lastOrderSnapshot?.orderId, paymentResult?.paymentId, clearCart]);
 
+  // Lookup order credentials if not already loaded and payment is successful
+  useEffect(() => {
+    if (!paymentResult?.isSuccess || deliveredCredentials.length > 0) return;
+    const orderId = lastOrderSnapshot?.orderId || paymentResult.paymentId;
+    if (!orderId) return;
+
+    const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
+      (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
+        ? 'https://upclic12-rypnq.sevalla.app'
+        : '');
+
+    const timer = setTimeout(() => {
+      fetch(`${apiBase}/api/orders/lookup?id=${encodeURIComponent(orderId)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data?.success && data.orders?.[0]?.deliveredCredentials?.length > 0) {
+            setDeliveredCredentials(data.orders[0].deliveredCredentials);
+            try {
+              localStorage.setItem('upclic_last_credentials', JSON.stringify(data.orders[0].deliveredCredentials));
+            } catch {}
+          }
+        })
+        .catch(() => {});
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [paymentResult?.isSuccess, deliveredCredentials.length, lastOrderSnapshot?.orderId, paymentResult?.paymentId]);
+
   const handleMercadoPago = async () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || isCreatingPreferenceRef.current) return;
     setEmailTouched(true);
     setPaymentError(null);
 
@@ -250,8 +351,19 @@ export const CheckoutPage: React.FC = () => {
       emailInputRef.current?.focus();
       return;
     }
+
+    // Pre-open window synchronously in direct click handler to prevent browser popup blockers
+    let popupWindow: Window | null = null;
+    const isStandalone = typeof window !== 'undefined' && window.top === window;
+
+    if (!isStandalone) {
+      try {
+        popupWindow = window.open('about:blank', '_blank');
+      } catch {}
+    }
     
     try {
+      isCreatingPreferenceRef.current = true;
       setIsCreatingPreference(true);
 
       // Save order snapshot in localStorage so when the user returns after paying, we have full details
@@ -288,8 +400,8 @@ export const CheckoutPage: React.FC = () => {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          origin: 'https://upclic.store',
-          returnUrl: 'https://upclic.store/checkout?status=return&cart=open',
+          origin: typeof window !== 'undefined' && window.location.origin.startsWith('https://') ? window.location.origin : 'https://upclic.store',
+          returnUrl: typeof window !== 'undefined' && window.location.origin.startsWith('https://') ? `${window.location.origin}/checkout?status=return&cart=open` : 'https://upclic.store/checkout?status=return&cart=open',
           items,
           discountAmount,
           discountReason,
@@ -330,17 +442,67 @@ export const CheckoutPage: React.FC = () => {
             console.error('Error actualizando orderId en localStorage', e);
           }
         }
-        const newWindow = window.open(data.init_point, '_blank');
-        if (!newWindow) {
+
+        // Standalone window (production store on desktop / mobile): redirect directly to Mercado Pago
+        if (isStandalone) {
           window.location.href = data.init_point;
+          return;
+        }
+
+        let windowOpened = false;
+
+        // 1. Inside iframe / preview: navigate pre-opened popup window
+        if (popupWindow && !popupWindow.closed) {
+          try {
+            popupWindow.location.href = data.init_point;
+            popupWindow.focus();
+            windowOpened = true;
+          } catch (e) {
+            console.warn('Could not redirect pre-opened popup:', e);
+          }
+        }
+
+        // 2. Fallback: try window.open
+        if (!windowOpened) {
+          try {
+            const openedWin = window.open(data.init_point, '_blank', 'noopener,noreferrer');
+            if (openedWin) {
+              openedWin.focus();
+              windowOpened = true;
+            }
+          } catch (e) {
+            console.warn('Could not window.open:', e);
+          }
+        }
+
+        // 3. Fallback: simulate synthetic anchor click
+        if (!windowOpened) {
+          try {
+            const anchor = document.createElement('a');
+            anchor.href = data.init_point;
+            anchor.target = '_blank';
+            anchor.rel = 'noopener noreferrer';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            windowOpened = true;
+          } catch (e) {
+            console.warn('Could not click anchor:', e);
+          }
         }
       } else {
         throw new Error('No se obtuvo la URL de pago de Mercado Pago.');
       }
     } catch (error: any) {
+      if (popupWindow && !popupWindow.closed) {
+        try {
+          popupWindow.close();
+        } catch {}
+      }
       console.error("Error Mercado Pago:", error);
       setPaymentError(error.message || 'Error al iniciar pago seguro con Mercado Pago. Verifica que MERCADOPAGO_ACCESS_TOKEN esté configurado.');
     } finally {
+      isCreatingPreferenceRef.current = false;
       setIsCreatingPreference(false);
     }
   };
@@ -378,30 +540,294 @@ export const CheckoutPage: React.FC = () => {
           </span>
 
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            {language === 'ES' ? '¡Pago Realizado con Éxito!' : 'Payment Completed Successfully!'}
+            {language === 'ES' ? '¡Se Completó su Compra!' : 'Purchase Completed!'}
           </h1>
 
           <p className="text-sm text-slate-600 mt-2.5 leading-relaxed">
             {language === 'ES'
-              ? 'Hemos verificado tu transacción con Mercado Pago. Te enviamos la confirmación oficial de tu compra a tu correo electrónico'
-              : 'We have verified your transaction with Mercado Pago. We have sent the official confirmation of your purchase to your email'}{paidCustomerEmail ? `: ` : '.'}
+              ? 'Hemos verificado tu transacción con Mercado Pago. Tu pago ha sido aprobado con éxito y te enviamos la confirmación oficial a tu correo electrónico'
+              : 'We have verified your transaction with Mercado Pago. Your payment has been successfully approved and official confirmation has been sent to your email'}{paidCustomerEmail ? `: ` : '.'}
             {paidCustomerEmail && <strong className="text-slate-900 break-all">{paidCustomerEmail}</strong>}
           </p>
 
-          {/* License delivery notice within 10 to 30 minutes */}
-          <div className="mt-6 p-4 sm:p-5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-left flex items-start gap-3.5 shadow-xs">
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-emerald-950">
-                {language === 'ES' ? 'Entrega de tu licencia digital:' : 'Digital license delivery:'}
-              </h4>
-              <p className="text-xs sm:text-sm text-emerald-800 mt-1 leading-relaxed">
-                <strong>{language === 'ES' ? 'Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.' : 'Your license will be sent to your email within 10 to 30 minutes.'}</strong> {language === 'ES' ? 'Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.' : 'Our technical team is validating your product key and preparing your receipt and activation instructions.'}
+          {/* Immediate Credentials Delivery Box */}
+          {deliveredCredentials.length > 0 && (
+            <div className="mt-6 text-left rounded-xl bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/60 border-2 border-emerald-400 p-5 sm:p-6 shadow-md relative overflow-hidden">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-600 text-white shadow-xs">
+                  <Zap className="w-3.5 h-3.5 fill-white" />
+                  Entrega Inmediata Automatizada
+                </span>
+                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300">
+                  Sin Esperas ⚡
+                </span>
+              </div>
+
+              <h3 className="text-base sm:text-lg font-black text-emerald-950 mb-1">
+                Tus Credenciales de Acceso Oficiales:
+              </h3>
+              <p className="text-xs text-emerald-800 mb-4 leading-relaxed font-medium">
+                Tus credenciales han sido asignadas automáticamente desde el inventario. Inicia sesión directamente en la plataforma o presiona el botón de acceso abajo.
               </p>
+
+              <div className="space-y-4">
+                {deliveredCredentials.map((cred: any, idx: number) => {
+                  const isPrime = cred.productSlug?.includes('prime') || cred.serviceName?.toLowerCase().includes('prime');
+                  const targetUrl = cred.loginUrl || (isPrime ? 'https://www.primevideo.com/' : 'https://www.crunchyroll.com/');
+                  const passFieldId = `pass-${cred.id || idx}`;
+                  const userFieldId = `user-${cred.id || idx}`;
+                  const pinFieldId = `pin-${cred.id || idx}`;
+                  const isPassVisible = Boolean(showPassword[passFieldId]);
+
+                  return (
+                    <div key={cred.id || idx} className="bg-white rounded-xl border border-emerald-300 p-4 sm:p-5 shadow-xs space-y-3.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white ${isPrime ? 'bg-[#00A8E1]' : 'bg-[#F47521]'}`}>
+                            <Tv className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black text-slate-900 leading-none">
+                              {cred.serviceName || (isPrime ? 'Amazon Prime Video' : 'Crunchyroll Premium')}
+                            </h4>
+                            <span className="text-[11px] text-slate-500 font-semibold block mt-0.5">
+                              1 Perfil (1 dispositivo) • {cred.months || 1} {(cred.months || 1) === 1 ? 'Mes' : 'Meses'} • Garantía según lo alquilado
+                            </span>
+                          </div>
+                        </div>
+
+                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                          {cred.id || 'Activa'}
+                        </span>
+                      </div>
+
+                      {/* Obligatory Single Device Notice */}
+                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-300 text-amber-950 text-xs flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold text-amber-900">
+                            ⚠️ REGLA OBLIGATORIA: Inicia sesión únicamente en el 1 dispositivo que vas a usar.
+                          </p>
+                          <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
+                            Tu suscripción incluye 1 perfil para 1 solo dispositivo y garantía según lo alquilado ({cred.months || 1} {(cred.months || 1) === 1 ? 'Mes' : 'Meses'}). No abras la cuenta en múltiples pantallas en simultáneo para mantener tu garantía activa.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Credentials Table / Rows */}
+                      <div className="space-y-2 text-xs">
+                        {/* Usuario / Email */}
+                        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Usuario / Correo:</span>
+                            <span className="font-mono font-bold text-slate-900 break-all select-all text-xs sm:text-sm">
+                              {cred.email}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(cred.email, userFieldId)}
+                            className="shrink-0 p-2 rounded-lg bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold text-[11px] cursor-pointer"
+                            title="Copiar usuario"
+                          >
+                            {copiedField === userFieldId ? (
+                              <>
+                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                <span className="text-emerald-700">¡Copiado!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5" />
+                                <span>Copiar</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+
+                        {/* Contraseña */}
+                        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Contraseña:</span>
+                            <span className="font-mono font-bold text-slate-900 break-all select-all text-xs sm:text-sm">
+                              {isPassVisible ? cred.password : '••••••••••••'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => toggleShowPassword(passFieldId)}
+                              className="p-2 rounded-lg bg-white border border-slate-300 hover:border-slate-400 text-slate-600 transition-colors cursor-pointer"
+                              title={isPassVisible ? "Ocultar contraseña" : "Ver contraseña"}
+                            >
+                              {isPassVisible ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => copyToClipboard(cred.password, passFieldId)}
+                              className="shrink-0 p-2 rounded-lg bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold text-[11px] cursor-pointer"
+                              title="Copiar contraseña"
+                            >
+                              {copiedField === passFieldId ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span className="text-emerald-700">¡Copiado!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3.5 h-3.5" />
+                                  <span>Copiar</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Perfil / PIN si aplica */}
+                        {cred.profilePin && (
+                          <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Perfil Asignado:</span>
+                              <span className="font-mono font-bold text-emerald-900 text-xs sm:text-sm">
+                                {cred.profilePin}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => copyToClipboard(cred.profilePin, pinFieldId)}
+                              className="shrink-0 p-2 rounded-lg bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold text-[11px] cursor-pointer"
+                            >
+                              {copiedField === pinFieldId ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span className="text-emerald-700">¡Copiado!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3.5 h-3.5" />
+                                  <span>Copiar</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Reglas de Garantía y Dispositivo */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
+                          <div className="p-2 rounded bg-slate-100 border border-slate-200">
+                            <span className="font-bold text-slate-600 block">Dispositivo:</span>
+                            <span className="font-bold text-slate-900">1 Dispositivo</span>
+                          </div>
+                          <div className="p-2 rounded bg-slate-100 border border-slate-200">
+                            <span className="font-bold text-slate-600 block">Garantía:</span>
+                            <span className="font-bold text-emerald-700">
+                              {cred.months || 1} {(cred.months || 1) === 1 ? 'Mes' : 'Meses'} (según lo alquilado)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Direct Launch Button for this Product */}
+                      <a
+                        href={targetUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-full py-3.5 px-4 rounded-xl text-white font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${
+                          isPrime
+                            ? 'bg-[#00A8E1] hover:bg-[#0092c4] shadow-blue-500/20'
+                            : 'bg-[#F47521] hover:bg-[#e06412] shadow-orange-500/20'
+                        }`}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>
+                          {isPrime ? '🚀 Abrir e Iniciar Sesión en Amazon Prime Video' : '🚀 Abrir e Iniciar Sesión en Crunchyroll'}
+                        </span>
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-emerald-200 text-xs text-emerald-900 space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Respaldo enviado a tu correo ({paidCustomerEmail})</span>
+                </p>
+                <p className="text-[11px] text-emerald-800">
+                  Consejo: Haz clic en el botón de lanzamiento para abrir la web oficial, inicia sesión con tu usuario y clave, y elige tu perfil asignado.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* If customer acquired Prime Video or Crunchyroll (immediate delivery profile) but stock was exhausted (deliveredCredentials is empty) */}
+          {deliveredCredentials.length === 0 && (paidOrderItems || []).some((it: any) => {
+            const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || '').toLowerCase();
+            return Boolean(it.product?.isImmediateDelivery) || slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
+          }) && (
+            <div className="mt-6 text-left rounded-xl bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 border-2 border-amber-400 p-5 sm:p-6 shadow-md">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-600 text-white shadow-xs">
+                  <MessageCircle className="w-3.5 h-3.5 fill-white" />
+                  Entrega de Perfil por WhatsApp
+                </span>
+                <span className="text-[11px] font-bold text-amber-900 bg-amber-200/70 px-2 py-0.5 rounded-md border border-amber-300">
+                  Pago Aprobado ⚡
+                </span>
+              </div>
+
+              <h3 className="text-base sm:text-lg font-black text-amber-950 mb-1">
+                Solicita tu Perfil Adquirido al Administrador
+              </h3>
+              <p className="text-xs sm:text-sm text-amber-900 leading-relaxed font-medium mb-4">
+                Hemos verificado y recibido tu pago exitosamente. Debido a la alta demanda, los perfiles de entrega automática inmediata de este lote ya fueron asignados. Por favor presiona el botón de WhatsApp a continuación para que el Administrador te entregue directamente tu perfil para 1 dispositivo con tu garantía correspondiente según lo alquilado.
+              </p>
+
+              {(() => {
+                const immediateItem = (paidOrderItems || []).find((it: any) => {
+                  const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || '').toLowerCase();
+                  return Boolean(it.product?.isImmediateDelivery) || slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
+                });
+                const prodName = immediateItem?.product?.name || immediateItem?.name || 'Suscripción Streaming';
+                const variantText = immediateItem?.variantName ? ` (${immediateItem.variantName})` : '';
+                const orderCode = lastOrderSnapshot?.orderId || paymentResult.paymentId || 'UpClic';
+                const waStockUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                  `Hola Administrador de UpClic, realicé mi pago con éxito para el pedido #${orderCode}. Adquirí ${prodName}${variantText}. Solicito por favor que me entregue el perfil para 1 dispositivo que adquirí.`
+                )}`;
+
+                return (
+                  <a
+                    href={waStockUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-4 px-5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-sm sm:text-base shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all active:scale-98 cursor-pointer"
+                  >
+                    <MessageCircle className="w-5 h-5 fill-current" />
+                    <span>Hablar con el Administrador y Solicitar mi Perfil</span>
+                  </a>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* License delivery notice within 10 to 30 minutes only for orders with standard licenses and NO immediate delivery */}
+          {!(paidOrderItems || []).some((it: any) => {
+            const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || '').toLowerCase();
+            return Boolean(it.product?.isImmediateDelivery) || slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
+          }) && (
+            <div className="mt-6 p-4 sm:p-5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-left flex items-start gap-3.5 shadow-xs">
+              <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-emerald-950">
+                  {language === 'ES' ? 'Entrega de tu licencia digital:' : 'Digital license delivery:'}
+                </h4>
+                <p className="text-xs sm:text-sm text-emerald-800 mt-1 leading-relaxed">
+                  <strong>{language === 'ES' ? 'Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.' : 'Your license will be sent to your email within 10 to 30 minutes.'}</strong> {language === 'ES' ? 'Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.' : 'Our technical team is validating your product key and preparing your receipt and activation instructions.'}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Order summary box */}
           <div className="mt-6 text-left rounded-lg bg-slate-50 border border-slate-200/80 p-5 space-y-3">
@@ -546,31 +972,6 @@ export const CheckoutPage: React.FC = () => {
           </p>
         </div>
 
-        {returnNotice && (
-          <div className="mb-8 p-4 sm:p-5 rounded-lg bg-blue-500/15 border border-blue-400/40 text-blue-200 flex items-start gap-3.5 shadow-md">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/25 text-blue-300 flex items-center justify-center shrink-0 mt-0.5 border border-blue-400/30">
-              <ShoppingBag className="w-4.5 h-4.5" />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-bold text-white text-sm">
-                {language === 'ES' ? '¡Has regresado a UpClic!' : 'You have returned to UpClic!'}
-              </h4>
-              <p className="mt-1 text-blue-200/90 text-xs sm:text-sm leading-relaxed">
-                {language === 'ES' 
-                  ? 'Tus productos seleccionados, cantidades y descuentos se mantienen guardados exactamente como los dejaste en tu carrito para que continúes cuando desees.'
-                  : 'Your selected products, quantities, and discounts remain saved exactly as you left them in your cart so you can continue whenever you want.'}
-              </p>
-            </div>
-            <button
-              onClick={() => setReturnNotice(false)}
-              className="text-blue-300 hover:text-white p-1 cursor-pointer transition-colors text-xs font-bold"
-              aria-label="Cerrar aviso"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Col 1: Detalle de Productos en el Carrito (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
@@ -625,48 +1026,71 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-4">
+                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
                         {/* Quantity Stepper */}
-                        <div className="flex items-center rounded-lg border border-slate-600 bg-[#0f172a] p-0.5">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(itemKey, -1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold active:scale-95"
-                            aria-label={t('decrease') || 'Decrease'}
-                            title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
-                          >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            min="1"
-                            max="99"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const val = parseInt(e.target.value, 10);
-                              if (!isNaN(val)) {
-                                setQuantity(itemKey, Math.min(99, Math.max(1, val)));
-                              }
-                            }}
-                            onBlur={(e) => {
-                              const val = parseInt(e.target.value, 10);
-                              if (isNaN(val) || val < 1) {
-                                setQuantity(itemKey, 1);
-                              }
-                            }}
-                            className="w-9 text-center text-xs font-black text-white bg-transparent focus:bg-white/20 focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            aria-label={t('editQuantity') || 'Edit quantity'}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(itemKey, 1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold active:scale-95"
-                            aria-label={t('increase') || 'Increase'}
-                            title={t('increase') || 'Increase'}
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
+                        {(() => {
+                          const itemMaxStock = typeof item.product?.stock === 'number' && item.product.stock > 0
+                            ? item.product.stock
+                            : 99;
+                          const isAtMax = item.quantity >= itemMaxStock;
+
+                          return (
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex items-center rounded-lg border border-slate-600 bg-[#0f172a] p-0.5">
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(itemKey, -1)}
+                                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold active:scale-95"
+                                  aria-label={t('decrease') || 'Decrease'}
+                                  title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
+                                >
+                                  -
+                                </button>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max={itemMaxStock}
+                                  value={item.quantity}
+                                  onChange={(e) => {
+                                    const val = parseInt(e.target.value, 10);
+                                    if (!isNaN(val)) {
+                                      setQuantity(itemKey, Math.min(itemMaxStock, Math.max(1, val)));
+                                    }
+                                  }}
+                                  onBlur={(e) => {
+                                    const val = parseInt(e.target.value, 10);
+                                    if (isNaN(val) || val < 1) {
+                                      setQuantity(itemKey, 1);
+                                    } else if (val > itemMaxStock) {
+                                      setQuantity(itemKey, itemMaxStock);
+                                    }
+                                  }}
+                                  className="w-9 text-center text-xs font-black text-white bg-transparent focus:bg-white/20 focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  aria-label={t('editQuantity') || 'Edit quantity'}
+                                />
+                                <button
+                                  type="button"
+                                  disabled={isAtMax}
+                                  onClick={() => updateQuantity(itemKey, 1)}
+                                  className={`w-7 h-7 flex items-center justify-center rounded-lg font-bold transition-colors ${
+                                    isAtMax
+                                      ? 'text-slate-600 bg-slate-800 cursor-not-allowed'
+                                      : 'hover:bg-white/20 text-white cursor-pointer active:scale-95'
+                                  }`}
+                                  aria-label={t('increase') || 'Increase'}
+                                  title={isAtMax ? `Stock máximo alcanzado (${itemMaxStock})` : (t('increase') || 'Increase')}
+                                >
+                                  <Plus className="w-3 h-3" />
+                                </button>
+                              </div>
+                              {isAtMax && item.product?.stock && (
+                                <span className="text-[10px] font-bold text-amber-400">
+                                  Máx. {itemMaxStock}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
                         <span className="font-black text-yellow-400 shrink-0 tabular-nums text-sm min-w-[75px] text-right">
                           {formatPrice((itemUnitPrice * item.quantity))}
                         </span>
@@ -1001,40 +1425,65 @@ export const CheckoutPage: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-300">
                   {isEn ? 'Select Payment Method:' : 'Selecciona el Método de Pago:'}
                 </label>
-                
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPaymentGateway('mercadopago')}
-                    className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                      selectedPaymentGateway === 'mercadopago'
-                        ? 'bg-blue-600/20 border-blue-500 ring-2 ring-blue-500/40 text-white'
-                        : 'bg-slate-800/60 border-slate-700 hover:border-slate-600 text-slate-300'
-                    }`}
-                  >
-                    <img
-                      src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                      alt="Mercado Pago"
-                      className="h-5 w-auto object-contain"
-                    />
-                    <span className="text-[11px] font-bold">Mercado Pago</span>
-                    <span className="text-[9px] text-slate-400 font-medium">Soles, Yape, Plin, Tarjeta</span>
-                  </button>
 
-                  <button
-                    type="button"
-                    onClick={() => navigateToPayPal()}
-                    className="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-800/60 hover:bg-[#003087]/30 border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white"
-                  >
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                      alt="PayPal"
-                      className="h-5 w-auto object-contain"
-                    />
-                    <span className="text-[11px] font-bold">PayPal (USD)</span>
-                    <span className="text-[9px] text-amber-300 font-medium">${totalUSD} USD →</span>
-                  </button>
-                </div>
+                {hasOnlyMercadoPagoItem ? (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPaymentGateway('mercadopago')}
+                      className="w-full p-3.5 rounded-xl border flex items-center justify-between gap-3 bg-blue-600/20 border-blue-500 ring-2 ring-blue-500/40 text-white cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <img
+                          src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                          alt="Mercado Pago"
+                          className="h-6 w-auto object-contain"
+                        />
+                        <div className="text-left">
+                          <span className="text-xs font-bold block">Mercado Pago</span>
+                          <span className="text-[10px] text-slate-400 font-medium">Soles, Yape, Plin, Tarjeta</span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black bg-emerald-500 text-slate-950 px-2 py-0.5 rounded shadow-2xs">
+                        Entrega Inmediata ⚡
+                      </span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPaymentGateway('mercadopago')}
+                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                        selectedPaymentGateway === 'mercadopago'
+                          ? 'bg-blue-600/20 border-blue-500 ring-2 ring-blue-500/40 text-white'
+                          : 'bg-slate-800/60 border-slate-700 hover:border-slate-600 text-slate-300'
+                      }`}
+                    >
+                      <img
+                        src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                        alt="Mercado Pago"
+                        className="h-5 w-auto object-contain"
+                      />
+                      <span className="text-[11px] font-bold">Mercado Pago</span>
+                      <span className="text-[9px] text-slate-400 font-medium">Soles, Yape, Plin, Tarjeta</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => navigateToPayPal()}
+                      className="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-800/60 hover:bg-[#003087]/30 border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white"
+                    >
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                        alt="PayPal"
+                        className="h-5 w-auto object-contain"
+                      />
+                      <span className="text-[11px] font-bold">PayPal (USD)</span>
+                      <span className="text-[9px] text-amber-300 font-medium">${totalUSD} USD →</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="mt-4 pt-1">
@@ -1102,20 +1551,31 @@ export const CheckoutPage: React.FC = () => {
                       disabled={isCreatingPreference}
                       className="w-full py-3.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      <CreditCard className="w-4.5 h-4.5 text-white" />
-                      <span className="tracking-tight">{isCreatingPreference ? t('connectingStatus') : t('finishPurchaseMercadoPago')}</span>
-                      <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
+                      {isCreatingPreference ? (
+                        <>
+                          <Loader2 className="w-4.5 h-4.5 animate-spin text-white" />
+                          <span className="tracking-tight">{t('connectingStatus') || 'Conectando con Mercado Pago...'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4.5 h-4.5 text-white" />
+                          <span className="tracking-tight">{t('finishPurchaseMercadoPago')}</span>
+                          <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
+                        </>
+                      )}
                     </button>
 
-                    <div className="mt-2.5 text-center">
-                      <button
-                        type="button"
-                        onClick={navigateToPayPal}
-                        className="text-[11px] text-amber-300 hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
-                      >
-                        <span>{isEn ? `Or pay with PayPal ($ ${totalUSD} USD) →` : `O pagar en Dólares con PayPal ($ ${totalUSD} USD) →`}</span>
-                      </button>
-                    </div>
+                    {isPayPalAllowed && (
+                      <div className="mt-2.5 text-center">
+                        <button
+                          type="button"
+                          onClick={navigateToPayPal}
+                          className="text-[11px] text-amber-300 hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
+                        >
+                          <span>{isEn ? `Or pay with PayPal ($ ${totalUSD} USD) →` : `O pagar en Dólares con PayPal ($ ${totalUSD} USD) →`}</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
