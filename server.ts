@@ -133,6 +133,15 @@ function loadStoredOrders(): any[] {
   return [];
 }
 
+function saveStoredOrders(orders: any[]): void {
+  ensureDataDirectory();
+  try {
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 250), null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error saving orders.json:", err);
+  }
+}
+
 function saveOrderNotification(orderData: any): any {
   ensureDataDirectory();
   try {
@@ -827,6 +836,10 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       appUrl = process.env.APP_URL.replace(/\/$/, '');
     }
 
+    const newOrderId = (typeof req.body?.orderId === 'string' && req.body.orderId.trim()) 
+      ? req.body.orderId.trim() 
+      : `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
     const preferenceBody: any = {
       items: mpItems,
       payer: {
@@ -834,7 +847,10 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
         ...(trimmedName ? { name: trimmedName } : {}),
         ...(trimmedPhone ? { phone: { number: trimmedPhone } } : {})
       },
+      external_reference: newOrderId,
+      notification_url: `${appUrl}/api/mercadopago/webhook`,
       metadata: {
+        order_id: newOrderId,
         customer_email: trimmedEmail,
         customer_name: trimmedName,
         customer_phone: trimmedPhone,
@@ -842,9 +858,9 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
         items_count: items.length
       },
       back_urls: {
-        success: `${appUrl}/checkout?status=success`,
+        success: `${appUrl}/checkout?status=success&orderId=${newOrderId}`,
         failure: `${appUrl}/checkout?status=return&cart=open`,
-        pending: `${appUrl}/checkout?status=pending`,
+        pending: `${appUrl}/checkout?status=pending&orderId=${newOrderId}`,
       },
     };
 
@@ -859,6 +875,7 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
 
     // Save order notification to persistent storage
     const recordedOrder = saveOrderNotification({
+      id: newOrderId,
       preferenceId: response.id,
       customerEmail: trimmedEmail,
       customerName: trimmedName || null,
@@ -1418,6 +1435,202 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
   } catch (err: any) {
     console.error("Error en /api/confirm_payment_success:", err);
     return res.status(500).json({ error: "Error al confirmar pago de orden." });
+  }
+});
+
+// Centralized helper to process and fulfill an approved Mercado Pago payment
+export async function processMercadoPagoPayment(paymentId: string): Promise<{
+  success: boolean;
+  order?: any;
+  deliveredCredentials?: any[];
+  alreadyPaid?: boolean;
+}> {
+  try {
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    if (!accessToken) {
+      console.warn("⚠️ [MERCADOPAGO] No se puede procesar pago: falta MERCADOPAGO_ACCESS_TOKEN");
+      return { success: false };
+    }
+
+    const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (!mpRes.ok) {
+      console.warn(`⚠️ [MERCADOPAGO] No se pudo consultar pago ${paymentId}: ${mpRes.status}`);
+      return { success: false };
+    }
+
+    const paymentData = await mpRes.json();
+    if (paymentData.status !== "approved") {
+      console.log(`ℹ️ [MERCADOPAGO] Pago ${paymentId} en estado '${paymentData.status}'. No se procesa entrega aún.`);
+      return { success: false };
+    }
+
+    const payerEmail = (paymentData.metadata?.customer_email || paymentData.payer?.email || "").toLowerCase().trim();
+    const externalRef = paymentData.external_reference;
+    const prefId = paymentData.order?.id || paymentData.preference_id;
+
+    const orders = loadStoredOrders();
+    // 1. Match by external_reference (our order ID)
+    let matchIdx = orders.findIndex(o => externalRef && o.id === externalRef);
+    // 2. Match by preferenceId
+    if (matchIdx === -1 && prefId) {
+      matchIdx = orders.findIndex(o => o.preferenceId === prefId);
+    }
+    // 3. Match by customer email and pending status
+    if (matchIdx === -1 && payerEmail) {
+      matchIdx = orders.findIndex(o => o.customerEmail?.toLowerCase() === payerEmail && o.status !== "paid");
+    }
+
+    if (matchIdx === -1) {
+      console.warn(`⚠️ [MERCADOPAGO] Pago ${paymentId} aprobado pero no se encontró pedido correspondiente (email: ${payerEmail}, ref: ${externalRef}).`);
+      return { success: false };
+    }
+
+    const order = orders[matchIdx];
+    if (order.status === "paid" && Array.isArray(order.deliveredCredentials) && order.deliveredCredentials.length > 0) {
+      console.log(`✅ [MERCADOPAGO] Pedido ${order.id} ya estaba confirmado y despachado.`);
+      return { success: true, order, deliveredCredentials: order.deliveredCredentials, alreadyPaid: true };
+    }
+
+    order.status = "paid";
+    order.isPaid = true;
+    order.paymentId = String(paymentId);
+    order.paidAt = new Date().toISOString();
+
+    // Claim credentials for streaming items if not claimed yet
+    const deliveredCredentials: any[] = Array.isArray(order.deliveredCredentials) ? [...order.deliveredCredentials] : [];
+    const orderItems = order.items || [];
+    for (const item of orderItems) {
+      const slug = (item.slug || item.id || item.product?.slug || item.product?.id || item.name || "").toLowerCase();
+      if (slug.includes("prime-video") || slug.includes("crunchyroll") || slug.includes("prime video") || slug.includes("crunchy")) {
+        const productSlug = slug.includes("crunchy") ? "crunchyroll-premium" : "amazon-prime-video";
+        let months = 1;
+        const variantText = (item.variantName || item.selectedVariant || "").toLowerCase();
+        if (variantText.includes("6")) months = 6;
+        else if (variantText.includes("3")) months = 3;
+
+        const alreadyAssigned = deliveredCredentials.find((c: any) => c.productSlug === productSlug);
+        if (!alreadyAssigned) {
+          const cred = claimCredentialForOrder({
+            productSlug,
+            months,
+            customerEmail: order.customerEmail,
+            orderId: order.id
+          });
+          if (cred) deliveredCredentials.push(cred);
+        }
+      }
+    }
+
+    order.deliveredCredentials = deliveredCredentials;
+    saveStoredOrders(orders);
+
+    // Send confirmation emails with credentials
+    sendOrderEmails({
+      orderId: order.id,
+      customerEmail: order.customerEmail,
+      customerName: order.customerName,
+      customerPhone: order.customerPhone,
+      total: order.total,
+      items: order.items,
+      channel: "mercado_pago",
+      status: "paid",
+      isPaid: true,
+      paymentId: String(paymentId),
+      deliveredCredentials: deliveredCredentials.length > 0 ? deliveredCredentials : undefined,
+      createdAt: order.createdAt
+    }).then(res => {
+      console.log(`📧 [EMAIL] Despacho automático de credenciales para pedido ${order.id}: cliente=${res.customerSent}, admin=${res.adminSent}`);
+    }).catch(err => console.error("Error despachando correos en webhook:", err));
+
+    return { success: true, order, deliveredCredentials };
+  } catch (err: any) {
+    console.error("Error procesando pago de Mercado Pago:", err);
+    return { success: false };
+  }
+}
+
+// Webhook endpoint for Mercado Pago instant notifications
+app.all("/api/mercadopago/webhook", express.json(), async (req, res) => {
+  try {
+    const topic = req.query.topic || req.query.type || req.body?.type || req.body?.action;
+    const paymentId = req.query["data.id"] || req.query.id || req.body?.data?.id || req.body?.id;
+
+    console.log(`🔔 [MERCADOPAGO WEBHOOK] Notificación: topic=${topic}, paymentId=${paymentId}`);
+
+    if (paymentId) {
+      await processMercadoPagoPayment(String(paymentId));
+    }
+
+    return res.status(200).send("OK");
+  } catch (err: any) {
+    console.error("Error en webhook de Mercado Pago:", err);
+    return res.status(200).send("OK");
+  }
+});
+
+// Endpoint for frontend to actively verify if a payment has been approved and get credentials
+app.get("/api/mercadopago/check_payment", async (req, res) => {
+  try {
+    const orderId = req.query.orderId?.toString().trim();
+    const email = req.query.email?.toString().toLowerCase().trim();
+
+    if (!orderId && !email) {
+      return res.status(400).json({ error: "Falta orderId o email" });
+    }
+
+    const orders = loadStoredOrders();
+    const order = orders.find(o => (orderId && o.id === orderId) || (email && o.customerEmail?.toLowerCase() === email));
+
+    if (order && order.status === "paid") {
+      return res.json({
+        isPaid: true,
+        order,
+        deliveredCredentials: order.deliveredCredentials || []
+      });
+    }
+
+    // Active lookup in Mercado Pago for recent approved payments matching this order or email
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    if (accessToken) {
+      try {
+        const searchRes = await fetch("https://api.mercadopago.com/v1/payments/search?sort=date_created&criteria=desc&limit=10", {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (searchRes.ok) {
+          const data = await searchRes.json();
+          const approved = (data.results || []).find((p: any) => {
+            if (p.status !== "approved") return false;
+            if (orderId && p.external_reference === orderId) return true;
+            if (email && (p.payer?.email?.toLowerCase() === email || p.metadata?.customer_email?.toLowerCase() === email)) return true;
+            return false;
+          });
+
+          if (approved) {
+            console.log(`⚡ [AUTO-CONFIRM] Pago ${approved.id} detectado como aprobado en Mercado Pago.`);
+            const result = await processMercadoPagoPayment(String(approved.id));
+            if (result.success && result.order) {
+              return res.json({
+                isPaid: true,
+                order: result.order,
+                deliveredCredentials: result.deliveredCredentials || []
+              });
+            }
+          }
+        }
+      } catch (searchErr) {
+        console.warn("No se pudo consultar lista de pagos en Mercado Pago:", searchErr);
+      }
+    }
+
+    return res.json({
+      isPaid: false,
+      order: order || null
+    });
+  } catch (err: any) {
+    console.error("Error en check_payment:", err);
+    return res.status(500).json({ error: "Error consultando estado de pago" });
   }
 });
 

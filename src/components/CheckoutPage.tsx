@@ -260,6 +260,68 @@ export const CheckoutPage: React.FC = () => {
     return null;
   })();
 
+  // Automatic synchronization: actively detect when Mercado Pago payment is approved
+  useEffect(() => {
+    if (paymentResult?.isSuccess) return;
+
+    const storedRaw = typeof window !== 'undefined' ? localStorage.getItem('upclic_last_order') : null;
+    let orderIdToTrack: string | null = null;
+    let emailToTrack: string | null = null;
+    if (storedRaw) {
+      try {
+        const parsed = JSON.parse(storedRaw);
+        orderIdToTrack = parsed.orderId || null;
+        emailToTrack = parsed.customerEmail || null;
+      } catch {}
+    }
+
+    if (!orderIdToTrack && !emailToTrack) return;
+
+    const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
+      (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
+        ? 'https://upclic12-rypnq.sevalla.app'
+        : '');
+
+    let isMounted = true;
+
+    const checkStatus = async () => {
+      try {
+        const query = orderIdToTrack 
+          ? `orderId=${encodeURIComponent(orderIdToTrack)}` 
+          : `email=${encodeURIComponent(emailToTrack || '')}`;
+        const res = await fetch(`${apiBase}/api/mercadopago/check_payment?${query}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data?.isPaid && isMounted) {
+          console.log('🎉 [PAYMENT DETECTED] Pago confirmado automáticamente:', data);
+          setPaymentResult({
+            isSuccess: true,
+            paymentId: data.order?.paymentId || 'MP-APPROVED',
+            status: 'approved'
+          });
+          if (Array.isArray(data.deliveredCredentials) && data.deliveredCredentials.length > 0) {
+            setDeliveredCredentials(data.deliveredCredentials);
+            try {
+              localStorage.setItem('upclic_last_credentials', JSON.stringify(data.deliveredCredentials));
+            } catch {}
+          }
+          clearCart();
+        }
+      } catch {}
+    };
+
+    checkStatus();
+    const handleFocus = () => checkStatus();
+    window.addEventListener('focus', handleFocus);
+    const interval = setInterval(checkStatus, 2500);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(interval);
+    };
+  }, [paymentResult?.isSuccess, clearCart]);
+
   const paidOrderItems = (lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0)
     ? lastOrderSnapshot.items
     : items;
