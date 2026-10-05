@@ -992,16 +992,16 @@ export const CheckoutPage: React.FC = () => {
   if (items.length === 0) {
     return (
       <div className="py-20 max-w-xl mx-auto px-4 text-center min-h-screen">
-        <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-6 text-white/40">
+        <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6 text-[#0070ba]">
           <ShoppingBag className="w-10 h-10" />
         </div>
-        <h2 className="text-2xl font-black text-white">{t('emptyCartTitle')}</h2>
-        <p className="text-sm text-slate-300 mt-2 mb-8">
+        <h2 className="text-2xl font-black text-slate-900">{t('emptyCartTitle')}</h2>
+        <p className="text-sm text-slate-600 mt-2 mb-8">
           {t('emptyCartSub')}
         </p>
         <button
           onClick={navigateToHome}
-          className="px-6 py-3 rounded-lg bg-yellow-400 text-slate-950 font-bold text-sm shadow-md hover:bg-[#eab308] transition-colors cursor-pointer"
+          className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#0070ba] to-[#0088cc] text-white font-bold text-sm shadow-md hover:from-[#005a96] hover:to-[#0070ba] transition-all cursor-pointer"
         >
           {t('backToStore')}
         </button>
@@ -1010,26 +1010,49 @@ export const CheckoutPage: React.FC = () => {
   }
 
   return (
-    <div id="checkout-view" className="py-10 sm:py-14 bg-slate-900 text-white min-h-screen font-sans">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Navigation back */}
-        <div className="mb-8">
+    <div id="checkout-view" className="py-8 sm:py-12 bg-slate-50 text-slate-800 min-h-screen font-sans relative">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Navigation back and Steps progress bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <button
             onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-slate-600 text-xs sm:text-sm font-bold text-white transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 transition-all cursor-pointer shadow-xs hover:shadow-sm"
           >
-            <ArrowLeft className="w-4 h-4 text-yellow-400" />
+            <ArrowLeft className="w-4 h-4 text-[#0070ba]" />
             <span>{t('backToCatalog')}</span>
           </button>
+
+          {/* Visual Step Indicator */}
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200 text-slate-700 border border-slate-300">
+              <span className="w-4 h-4 rounded-full bg-slate-700 text-white flex items-center justify-center text-[10px] font-black">1</span>
+              {language === 'ES' ? 'Carrito' : 'Cart'}
+            </span>
+            <span className="text-slate-400">→</span>
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0070ba] border border-blue-200 ring-2 ring-blue-500/10">
+              <span className="w-4 h-4 rounded-full bg-[#0070ba] text-white flex items-center justify-center text-[10px] font-black">2</span>
+              {language === 'ES' ? 'Datos & Pago' : 'Checkout'}
+            </span>
+            <span className="text-slate-400">→</span>
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-400 border border-slate-200">
+              <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] font-black">3</span>
+              {language === 'ES' ? 'Entrega' : 'Delivery'}
+            </span>
+          </div>
         </div>
 
-        <div className="text-center max-w-2xl mx-auto mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
-            <span className="text-yellow-400">
-              {t('checkoutTitle')}
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0070ba] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
+            <ShieldCheck className="w-4 h-4" />
+            <span>{language === 'ES' ? 'Pasarela Segura & Oficial UpClic' : 'Secure & Official Checkout'}</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+            <span>{language === 'ES' ? 'Finalizar ' : 'Complete '}</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#00a2e8]">
+              {language === 'ES' ? 'tu Compra' : 'your Purchase'}
             </span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 mt-2 font-medium">
+          <p className="text-sm sm:text-base text-slate-600 mt-2 font-medium">
             {t('checkoutSubtitle')}
           </p>
         </div>
@@ -1037,21 +1060,21 @@ export const CheckoutPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Col 1: Detalle de Productos en el Carrito (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-[#1e293b] rounded-lg border border-slate-700 shadow-md p-6 sm:p-8 text-white">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-4">
-                <h2 className="text-lg font-black text-white flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-slate-700/50 text-yellow-400 flex items-center justify-center border border-amber-400/30">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7 text-slate-900 relative overflow-hidden">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0070ba] flex items-center justify-center border border-blue-100">
                     <ShieldCheck className="w-4.5 h-4.5" />
                   </div>
                   <span>{language === 'ES' ? 'Productos en tu orden' : 'Products in your order'}</span>
                 </h2>
-                <span className="text-xs font-bold text-slate-300 bg-white/10 px-2.5 py-1 rounded-full border border-slate-700">
+                <span className="text-xs font-bold text-[#0070ba] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
                   {totalQuantity} {totalQuantity === 1 ? t('item') : t('items')}
                 </span>
               </div>
 
               {/* Products list */}
-              <div className="divide-y divide-white/10 mb-6 pr-1">
+              <div className="divide-y divide-slate-100 mb-6 pr-1">
                 {items.map(item => {
                   const itemUnitPrice = item.unitPrice ?? item.product.price;
                   const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
@@ -1063,7 +1086,7 @@ export const CheckoutPage: React.FC = () => {
                   return (
                     <div key={itemKey} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-14 h-14 rounded-lg bg-[#0f172a] p-1.5 border border-slate-700 shrink-0 flex items-center justify-center shadow-md">
+                        <div className="w-14 h-14 rounded-xl bg-slate-50 p-1.5 border border-slate-200 shrink-0 flex items-center justify-center shadow-xs">
                           <img
                             src={item.product.imageUrl}
                             alt={itemName}
@@ -1075,16 +1098,16 @@ export const CheckoutPage: React.FC = () => {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-bold text-white text-sm truncate" title={itemName}>
+                          <div className="font-bold text-slate-900 text-sm truncate" title={itemName}>
                             {itemName}
                           </div>
                           {displayVariantName && (
-                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-700/50 text-slate-300 border border-purple-400/30">
+                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0070ba] border border-blue-200">
                               {displayVariantName}
                             </span>
                           )}
-                          <div className="text-[11px] text-slate-400 mt-0.5">
-                            {language === 'ES' ? 'Precio unitario:' : 'Unit price:'} <strong className="text-white">{formatPrice(itemUnitPrice)}</strong>
+                          <div className="text-[11px] text-slate-500 mt-0.5">
+                            {language === 'ES' ? 'Precio unitario:' : 'Unit price:'} <strong className="text-slate-800">{formatPrice(itemUnitPrice)}</strong>
                           </div>
                         </div>
                       </div>
@@ -1098,11 +1121,11 @@ export const CheckoutPage: React.FC = () => {
 
                           return (
                             <div className="flex items-center gap-1.5">
-                              <div className="flex items-center rounded-lg border border-slate-600 bg-[#0f172a] p-0.5">
+                              <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5">
                                 <button
                                   type="button"
                                   onClick={() => updateQuantity(itemKey, -1)}
-                                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer font-bold active:scale-95"
+                                  className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer font-bold active:scale-95"
                                   aria-label={t('decrease') || 'Decrease'}
                                   title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
                                 >
@@ -1127,17 +1150,17 @@ export const CheckoutPage: React.FC = () => {
                                       setQuantity(itemKey, itemMaxStock);
                                     }
                                   }}
-                                  className="w-9 text-center text-xs font-black text-white bg-transparent focus:bg-white/20 focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  className="w-9 text-center text-xs font-black text-slate-900 bg-transparent focus:bg-white focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                   aria-label={t('editQuantity') || 'Edit quantity'}
                                 />
                                 <button
                                   type="button"
                                   disabled={isAtMax}
                                   onClick={() => updateQuantity(itemKey, 1)}
-                                  className={`w-7 h-7 flex items-center justify-center rounded-lg font-bold transition-colors ${
+                                  className={`w-7 h-7 flex items-center justify-center rounded font-bold transition-colors ${
                                     isAtMax
-                                      ? 'text-slate-600 bg-slate-800 cursor-not-allowed'
-                                      : 'hover:bg-white/20 text-white cursor-pointer active:scale-95'
+                                      ? 'text-slate-400 bg-slate-100 cursor-not-allowed'
+                                      : 'hover:bg-slate-200 text-slate-700 cursor-pointer active:scale-95'
                                   }`}
                                   aria-label={t('increase') || 'Increase'}
                                   title={isAtMax ? `Stock máximo alcanzado (${itemMaxStock})` : (t('increase') || 'Increase')}
@@ -1146,21 +1169,21 @@ export const CheckoutPage: React.FC = () => {
                                 </button>
                               </div>
                               {isAtMax && item.product?.stock && (
-                                <span className="text-[10px] font-bold text-amber-400">
+                                <span className="text-[10px] font-bold text-amber-600">
                                   Máx. {itemMaxStock}
                                 </span>
                               )}
                             </div>
                           );
                         })()}
-                        <span className="font-black text-yellow-400 shrink-0 tabular-nums text-sm min-w-[75px] text-right">
+                        <span className="font-black text-[#0070ba] shrink-0 tabular-nums text-sm min-w-[75px] text-right">
                           {formatPrice((itemUnitPrice * item.quantity))}
                         </span>
 
                         <button
                           type="button"
                           onClick={() => removeItem(itemKey)}
-                          className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors cursor-pointer shrink-0"
+                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
                           title={t('removeProduct') || 'Remove product'}
                           aria-label={t('removeProduct') || 'Remove product'}
                         >
@@ -1173,22 +1196,22 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Coupon input on Checkout */}
-              <div className="pt-4 border-t border-slate-700">
+              <div className="pt-4 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-yellow-400" />
+                  <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-[#0070ba]" />
                     {t('hasCouponPrompt')}
                   </span>
                 </div>
 
                 {appliedCoupon ? (
-                  <div className="bg-emerald-500/20 border border-emerald-500/40 rounded-lg p-2.5 flex items-center justify-between">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                      <span className="font-mono font-bold text-xs text-emerald-200">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span className="font-mono font-bold text-xs text-emerald-800">
                         {appliedCoupon}
                       </span>
-                      <span className="text-[11px] text-emerald-300 font-medium">
+                      <span className="text-[11px] text-emerald-700 font-medium">
                         {language === 'ES'
                           ? `(${Math.round(discountRate * 100)}% de descuento aplicado)`
                           : `(${Math.round(discountRate * 100)}% discount applied)`}
@@ -1197,7 +1220,7 @@ export const CheckoutPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={removeCoupon}
-                      className="text-xs text-slate-400 hover:text-red-400 font-bold px-1 transition-colors cursor-pointer"
+                      className="text-xs text-slate-400 hover:text-red-500 font-bold px-1 transition-colors cursor-pointer"
                       title={t('removeCoupon') || 'Quitar cupón'}
                     >
                       <X className="w-4 h-4" />
@@ -1210,11 +1233,11 @@ export const CheckoutPage: React.FC = () => {
                       value={inputCoupon}
                       onChange={e => setInputCoupon(e.target.value)}
                       placeholder={t('couponCode')}
-                      className="flex-1 px-3 py-2 text-xs uppercase font-mono rounded-lg border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                      className="flex-1 px-3.5 py-2.5 text-xs uppercase font-mono rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-1 focus:ring-[#0070ba]"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
+                      className="px-5 py-2.5 bg-gradient-to-r from-[#0070ba] to-[#0088cc] hover:from-[#005a96] hover:to-[#0070ba] text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
                     >
                       {t('apply')}
                     </button>
@@ -1223,18 +1246,18 @@ export const CheckoutPage: React.FC = () => {
 
                 {couponFeedback && (
                   <div
-                    className={`mt-2 text-[11px] p-2.5 rounded-lg flex items-start gap-2 transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
+                    className={`mt-2 text-[11px] p-2.5 rounded-xl flex items-start gap-2 transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
                       couponFeedback.type === 'success'
-                        ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                         : couponFeedback.type === 'info'
-                        ? 'bg-slate-700/50 text-slate-300 border border-slate-700'
-                        : 'bg-red-500/20 text-red-200 border border-red-500/30 shadow-xs'
+                        ? 'bg-slate-100 text-slate-700 border border-slate-200'
+                        : 'bg-red-50 text-red-800 border border-red-200 shadow-xs'
                     }`}
                   >
                     {couponFeedback.type === 'error' ? (
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-300" />
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-600" />
                     ) : (
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-300" />
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />
                     )}
                     <span className="leading-snug">{couponFeedback.message}</span>
                   </div>
@@ -1243,20 +1266,20 @@ export const CheckoutPage: React.FC = () => {
             </div>
 
             {/* 2. Datos del Cliente para la Entrega Digital */}
-            <div id="customer-delivery-card" className="bg-[#1e293b] rounded-lg border border-slate-700 shadow-md p-6 sm:p-7 space-y-5 text-white">
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4">
+            <div id="customer-delivery-card" className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7 space-y-5 text-slate-900">
+              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-400/20 text-yellow-400 flex items-center justify-center shrink-0 border border-amber-400/30">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070ba] flex items-center justify-center shrink-0 border border-blue-100">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+                    <h2 className="text-base font-black text-slate-900 tracking-tight flex items-center gap-2">
                       <span>{t('digitalDeliveryData')}</span>
-                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 tracking-wider">
+                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0070ba] border border-blue-200 tracking-wider">
                         {t('requiredLabel')}
                       </span>
                     </h2>
-                    <p className="text-xs text-slate-300 mt-0.5">
+                    <p className="text-xs text-slate-500 mt-0.5">
                       {t('digitalDeliverySubtitle')}
                     </p>
                   </div>
@@ -1265,13 +1288,13 @@ export const CheckoutPage: React.FC = () => {
 
               {/* Email field (Mandatory) */}
               <div className="space-y-1.5">
-                <label htmlFor="customer-email-input" className="block text-xs font-bold text-slate-300 flex items-center justify-between">
+                <label htmlFor="customer-email-input" className="block text-xs font-bold text-slate-700 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-yellow-400" />
-                    {t('customerEmailLabel')} <span className="text-red-400 font-black">*</span>
+                    <Mail className="w-3.5 h-3.5 text-[#0070ba]" />
+                    {t('customerEmailLabel')} <span className="text-red-500 font-black">*</span>
                   </span>
                   {customerEmail && isValidEmail(customerEmail) && (
-                    <span className="text-[11px] font-bold text-emerald-300 flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       {t('emailVerifiedForDelivery')}
                     </span>
@@ -1296,12 +1319,12 @@ export const CheckoutPage: React.FC = () => {
                       }
                     }}
                     placeholder="ej: nombre@gmail.com"
-                    className={`w-full pl-10 pr-4 py-3 rounded-lg text-sm border font-medium transition-all focus:outline-none ${
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl text-sm border font-medium transition-all focus:outline-none ${
                       emailError
-                        ? 'border-red-400 bg-red-500/20 text-white placeholder-red-200 focus:ring-2 focus:ring-red-400'
+                        ? 'border-red-400 bg-red-50 text-slate-900 placeholder-red-300 focus:ring-2 focus:ring-red-300'
                         : customerEmail && isValidEmail(customerEmail)
-                        ? 'border-emerald-400 bg-emerald-500/20 text-white focus:ring-2 focus:ring-emerald-400'
-                        : 'border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                        ? 'border-emerald-400 bg-emerald-50/50 text-slate-900 focus:ring-2 focus:ring-emerald-300'
+                        : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20'
                     }`}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -1309,7 +1332,7 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
                 {emailError && (
-                  <p className="text-xs text-red-300 font-semibold flex items-center gap-1 mt-1">
+                  <p className="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>{emailError}</span>
                   </p>
@@ -1319,9 +1342,9 @@ export const CheckoutPage: React.FC = () => {
               {/* Optional Name and Phone in 2 cols */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div className="space-y-1.5">
-                  <label htmlFor="customer-name-input" className="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                  <label htmlFor="customer-name-input" className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-slate-400" />
-                    {t('customerNameLabel')} <span className="text-slate-500 font-normal">({t('optionalLabel') || 'Opcional'})</span>
+                    {t('customerNameLabel')} <span className="text-slate-400 font-normal">({t('optionalLabel') || 'Opcional'})</span>
                   </label>
                   <div className="relative">
                     <input
@@ -1331,7 +1354,7 @@ export const CheckoutPage: React.FC = () => {
                       value={customerName}
                       onChange={e => handleNameChange(e.target.value)}
                       placeholder={language === 'ES' ? 'ej: Roberto M. / IT Dept' : 'e.g.: Robert M. / IT Dept'}
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <User className="w-4 h-4" />
@@ -1343,9 +1366,9 @@ export const CheckoutPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="customer-phone-input" className="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                  <label htmlFor="customer-phone-input" className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
-                    {language === 'ES' ? 'Teléfono / WhatsApp' : 'Phone / WhatsApp'} <span className="text-slate-500 font-normal">({t('optionalLabel') || 'Opcional'})</span>
+                    {language === 'ES' ? 'Teléfono / WhatsApp' : 'Phone / WhatsApp'} <span className="text-slate-400 font-normal">({t('optionalLabel') || 'Opcional'})</span>
                   </label>
                   <div className="relative">
                     <input
@@ -1355,7 +1378,7 @@ export const CheckoutPage: React.FC = () => {
                       value={customerPhone}
                       onChange={e => handlePhoneChange(e.target.value)}
                       placeholder="ej: 555-0123"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <Phone className="w-4 h-4" />
@@ -1368,17 +1391,17 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Flow notice on Mercado Pago registration */}
-              <div className="pt-3 border-t border-slate-700 flex flex-col gap-2.5 text-xs text-slate-300">
+              <div className="pt-3 border-t border-slate-100 flex flex-col gap-2.5 text-xs text-slate-600">
                 <div className="flex items-start gap-2.5">
-                  <CreditCard className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <CreditCard className="w-4 h-4 text-[#0070ba] shrink-0 mt-0.5" />
                   <span className="leading-relaxed">
                     {language === 'ES'
-                      ? 'Para Colombia, México y otros países, por favor selecciona el pago con tarjeta de crédito o débito.'
+                      ? 'Para Perú, Colombia, México y otros países, acepta pagos con Yape, Plin, tarjeta de crédito o débito.'
                       : 'For international payments, please select credit or debit card payment.'}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">
                     {language === 'ES'
                       ? 'La información es encriptada y procesada de forma segura por Mercado Pago. Solo se te cobrará el monto elegido, sin recargos.'
@@ -1388,10 +1411,10 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Privacy note */}
-              <div className="p-3 bg-[#0f172a] rounded-lg border border-slate-700 flex items-start gap-2.5 text-xs text-slate-300">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start gap-2.5 text-xs text-slate-600">
+                <ShieldCheck className="w-4 h-4 text-[#0070ba] shrink-0 mt-0.5" />
                 <span className="text-[11px] leading-relaxed">
-                  <strong>{language === 'ES' ? 'Privacidad y entrega garantizada:' : 'Privacy and guaranteed delivery:'}</strong>{' '}
+                  <strong className="text-slate-800">{language === 'ES' ? 'Privacidad y entrega garantizada:' : 'Privacy and guaranteed delivery:'}</strong>{' '}
                   {language === 'ES'
                     ? 'Tus datos están protegidos y se usan exclusivamente para asignarte tus pedidos y emitir tu comprobante.'
                     : 'Your data is protected and used exclusively to assign your orders and issue your receipt.'}
@@ -1401,42 +1424,42 @@ export const CheckoutPage: React.FC = () => {
 
             {/* Garantías de UpClic */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-4 rounded-lg bg-[#1e293b] border border-slate-700 flex items-center gap-3 text-white">
-                <div className="w-9 h-9 rounded-lg bg-slate-700/50 text-blue-400 flex items-center justify-center shrink-0 border border-blue-400/30">
+              <div className="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3 text-slate-800 shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070ba] flex items-center justify-center shrink-0 border border-blue-100">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">
+                  <h4 className="text-xs font-bold text-slate-900">
                     {language === 'ES' ? 'Compra Segura 100%' : '100% Secure Purchase'}
                   </h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
-                    {language === 'ES' ? 'Garantía de 6 meses (telefónica 1 mes)' : '6-month warranty (phone 1 month)'}
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {language === 'ES' ? 'Garantía oficial completa' : 'Full official warranty'}
                   </p>
                 </div>
               </div>
-              <div className="p-4 rounded-lg bg-[#1e293b] border border-slate-700 flex items-center gap-3 text-white">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
+              <div className="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3 text-slate-800 shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0 border border-cyan-100">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">
+                  <h4 className="text-xs font-bold text-slate-900">
                     {language === 'ES' ? 'Entrega Garantizada' : 'Guaranteed Delivery'}
                   </h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
-                    {language === 'ES' ? 'Envío seguro y protegido' : 'Fast & protected dispatch'}
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {language === 'ES' ? 'Envío digital protegido' : 'Fast & protected dispatch'}
                   </p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-[#1e293b] border border-slate-700 flex items-center gap-3 text-white">
-                <div className="w-9 h-9 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center shrink-0 border border-indigo-500/30">
+              <div className="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3 text-slate-800 shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">
+                  <h4 className="text-xs font-bold text-slate-900">
                     {language === 'ES' ? 'Soporte Técnico' : 'Technical Support'}
                   </h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-slate-500 mt-0.5">
                     {language === 'ES' ? 'Asistencia remota personalizada' : 'Personalized remote assistance'}
                   </p>
                 </div>
@@ -1446,20 +1469,20 @@ export const CheckoutPage: React.FC = () => {
 
           {/* Col 2: Resumen de Compra & Payment Buttons (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#1e293b] rounded-lg border border-slate-700 shadow-md p-6 sm:p-7 sticky top-24 text-white">
-              <h2 className="text-base font-black text-white mb-4 pb-3 border-b border-slate-700 flex items-center justify-between">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 sm:p-7 sticky top-24 text-slate-900 ring-1 ring-slate-100">
+              <h2 className="text-base font-black text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
                 <span>{t('paymentSummaryLabel')}</span>
               </h2>
 
               {/* Subtotal & Discount breakdown */}
-              <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="space-y-2.5 text-xs text-slate-600">
                 <div className="flex justify-between">
                   <span>{t('subtotalLabel')}</span>
-                  <span className="font-bold text-white tabular-nums">{formatPrice(subtotal)}</span>
+                  <span className="font-bold text-slate-900 tabular-nums">{formatPrice(subtotal)}</span>
                 </div>
 
                 {hasDiscount && (
-                  <div className="flex justify-between items-baseline py-0.5 text-emerald-400 font-semibold text-xs">
+                  <div className="flex justify-between items-baseline py-0.5 text-emerald-600 font-semibold text-xs">
                     <span>
                       {isMultiItemDiscount
                         ? (language === 'ES' ? 'Descuento 10%:' : 'Discount 10%:')
@@ -1469,13 +1492,13 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between items-baseline text-base font-black text-white pt-3 border-t border-slate-700">
+                <div className="flex justify-between items-baseline text-base font-black text-slate-900 pt-3 border-t border-slate-100">
                   <span>{t('totalLabel')}</span>
                   <div className="text-right">
-                    <span className="text-blue-400 text-xl sm:text-2xl font-black tabular-nums tracking-tight">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0070ba] to-[#0088cc] text-2xl sm:text-3xl font-black tabular-nums tracking-tight">
                       {formatPrice(total)}
                     </span>
-                    <div className="text-[11px] text-slate-400 font-medium">
+                    <div className="text-[11px] text-slate-500 font-medium">
                       ≈ ${totalUSD} USD
                     </div>
                   </div>
@@ -1483,79 +1506,125 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Payment Method Selector Tabs */}
-              <div className="mt-5 pt-3 border-t border-slate-700 space-y-3">
-                <label className="block text-xs font-bold text-slate-300">
-                  {isEn ? 'Select Payment Method:' : 'Selecciona el Método de Pago:'}
-                </label>
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <CreditCard className="w-3.5 h-3.5 text-[#0070ba]" />
+                    <span>{isEn ? 'Payment Method:' : 'Método de Pago:'}</span>
+                  </label>
+                  <span className="text-[10px] font-bold text-[#0070ba] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-[#0070ba]" />
+                    <span>SSL 256-bit</span>
+                  </span>
+                </div>
 
                 {hasOnlyMercadoPagoItem ? (
                   <div>
                     <button
                       type="button"
                       onClick={() => setSelectedPaymentGateway('mercadopago')}
-                      className="w-full p-3.5 rounded-xl border flex items-center justify-between gap-3 bg-blue-600/20 border-blue-500 ring-2 ring-blue-500/40 text-white cursor-pointer"
+                      className="w-full p-4 rounded-2xl border-2 flex items-center justify-between gap-3 bg-blue-50/70 border-[#0070ba] ring-2 ring-[#0070ba]/20 text-slate-900 cursor-pointer shadow-sm transition-all text-left"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <img
-                          src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                          alt="Mercado Pago"
-                          className="h-6 w-auto object-contain"
-                        />
-                        <div className="text-left">
-                          <span className="text-xs font-bold block">Mercado Pago</span>
-                          <span className="text-[10px] text-slate-400 font-medium">Soles, Yape, Plin, Tarjeta</span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-xs border border-slate-200">
+                          <img
+                            src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                            alt="Mercado Pago"
+                            className="h-7 w-auto object-contain"
+                          />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs sm:text-sm font-black text-slate-900">Mercado Pago</span>
+                            <span className="text-[10px] font-extrabold text-[#0070ba] bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200">
+                              Oficial
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-600 font-medium block mt-0.5">
+                            Yape, Plin, Tarjeta Débito / Crédito, PagoEfectivo
+                          </span>
                         </div>
                       </div>
-                      <span className="text-[10px] font-black bg-emerald-500 text-slate-950 px-2 py-0.5 rounded shadow-2xs">
-                        Entrega Inmediata ⚡
-                      </span>
+                      <div className="w-5 h-5 rounded-full bg-[#0070ba] text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                      </div>
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Mercado Pago Option */}
                     <button
                       type="button"
                       onClick={() => setSelectedPaymentGateway('mercadopago')}
-                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                      className={`p-3.5 rounded-2xl border-2 flex flex-col items-start justify-between gap-2.5 transition-all cursor-pointer relative overflow-hidden text-left ${
                         selectedPaymentGateway === 'mercadopago'
-                          ? 'bg-blue-600/20 border-blue-500 ring-2 ring-blue-500/40 text-white'
-                          : 'bg-slate-800/60 border-slate-700 hover:border-slate-600 text-slate-300'
+                          ? 'bg-blue-50/70 border-[#0070ba] ring-2 ring-[#0070ba]/20 text-slate-900 shadow-sm'
+                          : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
-                      <img
-                        src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                        alt="Mercado Pago"
-                        className="h-5 w-auto object-contain"
-                      />
-                      <span className="text-[11px] font-bold">Mercado Pago</span>
-                      <span className="text-[9px] text-slate-400 font-medium">Soles, Yape, Plin, Tarjeta</span>
+                      <div className="flex items-center justify-between w-full">
+                        <div className="h-8 bg-white px-2 py-1 rounded-lg flex items-center justify-center shadow-xs border border-slate-200">
+                          <img
+                            src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
+                            alt="Mercado Pago"
+                            className="h-5 w-auto object-contain"
+                          />
+                        </div>
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                          selectedPaymentGateway === 'mercadopago' ? 'bg-[#0070ba] text-white' : 'border border-slate-300'
+                        }`}>
+                          {selectedPaymentGateway === 'mercadopago' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-xs font-black block text-slate-900">Mercado Pago</span>
+                        <span className="text-[10px] text-slate-500 font-medium line-clamp-1 mt-0.5">
+                          Yape, Plin, Tarjetas, Soles
+                        </span>
+                      </div>
                     </button>
 
+                    {/* PayPal Option */}
                     <button
                       type="button"
                       onClick={() => navigateToPayPal()}
-                      className="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-800/60 hover:bg-[#003087]/30 border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white"
+                      className={`p-3.5 rounded-2xl border-2 flex flex-col items-start justify-between gap-2.5 transition-all cursor-pointer relative overflow-hidden text-left ${
+                        selectedPaymentGateway === 'paypal'
+                          ? 'bg-amber-50/70 border-amber-400 ring-2 ring-amber-400/20 text-slate-900 shadow-sm'
+                          : 'bg-white border-slate-200 hover:border-amber-300 text-slate-700 hover:bg-slate-50'
+                      }`}
                     >
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                        alt="PayPal"
-                        className="h-5 w-auto object-contain"
-                      />
-                      <span className="text-[11px] font-bold">PayPal (USD)</span>
-                      <span className="text-[9px] text-amber-300 font-medium">${totalUSD} USD →</span>
+                      <div className="flex items-center justify-between w-full">
+                        <div className="h-8 bg-white px-2.5 py-1 rounded-lg flex items-center justify-center shadow-xs border border-slate-200">
+                          <img
+                            src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                            alt="PayPal"
+                            className="h-4.5 w-auto object-contain"
+                          />
+                        </div>
+                        <span className="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">
+                          USD
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-xs font-black block text-slate-900">PayPal</span>
+                        <span className="text-[10px] text-amber-700 font-medium block mt-0.5">
+                          ${totalUSD} USD (Internacional) →
+                        </span>
+                      </div>
                     </button>
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-1">
+              <div className="mt-5 pt-1">
                 {selectedPaymentGateway === 'paypal' ? (
                   /* PayPal Option Details */
                   <div className="space-y-3">
                     <button
                       id="paypal-go-btn"
                       onClick={navigateToPayPal}
-                      className="w-full py-3.5 px-4 rounded-xl bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-black text-sm sm:text-base shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
+                      className="w-full py-4 px-5 rounded-2xl bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-black text-sm sm:text-base shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-amber-300"
                     >
                       <img
                         src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
@@ -1568,25 +1637,25 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 ) : (
                   /* Mercado Pago Option */
-                  <div>
-                    {/* Official Gateway Badge */}
-                    <div className="mb-3 p-2.5 rounded-lg bg-white border border-slate-700 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="space-y-3.5">
+                    {/* Payment badges pill bar */}
+                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2 shadow-xs">
                       <div className="flex items-center gap-2">
-                        <img
-                          src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                          alt="Mercado Pago"
-                          className="h-6 w-auto object-contain"
-                        />
-                        <span className="text-[11px] font-bold text-slate-800">Pasarela Oficial</span>
+                        <div className="w-2 h-2 rounded-full bg-[#0070ba]" />
+                        <span className="text-[11px] font-bold text-slate-700">
+                          {language === 'ES' ? 'Métodos de pago habilitados' : 'Available payment channels'}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                        100% Seguro
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-black text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded border border-purple-200">Yape</span>
+                        <span className="text-[9px] font-black text-cyan-700 bg-cyan-100 px-1.5 py-0.5 rounded border border-cyan-200">Plin</span>
+                        <span className="text-[9px] font-black text-[#0070ba] bg-blue-100 px-1.5 py-0.5 rounded border border-blue-200">Tarjetas</span>
+                      </div>
                     </div>
 
                     {emailError && (
-                      <div className="p-3 mb-4 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
-                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                      <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-700 flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                         <div>
                           <p className="font-bold">{t('requiredFieldNotice')}</p>
                           <p className="mt-0.5 text-[11px] leading-relaxed">{emailError}</p>
@@ -1595,12 +1664,12 @@ export const CheckoutPage: React.FC = () => {
                     )}
 
                     {paymentError && (
-                      <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-xs text-red-200 flex items-start gap-2">
-                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                      <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-700 flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                         <div>
                           <p className="font-bold">{t('paymentErrorNotice')}</p>
                           <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
-                          <p className="mt-1 text-[10px] text-red-300 font-medium">
+                          <p className="mt-1 text-[10px] text-red-600 font-medium">
                             {t('contactSupportIfPersists')}
                           </p>
                         </div>
@@ -1611,28 +1680,28 @@ export const CheckoutPage: React.FC = () => {
                       id="mercado-pago-pay-btn"
                       onClick={handleMercadoPago}
                       disabled={isCreatingPreference}
-                      className="w-full py-3.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#0099e6] hover:from-[#0060a0] hover:to-[#0088cc] text-white font-black text-sm sm:text-base shadow-xl shadow-blue-500/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-blue-400/30 disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
                     >
                       {isCreatingPreference ? (
                         <>
-                          <Loader2 className="w-4.5 h-4.5 animate-spin text-white" />
+                          <Loader2 className="w-5 h-5 animate-spin text-white" />
                           <span className="tracking-tight">{t('connectingStatus') || 'Conectando con Mercado Pago...'}</span>
                         </>
                       ) : (
                         <>
-                          <CreditCard className="w-4.5 h-4.5 text-white" />
+                          <CreditCard className="w-5 h-5 text-white" />
                           <span className="tracking-tight">{t('finishPurchaseMercadoPago')}</span>
-                          <ExternalLink className="w-4 h-4 ml-0.5 opacity-90" />
+                          <ExternalLink className="w-4 h-4 ml-0.5 opacity-90 group-hover:translate-x-0.5 transition-transform" />
                         </>
                       )}
                     </button>
 
                     {isPayPalAllowed && (
-                      <div className="mt-2.5 text-center">
+                      <div className="pt-1 text-center">
                         <button
                           type="button"
                           onClick={navigateToPayPal}
-                          className="text-[11px] text-amber-300 hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
+                          className="text-[11px] text-[#0070ba] hover:text-[#005a96] hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
                         >
                           <span>{isEn ? `Or pay with PayPal ($ ${totalUSD} USD) →` : `O pagar en Dólares con PayPal ($ ${totalUSD} USD) →`}</span>
                         </button>
@@ -1643,13 +1712,13 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Security guarantee footnote */}
-              <div className="mt-5 pt-4 border-t border-slate-700 text-[11px] text-slate-400 space-y-2">
-                <div className="flex items-center gap-1.5 text-white font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-2.5">
+                <div className="flex items-center gap-2 text-slate-700 font-semibold">
+                  <ShieldCheck className="w-4 h-4 text-[#0070ba] shrink-0" />
                   <span>{t('securePaymentMercadoPago')}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-400 font-medium">
-                  <Clock className="w-4 h-4 text-amber-400" />
+                <div className="flex items-center gap-2 text-slate-500 font-medium">
+                  <Clock className="w-4 h-4 text-cyan-600 shrink-0" />
                   <span>{t('deliveryTimeNotice')}</span>
                 </div>
               </div>

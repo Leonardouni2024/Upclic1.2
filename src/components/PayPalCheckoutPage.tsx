@@ -477,14 +477,14 @@ export const PayPalCheckoutPage: React.FC = () => {
 
   if (hasImmediateDeliveryItem) {
     return (
-      <div className="min-h-screen bg-[#0f172a] py-12 px-4 flex items-center justify-center text-slate-200">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+      <div className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center text-slate-700">
+        <Loader2 className="w-8 h-8 text-[#0070ba] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] py-8 sm:py-12 text-slate-200">
+    <div className="min-h-screen bg-slate-50 py-8 sm:py-12 text-slate-800">
       {/* Clean scoped styles for PayPal container layout */}
       <style>{`
         #paypal-container-9W56EUJ67HRS4 {
@@ -515,24 +515,23 @@ export const PayPalCheckoutPage: React.FC = () => {
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={navigateToCheckout}
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors cursor-pointer bg-slate-800/80 hover:bg-slate-700/80 px-3.5 py-2 rounded-lg border border-slate-700"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer bg-white hover:bg-slate-100 px-4 py-2 rounded-xl border border-slate-200 shadow-xs"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 text-[#0070ba]" />
             <span>{isEn ? 'Back to Payment Options' : 'Volver a Opciones de Pago'}</span>
           </button>
 
-          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <ShieldCheck className="w-4 h-4 text-[#0070ba]" />
             <span>{isEn ? 'Official PayPal Gateway' : 'Pasarela Oficial de PayPal'}</span>
           </div>
         </div>
 
         {/* Top Header Banner */}
-        <div className="bg-[#1e293b] rounded-2xl border border-slate-700/80 p-5 sm:p-7 mb-8 shadow-xl relative overflow-hidden">
-          <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 mb-8 shadow-sm relative overflow-hidden">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md p-2 shrink-0 border border-slate-300">
+              <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shadow-xs p-2 shrink-0 border border-slate-200">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
                   alt="PayPal"
@@ -541,17 +540,17 @@ export const PayPalCheckoutPage: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-50 text-[#0070ba] border border-blue-200">
                     {isEn ? 'International Payment' : 'Pago Internacional'}
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                     USD ($)
                   </span>
                 </div>
-                <h1 className="text-xl sm:text-2xl font-black text-white mt-1">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
                   {isEn ? 'PayPal Checkout (US Dollars)' : 'Pagar con PayPal (Dólares USD)'}
                 </h1>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   {isEn
                     ? 'Official encrypted checkout in US Dollars ($ USD)'
                     : 'Pasarela oficial de cobro en Dólares Estadounidenses ($ USD)'}
@@ -566,23 +565,23 @@ export const PayPalCheckoutPage: React.FC = () => {
           {/* Left Column (7 cols): Products breakdown + Delivery Information */}
           <div className="lg:col-span-7 space-y-6">
             {/* Delivery Contact Information */}
-            <div className="bg-[#1e293b] rounded-xl border border-slate-700 p-5 sm:p-6 text-white space-y-4 shadow-md">
-              <h3 className="text-sm font-bold text-white flex items-center justify-between border-b border-slate-700 pb-3">
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 text-slate-900 space-y-4 shadow-sm">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between border-b border-slate-100 pb-3">
                 <span className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-blue-400" />
+                  <Mail className="w-4 h-4 text-[#0070ba]" />
                   {isEn ? 'License Delivery Information' : 'Datos para el Envío de tu Licencia'}
                 </span>
-                <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                <span className="text-[11px] text-cyan-600 font-semibold flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   {isEn ? 'Delivery in 10-30 min' : 'Entrega en 10-30 min'}
                 </span>
               </h3>
 
               <div className="space-y-1.5">
-                <label htmlFor="paypal-customer-email" className="block text-xs font-bold text-slate-300 flex items-center justify-between">
+                <label htmlFor="paypal-customer-email" className="block text-xs font-bold text-slate-700 flex items-center justify-between">
                   <span>{isEn ? 'Email address (Where you will receive the product key)' : 'Correo Electrónico (donde recibirás la clave y descarga)'} *</span>
                   {emailError && (
-                    <span className="text-[11px] text-red-400 font-bold flex items-center gap-1">
+                    <span className="text-[11px] text-red-500 font-bold flex items-center gap-1">
                       ⚠️ {isEn ? 'Email required' : 'Correo requerido'}
                     </span>
                   )}
@@ -608,21 +607,21 @@ export const PayPalCheckoutPage: React.FC = () => {
                       }
                     }}
                     placeholder="ej: tuemail@gmail.com"
-                    className={`w-full pl-10 pr-4 py-2.5 rounded-lg text-sm border ${
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl text-sm border ${
                       emailError
-                        ? 'border-red-500 bg-red-950/20 text-white placeholder-red-300 focus:ring-1 focus:ring-red-500'
-                        : 'border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                    } focus:outline-none font-medium transition-colors`}
+                        ? 'border-red-400 bg-red-50 text-slate-900 placeholder-red-300 focus:ring-1 focus:ring-red-400'
+                        : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20'
+                    } focus:outline-none font-medium transition-all`}
                   />
                   <Mail className={`w-4 h-4 absolute left-3.5 top-3 pointer-events-none ${emailError ? 'text-red-400' : 'text-slate-400'}`} />
                 </div>
 
                 {emailError ? (
-                  <p className="text-[11px] text-red-400 font-medium">
+                  <p className="text-[11px] text-red-500 font-medium">
                     {emailError}
                   </p>
                 ) : (
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500">
                     {isEn
                       ? 'Your official activation key, direct Microsoft installer and support guide will be sent here.'
                       : 'A este correo te llegará tu clave digital original, enlaces de descarga oficiales y guía de instalación paso a paso.'}
@@ -630,8 +629,8 @@ export const PayPalCheckoutPage: React.FC = () => {
                 )}
 
                 {registeredOrderId && (
-                  <div className="mt-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 rounded-lg flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="mt-2 text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>
                       {isEn
                         ? `Delivery email registered. Your product keys and setup guide will arrive at ${customerEmail}`
@@ -643,7 +642,7 @@ export const PayPalCheckoutPage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
                 <div className="space-y-1.5">
-                  <label htmlFor="paypal-customer-name" className="block text-xs font-bold text-slate-300 flex items-center gap-1">
+                  <label htmlFor="paypal-customer-name" className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <User className="w-3.5 h-3.5 text-slate-400" />
                     <span>{isEn ? 'Customer Name (optional)' : 'Nombre (opcional)'}</span>
                   </label>
@@ -653,12 +652,12 @@ export const PayPalCheckoutPage: React.FC = () => {
                     value={customerName}
                     onChange={e => handleNameChange(e.target.value)}
                     placeholder={isEn ? 'e.g. John Doe' : 'ej: Roberto M.'}
-                    className="w-full px-3.5 py-2 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="paypal-customer-phone" className="block text-xs font-bold text-slate-300 flex items-center gap-1">
+                  <label htmlFor="paypal-customer-phone" className="block text-xs font-bold text-slate-700 flex items-center gap-1">
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
                     <span>{isEn ? 'WhatsApp / Phone (optional)' : 'WhatsApp / Teléfono (opcional)'}</span>
                   </label>
@@ -668,22 +667,22 @@ export const PayPalCheckoutPage: React.FC = () => {
                     value={customerPhone}
                     onChange={e => handlePhoneChange(e.target.value)}
                     placeholder="+51 987 654 321"
-                    className="w-full px-3.5 py-2 rounded-lg text-xs sm:text-sm border border-slate-600 bg-[#0f172a] text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20"
                   />
                 </div>
               </div>
             </div>
 
             {/* Cart Items Summary */}
-            <div className="bg-[#1e293b] rounded-xl border border-slate-700 p-5 sm:p-6 text-white space-y-4 shadow-md">
-              <h3 className="text-sm font-bold text-white flex items-center justify-between border-b border-slate-700 pb-3">
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 text-slate-900 space-y-4 shadow-sm">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between border-b border-slate-100 pb-3">
                 <span className="flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4 text-blue-400" />
+                  <ShoppingBag className="w-4 h-4 text-[#0070ba]" />
                   {isEn ? 'Order Items' : 'Detalle de tu Pedido'} ({totalQuantity})
                 </span>
               </h3>
 
-              <div className="divide-y divide-slate-700/60 max-h-72 overflow-y-auto pr-1">
+              <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto pr-1">
                 {items.map((item, idx) => {
                   const itemUnitPricePEN = Number(item.unitPrice ?? item.product?.price) || 0;
                   const itemUnitPriceUSD = (itemUnitPricePEN / penRate).toFixed(2);
@@ -693,7 +692,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                   return (
                     <div key={idx} className="py-3 flex items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-12 h-12 rounded-lg bg-[#0f172a] p-1.5 border border-slate-700 shrink-0 flex items-center justify-center shadow-md">
+                        <div className="w-12 h-12 rounded-xl bg-slate-50 p-1.5 border border-slate-200 shrink-0 flex items-center justify-center shadow-xs">
                           <img
                             src={item.product?.imageUrl || item.product?.fallbackImage}
                             alt={getProductName(item.product)}
@@ -707,22 +706,22 @@ export const PayPalCheckoutPage: React.FC = () => {
                           />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="font-bold text-white truncate text-xs">
+                          <h4 className="font-bold text-slate-900 truncate text-xs">
                             {getProductName(item.product)}
                           </h4>
                           {item.selectedVariant && (
-                            <p className="text-[11px] text-blue-300 truncate">
+                            <p className="text-[11px] text-[#0070ba] truncate">
                               {item.selectedVariant.name}
                             </p>
                           )}
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-500">
                             {isEn ? 'Qty:' : 'Cant:'} {item.quantity} × ${itemUnitPriceUSD} USD
                           </p>
                         </div>
                       </div>
 
                       <div className="text-right shrink-0">
-                        <div className="font-bold text-emerald-400 tabular-nums text-sm">
+                        <div className="font-bold text-[#0070ba] tabular-nums text-sm">
                           ${itemTotalUSD} USD
                         </div>
                         <div className="text-[10px] text-slate-400 tabular-nums">
@@ -735,14 +734,14 @@ export const PayPalCheckoutPage: React.FC = () => {
               </div>
 
               {/* Pricing Breakdown in USD */}
-              <div className="pt-3 border-t border-slate-700 space-y-2 text-xs text-slate-300">
+              <div className="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-600">
                 <div className="flex justify-between items-center">
                   <span>{isEn ? 'Subtotal:' : 'Subtotal:'}</span>
-                  <span className="font-bold text-white tabular-nums">${subtotalUSD} USD</span>
+                  <span className="font-bold text-slate-900 tabular-nums">${subtotalUSD} USD</span>
                 </div>
 
                 {hasDiscount && (
-                  <div className="flex justify-between items-center text-emerald-400 font-semibold">
+                  <div className="flex justify-between items-center text-emerald-600 font-semibold">
                     <span>
                       {isMultiItemDiscount
                         ? (isEn ? '10% Multi-product Discount:' : 'Descuento 10% por 2+ productos:')
@@ -752,10 +751,10 @@ export const PayPalCheckoutPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between items-baseline text-sm sm:text-base font-black text-white pt-2.5 border-t border-slate-700">
+                <div className="flex justify-between items-baseline text-sm sm:text-base font-black text-slate-900 pt-2.5 border-t border-slate-100">
                   <span>{isEn ? 'Total in US Dollars ($ USD):' : 'Total a pagar en Dólares ($ USD):'}</span>
                   <div className="text-right">
-                    <span className="text-emerald-400 text-xl sm:text-2xl font-black tabular-nums">
+                    <span className="text-[#0070ba] text-xl sm:text-2xl font-black tabular-nums">
                       ${totalUSD} USD
                     </span>
                     <div className="text-[10px] text-slate-400 font-normal">
@@ -769,27 +768,27 @@ export const PayPalCheckoutPage: React.FC = () => {
 
           {/* Right Column (5 cols): Official PayPal Hosted Button Container */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-xl p-6 sm:p-7 sticky top-24 text-white">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-5">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 sm:p-7 sticky top-24 text-slate-900">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
                 <div>
-                  <h3 className="font-bold text-white text-sm">
+                  <h3 className="font-bold text-slate-900 text-sm">
                     {isEn ? 'PayPal Payment' : 'Pago PayPal'}
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500">
                     {isEn ? 'Instant & secure gateway' : 'Pasarela instantánea y segura'}
                   </p>
                 </div>
 
-                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                <span className="text-[10px] font-bold text-[#0070ba] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
                   Seguro SSL
                 </span>
               </div>
 
               {/* White High-Contrast Card for PayPal Hosted Button */}
-              <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200 min-h-[160px] flex flex-col items-center justify-center">
+              <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl shadow-xs border border-slate-200 min-h-[160px] flex flex-col items-center justify-center">
                 {isScriptLoading && (
                   <div className="flex flex-col items-center justify-center gap-3 py-6 text-slate-600">
-                    <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#0070ba] animate-spin" />
                     <span className="text-xs font-bold text-slate-700">
                       {isEn ? 'Loading PayPal buttons...' : 'Cargando botones de PayPal...'}
                     </span>
@@ -801,7 +800,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                     <p className="font-bold mb-1">{scriptError}</p>
                     <button
                       onClick={() => forceFreshRenderButtonRef.current?.()}
-                      className="mt-2 text-[11px] font-bold underline text-blue-600 hover:text-blue-800"
+                      className="mt-2 text-[11px] font-bold underline text-[#0070ba] hover:text-[#005a96]"
                     >
                       {isEn ? 'Reload' : 'Recargar'}
                     </button>
@@ -821,22 +820,22 @@ export const PayPalCheckoutPage: React.FC = () => {
                   href={`https://wa.me/51983204384?text=Hola%20UpClic,%20acabo%20de%20realizar%20mi%20pago%20por%20PayPal%20para%20mi%20licencia.%20Mi%20correo%20es:%20${encodeURIComponent(customerEmail || '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98] cursor-pointer"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4 text-white shrink-0" />
                   <span>{isEn ? 'Notify seller on WhatsApp (I already paid)' : 'Notificar al vendedor por WhatsApp que ya pagué'}</span>
                 </a>
-                <p className="text-[11px] text-slate-400 mt-1.5">
+                <p className="text-[11px] text-slate-500 mt-1.5">
                   {isEn
-                    ? 'Click here after completing payment on PayPal to speed up immediate delivery.'
-                    : 'Haz clic aquí después de pagar en PayPal para coordinar la entrega inmediata.'}
+                    ? 'Click here after completing payment on PayPal to coordinate your license delivery and activation.'
+                    : 'Haz clic aquí después de pagar en PayPal para coordinar el envío de tus claves y activación.'}
                 </p>
               </div>
 
               {/* Guarantees & Features */}
-              <div className="mt-6 pt-4 border-t border-slate-700 text-xs text-slate-300 space-y-3">
+              <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-600 space-y-3">
                 <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-[#0070ba] shrink-0 mt-0.5" />
                   <span className="text-[11px] leading-relaxed">
                     {isEn
                       ? 'PayPal Buyer Protection: transaction is encrypted and guaranteed.'
@@ -845,7 +844,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <Clock className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
                   <span className="text-[11px] leading-relaxed">
                     {isEn
                       ? 'Direct digital delivery to your email in 10 to 30 minutes.'
@@ -854,7 +853,7 @@ export const PayPalCheckoutPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                   <span className="text-[11px] leading-relaxed">
                     {isEn
                       ? 'Includes installation guide and technical support.'
@@ -864,13 +863,13 @@ export const PayPalCheckoutPage: React.FC = () => {
               </div>
 
               {/* Alternative gateway link */}
-              <div className="mt-6 pt-4 border-t border-slate-700 text-center">
+              <div className="mt-6 pt-4 border-t border-slate-100 text-center">
                 <button
                   onClick={navigateToCheckout}
-                  className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1.5 font-medium"
+                  className="text-xs text-slate-500 hover:text-slate-800 transition-colors cursor-pointer inline-flex items-center gap-1.5 font-medium"
                 >
                   <span>{isEn ? 'Prefer local currency (PEN, COP, MXN)?' : '¿Prefieres pagar en Soles (Yape/Plin)?'}</span>
-                  <span className="text-blue-400 underline font-bold">
+                  <span className="text-[#0070ba] underline font-bold">
                     {isEn ? 'Use Mercado Pago' : 'Usar Mercado Pago'}
                   </span>
                 </button>

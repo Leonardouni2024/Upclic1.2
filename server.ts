@@ -62,34 +62,35 @@ CONDICIONES CLAVE DE UPCLIC:
 2. ACTIVACIÓN Y GARANTÍA: Claves alfanuméricas originales de 25 caracteres emitidas por servidores oficiales de Microsoft, activación permanente (de por vida), reinstalables y con soporte técnico y garantía de 1 año.
 3. MODALIDADES DE ACTIVACIÓN:
    - Claves Directas: Activación directa ingresando la clave en la aplicación o sistema.
-   - Activación por Teléfono: Alternativa económica y 100% legal con asistente telefónico automatizado de Microsoft (Office desde S/ 12.00, Windows desde S/ 12.00).
+   - Activación por Teléfono: Alternativa económica y 100% legal con asistente telefónico automatizado de Microsoft (Office a S/ 16.00, Windows a S/ 16.00).
 4. DESCUENTOS Y PROMOCIONES:
    - 10% de descuento automático al llevar 2 o más licencias en el carrito.
-   - Combos especiales con descuento integrado (ej. Windows 11 Pro + Office 2024 a S/ 56.90).
+   - Combos especiales con descuento integrado (ej. Windows 11 Pro + Office 2024 a S/ 45.00, Combo 3 en 1 a S/ 55.00).
 5. MEDIOS DE PAGO: Yape, Plin, transferencias bancarias (BCP, BBVA, Interbank), tarjetas de crédito/débito mediante Mercado Pago y PayPal para pagos internacionales en USD.
 
 GUÍA INTELIGENTE DE ASESORAMIENTO Y RECOMENDACIÓN:
 - Si el usuario busca Office para Windows 10/11:
-  * Office 2024 Professional Plus (S/ 27.00 clave directa / S/ 13.00 teléfono): La versión más moderna y fluida de Microsoft.
-  * Office 2021 Professional Plus (S/ 25.00 clave directa / S/ 12.00 teléfono): Excelente estabilidad, Word, Excel, PowerPoint, Outlook, Access.
-  * Microsoft 365 Personal (S/ 35.00): Ideal para 5 dispositivos simultáneos (PC, Mac, tablet, celular) + 100 GB en la nube OneDrive por 1 año.
-  * Office 2019 / 2016 (S/ 24.00 directa / S/ 12.00 teléfono).
-  * Office 2010 LTSC (S/ 29.00): Para equipos clásicos con Windows 7/XP.
+  * Office 2024 Professional Plus (S/ 27.00 clave directa / S/ 16.00 teléfono): La versión más moderna y fluida de Microsoft.
+  * Office 2021 Professional Plus (S/ 25.00 clave directa / S/ 16.00 teléfono): Excelente estabilidad, Word, Excel, PowerPoint, Outlook, Access.
+  * Microsoft 365 Personal (S/ 33.00): Ideal para 5 dispositivos simultáneos (PC, Mac, tablet, celular) + 100 GB en la nube OneDrive por 1 año.
+  * Office 2019 / 2016 / 2013 / 2010 (S/ 24.00 directa / S/ 16.00 teléfono).
 - Si el usuario busca Windows:
-  * Windows 11 Pro (S/ 20.00 OEM / S/ 28.00 Retail / S/ 12.00 teléfono): El sistema más moderno y seguro.
-  * Windows 11 Home (S/ 20.00 OEM / S/ 26.00 Retail / S/ 12.00 teléfono).
-  * Windows 10 Pro (S/ 20.00 OEM / S/ 27.00 Retail / S/ 12.00 teléfono): Para equipos sin chip TPM 2.0.
-  * Windows 10 Home (S/ 19.00 OEM / S/ 25.00 Retail / S/ 12.00 teléfono).
-  * Windows 11 Enterprise (S/ 33.00), Windows 10 Enterprise (S/ 32.00).
-  * Windows 7 Pro (S/ 30.00), Windows 7 Ultimate (S/ 28.00), Windows 8.1 Pro (S/ 35.00).
+  * Windows 11 Pro (S/ 28.00 OEM / S/ 35.00 Retail / S/ 16.00 teléfono): El sistema más moderno y seguro.
+  * Windows 11 Home (S/ 26.00 OEM / S/ 32.00 Retail / S/ 16.00 teléfono).
+  * Windows 10 Pro (S/ 26.00 OEM / S/ 32.00 Retail / S/ 16.00 teléfono): Para equipos sin chip TPM 2.0.
+  * Windows 10 Home (S/ 25.00 OEM / S/ 30.00 Retail / S/ 16.00 teléfono).
+  * Windows 11 Enterprise (S/ 36.00), Windows 10 Enterprise (S/ 34.00).
+  * Windows 8.1 Pro (S/ 38.00), Windows 7 Pro (S/ 32.00), Windows 7 Ultimate (S/ 30.00).
 - Si el usuario busca Project o Visio:
-  * Project Profesional 2024 (S/ 28.00), 2021 (S/ 27.00), 2019 (S/ 27.00), 2016 (S/ 27.00).
-  * Visio Profesional 2024 (S/ 28.00), 2021 (S/ 27.00), 2019 (S/ 26.00), 2013 (S/ 25.00).
+  * Project Profesional 2024 (S/ 26.00), 2021 (S/ 25.00), 2019 (S/ 24.00), 2016 (S/ 24.00).
+  * Visio Profesional 2024 (S/ 28.00), 2021 (S/ 27.00), 2019 (S/ 26.00), 2016 (S/ 26.00), 2013 (S/ 26.00).
 - Si el usuario busca Apps y Suscripciones:
-  * Duolingo Super (12 meses - S/ 27.00): Vidas infinitas, sin anuncios, en su cuenta personal.
-  * Canva Pro (12 meses - S/ 20.00): Recursos premium, quitafondos mágico y 1 TB de nube.
-  * McAfee Total Protection Antivirus (12 meses - S/ 38.00): Seguridad y protección integral.
-  * Gemini AI Pro (12 meses - S/ 20.00 / 18 meses - S/ 35.00): Acceso a IA avanzada con 5 TB en Google One.
+  * Duolingo Super (12 meses - S/ 30.00): Vidas infinitas, sin anuncios, en su cuenta personal.
+  * Canva Pro (12 meses - S/ 30.00): Recursos premium, quitafondos mágico y herramientas IA.
+  * McAfee AntiVirus (12 meses - S/ 39.00): Seguridad y protección integral.
+  * Adobe Acrobat Pro DC 2018 (S/ 50.00): Edición y conversión PDF de por vida.
+  * Amazon Prime Video (1 Mes S/ 8.00, 3 Meses S/ 22.00, 6 Meses S/ 40.00).
+  * Crunchyroll Premium Mega Fan (1 Mes S/ 8.00, 3 Meses S/ 22.00, 6 Meses S/ 40.00).
 
 REGLA SOBRE RECOMENDAR PRODUCTOS:
 Al recomendar productos específicos del catálogo, puedes incluir la etiqueta [RECOMIENDA: slug-del-producto] (por ejemplo: [RECOMIENDA: office-2024-pro-plus], [RECOMIENDA: canva-pro-12-meses] o [RECOMIENDA: windows-11-pro-key]) para que el sistema le muestre al cliente la ficha interactiva con botón de compra directa.
@@ -689,20 +690,20 @@ app.post("/api/chat", async (req, res) => {
       } else if (asksForAdmin) {
         reply = `¡Con mucho gusto! Puede comunicarse directamente con nuestro **Administrador Oficial y Soporte Técnico** por WhatsApp para atención personalizada, cotizaciones corporativas con RUC o asistencia remota:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Atención rápida:** Lunes a Domingo de 8:00 AM a 11:00 PM.`;
       } else if (cleanLower.includes("canva") || cleanLower.includes("duolingo") || cleanLower.includes("antivirus") || cleanLower.includes("mcafee")) {
-        reply = `✨ **Suscripciones y Apps Premium Disponibles en UpClic:**\n\n• 🎨 **Canva Pro (12 Meses - S/ 20.00):** Acceso total a 100M+ recursos premium, quitafondos mágico con un clic y 1 TB de nube.\n• 🦉 **Duolingo Super (12 Meses - S/ 27.00):** Vidas infinitas para aprender idiomas sin límites y sin publicidad.\n• 🛡️ **McAfee Total Protection (12 Meses - S/ 38.00):** Seguridad integral contra virus, malware y phishing bancario.\n• 🤖 **Gemini AI Pro (12 Meses S/ 20.00 | 18 Meses S/ 35.00):** Inteligencia Artificial de vanguardia con 5 TB en Google One.\n\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** con garantía completa.`;
-        explicitSlugs.push("canva-pro-12-meses", "duolingo-super-12-meses", "mcafee-antivirus-total-protection-12m");
+        reply = `✨ **Suscripciones y Apps Premium Disponibles en UpClic:**\n\n• 🎨 **Canva Pro (12 Meses - S/ 30.00):** Acceso total a 100M+ recursos premium, quitafondos mágico con un clic y kits de marca.\n• 🦉 **Duolingo Super (12 Meses - S/ 30.00):** Vidas infinitas para aprender idiomas sin límites y sin publicidad.\n• 🛡️ **McAfee AntiVirus (12 Meses - S/ 39.00):** Seguridad integral contra virus, malware y phishing bancario.\n• 🤖 **Gemini AI Pro (12 Meses S/ 20.00 | 18 Meses S/ 35.00):** Inteligencia Artificial de vanguardia con 5 TB en Google One.\n\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** con garantía completa.`;
+        explicitSlugs.push("canva-pro-12-meses", "duolingo-super-12-meses", "mcafee-antivirus-1pc-12-meses");
       } else if (cleanLower.includes("cupón") || cleanLower.includes("descuento") || cleanLower.includes("promocion") || cleanLower.includes("oferta")) {
-        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n🔥 **Descuento por volumen automático:** Al llevar 2 o más licencias, el carrito le aplicará un **10% de descuento automático**.\n🎁 **Combos de Ahorro:** Ofrecemos paquetes especiales como el *Combo Windows 11 Pro + Office 2024 Pro Plus* con precio rebajado.\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** tras la confirmación de pago.\n\n¿Desea que le recomiende alguna combinación de licencias?`;
+        reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n🔥 **Descuento por volumen automático:** Al llevar 2 o más licencias, el carrito le aplicará un **10% de descuento automático**.\n🎁 **Combos de Ahorro:** Ofrecemos paquetes especiales como el *Combo Windows 11 Pro + Office 2024 Pro Plus* a S/ 45.00 y *Combo 3 en 1* a S/ 55.00.\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** tras la confirmación de pago.\n\n¿Desea que le recomiende alguna combinación de licencias?`;
       } else if (cleanLower.includes("instalar") || cleanLower.includes("activar") || cleanLower.includes("descarga") || cleanLower.includes("como funciona") || cleanLower.includes("entrega") || cleanLower.includes("tiempo") || cleanLower.includes("telefono")) {
-        reply = `⚡ **El proceso de compra, entrega y activación en UpClic es 100% seguro y garantizado:**\n\n1. **Selección:** Elige su software en clave directa u opción económica de **activación telefónica** (desde S/ 12.00).\n2. **Entrega Digital (10 a 30 min):** Recibe su clave original de 25 caracteres y el enlace de descarga oficial por correo electrónico y WhatsApp tras la confirmación del pago.\n3. **Descarga e Instalación:** Descarga los instaladores oficiales e ingresa su clave para activación permanente de por vida.\n4. **Garantía y Soporte:** Cuenta con 1 año de garantía y soporte técnico especializado.\n\nSi necesita asistencia guiada, nuestro administrador está listo para ayudarle en WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
+        reply = `⚡ **El proceso de compra, entrega y activación en UpClic es 100% seguro y garantizado:**\n\n1. **Selección:** Elige su software en clave directa u opción económica de **activación telefónica** (a S/ 16.00).\n2. **Entrega Digital (10 a 30 min):** Recibe su clave original de 25 caracteres y el enlace de descarga oficial por correo electrónico y WhatsApp tras la confirmación del pago.\n3. **Descarga e Instalación:** Descarga los instaladores oficiales e ingresa su clave para activación permanente de por vida.\n4. **Garantía y Soporte:** Cuenta con garantía oficial y soporte técnico especializado.\n\nSi necesita asistencia guiada, nuestro administrador está listo para ayudarle en WhatsApp: [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER}).`;
       } else if (cleanLower.includes("office") || cleanLower.includes("word") || cleanLower.includes("excel")) {
-        reply = `💼 **Opciones de Microsoft Office recomendadas en UpClic:**\n\n• **Office 2024 Professional Plus:** S/ 27.00 (Clave Directa) | S/ 13.00 (Activación Telefónica). La más moderna para Windows 10 y 11.\n• **Office 2021 Professional Plus:** S/ 25.00 (Clave Directa) | S/ 12.00 (Activación Telefónica). Muy estable y completa.\n• **Microsoft 365 Personal (1 año - S/ 35.00):** Incluye apps en hasta 5 dispositivos simultáneos (PC, Mac, tablet, celular) + 100 GB en OneDrive.\n\n⚡ **Entrega:** Por correo y WhatsApp en **10 a 30 minutos** con clave original y guía de instalación.`;
-        explicitSlugs.push("office-2024-pro-plus", "office-2021-pro-plus", "microsoft-365-personal-family");
+        reply = `💼 **Opciones de Microsoft Office recomendadas en UpClic:**\n\n• **Office 2024 Professional Plus:** S/ 27.00 (Clave Directa) | S/ 16.00 (Activación Telefónica). La más moderna para Windows 10 y 11.\n• **Office 2021 Professional Plus:** S/ 25.00 (Clave Directa) | S/ 16.00 (Activación Telefónica). Muy estable y completa.\n• **Microsoft 365 Personal (1 año - S/ 33.00):** Incluye apps en hasta 5 dispositivos simultáneos (PC, Mac, tablet, celular) + 100 GB en OneDrive.\n\n⚡ **Entrega:** Por correo y WhatsApp en **10 a 30 minutos** con clave original y guía de instalación.`;
+        explicitSlugs.push("office-2024-pro-plus", "office-2021-pro-plus", "microsoft-365-personal-1-ano");
       } else if (cleanLower.includes("windows") || cleanLower.includes("win 11") || cleanLower.includes("win 10")) {
-        reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro:** S/ 20.00 (OEM) | S/ 28.00 (Retail) | S/ 12.00 (Activación por Teléfono).\n• **Windows 10 Pro:** S/ 20.00 (OEM) | S/ 27.00 (Retail) | S/ 12.00 (Activación por Teléfono).\n• **Combo Windows 11 Pro + Office 2024 (S/ 56.90):** Las dos licencias oficiales juntas con super ahorro.\n\n⚡ **Entrega:** 100% digital en **10 a 30 minutos** con activación permanente. 🛡️`;
-        explicitSlugs.push("windows-11-pro-key", "windows-10-pro-key", "combo-windows-11-pro-office-2024");
+        reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro:** S/ 28.00 (OEM) | S/ 35.00 (Retail) | S/ 16.00 (Activación por Teléfono).\n• **Windows 10 Pro:** S/ 26.00 (OEM) | S/ 32.00 (Retail) | S/ 16.00 (Activación por Teléfono).\n• **Windows 11 Home (S/ 26.00 / S/ 32.00), Windows 10 Home (S/ 25.00 / S/ 30.00)**.\n• **Windows 8.1 Pro (S/ 38.00), Windows 7 Pro (S/ 32.00), Windows 7 Ultimate (S/ 30.00)**.\n• **Combo Windows 11 Pro + Office 2024 (S/ 45.00):** Las dos licencias oficiales juntas con super ahorro.\n\n⚡ **Entrega:** 100% digital en **10 a 30 minutos** con activación permanente. 🛡️`;
+        explicitSlugs.push("windows-11-pro-key", "windows-10-pro-key", "combo-windows-11-pro-office-2024-pro-plus");
       } else {
-        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Inteligente de Licenciamiento y estoy aquí para asesorarle a encontrar la licencia de **Microsoft Office, Windows, Visio, Project o suscripciones digitales** ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Office o versión de Windows (Claves directas o por teléfono).\n• 💻 Diferencias entre Office 2024, 2021 y Microsoft 365.\n• 📱 Suscripciones: Canva Pro (S/ 20), Duolingo Super (S/ 27), McAfee (S/ 38).\n• ⚡ Conocer los tiempos de entrega (10 a 30 min) y medios de pago.`;
+        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Inteligente de Licenciamiento y estoy aquí para asesorarle a encontrar la licencia de **Microsoft Office, Windows, Visio, Project o suscripciones digitales** ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Office o versión de Windows (Claves directas o por teléfono a S/ 16).\n• 💻 Diferencias entre Office 2024 (S/ 27), 2021 (S/ 25) y Microsoft 365 (S/ 33).\n• 📱 Suscripciones: Canva Pro (S/ 30), Duolingo Super (S/ 30), McAfee (S/ 39), Adobe Acrobat (S/ 50).\n• ⚡ Conocer los tiempos de entrega (10 a 30 min) y medios de pago.`;
       }
     }
 
