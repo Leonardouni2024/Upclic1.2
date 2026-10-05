@@ -107,27 +107,19 @@ export const ProductGrid: React.FC = () => {
             <div className="w-16 h-16 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
               <SearchX className="w-8 h-8 stroke-[1.5]" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">
-              {searchQuery ? t('noProductsMatch') : 'Catálogo en actualización'}
-            </h3>
+            <h3 className="text-lg font-bold text-slate-900">{t('noProductsMatch')}</h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
-              {searchQuery ? (
-                <>No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>".</>
-              ) : (
-                'Actualmente no hay productos disponibles en el catálogo.'
-              )}
+              No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Windows 11, Office 2024 o Combos.
             </p>
-            {searchQuery && (
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setActiveCategory('all');
-                }}
-                className="mt-6 px-5 py-2.5 rounded-lg bg-[#00A3E0] text-white text-xs sm:text-sm font-black hover:bg-[#0092cc] shadow-sm transition-all cursor-pointer border border-[#00A3E0]"
-              >
-                {t('viewAllCatalog')}
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setActiveCategory('all');
+              }}
+              className="mt-6 px-5 py-2.5 rounded-lg bg-[#00A3E0] text-white text-xs sm:text-sm font-black hover:bg-[#0092cc] shadow-sm transition-all cursor-pointer border border-[#00A3E0]"
+            >
+              {t('viewAllCatalog')}
+            </button>
           </div>
         )}
       </div>
