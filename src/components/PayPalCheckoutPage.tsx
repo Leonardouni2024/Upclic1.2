@@ -34,17 +34,9 @@ export const PayPalCheckoutPage: React.FC = () => {
 
   const isEn = language === 'EN';
 
-  // Check if cart contains any item that explicitly disallows PayPal (Crunchyroll and Amazon Prime Video)
+  // Check if cart contains any item that explicitly disallows PayPal
   const hasImmediateDeliveryItem = items.some(it => {
-    const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
-    const name = (it.product?.name || (it as any).name || '').toLowerCase();
-    return (
-      slug.includes('prime') ||
-      slug.includes('crunchy') ||
-      name.includes('prime') ||
-      name.includes('crunchy') ||
-      Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
-    );
+    return Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'));
   });
 
   // Synchronized exchange rate with the store

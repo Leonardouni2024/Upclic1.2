@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
-import { X, HelpCircle, FileText, Shield, Mail, Phone, CheckCircle2 } from 'lucide-react';
-import { WHATSAPP_NUMBER } from '../products.ts';
+import { X, HelpCircle, FileText, Shield, Mail, Phone, CheckCircle2, ShoppingBag, ExternalLink } from 'lucide-react';
+import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL } from '../products.ts';
 
 interface HelpModalProps {
   topic: string | null;
@@ -129,6 +129,24 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
                 <Mail className="w-4 h-4 text-blue-600" />
                 <span className="font-bold">Hours: Monday to Sunday 24/7 (Continuous Support)</span>
               </div>
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-4 h-4 text-yellow-600" />
+                  <div>
+                    <span className="font-bold block text-slate-800">Official Store on Mercado Libre</span>
+                    <span className="text-[11px] text-slate-500">Verified seller with 100% positive reputation</span>
+                  </div>
+                </div>
+                <a
+                  href={MERCADO_LIBRE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold rounded-lg text-xs transition-colors inline-flex items-center gap-1 shrink-0"
+                >
+                  <span>Visit</span>
+                  <ExternalLink className="w-3 h-3 opacity-80" />
+                </a>
+              </div>
             </div>
           </div>
         ) : (
@@ -154,6 +172,24 @@ export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-blue-600" />
                 <span className="font-bold">Horario: Lunes a Domingo 24/7 (Atención Continua)</span>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-4 h-4 text-yellow-600" />
+                  <div>
+                    <span className="font-bold block text-slate-800">Tienda Oficial en Mercado Libre</span>
+                    <span className="text-[11px] text-slate-500">Ventas verificadas con protección y garantía al comprador</span>
+                  </div>
+                </div>
+                <a
+                  href={MERCADO_LIBRE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold rounded-lg text-xs transition-colors inline-flex items-center gap-1 shrink-0"
+                >
+                  <span>Visitar</span>
+                  <ExternalLink className="w-3 h-3 opacity-80" />
+                </a>
               </div>
             </div>
           </div>

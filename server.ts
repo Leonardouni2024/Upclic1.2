@@ -89,8 +89,6 @@ GUÍA INTELIGENTE DE ASESORAMIENTO Y RECOMENDACIÓN:
   * Canva Pro (12 meses - S/ 30.00): Recursos premium, quitafondos mágico y herramientas IA.
   * McAfee AntiVirus (12 meses - S/ 39.00): Seguridad y protección integral.
   * Adobe Acrobat Pro DC 2018 (S/ 50.00): Edición y conversión PDF de por vida.
-  * Amazon Prime Video (1 Mes S/ 8.00, 3 Meses S/ 22.00, 6 Meses S/ 40.00).
-  * Crunchyroll Premium Mega Fan (1 Mes S/ 8.00, 3 Meses S/ 22.00, 6 Meses S/ 40.00).
 
 REGLA SOBRE RECOMENDAR PRODUCTOS:
 Al recomendar productos específicos del catálogo, puedes incluir la etiqueta [RECOMIENDA: slug-del-producto] (por ejemplo: [RECOMIENDA: office-2024-pro-plus], [RECOMIENDA: canva-pro-12-meses] o [RECOMIENDA: windows-11-pro-key]) para que el sistema le muestre al cliente la ficha interactiva con botón de compra directa.
@@ -1036,15 +1034,15 @@ app.post("/api/paypal/create_order", express.json(), async (req, res) => {
       return res.status(400).json({ error: "Por favor ingresa un correo electrónico válido." });
     }
 
-    // Verify that cart does not contain streaming accounts that are strictly Mercado Pago exclusive (Crunchyroll, Amazon Prime Video)
-    const hasStreamingExclusive = Array.isArray(items) && items.some((it: any) => {
-      const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || "").toLowerCase();
-      return slug.includes("prime-video") || slug.includes("crunchyroll") || slug.includes("prime video") || slug.includes("crunchy");
+    // Verify that cart items allow PayPal
+    const hasNonPayPalItem = Array.isArray(items) && items.some((it: any) => {
+      const gateways = it.product?.acceptedPaymentGateways;
+      return Boolean(gateways && !gateways.includes("paypal"));
     });
 
-    if (hasStreamingExclusive) {
+    if (hasNonPayPalItem) {
       return res.status(400).json({
-        error: "Las cuentas de Crunchyroll y Amazon Prime Video solo aceptan pagos mediante Mercado Pago. Por favor utiliza Mercado Pago para continuar."
+        error: "Uno o más productos en el carrito requieren pago exclusivo por Mercado Pago. Por favor selecciona Mercado Pago."
       });
     }
 
@@ -1352,49 +1350,8 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
       });
     }
 
-    // Check if order contains immediate delivery products (Prime Video or Crunchyroll) and auto-claim credentials from Excel inventory
+    // Digital order recorded successfully
     const deliveredCredentials: any[] = recorded.deliveredCredentials || [];
-    const orderItems = recorded.items || [];
-    
-    if (deliveredCredentials.length === 0) {
-      for (const item of orderItems) {
-        const slug = (item.slug || item.id || item.product?.slug || item.product?.id || item.name || "").toLowerCase();
-        if (slug.includes("prime-video") || slug.includes("crunchyroll") || slug.includes("prime video") || slug.includes("crunchy")) {
-          const productSlug = slug.includes("crunchy") ? "crunchyroll-premium" : "amazon-prime-video";
-          
-          let months = 1;
-          const variantText = (item.variantName || item.selectedVariant || "").toLowerCase();
-          if (variantText.includes("6")) {
-            months = 6;
-          } else if (variantText.includes("3")) {
-            months = 3;
-          }
-
-          const qty = Math.max(1, Number(item.quantity) || 1);
-          for (let q = 0; q < qty; q++) {
-            const cred = claimCredentialForOrder({
-              productSlug,
-              months,
-              customerEmail: trimmedEmail,
-              orderId: recorded.id,
-            });
-            if (cred) {
-              deliveredCredentials.push(cred);
-            }
-          }
-        }
-      }
-
-      if (deliveredCredentials.length > 0) {
-        recorded.deliveredCredentials = deliveredCredentials;
-        const currentOrders = loadStoredOrders();
-        const oIdx = currentOrders.findIndex((o: any) => o.id === recorded.id);
-        if (oIdx >= 0) {
-          currentOrders[oIdx].deliveredCredentials = deliveredCredentials;
-          fs.writeFileSync(ORDERS_FILE, JSON.stringify(currentOrders.slice(0, 250), null, 2), "utf-8");
-        }
-      }
-    }
 
     console.log("\n=======================================================");
     console.log(`🎉 [PAGO CONFIRMADO MERCADO PAGO] PAGO APROBADO EXITOSAMENTE`);
@@ -1499,32 +1456,7 @@ export async function processMercadoPagoPayment(paymentId: string): Promise<{
     order.paymentId = String(paymentId);
     order.paidAt = new Date().toISOString();
 
-    // Claim credentials for streaming items if not claimed yet
-    const deliveredCredentials: any[] = Array.isArray(order.deliveredCredentials) ? [...order.deliveredCredentials] : [];
-    const orderItems = order.items || [];
-    for (const item of orderItems) {
-      const slug = (item.slug || item.id || item.product?.slug || item.product?.id || item.name || "").toLowerCase();
-      if (slug.includes("prime-video") || slug.includes("crunchyroll") || slug.includes("prime video") || slug.includes("crunchy")) {
-        const productSlug = slug.includes("crunchy") ? "crunchyroll-premium" : "amazon-prime-video";
-        let months = 1;
-        const variantText = (item.variantName || item.selectedVariant || "").toLowerCase();
-        if (variantText.includes("6")) months = 6;
-        else if (variantText.includes("3")) months = 3;
-
-        const alreadyAssigned = deliveredCredentials.find((c: any) => c.productSlug === productSlug);
-        if (!alreadyAssigned) {
-          const cred = claimCredentialForOrder({
-            productSlug,
-            months,
-            customerEmail: order.customerEmail,
-            orderId: order.id
-          });
-          if (cred) deliveredCredentials.push(cred);
-        }
-      }
-    }
-
-    order.deliveredCredentials = deliveredCredentials;
+    const deliveredCredentials: any[] = order.deliveredCredentials || [];
     saveStoredOrders(orders);
 
     // Send confirmation emails with credentials
@@ -1654,8 +1586,6 @@ app.get("/api/credentials/excel", (_req, res) => {
 app.get("/api/credentials/inventory", (_req, res) => {
   try {
     const inventory = loadCredentialsInventory();
-    const primeAvailable = inventory.filter((c) => c.productSlug.includes("prime-video") && c.estado === "Disponible").length;
-    const crunchyAvailable = inventory.filter((c) => c.productSlug.includes("crunchyroll") && c.estado === "Disponible").length;
     return res.json({
       success: true,
       inventory,
@@ -1663,8 +1593,6 @@ app.get("/api/credentials/inventory", (_req, res) => {
         total: inventory.length,
         disponibles: inventory.filter((c) => c.estado === "Disponible").length,
         entregados: inventory.filter((c) => c.estado === "Entregado").length,
-        primeVideoDisponibles: primeAvailable,
-        crunchyrollDisponibles: crunchyAvailable,
       },
     });
   } catch (err: any) {

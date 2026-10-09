@@ -163,8 +163,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                         <span>Credenciales Entregadas al Instante:</span>
                       </div>
                       {order.deliveredCredentials.map((c: any, cIdx: number) => {
-                        const isPrime = c.productSlug?.includes('prime') || c.serviceName?.toLowerCase().includes('prime');
-                        const targetUrl = c.loginUrl || (isPrime ? 'https://www.primevideo.com/' : 'https://www.crunchyroll.com/');
+                        const targetUrl = c.loginUrl || '';
                         return (
                           <div key={cIdx} className="bg-white rounded-lg p-3 border border-emerald-200 text-xs space-y-1.5">
                             <div className="flex items-center justify-between font-bold text-slate-800">
@@ -176,17 +175,17 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ isOpen, onClos
                               <p><strong>Contraseña:</strong> {c.password}</p>
                               {c.profilePin && <p><strong>PIN / Perfil:</strong> {c.profilePin}</p>}
                             </div>
-                            <a
-                              href={targetUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`mt-2 inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg text-white font-bold text-xs shadow-xs transition-all ${
-                                isPrime ? 'bg-[#00A8E1] hover:bg-[#0092c4]' : 'bg-[#F47521] hover:bg-[#e06412]'
-                              }`}
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                              <span>{isPrime ? 'Lanzar Prime Video' : 'Lanzar Crunchyroll'}</span>
-                            </a>
+                            {targetUrl && (
+                              <a
+                                href={targetUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-2 inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg text-white font-bold text-xs shadow-xs transition-all bg-[#0066FF] hover:bg-[#0052cc]"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                                <span>Abrir Plataforma</span>
+                              </a>
+                            )}
                           </div>
                         );
                       })}

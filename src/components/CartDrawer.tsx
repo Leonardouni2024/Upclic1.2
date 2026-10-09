@@ -36,13 +36,10 @@ export const CartDrawer: React.FC = () => {
 
   const [inputCoupon, setInputCoupon] = useState('');
 
-  // Check if PayPal is allowed for current cart (Crunchyroll and Amazon Prime Video only accept Mercado Pago)
+  // Check if PayPal is allowed for current cart
   const isPayPalAllowed = items.length > 0 && !items.some(it => {
-    const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
-    const name = (it.product?.name || (it as any).name || '').toLowerCase();
-    const isStreamingExclusive = slug.includes('prime') || slug.includes('crunchy') || name.includes('prime') || name.includes('crunchy');
     const gateways = it.product?.acceptedPaymentGateways;
-    return isStreamingExclusive || Boolean(gateways && !gateways.includes('paypal'));
+    return Boolean(gateways && !gateways.includes('paypal'));
   });
 
   // Only recommend coupon if the cart meets the requirements:

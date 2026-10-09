@@ -808,20 +808,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const navigateToPayPal = () => {
-    // Crunchyroll and Amazon Prime Video only accept Mercado Pago
-    const hasStreamingOnly = items.some(it => {
-      const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
-      const name = (it.product?.name || (it as any).name || '').toLowerCase();
-      return (
-        slug.includes('prime') ||
-        slug.includes('crunchy') ||
-        name.includes('prime') ||
-        name.includes('crunchy') ||
-        Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
-      );
+    // Check if any product in cart strictly requires another payment gateway
+    const hasNonPayPalItem = items.some(it => {
+      return Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'));
     });
 
-    if (hasStreamingOnly) {
+    if (hasNonPayPalItem) {
       navigateToCheckout();
       return;
     }

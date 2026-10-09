@@ -378,8 +378,8 @@ export function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             isPayPal
               ? 'Hemos registrado tu solicitud de compra a través de la pasarela internacional de <strong>PayPal</strong>. A continuación encuentras los detalles de tu pedido:'
               : (isPaid
-                  ? '¡Se completó tu compra con éxito! Te confirmamos que tu pago ha sido recibido y <strong>aprobado</strong> a través de Mercado Pago. A continuación encuentras los detalles de tu compra y tus credenciales de acceso:'
-                  : 'Hemos registrado tu pedido en UpClic Store. Tu orden se encuentra <strong>pendiente de pago</strong>. Por favor completa tu pago ingresando en el enlace de Mercado Pago para procesar y entregar tus accesos:')
+                  ? '¡Se completó tu compra con éxito! Te confirmamos que tu pago ha sido recibido y <strong>aprobado</strong> a través de Mercado Pago. A continuación encuentras los detalles de tu compra:'
+                  : 'Hemos registrado tu pedido en UpClic Store. Tu orden se encuentra <strong>pendiente de pago</strong>. Por favor completa tu pago ingresando en el enlace de Mercado Pago para procesar tu pedido:')
           }
         </p>
 
@@ -499,30 +499,8 @@ export function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             </div>
             `).join('')}
             <p style="margin: 0; font-size: 12px; color: #047857; line-height: 1.4;">
-              * Inicia sesión con estos datos en la aplicación oficial o sitio web y selecciona tu perfil asignado.
+              * Inicia sesión con estos datos en la aplicación oficial o sitio web.
             </p>
-          </div>
-          ` : (order.items && order.items.some(it => {
-              const slug = (it.slug || it.id || (it as any).product?.slug || (it as any).product?.id || it.name || '').toLowerCase();
-              return slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
-            })) ? `
-          <!-- Out-of-Stock Profile WhatsApp Notice ONLY when payment was approved -->
-          <div style="background-color: #fffbeb; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-            <span style="display: inline-block; background-color: #d97706; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-bottom: 6px;">
-              Pago Aprobado • Coordinar Entrega de Perfil
-            </span>
-            <h3 style="margin: 4px 0 6px; font-size: 16px; font-weight: 800; color: #78350f;">
-              Solicita tu Perfil Adquirido al Administrador
-            </h3>
-            <p style="margin: 0 0 14px; font-size: 13.5px; color: #92400e; line-height: 1.5;">
-              Confirmamos tu pago exitosamente. Debido a la gran demanda, los perfiles de entrega automática inmediata de este lote ya fueron asignados. Por favor presiona el botón a continuación para hablar directamente con el Administrador por WhatsApp y recibir tu perfil para 1 dispositivo con tu garantía según lo alquilado.
-            </p>
-            <div style="text-align: center;">
-              <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola Administrador de UpClic, realicé mi pago con éxito para el pedido #${order.orderId}. Solicito por favor la entrega de mi perfil para 1 dispositivo que adquirí.`)}"
-                 style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 800; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
-                💬 Solicitar mi Perfil al Administrador por WhatsApp
-              </a>
-            </div>
           </div>
           ` : `
           <!-- Delivery Notice 10-30 min when payment was approved -->
@@ -556,7 +534,7 @@ export function generateCustomerEmailHtml(order: OrderEmailPayload): string {
             </a>
           </div>
           <p style="margin: 0; font-size: 12px; color: #b45309;">
-            * Tus credenciales de acceso oficiales y confirmación se entregarán automáticamente una vez que ingreses al link de pago y concluyas tu compra en Mercado Pago.
+            * Tu licencia digital y confirmación se entregarán automáticamente una vez que ingreses al link de pago y concluyas tu compra en Mercado Pago.
           </p>
           ` : ''}
         </div>
@@ -661,15 +639,9 @@ Lima, Perú`;
     const credsText = order.deliveredCredentials && order.deliveredCredentials.length > 0
       ? `\n⚡ TUS CREDENCIALES DE ACCESO ENTREGADAS AL INSTANTE:\n` +
         order.deliveredCredentials.map(c => 
-          `- Servicio: ${c.serviceName} (${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'})\n  Usuario / Correo: ${c.email}\n  Contraseña: ${c.password || 'Asignada'}${c.profilePin ? `\n  Perfil / PIN: ${c.profilePin}` : ''}\n  Dispositivo: 1 solo dispositivo (uso personal)\n  Garantía: ${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'} (según lo alquilado)\n  ⚠️ REGLA OBLIGATORIA: Iniciar sesión únicamente en el 1 dispositivo que va a utilizar.\n  (No abrir en múltiples pantallas para no anular la garantía)${c.loginUrl ? `\n  Iniciar sesión: ${c.loginUrl}` : ''}`
+          `- Servicio: ${c.serviceName} (${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'})\n  Usuario / Correo: ${c.email}\n  Contraseña: ${c.password || 'Asignada'}${c.profilePin ? `\n  Perfil / PIN: ${c.profilePin}` : ''}\n  Dispositivo: 1 solo dispositivo\n  Garantía: ${c.months || 1} ${(c.months || 1) === 1 ? 'Mes' : 'Meses'}${c.loginUrl ? `\n  Iniciar sesión: ${c.loginUrl}` : ''}`
         ).join('\n\n') + '\n\n'
       : '';
-
-    const hasImmediateWithoutCreds = (!order.deliveredCredentials || order.deliveredCredentials.length === 0) &&
-      (order.items || []).some(it => {
-        const slug = (it.slug || it.id || (it as any).product?.slug || (it as any).product?.id || it.name || '').toLowerCase();
-        return slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
-      });
 
     return `Hola${order.customerName ? ` ${order.customerName}` : ''},
 
@@ -685,15 +657,9 @@ ${itemsText}
 
 ${order.discountAmount ? `Descuento: - S/ ${order.discountAmount.toFixed(2)}\n` : ''}Total pagado: S/ ${order.total.toFixed(2)}
 
-${order.deliveredCredentials && order.deliveredCredentials.length > 0 
-  ? 'Tus credenciales ya se encuentran activas y listas para usar. Recuerda iniciar sesión en un solo dispositivo.' 
-  : hasImmediateWithoutCreds
-    ? `COORDINACIÓN DE ENTREGA DE PERFIL CON EL ADMINISTRADOR:
-Tu pago ha sido confirmado exitosamente. Debido a la gran demanda, los perfiles de entrega automática inmediata de este lote ya fueron asignados. Por favor presiona el siguiente enlace para hablar directamente con el Administrador por WhatsApp y recibir tu perfil adquirido para 1 dispositivo con tu garantía según lo alquilado:
-https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola Administrador de UpClic, realicé mi pago con éxito para el pedido #${order.orderId}. Solicito por favor la entrega de mi perfil para 1 dispositivo que adquirí.`)}`
-    : `Entrega de tu licencia:
+Entrega de tu licencia:
 Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.
-Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.`}
+Nuestro equipo técnico está preparando tu clave de producto y los enlaces oficiales de descarga.
 
 Soporte y atención al cliente:
 Para contactar soporte por WhatsApp: https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20mi%20pedido%20es%20${encodeURIComponent(order.orderId)}
@@ -719,7 +685,7 @@ ${itemsText}
 
 ${order.discountAmount ? `Descuento: - S/ ${order.discountAmount.toFixed(2)}\n` : ''}Total a pagar: S/ ${order.total.toFixed(2)}
 
-${order.paymentUrl ? `👉 Para completar tu pago con Mercado Pago y recibir tus credenciales oficiales de acceso, ingresa al siguiente enlace de pago:\n${order.paymentUrl}\n\nNota: Tus credenciales oficiales de acceso se emitirán automáticamente una vez que ingreses al link de pago y concluyas tu compra.\n\n` : ''}Soporte:
+${order.paymentUrl ? `👉 Para completar tu pago con Mercado Pago y recibir tu licencia oficial, ingresa al siguiente enlace de pago:\n${order.paymentUrl}\n\nNota: Tu licencia digital se emitirá automáticamente una vez que concluyas tu compra en Mercado Pago.\n\n` : ''}Soporte:
 Para contactar soporte por WhatsApp: https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20mi%20pedido%20es%20${encodeURIComponent(order.orderId)}
 Teléfono: ${WHATSAPP_DISPLAY}
 

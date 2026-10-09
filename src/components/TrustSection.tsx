@@ -1,6 +1,6 @@
 import React from 'react';
-import { ShieldCheck, Users, Headphones, Clock, CheckCircle2, MessageCircle, FileCheck2, Instagram, ExternalLink, Star } from 'lucide-react';
-import { WHATSAPP_NUMBER, INSTAGRAM_URL, INSTAGRAM_DISPLAY } from '../products.ts';
+import { ShieldCheck, Users, Headphones, Clock, CheckCircle2, MessageCircle, FileCheck2, Instagram, ExternalLink, Star, ShoppingBag } from 'lucide-react';
+import { WHATSAPP_NUMBER, INSTAGRAM_URL, INSTAGRAM_DISPLAY, MERCADO_LIBRE_URL, MERCADO_LIBRE_DISPLAY } from '../products.ts';
 import { TrustpilotStars, TrustpilotLogo } from './TrustpilotWidget.tsx';
 
 export const TrustSection: React.FC = () => {
@@ -15,12 +15,13 @@ export const TrustSection: React.FC = () => {
       description: 'Activación directa con los servidores de Microsoft y desarrolladores autorizados.'
     },
     {
-      title: 'Garantía Escrita de Activación',
-      description: 'Respaldamos tu compra con garantía oficial de 6 meses (1 mes para activación telefónica) y soporte prioritario.'
+      title: 'Tienda en Mercado Libre',
+      description: 'Encuéntranos en Mercado Libre con compras protegidas, reputación destacada y garantía total.',
+      isMercadoLibre: true
     },
     {
-      title: 'Referencias',
-      description: 'Conoce opiniones y novedades en nuestro perfil oficial @upclic.peru.',
+      title: 'Referencias en Redes',
+      description: 'Conoce opiniones, entregas y novedades en nuestro perfil oficial @upclic.peru.',
       isInstagram: true
     },
     {
@@ -81,10 +82,22 @@ export const TrustSection: React.FC = () => {
               </button>
 
               <a
+                href={MERCADO_LIBRE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-lg bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold text-sm transition-all duration-150 flex items-center gap-2 shadow-md cursor-pointer active:scale-95"
+                title="Visitar tienda oficial de UpClic en Mercado Libre Perú"
+              >
+                <ShoppingBag className="w-4 h-4 text-[#2D3277]" />
+                <span>Tienda Mercado Libre</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+              </a>
+
+              <a
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-3 rounded-lg bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-sm transition-all duration-150 flex items-center gap-2 shadow-md cursor-pointer active:scale-95"
+                className="px-4 py-3 rounded-lg bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-sm transition-all duration-150 flex items-center gap-2 shadow-md cursor-pointer active:scale-95"
                 title="Ver referencias en Instagram @upclic.peru"
               >
                 <Instagram className="w-4 h-4" />
@@ -96,7 +109,40 @@ export const TrustSection: React.FC = () => {
 
           {/* Right Column: 4 Trust cards */}
           <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {trustPoints.map((point, index) => {
+            {trustPoints.map((point: any, index) => {
+              if (point.isMercadoLibre) {
+                return (
+                  <a
+                    key={index}
+                    href={MERCADO_LIBRE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-5 rounded-xl bg-gradient-to-br from-yellow-500/15 via-amber-950/20 to-slate-900 border border-yellow-400/40 hover:border-yellow-300 transition-all flex flex-col justify-start group cursor-pointer shadow-sm hover:shadow-md"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-9 h-9 rounded-lg bg-[#FFE600] flex items-center justify-center text-[#2D3277] shadow-sm group-hover:scale-105 transition-transform">
+                        <ShoppingBag className="w-5 h-5 text-[#2D3277]" />
+                      </div>
+                      <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-300 border border-yellow-400/30">
+                        Tienda Oficial
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <h4 className="text-sm font-bold text-white group-hover:text-yellow-300 transition-colors leading-snug">
+                        {point.title}
+                      </h4>
+                      <ExternalLink className="w-3.5 h-3.5 text-yellow-400 shrink-0 opacity-70 group-hover:opacity-100" />
+                    </div>
+                    <p className="text-xs text-slate-300 font-normal leading-relaxed">
+                      {point.description}
+                    </p>
+                    <span className="mt-2 text-[11px] font-bold text-yellow-300 group-hover:underline flex items-center gap-1">
+                      <span>Ver tienda en Mercado Libre &rarr;</span>
+                    </span>
+                  </a>
+                );
+              }
+
               if (point.isInstagram) {
                 return (
                   <a

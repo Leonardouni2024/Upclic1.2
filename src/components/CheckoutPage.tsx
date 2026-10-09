@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import {
   MERCADO_PAGO_URL,
-
+  MERCADO_LIBRE_URL,
   WHATSAPP_NUMBER,
   WHATSAPP_DISPLAY
 } from '../products.ts';
@@ -73,17 +73,9 @@ export const CheckoutPage: React.FC = () => {
   const [selectedPaymentGateway, setSelectedPaymentGateway] = useState<'mercadopago' | 'paypal'>('mercadopago');
   const [inputCoupon, setInputCoupon] = useState('');
 
-  // Check if any product in cart strictly requires Mercado Pago (Crunchyroll and Amazon Prime Video)
+  // Check if any product in cart strictly requires Mercado Pago
   const hasOnlyMercadoPagoItem = items.some(it => {
-    const slug = (it.product?.slug || it.product?.id || (it as any).slug || (it as any).id || '').toLowerCase();
-    const name = (it.product?.name || (it as any).name || '').toLowerCase();
-    return (
-      slug.includes('prime') ||
-      slug.includes('crunchy') ||
-      name.includes('prime') ||
-      name.includes('crunchy') ||
-      Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'))
-    );
+    return Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'));
   });
 
   useEffect(() => {
@@ -612,284 +604,20 @@ export const CheckoutPage: React.FC = () => {
             {paidCustomerEmail && <strong className="text-slate-900 break-all">{paidCustomerEmail}</strong>}
           </p>
 
-          {/* Immediate Credentials Delivery Box */}
-          {deliveredCredentials.length > 0 && (
-            <div className="mt-6 text-left rounded-xl bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/60 border-2 border-emerald-400 p-5 sm:p-6 shadow-md relative overflow-hidden">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-600 text-white shadow-xs">
-                  <Zap className="w-3.5 h-3.5 fill-white" />
-                  Entrega Inmediata Automatizada
-                </span>
-                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300">
-                  Sin Esperas ⚡
-                </span>
-              </div>
-
-              <h3 className="text-base sm:text-lg font-black text-emerald-950 mb-1">
-                Tus Credenciales de Acceso Oficiales:
-              </h3>
-              <p className="text-xs text-emerald-800 mb-4 leading-relaxed font-medium">
-                Tus credenciales han sido asignadas automáticamente desde el inventario. Inicia sesión directamente en la plataforma o presiona el botón de acceso abajo.
+          {/* License delivery notice within 10 to 30 minutes */}
+          <div className="mt-6 p-4 sm:p-5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-left flex items-start gap-3.5 shadow-xs">
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-emerald-950">
+                {language === 'ES' ? 'Entrega de tu licencia digital:' : 'Digital license delivery:'}
+              </h4>
+              <p className="text-xs sm:text-sm text-emerald-800 mt-1 leading-relaxed">
+                <strong>{language === 'ES' ? 'Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.' : 'Your license will be sent to your email within 10 to 30 minutes.'}</strong> {language === 'ES' ? 'Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.' : 'Our technical team is validating your product key and preparing your receipt and activation instructions.'}
               </p>
-
-              <div className="space-y-4">
-                {deliveredCredentials.map((cred: any, idx: number) => {
-                  const isPrime = cred.productSlug?.includes('prime') || cred.serviceName?.toLowerCase().includes('prime');
-                  const targetUrl = cred.loginUrl || (isPrime ? 'https://www.primevideo.com/' : 'https://www.crunchyroll.com/');
-                  const passFieldId = `pass-${cred.id || idx}`;
-                  const userFieldId = `user-${cred.id || idx}`;
-                  const pinFieldId = `pin-${cred.id || idx}`;
-                  const isPassVisible = Boolean(showPassword[passFieldId]);
-
-                  return (
-                    <div key={cred.id || idx} className="bg-white rounded-xl border border-emerald-300 p-4 sm:p-5 shadow-xs space-y-3.5">
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white ${isPrime ? 'bg-[#00A8E1]' : 'bg-[#F47521]'}`}>
-                            <Tv className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-black text-slate-900 leading-none">
-                              {cred.serviceName || (isPrime ? 'Amazon Prime Video' : 'Crunchyroll Premium')}
-                            </h4>
-                            <span className="text-[11px] text-slate-500 font-semibold block mt-0.5">
-                              1 Perfil (1 dispositivo) • {cred.months || 1} {(cred.months || 1) === 1 ? 'Mes' : 'Meses'} • Garantía según lo alquilado
-                            </span>
-                          </div>
-                        </div>
-
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
-                          {cred.id || 'Activa'}
-                        </span>
-                      </div>
-
-                      {/* Obligatory Single Device Notice */}
-                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-300 text-amber-950 text-xs flex items-start gap-2.5">
-                        <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-bold text-amber-900">
-                            ⚠️ REGLA OBLIGATORIA: Inicia sesión únicamente en el 1 dispositivo que vas a usar.
-                          </p>
-                          <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
-                            Tu suscripción incluye 1 perfil para 1 solo dispositivo y garantía según lo alquilado ({cred.months || 1} {(cred.months || 1) === 1 ? 'Mes' : 'Meses'}). No abras la cuenta en múltiples pantallas en simultáneo para mantener tu garantía activa.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Credentials Table / Rows */}
-                      <div className="space-y-2 text-xs">
-                        {/* Usuario / Email */}
-                        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Usuario / Correo:</span>
-                            <span className="font-mono font-bold text-slate-900 break-all select-all text-xs sm:text-sm">
-                              {cred.email}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => copyToClipboard(cred.email, userFieldId)}
-                            className="shrink-0 p-2 rounded-lg bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold text-[11px] cursor-pointer"
-                            title="Copiar usuario"
-                          >
-                            {copiedField === userFieldId ? (
-                              <>
-                                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                <span className="text-emerald-700">¡Copiado!</span>
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="w-3.5 h-3.5" />
-                                <span>Copiar</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-
-                        {/* Contraseña */}
-                        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Contraseña:</span>
-                            <span className="font-mono font-bold text-slate-900 break-all select-all text-xs sm:text-sm">
-                              {isPassVisible ? cred.password : '••••••••••••'}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => toggleShowPassword(passFieldId)}
-                              className="p-2 rounded-lg bg-white border border-slate-300 hover:border-slate-400 text-slate-600 transition-colors cursor-pointer"
-                              title={isPassVisible ? "Ocultar contraseña" : "Ver contraseña"}
-                            >
-                              {isPassVisible ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(cred.password, passFieldId)}
-                              className="shrink-0 p-2 rounded-lg bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold text-[11px] cursor-pointer"
-                              title="Copiar contraseña"
-                            >
-                              {copiedField === passFieldId ? (
-                                <>
-                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                  <span className="text-emerald-700">¡Copiado!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3.5 h-3.5" />
-                                  <span>Copiar</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Perfil / PIN si aplica */}
-                        {cred.profilePin && (
-                          <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
-                            <div className="min-w-0 flex-1">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Perfil Asignado:</span>
-                              <span className="font-mono font-bold text-emerald-900 text-xs sm:text-sm">
-                                {cred.profilePin}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(cred.profilePin, pinFieldId)}
-                              className="shrink-0 p-2 rounded-lg bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 transition-colors flex items-center gap-1 font-bold text-[11px] cursor-pointer"
-                            >
-                              {copiedField === pinFieldId ? (
-                                <>
-                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                  <span className="text-emerald-700">¡Copiado!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3.5 h-3.5" />
-                                  <span>Copiar</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Reglas de Garantía y Dispositivo */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
-                          <div className="p-2 rounded bg-slate-100 border border-slate-200">
-                            <span className="font-bold text-slate-600 block">Dispositivo:</span>
-                            <span className="font-bold text-slate-900">1 Dispositivo</span>
-                          </div>
-                          <div className="p-2 rounded bg-slate-100 border border-slate-200">
-                            <span className="font-bold text-slate-600 block">Garantía:</span>
-                            <span className="font-bold text-emerald-700">
-                              {cred.months || 1} {(cred.months || 1) === 1 ? 'Mes' : 'Meses'} (según lo alquilado)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Direct Launch Button for this Product */}
-                      <a
-                        href={targetUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-full py-3.5 px-4 rounded-xl text-white font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${
-                          isPrime
-                            ? 'bg-[#00A8E1] hover:bg-[#0092c4] shadow-blue-500/20'
-                            : 'bg-[#F47521] hover:bg-[#e06412] shadow-orange-500/20'
-                        }`}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        <span>
-                          {isPrime ? '🚀 Abrir e Iniciar Sesión en Amazon Prime Video' : '🚀 Abrir e Iniciar Sesión en Crunchyroll'}
-                        </span>
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-emerald-200 text-xs text-emerald-900 space-y-1">
-                <p className="font-bold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Respaldo enviado a tu correo ({paidCustomerEmail})</span>
-                </p>
-                <p className="text-[11px] text-emerald-800">
-                  Consejo: Haz clic en el botón de lanzamiento para abrir la web oficial, inicia sesión con tu usuario y clave, y elige tu perfil asignado.
-                </p>
-              </div>
             </div>
-          )}
-
-          {/* If customer acquired Prime Video or Crunchyroll (immediate delivery profile) but stock was exhausted (deliveredCredentials is empty) */}
-          {deliveredCredentials.length === 0 && (paidOrderItems || []).some((it: any) => {
-            const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || '').toLowerCase();
-            return Boolean(it.product?.isImmediateDelivery) || slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
-          }) && (
-            <div className="mt-6 text-left rounded-xl bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 border-2 border-amber-400 p-5 sm:p-6 shadow-md">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-600 text-white shadow-xs">
-                  <MessageCircle className="w-3.5 h-3.5 fill-white" />
-                  Entrega de Perfil por WhatsApp
-                </span>
-                <span className="text-[11px] font-bold text-amber-900 bg-amber-200/70 px-2 py-0.5 rounded-md border border-amber-300">
-                  Pago Aprobado ⚡
-                </span>
-              </div>
-
-              <h3 className="text-base sm:text-lg font-black text-amber-950 mb-1">
-                Solicita tu Perfil Adquirido al Administrador
-              </h3>
-              <p className="text-xs sm:text-sm text-amber-900 leading-relaxed font-medium mb-4">
-                Hemos verificado y recibido tu pago exitosamente. Debido a la alta demanda, los perfiles de entrega automática inmediata de este lote ya fueron asignados. Por favor presiona el botón de WhatsApp a continuación para que el Administrador te entregue directamente tu perfil para 1 dispositivo con tu garantía correspondiente según lo alquilado.
-              </p>
-
-              {(() => {
-                const immediateItem = (paidOrderItems || []).find((it: any) => {
-                  const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || '').toLowerCase();
-                  return Boolean(it.product?.isImmediateDelivery) || slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
-                });
-                const prodName = immediateItem?.product?.name || immediateItem?.name || 'Suscripción Streaming';
-                const variantText = immediateItem?.variantName ? ` (${immediateItem.variantName})` : '';
-                const orderCode = lastOrderSnapshot?.orderId || paymentResult.paymentId || 'UpClic';
-                const waStockUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  `Hola Administrador de UpClic, realicé mi pago con éxito para el pedido #${orderCode}. Adquirí ${prodName}${variantText}. Solicito por favor que me entregue el perfil para 1 dispositivo que adquirí.`
-                )}`;
-
-                return (
-                  <a
-                    href={waStockUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-4 px-5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-sm sm:text-base shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all active:scale-98 cursor-pointer"
-                  >
-                    <MessageCircle className="w-5 h-5 fill-current" />
-                    <span>Hablar con el Administrador y Solicitar mi Perfil</span>
-                  </a>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* License delivery notice within 10 to 30 minutes only for orders with standard licenses and NO immediate delivery */}
-          {!(paidOrderItems || []).some((it: any) => {
-            const slug = (it.slug || it.id || it.product?.slug || it.product?.id || it.name || '').toLowerCase();
-            return Boolean(it.product?.isImmediateDelivery) || slug.includes('prime-video') || slug.includes('crunchyroll') || slug.includes('prime video') || slug.includes('crunchy');
-          }) && (
-            <div className="mt-6 p-4 sm:p-5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-left flex items-start gap-3.5 shadow-xs">
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-emerald-950">
-                  {language === 'ES' ? 'Entrega de tu licencia digital:' : 'Digital license delivery:'}
-                </h4>
-                <p className="text-xs sm:text-sm text-emerald-800 mt-1 leading-relaxed">
-                  <strong>{language === 'ES' ? 'Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.' : 'Your license will be sent to your email within 10 to 30 minutes.'}</strong> {language === 'ES' ? 'Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.' : 'Our technical team is validating your product key and preparing your receipt and activation instructions.'}
-                </p>
-              </div>
-            </div>
-          )}
+          </div>
 
           {/* Order summary box */}
           <div className="mt-6 text-left rounded-lg bg-slate-50 border border-slate-200/80 p-5 space-y-3">
@@ -1720,6 +1448,21 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex items-center gap-2 text-slate-500 font-medium">
                   <Clock className="w-4 h-4 text-cyan-600 shrink-0" />
                   <span>{t('deliveryTimeNotice')}</span>
+                </div>
+                <div className="flex items-center justify-between pt-1 text-slate-600">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <ShoppingBag className="w-3.5 h-3.5 text-yellow-600 shrink-0" />
+                    <span>{isEn ? 'Also on Mercado Libre' : 'También en Mercado Libre'}</span>
+                  </span>
+                  <a
+                    href={MERCADO_LIBRE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0070ba] hover:text-[#005a96] font-bold hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>{isEn ? 'Official Store' : 'Tienda Oficial'}</span>
+                    <ExternalLink className="w-3 h-3 opacity-80" />
+                  </a>
                 </div>
               </div>
             </div>

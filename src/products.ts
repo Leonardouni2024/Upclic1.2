@@ -3,6 +3,8 @@ import type { Product, CartTotals, Currency } from './types.ts';
 export const WHATSAPP_NUMBER = '51983204384';
 export const WHATSAPP_DISPLAY = '+51 983 204 384';
 export const MERCADO_PAGO_URL = 'https://www.mercadopago.com.pe';
+export const MERCADO_LIBRE_URL = 'https://www.mercadolibre.com.pe/pagina/upclic';
+export const MERCADO_LIBRE_DISPLAY = 'Mercado Libre UpClic';
 export const INSTAGRAM_URL = 'https://www.instagram.com/upclic.peru/';
 export const INSTAGRAM_DISPLAY = '@upclic.peru';
 
@@ -1584,149 +1586,6 @@ const rawProducts: Product[] = [
       'Finaliza la instalación y reinicia el programa para aplicar la activación.',
       '¡Listo! Tu Adobe Acrobat Pro DC quedará activado de forma definitiva sin pagos recurrentes.'
     ]
-  },
-  {
-    id: 'prod-prime-video',
-    slug: 'amazon-prime-video',
-    name: 'Amazon Prime Video (Suscripción)',
-    description: '⚡ ENTREGA INMEDIATA AUTOMÁTICA SIN ESPERAS: Al completar tu pago con Mercado Pago, tus credenciales de acceso se envían y muestran directamente en pantalla sin esperas. Incluye 1 perfil privado para 1 dispositivo. Disfruta de todo el catálogo exclusivo de Amazon Prime Video: miles de películas, series galardonadas y estrenos en calidad Ultra HD 4K, reproducción fluida en Smart TV, TV Box, PC, celulares y tablets, perfiles personales, descargas para ver sin conexión y garantía completa según el tiempo alquilado (1, 3 o 6 meses).',
-    price: 8.00,
-    oldPrice: 15.00,
-    duration: '1, 3 o 6 meses',
-    category: 'apps',
-    imageUrl: '/products/prime-video.svg',
-    fallbackImage: 'https://i.blogs.es/57e3e8/amazon-prime-video-1/1200_900.jpeg',
-    rating: 4.97,
-    reviews: 132,
-    badge: 'ENTREGA INMEDIATA ⚡',
-    stock: 3,
-    isImmediateDelivery: true,
-    isAccountAccess: true,
-    acceptedPaymentGateways: ['mercadopago'],
-    variants: [
-      {
-        id: '1-mes',
-        name: '1 Mes',
-        type: '1 Mes',
-        price: 8.00,
-        oldPrice: 15.00,
-        badge: '8.00 / mes',
-        shortDesc: '1 perfil para 1 dispositivo por 1 mes. Garantía de 1 mes (según lo alquilado).',
-        months: 1
-      },
-      {
-        id: '3-meses',
-        name: '3 Meses',
-        type: '3 Meses',
-        price: 22.00,
-        oldPrice: 45.00,
-        badge: '22.00 / promo',
-        shortDesc: '1 perfil para 1 dispositivo por 3 meses. Garantía de 3 meses (según lo alquilado).',
-        months: 3
-      },
-      {
-        id: '6-meses',
-        name: '6 Meses',
-        type: '6 Meses',
-        price: 40.00,
-        oldPrice: 90.00,
-        badge: '40.00 / promo',
-        shortDesc: '1 perfil para 1 dispositivo por 6 meses. Garantía de 6 meses (según lo alquilado).',
-        months: 6
-      }
-    ],
-    features: [
-      '⚡ Entrega 100% Inmediata y Automática: Credenciales en pantalla y enviadas a tu correo al instante',
-      '📺 1 Perfil privado asignado exclusivamente para 1 dispositivo',
-      '🛡️ Garantía completa según el tiempo alquilado (1, 3 o 6 meses)',
-      'Acceso a series y películas originales de Amazon Prime Video (The Boys, Fallout, El Señor de los Anillos, etc.)',
-      'Calidad Ultra HD 4K con sonido envolvente Dolby Atmos',
-      'Compatible con Smart TV (Samsung, LG, Android TV), Fire TV Stick, computadoras, tablets y smartphones (1 dispositivo a la vez)',
-      'Descarga tus contenidos para ver sin internet donde y cuando quieras',
-      'Cupos limitados: 3 perfiles disponibles (1 dispositivo cada uno)'
-    ],
-    compatibility: 'Smart TV, Android TV, Fire TV, Chromecast, Windows, Mac, iOS y Android (1 dispositivo simultáneo)',
-    downloadUrl: 'https://www.primevideo.com/',
-    downloadLabel: 'Ir a Amazon Prime Video',
-    installationSteps: [
-      'Realiza tu pago seguro mediante Mercado Pago (Yape, Plin, tarjeta o banca móvil).',
-      'Al instante en que se confirma el pago, la pantalla te lanzará de forma inmediata tu correo y contraseña asignados.',
-      'También recibirás una copia de tus credenciales en tu correo electrónico.',
-      'Ingresa a primevideo.com o a la aplicación de Prime Video en tu Smart TV o teléfono.',
-      'Inicia sesión con las credenciales entregadas, selecciona tu perfil asignado en tu dispositivo y disfruta de tus series y películas.'
-    ]
-  },
-  {
-    id: 'prod-crunchyroll-premium',
-    slug: 'crunchyroll-premium',
-    name: 'Crunchyroll Premium (Mega Fan)',
-    description: '⚡ ENTREGA INMEDIATA AUTOMÁTICA SIN ESPERAS: Al completar tu pago, tus credenciales de acceso se envían y muestran directamente en pantalla sin esperas. Incluye 1 perfil privado para 1 dispositivo. Acceso completo al plan Crunchyroll Mega Fan: todo el catálogo de anime sin ningún anuncio publicitario, episodios estreno en emisión (Simulcast) apenas 1 hora después de transmitirse en Japón, calidad Full HD 1080p, descargas offline en dispositivos móviles y garantía según el tiempo alquilado (1, 3 o 6 meses).',
-    price: 8.00,
-    oldPrice: 16.00,
-    duration: '1, 3 o 6 meses',
-    category: 'apps',
-    imageUrl: '/products/crunchyroll.svg',
-    fallbackImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4-_W34aLKEKH9v4Ttm-rgHv6Njyzs_fVjsqInnrijKKTthDDDttpscC0&s=10',
-    rating: 4.98,
-    reviews: 119,
-    badge: 'ENTREGA INMEDIATA ⚡',
-    stock: 3,
-    isImmediateDelivery: true,
-    isAccountAccess: true,
-    acceptedPaymentGateways: ['mercadopago'],
-    variants: [
-      {
-        id: '1-mes',
-        name: '1 Mes',
-        type: '1 Mes',
-        price: 8.00,
-        oldPrice: 16.00,
-        badge: '8.00 / mes',
-        shortDesc: '1 perfil para 1 dispositivo por 1 mes. Garantía de 1 mes (según lo alquilado).',
-        months: 1
-      },
-      {
-        id: '3-meses',
-        name: '3 Meses',
-        type: '3 Meses',
-        price: 22.00,
-        oldPrice: 48.00,
-        badge: '22.00 / promo',
-        shortDesc: '1 perfil para 1 dispositivo por 3 meses. Garantía de 3 meses (según lo alquilado).',
-        months: 3
-      },
-      {
-        id: '6-meses',
-        name: '6 Meses',
-        type: '6 Meses',
-        price: 40.00,
-        oldPrice: 96.00,
-        badge: '40.00 / promo',
-        shortDesc: '1 perfil para 1 dispositivo por 6 meses. Garantía de 6 meses (según lo alquilado).',
-        months: 6
-      }
-    ],
-    features: [
-      '⚡ Entrega 100% Inmediata y Automática: Credenciales en pantalla y correo al instante tras pagar',
-      '📺 1 Perfil privado asignado exclusivamente para 1 dispositivo',
-      '🛡️ Garantía completa según el tiempo alquilado (1, 3 o 6 meses)',
-      'Suscripción Crunchyroll Mega Fan: Todo el catálogo de anime sin anuncios publicitarios',
-      'Simulcasts oficiales: Episodios de estreno apenas 1 hora después de su transmisión en Japón',
-      'Transmisión en Full HD (1080p) con audio original japonés y doblaje en español latino',
-      'Descargas para ver tus animes favoritos sin conexión a internet en tu smartphone o tablet',
-      'Compatible con Smart TV, consolas (PlayStation, Xbox), PC, Mac, Android y iOS (1 dispositivo a la vez)',
-      'Cupos limitados: 3 perfiles disponibles (1 dispositivo cada uno)'
-    ],
-    compatibility: 'Smart TV, PlayStation, Xbox, Android, iOS, Windows y Mac (1 dispositivo simultáneo)',
-    downloadUrl: 'https://www.crunchyroll.com/',
-    downloadLabel: 'Ir a Crunchyroll',
-    installationSteps: [
-      'Realiza tu pago seguro mediante Mercado Pago (Yape, Plin, tarjeta o banca por internet).',
-      'En cuanto se confirme el pago, se desplegarán inmediatamente en pantalla tus credenciales (correo y contraseña).',
-      'También se enviará un respaldo con tus credenciales a tu correo electrónico.',
-      'Ingresa a crunchyroll.com o a la aplicación de Crunchyroll en tu TV, consola o celular.',
-      'Inicia sesión con las credenciales entregadas, selecciona tu perfil en tu dispositivo y disfruta de todo el anime en emisión sin anuncios.'
-    ]
   }
 ];
 
@@ -1738,9 +1597,6 @@ export const products: Product[] = rawProducts.map(p => ({
 export function getProductDeviceTag(product: Product, language: 'ES' | 'EN' = 'ES'): string {
   const isEn = language === 'EN';
 
-  if (product.id === 'prod-prime-video' || product.id === 'prod-crunchyroll-premium') {
-    return isEn ? '1 Profile (1 device)' : '1 Perfil (1 dispositivo)';
-  }
   if (product.id === 'prod-gemini-ai-pro') {
     return isEn ? 'Up to 5 users' : 'Hasta 5 usuarios';
   }

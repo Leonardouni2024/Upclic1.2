@@ -1,8 +1,8 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory } from '../types.ts';
-import { ShieldCheck, MessageCircle, Lock, Globe } from 'lucide-react';
-import { WHATSAPP_NUMBER } from '../products.ts';
+import { ShieldCheck, MessageCircle, Lock, Globe, ShoppingBag, ExternalLink } from 'lucide-react';
+import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL, MERCADO_LIBRE_DISPLAY } from '../products.ts';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
 interface FooterProps {
@@ -39,6 +39,20 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
             <p className="text-xs text-slate-300 leading-relaxed max-w-sm font-normal">
               {t('footerDesc')}
             </p>
+
+            <div className="pt-1">
+              <a
+                href={MERCADO_LIBRE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold text-xs shadow-xs transition-colors cursor-pointer group"
+                title="Visitar tienda oficial de UpClic en Mercado Libre Perú"
+              >
+                <ShoppingBag className="w-3.5 h-3.5 text-[#2D3277]" />
+                <span>Tienda Oficial en Mercado Libre</span>
+                <ExternalLink className="w-3 h-3 text-[#2D3277] opacity-80 group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </div>
           </div>
 
           {/* Col 1: Categorías */}
@@ -129,6 +143,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   <span>WhatsApp UpClic</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={MERCADO_LIBRE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-yellow-300 hover:text-yellow-200 font-bold"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Mercado Libre</span>
                 </a>
               </li>
             </ul>
