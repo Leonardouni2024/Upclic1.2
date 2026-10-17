@@ -3,7 +3,7 @@ import { products , formatPrice } from '../products.ts';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useReviews } from '../context/ReviewsContext.tsx';
-import { Trophy, Star, Check, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Trophy, Check, ShoppingCart, ArrowRight } from 'lucide-react';
 
 export const TopProductsSection: React.FC = () => {
   const {
@@ -84,23 +84,12 @@ export const TopProductsSection: React.FC = () => {
               {/* Content & Action */}
               <div className="w-full sm:w-1/2 flex flex-col justify-between flex-1">
                 <div>
-                  <div className="flex items-center gap-1.5 text-amber-400 mb-2">
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-3.5 h-3.5 ${
-                            star <= Math.round(stats.averageRating)
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'text-slate-200'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="font-extrabold text-xs text-slate-700 tabular-nums">
-                      {stats.averageRating.toFixed(1)}/5
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
+                      <span>Licencia Oficial Verificada</span>
                     </span>
-                    <span className="text-xs text-slate-500">({stats.totalReviews})</span>
+                    <span className="text-xs text-slate-500 font-medium">({stats.totalReviews} opiniones)</span>
                   </div>
 
                   <h3

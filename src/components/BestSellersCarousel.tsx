@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { products } from '../products.ts';
 import { ProductCard } from './ProductCard.tsx';
 import { useCart } from '../context/CartContext.tsx';
-import { Flame, ChevronLeft, ChevronRight, Play, Pause, Sparkles } from 'lucide-react';
+import { Flame, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
 export const BestSellersCarousel: React.FC = () => {
   const { t } = useCart();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
-import { CheckCircle, Sparkles, X } from 'lucide-react';
+import { CheckCircle, Tag, X } from 'lucide-react';
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useCart();
@@ -29,7 +29,7 @@ export const ToastContainer: React.FC = () => {
                 isDiscount ? 'bg-[#0066FF] text-white' : 'bg-emerald-50 text-emerald-600'
               }`}
             >
-              {isDiscount ? <Sparkles className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
+              {isDiscount ? <Tag className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-sm leading-snug">{toast.title}</h4>
