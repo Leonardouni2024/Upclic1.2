@@ -1553,19 +1553,19 @@ const rawProducts: Product[] = [
     ]
   },
   {
-    id: 'prod-adobe-acrobat-pro-2018',
-    slug: 'adobe-acrobat-pro-dc-2018-permanente',
-    name: 'Adobe Acrobat Pro DC 2018 (Licencia Permanente)',
-    description: 'Licencia digital oficial permanente de Adobe Acrobat Pro DC 2018 para 1 PC (Windows). Incluye clave de activación vitalicia, instalador completo y guía paso a paso. Crea, edita, convierte, firma, protege y combina documentos PDF profesionales sin suscripciones ni mensualidades.',
-    price: 50.00,
-    oldPrice: 150.00,
+    id: 'prod-adobe-acrobat-pro-2022',
+    slug: 'adobe-acrobat-pro-dc-2022-permanente',
+    name: 'Adobe Acrobat Pro DC 2022 (Licencia Permanente)',
+    description: 'Licencia digital oficial permanente de Adobe Acrobat Pro DC 2022 para 1 PC (Windows). Incluye clave de activación vitalicia, instalador completo oficial y guía paso a paso. Crea, edita, convierte, firma, protege y combina documentos PDF profesionales sin suscripciones ni mensualidades.',
+    price: 27.00,
+    oldPrice: 120.00,
     duration: 'Permanente (De por vida)',
     category: 'apps',
-    imageUrl: '/products/adobe-acrobat-pro-2018.webp',
-    fallbackImage: '/products/adobe-acrobat-pro-2018.png',
+    imageUrl: '/products/adobe-acrobat-pro-2022.webp',
+    fallbackImage: '/products/adobe-acrobat-pro-2022.png',
     rating: 4.96,
     reviews: 142,
-    badge: 'PAGO ÚNICO 📄',
+    badge: 'OFERTA S/ 27 📄',
     features: [
       'Clave oficial permanente de activación digital para 1 PC (Windows)',
       'Pago único de por vida: sin mensualidades ni cuotas recurrentes',
@@ -1577,14 +1577,14 @@ const rawProducts: Product[] = [
       'Garantía total de activación y funcionamiento por 6 meses'
     ],
     compatibility: 'Windows 11, Windows 10, Windows 8.1 y Windows 7 (32 y 64 Bit)',
-    downloadUrl: 'https://helpx.adobe.com/download-install/kb/acrobat-2017-downloads.html',
+    downloadUrl: 'https://helpx.adobe.com/download-install/kb/acrobat-downloads.html',
     downloadLabel: 'Descargar Adobe Acrobat DC (.exe)',
     installationSteps: [
       'Descarga el instalador oficial de Adobe Acrobat Pro DC provisto en los enlaces de tu compra.',
       'Ejecuta el instalador en tu computadora con Windows y sigue el asistente de instalación.',
       'Cuando el programa lo solicite, introduce la clave oficial permanente de activación provista.',
       'Finaliza la instalación y reinicia el programa para aplicar la activación.',
-      '¡Listo! Tu Adobe Acrobat Pro DC quedará activado de forma definitiva sin pagos recurrentes.'
+      '¡Listo! Tu Adobe Acrobat Pro DC 2022 quedará activado de forma definitiva sin pagos recurrentes.'
     ]
   }
 ];
@@ -1612,7 +1612,7 @@ export function getProductDeviceTag(product: Product, language: 'ES' | 'EN' = 'E
   if (product.id === 'prod-mcafee-antivirus' || product.id.includes('mcafee')) {
     return '1 PC';
   }
-  if (product.id === 'prod-adobe-acrobat-pro-2018' || product.id.includes('adobe')) {
+  if (product.id === 'prod-adobe-acrobat-pro-2022' || product.id === 'prod-adobe-acrobat-pro-2018' || product.id.includes('adobe')) {
     return '1 PC';
   }
   if (product.id.includes('365-family') || product.id.includes('family')) {
@@ -1687,7 +1687,7 @@ export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' =
       ? 'Official lifetime digital license for 1 Mac + official DMG installer (6-month warranty).'
       : 'Clave de licencia digital permanente para 1 Mac + instalador oficial (.dmg) (Garantía de 6 meses).';
   }
-  if (product.id === 'prod-adobe-acrobat-pro-2018') {
+  if (product.id === 'prod-adobe-acrobat-pro-2022' || product.id === 'prod-adobe-acrobat-pro-2018') {
     return isEn
       ? 'Official lifetime digital product key for 1 PC + full installer included (6-month warranty).'
       : 'Clave digital oficial permanente de por vida para 1 PC + instalador completo incluido (Garantía de 6 meses).';

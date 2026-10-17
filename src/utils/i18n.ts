@@ -1109,11 +1109,26 @@ export const PRODUCT_TRANSLATIONS_EN: Record<string, ProductTranslationData> = {
     duration: 'Lifetime / Permanent',
     compatibility: 'Windows XP / Vista / 7 / 8 / 10'
   },
-  'prod-adobe-acrobat-pro-2018': {
-    name: 'Adobe Acrobat Pro DC 2018 (Lifetime License)',
-    description: 'Official permanent digital license of Adobe Acrobat Pro DC 2018 for Windows. Includes lifetime activation key, full installer, and step-by-step guide. Create, edit, convert, sign, protect, and combine professional PDF documents without recurring monthly fees.',
+  'prod-adobe-acrobat-pro-2022': {
+    name: 'Adobe Acrobat Pro DC 2022 (Lifetime License)',
+    description: 'Official permanent digital license of Adobe Acrobat Pro DC 2022 for Windows. Includes lifetime activation key, full official installer, and step-by-step guide. Create, edit, convert, sign, protect, and combine professional PDF documents without recurring monthly fees.',
     duration: 'Lifetime / Permanent',
-    badge: 'LIFETIME • PDF PRO',
+    badge: 'OFFER S/ 27 📄',
+    compatibility: 'Windows 11, Windows 10, Windows 8.1, and Windows 7 (32/64 Bit)',
+    features: [
+      'Lifetime permanent license (one-time payment, no monthly subscriptions)',
+      'Official digital activation key + full installer included',
+      'Full text and image editing directly in PDF files',
+      'High-accuracy bidirectional conversion to Word, Excel, PowerPoint, and images',
+      'Digital signatures, password protection, and advanced security permissions',
+      'Detailed step-by-step installation guide and guaranteed technical support'
+    ]
+  },
+  'prod-adobe-acrobat-pro-2018': {
+    name: 'Adobe Acrobat Pro DC 2022 (Lifetime License)',
+    description: 'Official permanent digital license of Adobe Acrobat Pro DC 2022 for Windows. Includes lifetime activation key, full official installer, and step-by-step guide. Create, edit, convert, sign, protect, and combine professional PDF documents without recurring monthly fees.',
+    duration: 'Lifetime / Permanent',
+    badge: 'OFFER S/ 27 📄',
     compatibility: 'Windows 11, Windows 10, Windows 8.1, and Windows 7 (32/64 Bit)',
     features: [
       'Lifetime permanent license (one-time payment, no monthly subscriptions)',

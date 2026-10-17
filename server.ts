@@ -88,7 +88,7 @@ GUÍA INTELIGENTE DE ASESORAMIENTO Y RECOMENDACIÓN:
   * Duolingo Super (12 meses - S/ 30.00): Vidas infinitas, sin anuncios, en su cuenta personal.
   * Canva Pro (12 meses - S/ 10.00): Recursos premium, quitafondos mágico y herramientas IA.
   * McAfee AntiVirus (12 meses - S/ 39.00): Seguridad y protección integral.
-  * Adobe Acrobat Pro DC 2018 (S/ 50.00): Edición y conversión PDF de por vida.
+  * Adobe Acrobat Pro DC 2022 (S/ 27.00): Edición, conversión y OCR de PDF permanente de por vida.
 
 REGLA SOBRE RECOMENDAR PRODUCTOS:
 Al recomendar productos específicos del catálogo, puedes incluir la etiqueta [RECOMIENDA: slug-del-producto] (por ejemplo: [RECOMIENDA: office-2024-pro-plus], [RECOMIENDA: canva-pro-12-meses] o [RECOMIENDA: windows-11-pro-key]) para que el sistema le muestre al cliente la ficha interactiva con botón de compra directa.
@@ -679,17 +679,17 @@ app.post("/api/chat", async (req, res) => {
       const offTopicKeywords = [
         "netflix", "spotify", "juego", "gta", "minecraft", "playstation", "xbox", "steam",
         "tarjeta de video", "laptop dell", "memoria ram", "disco duro", "celular", "iphone",
-        "ropa", "comida", "restaurante", "clima", "vuelo", "hotel", "adobe", "photoshop"
+        "ropa", "comida", "restaurante", "clima", "vuelo", "hotel", "photoshop"
       ];
       const isOffTopic = offTopicKeywords.some(k => cleanLower.includes(k));
 
       if (isOffTopic) {
-        reply = `¡Hola! Con mucho gusto le atiendo. 😊\n\nEn **UpClic** nos especializamos en **licencias digitales oficiales de Microsoft** (Office, Windows, Visio, Project) y **suscripciones digitales premium** (Canva Pro, Duolingo Super, McAfee Antivirus y Gemini AI Pro) para garantizarle los mejores precios, entrega digital en 10 a 30 minutos y garantía oficial.\n\nNo disponemos de productos físicos ni hardware. Si necesita activar su software o renovar su suite, ¡dígame y le recomendaré la opción ideal! 🛍️`;
+        reply = `¡Hola! Con mucho gusto le atiendo. 😊\n\nEn **UpClic** nos especializamos en **licencias digitales oficiales de Microsoft** (Office, Windows, Visio, Project) y **suscripciones digitales premium** (Canva Pro, Adobe Acrobat Pro 2022, Duolingo Super, McAfee Antivirus y Gemini AI Pro) para garantizarle los mejores precios, entrega digital en 10 a 30 minutos y garantía oficial.\n\nNo disponemos de productos físicos ni hardware. Si necesita activar su software o renovar su suite, ¡dígame y le recomendaré la opción ideal! 🛍️`;
       } else if (asksForAdmin) {
         reply = `¡Con mucho gusto! Puede comunicarse directamente con nuestro **Administrador Oficial y Soporte Técnico** por WhatsApp para atención personalizada, cotizaciones corporativas con RUC o asistencia remota:\n\n📱 **WhatsApp:** [${WHATSAPP_DISPLAY}](https://wa.me/${WHATSAPP_NUMBER})\n⚡ **Atención rápida:** Lunes a Domingo de 8:00 AM a 11:00 PM.`;
-      } else if (cleanLower.includes("canva") || cleanLower.includes("duolingo") || cleanLower.includes("antivirus") || cleanLower.includes("mcafee")) {
-        reply = `✨ **Suscripciones y Apps Premium Disponibles en UpClic:**\n\n• 🎨 **Canva Pro (12 Meses - S/ 10.00):** Acceso total a 100M+ recursos premium, quitafondos mágico con un clic y kits de marca.\n• 🦉 **Duolingo Super (12 Meses - S/ 30.00):** Vidas infinitas para aprender idiomas sin límites y sin publicidad.\n• 🛡️ **McAfee AntiVirus (12 Meses - S/ 39.00):** Seguridad integral contra virus, malware y phishing bancario.\n• 🤖 **Gemini AI Pro (12 Meses S/ 20.00 | 18 Meses S/ 35.00):** Inteligencia Artificial de vanguardia con 5 TB en Google One.\n\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** con garantía completa.`;
-        explicitSlugs.push("canva-pro-12-meses", "duolingo-super-12-meses", "mcafee-antivirus-1pc-12-meses");
+      } else if (cleanLower.includes("canva") || cleanLower.includes("duolingo") || cleanLower.includes("antivirus") || cleanLower.includes("mcafee") || cleanLower.includes("acrobat") || cleanLower.includes("adobe") || cleanLower.includes("pdf")) {
+        reply = `✨ **Suscripciones y Apps Premium Disponibles en UpClic:**\n\n• 🎨 **Canva Pro (12 Meses - S/ 10.00):** Acceso total a 100M+ recursos premium, quitafondos mágico con un clic y kits de marca.\n• 📄 **Adobe Acrobat Pro DC 2022 (Permanente - S/ 27.00):** Edición completa de PDF, conversión Word/Excel, OCR y firmas digitales de por vida.\n• 🦉 **Duolingo Super (12 Meses - S/ 30.00):** Vidas infinitas para aprender idiomas sin límites y sin publicidad.\n• 🛡️ **McAfee AntiVirus (12 Meses - S/ 39.00):** Seguridad integral contra virus, malware y phishing bancario.\n• 🤖 **Gemini AI Pro (12 Meses S/ 20.00 | 18 Meses S/ 35.00):** Inteligencia Artificial de vanguardia con 5 TB en Google One.\n\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** con garantía completa.`;
+        explicitSlugs.push("canva-pro-12-meses", "adobe-acrobat-pro-dc-2022-permanente", "duolingo-super-12-meses", "mcafee-antivirus-1pc-12-meses");
       } else if (cleanLower.includes("cupón") || cleanLower.includes("descuento") || cleanLower.includes("promocion") || cleanLower.includes("oferta")) {
         reply = `🎉 ¡Tenemos excelentes promociones para usted!\n\n🔥 **Descuento por volumen automático:** Al llevar 2 o más licencias, el carrito le aplicará un **10% de descuento automático**.\n🎁 **Combos de Ahorro:** Ofrecemos paquetes especiales como el *Combo Windows 11 Pro + Office 2024 Pro Plus* a S/ 45.00 y *Combo 3 en 1* a S/ 55.00.\n⚡ **Entrega:** En un plazo de **10 a 30 minutos** tras la confirmación de pago.\n\n¿Desea que le recomiende alguna combinación de licencias?`;
       } else if (cleanLower.includes("instalar") || cleanLower.includes("activar") || cleanLower.includes("descarga") || cleanLower.includes("como funciona") || cleanLower.includes("entrega") || cleanLower.includes("tiempo") || cleanLower.includes("telefono")) {
@@ -701,7 +701,7 @@ app.post("/api/chat", async (req, res) => {
         reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro:** S/ 28.00 (OEM) | S/ 35.00 (Retail) | S/ 16.00 (Activación por Teléfono).\n• **Windows 10 Pro:** S/ 26.00 (OEM) | S/ 32.00 (Retail) | S/ 16.00 (Activación por Teléfono).\n• **Windows 11 Home (S/ 26.00 / S/ 32.00), Windows 10 Home (S/ 25.00 / S/ 30.00)**.\n• **Windows 8.1 Pro (S/ 38.00), Windows 7 Pro (S/ 32.00), Windows 7 Ultimate (S/ 30.00)**.\n• **Combo Windows 11 Pro + Office 2024 (S/ 45.00):** Las dos licencias oficiales juntas con super ahorro.\n\n⚡ **Entrega:** 100% digital en **10 a 30 minutos** con activación permanente. 🛡️`;
         explicitSlugs.push("windows-11-pro-key", "windows-10-pro-key", "combo-windows-11-pro-office-2024-pro-plus");
       } else {
-        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Inteligente de Licenciamiento y estoy aquí para asesorarle a encontrar la licencia de **Microsoft Office, Windows, Visio, Project o suscripciones digitales** ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Office o versión de Windows (Claves directas o por teléfono a S/ 16).\n• 💻 Diferencias entre Office 2024 (S/ 27), 2021 (S/ 25) y Microsoft 365 (S/ 33).\n• 📱 Suscripciones: Canva Pro (S/ 10), Duolingo Super (S/ 30), McAfee (S/ 39), Adobe Acrobat (S/ 50).\n• ⚡ Conocer los tiempos de entrega (10 a 30 min) y medios de pago.`;
+        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Inteligente de Licenciamiento y estoy aquí para asesorarle a encontrar la licencia de **Microsoft Office, Windows, Visio, Project o suscripciones digitales** ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Office o versión de Windows (Claves directas o por teléfono a S/ 16).\n• 💻 Diferencias entre Office 2024 (S/ 27), 2021 (S/ 25) y Microsoft 365 (S/ 33).\n• 📱 Suscripciones: Canva Pro (S/ 10), Adobe Acrobat Pro 2022 (S/ 27), Duolingo Super (S/ 30), McAfee (S/ 39).\n• ⚡ Conocer los tiempos de entrega (10 a 30 min) y medios de pago.`;
       }
     }
 
