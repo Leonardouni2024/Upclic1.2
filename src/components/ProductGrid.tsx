@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { products, searchProducts } from '../products.ts';
 import { ProductCard } from './ProductCard.tsx';
 import { useCart } from '../context/CartContext.tsx';
@@ -10,10 +11,8 @@ export const ProductGrid: React.FC = () => {
 
   // Filter products by category and tokenized search engine
   const filteredProducts = useMemo(() => {
-    // If user has typed, use tokenized search with prefix matching
     let result = searchQuery.trim() ? searchProducts(searchQuery) : products;
 
-    // Category Filter
     if (activeCategory === 'combos') {
       result = result.filter(p => p.category === 'combos');
     } else if (activeCategory === 'office') {
@@ -35,47 +34,53 @@ export const ProductGrid: React.FC = () => {
     return result;
   }, [activeCategory, searchQuery]);
 
-  const categories: { key: ProductCategory; label: string; count?: number }[] = [
+  const categories: { key: ProductCategory; label: string }[] = [
     { key: 'all', label: t('allProducts') },
-    { key: 'office', label: t('office').toUpperCase() },
-    { key: 'windows', label: t('windows').toUpperCase() },
-    { key: 'combos', label: t('combos').toUpperCase() },
-    { key: 'project-visio', label: t('projectVisio').toUpperCase() },
-    { key: 'apps', label: (t('apps') || 'APPS').toUpperCase() },
-    { key: 'bestsellers', label: t('bestSellers').toUpperCase() },
-    { key: 'offers', label: t('deals').toUpperCase() }
+    { key: 'office', label: t('office') },
+    { key: 'windows', label: t('windows') },
+    { key: 'combos', label: t('combos') },
+    { key: 'project-visio', label: t('projectVisio') },
+    { key: 'apps', label: t('apps') || 'Apps' },
+    { key: 'bestsellers', label: t('bestSellers') },
+    { key: 'offers', label: t('deals') }
   ];
 
   return (
-    <section id="catalogo-section" className="py-14 bg-slate-50 text-slate-900 border-b border-slate-200 font-sans">
+    <section id="catalogo-section" className="py-14 sm:py-20 bg-white text-slate-900 border-b border-slate-200/80 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4"
+        >
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0067B8] text-xs font-bold uppercase tracking-wider mb-2.5 border border-blue-200">
-              <span>{t('catalogBadge')}</span>
-            </div>
-            <h2 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-2">
+              {t('catalogBadge')}
+            </p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
               {t('catalogTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 sm:mt-1.5 font-normal">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1.5 font-normal">
               {t('catalogSubtitle')}
             </p>
           </div>
 
-          {/* Results count pill */}
-          <div className="text-[11px] sm:text-xs font-semibold text-slate-600 bg-white px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-200 shadow-xs self-start md:self-auto flex items-center gap-1.5">
+          {/* Results count indicator */}
+          <div className="text-xs font-semibold text-slate-600 bg-[#f8fafc] px-4 py-2 rounded-2xl border border-slate-200/90 self-start md:self-auto flex items-center gap-1.5">
             <span>Mostrando</span>
-            <span className="font-bold text-white bg-[#00A3E0] px-2 py-0.5 rounded-md tabular-nums">
+            <span className="font-extrabold text-[#0078d4] font-mono tabular-nums">
               {filteredProducts.length}
             </span>
-            <span>licencias</span>
-            {searchQuery && <span className="text-[#0B1F3A] font-bold"> para "{searchQuery}"</span>}
+            <span>licencias disponibles</span>
+            {searchQuery && <span className="text-slate-900 font-bold"> · "{searchQuery}"</span>}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Category Navigation Pills */}
-        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-6 sm:mb-8 no-scrollbar scroll-smooth">
+        {/* Interactive Segmented Category Filter Bar with Animated Active Pill */}
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 mb-8 rounded-2xl bg-[#f8fafc] border border-slate-200/80 no-scrollbar scroll-smooth">
           {categories.map(cat => {
             const isActive = activeCategory === cat.key;
             return (
@@ -83,13 +88,20 @@ export const ProductGrid: React.FC = () => {
                 key={cat.key}
                 id={`cat-filter-${cat.key}`}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-all duration-150 cursor-pointer font-bold ${
+                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 cursor-pointer font-bold shrink-0 ${
                   isActive
-                    ? 'bg-[#00A3E0] text-white font-bold shadow-xs border border-transparent'
-                    : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
+                    ? 'text-white'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
                 }`}
               >
-                {cat.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="catalogCategoryActivePill"
+                    transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                    className="absolute inset-0 rounded-xl bg-[#0078d4] shadow-xs"
+                  />
+                )}
+                <span className="relative z-10">{cat.label}</span>
               </button>
             );
           })}
@@ -97,17 +109,39 @@ export const ProductGrid: React.FC = () => {
 
         {/* Product Grid: 4 cols desktop, 3 tablet, 2 mobile */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
-            {filteredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <motion.div
+            layout
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map((product, idx) => (
+                <motion.div
+                  key={product.id}
+                  layout
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    duration: 0.32,
+                    delay: Math.min(idx * 0.03, 0.24),
+                    ease: [0.16, 1, 0.3, 1]
+                  }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         ) : (
-          <div className="bg-white rounded-lg p-12 text-center border border-slate-200 shadow-sm max-w-lg mx-auto">
-            <div className="w-16 h-16 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#f8fafc] rounded-3xl p-12 text-center border border-slate-200/90 max-w-lg mx-auto"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
               <SearchX className="w-8 h-8 stroke-[1.5]" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">{t('noProductsMatch')}</h3>
+            <h3 className="text-lg font-extrabold text-slate-900">{t('noProductsMatch')}</h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
               No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Windows 11, Office 2024 o Combos.
             </p>
@@ -116,11 +150,11 @@ export const ProductGrid: React.FC = () => {
                 setSearchQuery('');
                 setActiveCategory('all');
               }}
-              className="mt-6 px-5 py-2.5 rounded-lg bg-[#00A3E0] text-white text-xs sm:text-sm font-black hover:bg-[#0092cc] shadow-sm transition-all cursor-pointer border border-[#00A3E0]"
+              className="mt-6 px-5 py-2.5 rounded-xl bg-[#0078d4] text-white text-xs sm:text-sm font-bold hover:bg-[#0062ad] shadow-xs transition-colors cursor-pointer"
             >
               {t('viewAllCatalog')}
             </button>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

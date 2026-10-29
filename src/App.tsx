@@ -3,7 +3,6 @@ import { CartProvider, useCart } from './context/CartContext.tsx';
 import { ReviewsProvider } from './context/ReviewsContext.tsx';
 import { Header } from './components/Header.tsx';
 import { Hero } from './components/Hero.tsx';
-import { ProductCategoriesSection } from './components/ProductCategoriesSection.tsx';
 import { BenefitsSection } from './components/BenefitsSection.tsx';
 import { FeaturedProductsSection } from './components/FeaturedProductsSection.tsx';
 import { TrustSection } from './components/TrustSection.tsx';
@@ -44,7 +43,7 @@ const AppContent: React.FC = () => {
     }
 
     return (
-      <main>
+      <main className="bg-[#f8fafc]">
         {activeCategory === 'all' && (
           <>
             {/* 1. HERO SECTION (Primer Pantallazo en Diseño Bento Box) */}
@@ -55,16 +54,16 @@ const AppContent: React.FC = () => {
 
             {/* 3. TABLA COMPARATIVA DE PRODUCTOS (Las 3 Tarjetas Principales de Office) */}
             <FeaturedProductsSection />
-
-            {/* 4. SECCIÓN DE CONFIANZA, PAGOS SEGUROS Y FAQ ACORDEÓN */}
-            <TrustSection />
-
-            {/* Explorador por Categorías */}
-            <ProductCategoriesSection />
           </>
         )}
-        {/* Catálogo completo y buscador */}
+
+        {/* Catálogo completo y buscador por categorías */}
         <ProductGrid />
+
+        {activeCategory === 'all' && (
+          /* 4. SECCIÓN DE CONFIANZA, PAGOS SEGUROS Y FAQ ACORDEÓN */
+          <TrustSection />
+        )}
       </main>
     );
   };

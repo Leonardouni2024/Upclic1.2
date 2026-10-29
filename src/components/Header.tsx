@@ -1,9 +1,8 @@
-import { formatPrice, MERCADO_LIBRE_URL, WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from '../products.ts';
+import { formatPrice, searchProducts } from '../products.ts';
 import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory, Product } from '../types.ts';
-import { searchProducts } from '../products.ts';
-import { Search, Menu, X, ArrowRight, Layers, ShoppingCart, User, Globe, ChevronDown, Check, ShieldCheck, Zap, ShoppingBag } from 'lucide-react';
+import { Search, Menu, X, ArrowRight, ShoppingCart, User, Globe, ChevronDown, Check } from 'lucide-react';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
 interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: boolean) => void; setIsHelpModalOpen?: (open: boolean) => void; }
@@ -115,56 +114,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
 
   return (
     <header id="main-header" className="sticky top-0 z-40 text-white shadow-md transition-all font-sans">
-      {/* Top Announcement & Trust Bar */}
-      <div className="bg-[#07172c] text-slate-200 text-xs py-1.5 border-b border-white/10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-[11px] sm:text-xs">
-          {/* Mercado Libre Store Link */}
-          <a
-            href={MERCADO_LIBRE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[#FFE600] hover:text-[#fff066] font-bold transition-colors shrink-0"
-            title="Visitar nuestra tienda oficial en Mercado Libre Perú"
-          >
-            <ShoppingBag className="w-3.5 h-3.5 text-[#FFE600]" />
-            <span>Tienda Mercado Libre</span>
-            <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-[#FFE600]/20 text-[10px] text-[#FFE600] font-black border border-[#FFE600]/30">
-              LÍDER GOLD
-            </span>
-          </a>
-
-          {/* Canva Pro Offer Spotlight */}
-          <button
-            onClick={() => navigateToProduct('canva-pro-12-meses')}
-            className="inline-flex items-center gap-1.5 text-white hover:text-cyan-300 font-bold transition-colors cursor-pointer truncate"
-          >
-            <span className="truncate">
-              Canva Pro 12 Meses a solo <strong className="text-amber-300 font-black">S/ 10.00</strong>
-            </span>
-            <span className="hidden md:inline text-cyan-300 font-semibold underline text-[11px] shrink-0">
-              Ver oferta →
-            </span>
-          </button>
-
-          {/* Support and delivery speed */}
-          <div className="hidden lg:flex items-center gap-2.5 text-slate-300 text-[11px] font-medium shrink-0">
-            <span className="flex items-center gap-1 text-emerald-400 font-bold">
-              <Zap className="w-3 h-3 text-emerald-400 fill-emerald-400" />
-              <span>Entrega 10-30 min</span>
-            </span>
-            <span>•</span>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-300 hover:text-white transition-colors"
-            >
-              WhatsApp: {WHATSAPP_DISPLAY}
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* Top Header Row in Celeste & Blue UpClic Gradient */}
       <div className="bg-[#0088cc] bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#0092d6] border-b border-[#0070ba]/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
