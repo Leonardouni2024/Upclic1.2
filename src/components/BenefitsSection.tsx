@@ -16,7 +16,7 @@ export const BenefitsSection: React.FC = () => {
       accentBg: 'bg-[#0078d4]/10 border-[#0078d4]/20',
       title: 'Elige tu versión de Office y paga de forma segura',
       description:
-        'Selecciona la edición de Microsoft Office ideal para tu equipo y completa tu compra mediante nuestra pasarela encriptada (Tarjetas, Yape, Plin o PayPal).',
+        'Selecciona la edición de Microsoft Office ideal para tu equipo (2024, 2021 o 365) y completa tu compra mediante nuestra pasarela encriptada (Tarjetas, Yape, Plin o PayPal).',
       tag: 'Compra 100% Protegida SSL'
     },
     {
@@ -42,7 +42,10 @@ export const BenefitsSection: React.FC = () => {
   ];
 
   return (
-    <section id="proceso-bento-section" className="py-14 sm:py-20 bg-white font-sans border-b border-slate-200/80">
+    <section
+      id="proceso-bento-section"
+      className="py-12 sm:py-16 lg:py-20 bg-white font-sans border-b border-slate-200/80 overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -51,21 +54,21 @@ export const BenefitsSection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={stepTransition}
-          className="text-center max-w-2xl mx-auto mb-12"
+          className="text-center max-w-2xl mx-auto mb-10 sm:mb-12"
         >
-          <p className="text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-2.5">
+          <p className="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-2">
             Proceso Ultra Rápido
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
             Tu software original activo en 3 simples pasos
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-            Sin esperas físicas ni configuraciones complicadas. Diseñado para que empieces a trabajar hoy mismo.
+          <p className="mt-2.5 text-xs sm:text-base text-slate-600 font-normal leading-relaxed">
+            Sin esperas físicas ni configuraciones complicadas. Diseñado para que empieces a trabajar hoy mismo en cualquier equipo.
           </p>
         </motion.div>
 
-        {/* 3-Column Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+        {/* 3-Column Responsive Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-7 relative">
           {steps.map((step, index) => (
             <motion.div
               key={step.stepIndex}
@@ -74,26 +77,26 @@ export const BenefitsSection: React.FC = () => {
               viewport={{ once: true, margin: '-50px' }}
               transition={{ ...stepTransition, delay: index * 0.1 }}
               whileHover={{ y: -4 }}
-              className="bg-[#f8fafc] hover:bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 hover:border-[#0078d4]/45 shadow-2xs hover:shadow-lg transition-all duration-200 flex flex-col justify-between relative group"
+              className="bg-[#f8fafc] hover:bg-white rounded-3xl p-5 sm:p-6 lg:p-8 border border-slate-200/90 hover:border-[#0078d4]/45 shadow-2xs hover:shadow-lg transition-all duration-200 flex flex-col justify-between relative group"
             >
               <div>
                 {/* Top Row: Icon Box & Editorial Step Index */}
-                <div className="flex items-center justify-between gap-4 mb-6">
-                  <div className={`w-13 h-13 rounded-2xl border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 ${step.accentBg}`}>
+                <div className="flex items-center justify-between gap-3 mb-5 sm:mb-6">
+                  <div className={`w-12 h-12 sm:w-13 sm:h-13 rounded-2xl border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 ${step.accentBg}`}>
                     {step.icon}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-500">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-500">
                       {step.stepLabel}
                     </span>
                     {index < 2 && (
-                      <ArrowRight className="hidden md:inline-block w-3.5 h-3.5 text-slate-300 group-hover:text-[#0078d4] group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="hidden lg:inline-block w-3.5 h-3.5 text-slate-300 group-hover:text-[#0078d4] group-hover:translate-x-0.5 transition-all shrink-0" />
                     )}
                   </div>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug mb-3 [text-wrap:balance]">
+                <h3 className="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 leading-snug mb-2.5 sm:mb-3 [text-wrap:balance]">
                   {step.title}
                 </h3>
 
@@ -104,12 +107,12 @@ export const BenefitsSection: React.FC = () => {
               </div>
 
               {/* Bottom Verification Tag */}
-              <div className="mt-6 pt-4 border-t border-slate-200/70 flex items-center justify-between text-xs font-bold text-[#0078d4]">
-                <span className="inline-flex items-center gap-2">
+              <div className="mt-5 sm:mt-6 pt-3.5 sm:pt-4 border-t border-slate-200/70 flex items-center justify-between gap-2 text-[11px] sm:text-xs font-bold text-[#0078d4]">
+                <span className="inline-flex items-center gap-1.5 min-w-0">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>{step.tag}</span>
+                  <span className="truncate">{step.tag}</span>
                 </span>
-                <span className="font-mono text-slate-400 font-bold tabular-nums">
+                <span className="font-mono text-slate-400 font-bold tabular-nums shrink-0">
                   {step.stepIndex}/03
                 </span>
               </div>

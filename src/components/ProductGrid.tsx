@@ -46,18 +46,21 @@ export const ProductGrid: React.FC = () => {
   ];
 
   return (
-    <section id="catalogo-section" className="py-14 sm:py-20 bg-white text-slate-900 border-b border-slate-200/80 font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="catalogo-section"
+      className="py-12 sm:py-16 lg:py-20 bg-white text-slate-900 border-b border-slate-200/80 font-sans overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-3 sm:gap-4"
         >
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-2">
+            <p className="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-1.5 sm:mb-2">
               {t('catalogBadge')}
             </p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
@@ -69,18 +72,18 @@ export const ProductGrid: React.FC = () => {
           </div>
 
           {/* Results count indicator */}
-          <div className="text-xs font-semibold text-slate-600 bg-[#f8fafc] px-4 py-2 rounded-2xl border border-slate-200/90 self-start md:self-auto flex items-center gap-1.5">
+          <div className="text-xs font-semibold text-slate-600 bg-[#f8fafc] px-3.5 py-2 rounded-2xl border border-slate-200/90 self-start md:self-auto flex items-center gap-1.5 shrink-0">
             <span>Mostrando</span>
             <span className="font-extrabold text-[#0078d4] font-mono tabular-nums">
               {filteredProducts.length}
             </span>
             <span>licencias disponibles</span>
-            {searchQuery && <span className="text-slate-900 font-bold"> · "{searchQuery}"</span>}
+            {searchQuery && <span className="text-slate-900 font-bold truncate max-w-[140px]"> · "{searchQuery}"</span>}
           </div>
         </motion.div>
 
         {/* Interactive Segmented Category Filter Bar with Animated Active Pill */}
-        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 mb-8 rounded-2xl bg-[#f8fafc] border border-slate-200/80 no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 mb-7 sm:mb-8 rounded-2xl bg-[#f8fafc] border border-slate-200/80 no-scrollbar scroll-smooth">
           {categories.map(cat => {
             const isActive = activeCategory === cat.key;
             return (
@@ -88,7 +91,7 @@ export const ProductGrid: React.FC = () => {
                 key={cat.key}
                 id={`cat-filter-${cat.key}`}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 cursor-pointer font-bold shrink-0 ${
+                className={`relative px-3.5 sm:px-4 py-2 min-h-[38px] rounded-xl text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 cursor-pointer font-bold shrink-0 ${
                   isActive
                     ? 'text-white'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
@@ -111,7 +114,7 @@ export const ProductGrid: React.FC = () => {
         {filteredProducts.length > 0 ? (
           <motion.div
             layout
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6"
           >
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((product, idx) => (
@@ -136,21 +139,21 @@ export const ProductGrid: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#f8fafc] rounded-3xl p-12 text-center border border-slate-200/90 max-w-lg mx-auto"
+            className="bg-[#f8fafc] rounded-3xl p-8 sm:p-12 text-center border border-slate-200/90 max-w-lg mx-auto"
           >
-            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
-              <SearchX className="w-8 h-8 stroke-[1.5]" />
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
+              <SearchX className="w-7 h-7 sm:w-8 sm:h-8 stroke-[1.5]" />
             </div>
-            <h3 className="text-lg font-extrabold text-slate-900">{t('noProductsMatch')}</h3>
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900">{t('noProductsMatch')}</h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
-              No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Windows 11, Office 2024 o Combos.
+              No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Windows 11, Office 2024, Office 2021 o Combos.
             </p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setActiveCategory('all');
               }}
-              className="mt-6 px-5 py-2.5 rounded-xl bg-[#0078d4] text-white text-xs sm:text-sm font-bold hover:bg-[#0062ad] shadow-xs transition-colors cursor-pointer"
+              className="mt-6 px-5 py-2.5 min-h-[42px] rounded-xl bg-[#0078d4] text-white text-xs sm:text-sm font-bold hover:bg-[#0062ad] shadow-xs transition-colors cursor-pointer"
             >
               {t('viewAllCatalog')}
             </button>

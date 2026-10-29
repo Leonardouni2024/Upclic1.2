@@ -113,20 +113,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
   };
 
   return (
-    <header id="main-header" className="sticky top-0 z-40 text-white shadow-md transition-all font-sans">
-      {/* Top Header Row in Celeste & Blue UpClic Gradient */}
-      <div className="bg-[#0088cc] bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#0092d6] border-b border-[#0070ba]/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6">
+    <header id="main-header" className="sticky top-0 z-40 text-white shadow-sm transition-all font-sans">
+      {/* Top Header Row in Official Microsoft Blue (#0078d4) */}
+      <div className="bg-[#0078d4] border-b border-[#0062ad]">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-15 sm:h-18 gap-2 sm:gap-5">
             {/* Mobile menu toggle button */}
             <div className="flex items-center lg:hidden shrink-0">
               <button
                 id="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 -ml-2 rounded-xl text-white hover:bg-white/15 transition-all cursor-pointer"
+                className="p-2 -ml-1 rounded-xl text-white hover:bg-white/15 transition-all cursor-pointer"
                 aria-label="Abrir menú"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-5.5 h-5.5" /> : <Menu className="w-5.5 h-5.5" />}
               </button>
             </div>
 

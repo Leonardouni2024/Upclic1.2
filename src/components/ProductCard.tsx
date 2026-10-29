@@ -73,11 +73,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <article
       id={`product-card-${product.id}`}
-      className="bento-card bento-card-interactive rounded-3xl p-4 sm:p-5 flex flex-col justify-between group h-full text-slate-700 relative overflow-hidden"
+      className="bento-card bento-card-interactive rounded-2xl sm:rounded-3xl p-3 sm:p-5 flex flex-col justify-between group h-full text-slate-700 relative overflow-hidden"
     >
       <div>
         {/* Top Kicker Row: Delivery Speed & Discount */}
-        <div className="flex items-center justify-between gap-1.5 mb-2.5 text-[11px] font-bold">
+        <div className="flex items-center justify-between gap-1 mb-2 text-[10px] sm:text-[11px] font-bold">
           <span className="inline-flex items-center gap-1 text-[#0078d4] truncate">
             <Zap className="w-3 h-3 text-[#0078d4] fill-[#0078d4] shrink-0" />
             <span className="truncate">Envío Digital</span>
@@ -93,7 +93,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Product Image Container */}
         <div
           onClick={() => navigateToProduct(product.slug)}
-          className="w-full aspect-square max-h-[150px] sm:max-h-[175px] bg-[#f8fafc] rounded-2xl p-3 flex items-center justify-center cursor-pointer my-1.5 border border-slate-100 overflow-hidden"
+          className="w-full aspect-square max-h-[120px] sm:max-h-[165px] bg-[#f8fafc] rounded-xl sm:rounded-2xl p-2 sm:p-3 flex items-center justify-center cursor-pointer my-1 border border-slate-100 overflow-hidden"
         >
           <img
             src={imgSrc}
@@ -106,10 +106,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Category & Guarantee Kicker */}
-        <div className="flex items-center justify-between gap-1 text-[10.5px] font-bold text-slate-500 uppercase tracking-wider mt-2.5 mb-1">
+        <div className="flex items-center justify-between gap-1 text-[9.5px] sm:text-[10.5px] font-bold text-slate-500 uppercase tracking-wider mt-2 mb-1">
           <span className="truncate text-[#0078d4]">{getCategoryLabel(product.category)}</span>
-          <span className="inline-flex items-center gap-1 text-emerald-700 shrink-0 normal-case font-semibold">
-            <ShieldCheck className="w-3 h-3 text-emerald-600" />
+          <span className="inline-flex items-center gap-0.5 text-emerald-700 shrink-0 normal-case font-semibold">
+            <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
             <span>Original</span>
           </span>
         </div>
@@ -117,24 +117,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Product Title */}
         <h3
           onClick={() => navigateToProduct(product.slug)}
-          className="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2 cursor-pointer group-hover:text-[#0078d4] transition-colors min-h-[2.3rem] sm:min-h-[2.6rem]"
+          className="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2 cursor-pointer group-hover:text-[#0078d4] transition-colors min-h-[2.2rem] sm:min-h-[2.6rem]"
           title={productName}
         >
           {productName}
         </h3>
 
         {/* Clean Unboxed Metadata with Middot Separators */}
-        <div className="mt-2 flex items-center gap-1.5 flex-wrap text-[11px] font-medium text-slate-500">
+        <div className="mt-1.5 sm:mt-2 flex items-center gap-1 sm:gap-1.5 flex-wrap text-[10px] sm:text-[11px] font-medium text-slate-500 leading-tight">
           <span className="text-slate-700 font-semibold">{durationTag}</span>
           <span aria-hidden="true">·</span>
-          <span>{deviceTag}</span>
-          <span aria-hidden="true">·</span>
-          <span className="text-emerald-700 font-semibold tabular-nums">Stock ({stockCount})</span>
+          <span className="truncate">{deviceTag}</span>
+          <span aria-hidden="true" className="hidden sm:inline">·</span>
+          <span className="text-emerald-700 font-semibold tabular-nums hidden sm:inline">Stock ({stockCount})</span>
         </div>
 
         {/* Interactive Variant Segmented Control (OEM / Retail) */}
         {product.variants && product.variants.length > 0 && (
-          <div className="mt-3 flex items-center gap-1 p-1 rounded-xl bg-[#f8fafc] border border-slate-200/80">
+          <div className="mt-2.5 sm:mt-3 flex items-center gap-1 p-1 rounded-xl bg-[#f8fafc] border border-slate-200/80">
             {product.variants.map((v) => {
               const isSelected = selectedVariantId === v.id;
               return (
@@ -145,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     e.stopPropagation();
                     setSelectedVariantId(v.id);
                   }}
-                  className={`flex-1 py-1 px-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer text-center truncate whitespace-nowrap ${
+                  className={`flex-1 py-1 px-1 sm:px-1.5 rounded-lg text-[9.5px] sm:text-[10px] font-bold transition-all cursor-pointer text-center truncate whitespace-nowrap ${
                     isSelected
                       ? 'bg-[#0078d4] text-white shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -160,20 +160,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Price & Primary Action Button */}
-      <div className="mt-4 pt-3 border-t border-slate-100">
-        <div className="flex items-baseline justify-between gap-1 mb-3">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-lg sm:text-2xl font-extrabold text-slate-900 tabular-nums font-mono">
+      <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100">
+        <div className="flex items-baseline justify-between gap-1 mb-2.5 sm:mb-3 flex-wrap">
+          <div className="flex items-baseline gap-1 sm:gap-1.5">
+            <span className="text-base sm:text-2xl font-extrabold text-slate-900 tabular-nums font-mono">
               {formatPrice(activePrice)}
             </span>
             {activeOldPrice && (
-              <span className="text-[11px] sm:text-xs text-slate-400 line-through tabular-nums font-mono">
+              <span className="text-[10px] sm:text-xs text-slate-400 line-through tabular-nums font-mono">
                 {formatPrice(activeOldPrice)}
               </span>
             )}
           </div>
           {discountPercent > 0 && activeOldPrice && (
-            <span className="text-[10px] text-emerald-700 font-bold hidden xs:inline tabular-nums">
+            <span className="text-[10px] text-emerald-700 font-bold hidden sm:inline tabular-nums">
               Ahorra {formatPrice(activeOldPrice - activePrice)}
             </span>
           )}
@@ -184,7 +184,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           whileTap={{ scale: 0.975 }}
           id={`add-to-cart-${product.id}`}
           onClick={handleAddToCart}
-          className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors duration-200 shadow-2xs cursor-pointer whitespace-nowrap ${
+          className={`w-full py-2.5 px-2.5 sm:px-3 min-h-[40px] sm:min-h-[44px] rounded-xl font-bold text-[11px] sm:text-sm flex items-center justify-center gap-1.5 transition-colors duration-200 shadow-2xs cursor-pointer whitespace-nowrap ${
             isAddedRecently
               ? 'bg-emerald-600 text-white'
               : 'bg-[#0078d4] hover:bg-[#0062ad] text-white'
@@ -192,12 +192,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         >
           {isAddedRecently ? (
             <>
-              <Check className="w-4 h-4 stroke-[2.5]" />
+              <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] shrink-0" />
               <span>¡Agregado!</span>
             </>
           ) : (
             <>
-              <ShoppingCart className="w-3.5 h-3.5" />
+              <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
               <span>Añadir al carrito</span>
             </>
           )}
