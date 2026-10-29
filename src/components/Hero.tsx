@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
-import { formatPrice, MERCADO_LIBRE_URL } from '../products.ts';
-import { ArrowRight, Zap, ShieldCheck, ShoppingBag, ExternalLink, Headphones, Award, CheckCircle2 } from 'lucide-react';
+import { formatPrice, WHATSAPP_NUMBER } from '../products.ts';
+import { ArrowRight, ShieldCheck, MessageCircle, CheckCircle2, Lock, Zap, Globe, Mail, Award } from 'lucide-react';
 
 export const Hero: React.FC = () => {
   const { setActiveCategory, navigateToHome, navigateToProduct, currentPath } = useCart();
@@ -21,263 +21,221 @@ export const Hero: React.FC = () => {
     }, 100);
   };
 
+  const handleWhatsAppSupport = () => {
+    const text = 'Hola UpClic, deseo información y asesoría sobre las licencias originales de Microsoft Office.';
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <section id="hero-section" className="relative bg-[#0088cc] text-white font-sans overflow-hidden">
-      {/* Background Gradient & Dynamic Depth */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-[#00609c] via-[#007cbd] to-[#0092d6] pointer-events-none"
+    <section id="hero-section" className="relative bg-[#f8fafc] text-slate-900 font-sans pt-8 pb-12 sm:pt-12 sm:pb-16 border-b border-slate-200/80 overflow-hidden">
+      {/* Subtle architectural background grid */}
+      <div
+        className="absolute inset-0 opacity-40 pointer-events-none"
         style={{
-          clipPath: 'polygon(0 0, 100% 0, 100% 98%, 0 100%)'
+          backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
+          backgroundSize: '28px 28px'
         }}
       />
-      
-      {/* Subtle light effects */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-cyan-300/15 rounded-full blur-2xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14 sm:pt-12 sm:pb-16 relative z-10">
-        
-        {/* Top Banner Alert inside Hero: Special Canva Pro S/ 10 Offer */}
-        <div className="mb-6 flex justify-center lg:justify-start">
-          <div 
-            onClick={() => navigateToProduct('canva-pro-12-meses')}
-            className="inline-flex items-center gap-2 sm:gap-3 px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400/90 via-amber-300 to-yellow-400 text-slate-900 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all cursor-pointer border border-amber-200 active:scale-98 group"
-          >
-            <span className="px-2 py-0.5 rounded-md bg-slate-900 text-amber-300 text-[10px] font-black uppercase tracking-wider">
-              OFERTA FLASH
-            </span>
-            <span className="font-extrabold text-slate-900">
-              Canva Pro (12 Meses) a solo <span className="underline decoration-2">{formatPrice(10)}</span>
-            </span>
-            <span className="text-[11px] font-semibold text-slate-800 hidden sm:inline">
-              (Antes S/ 79.00 • -87% OFF)
-            </span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Main Bento Grid Container */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
-          {/* Left Column: Floating Showcase Cards */}
-          <div className="lg:col-span-6 flex items-center justify-center order-2 lg:order-1 pt-2 lg:pt-0">
-            <div className="relative flex items-center justify-center gap-2.5 sm:gap-3.5 max-w-lg w-full flex-wrap sm:flex-nowrap">
-              
-              {/* Card 1: Canva Pro 12 Meses (Super Offer) */}
-              <div 
-                onClick={() => navigateToProduct('canva-pro-12-meses')}
-                className="w-28 sm:w-36 bg-white rounded-xl shadow-2xl p-2.5 sm:p-3 text-center transform -rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer border-2 border-amber-400 shrink-0 text-slate-900 relative group"
-              >
-                <div className="absolute -top-2.5 -right-2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs uppercase">
-                  -87% OFF
-                </div>
-                <div className="w-full aspect-square bg-slate-50 rounded-lg p-1.5 mb-1.5 flex items-center justify-center">
-                  <img 
-                    src="/products/canva-pro.webp" 
-                    alt="Canva Pro"
-                    onError={(e) => { e.currentTarget.src = '/products/canva-pro.png'; }}
-                    className="w-full h-full object-contain mix-blend-multiply drop-shadow-xs"
-                  />
-                </div>
-                <div className="text-[10px] sm:text-xs font-bold text-slate-900 truncate">Canva Pro 12M</div>
-                <div className="text-xs sm:text-sm font-black text-rose-600 mt-0.5">{formatPrice(10)}</div>
-                <div className="text-[9px] text-slate-400 line-through">{formatPrice(79)}</div>
+          {/* Left Main Bento Cell (7 cols): High-Impact Value Proposition */}
+          <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/90 shadow-xs flex flex-col justify-between relative overflow-hidden">
+            {/* Subtle top Microsoft Blue accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#0078d4] via-[#0078d4] to-[#d83b01]" />
+
+            <div>
+              {/* Discreet Floating Badge: Garantía de activación del 100% */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/90 text-slate-800 text-xs font-semibold tracking-tight mb-6 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <ShieldCheck className="w-4 h-4 text-[#0078d4] shrink-0" />
+                <span>Garantía de activación del 100% • Partner Digital Verificado</span>
               </div>
 
-              {/* Card 2: Office 2024 Pro (Center prominent) */}
-              <div 
-                onClick={() => navigateToProduct('office-2024-pro-plus')}
-                className="w-32 sm:w-40 bg-white rounded-xl shadow-2xl p-3 sm:p-3.5 text-center transform hover:scale-105 transition-all duration-300 cursor-pointer border-2 border-cyan-400 z-10 shrink-0 -translate-y-2 sm:-translate-y-3 text-slate-900"
-              >
-                <div className="w-full aspect-square bg-slate-50 rounded-lg p-2 mb-1.5 flex items-center justify-center">
-                  <img 
-                    src="/products/office-2024.webp" 
-                    alt="Office 2024 Pro"
+              {/* High-impact Headline focused on originality, instant delivery, and warranty */}
+              <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-slate-900 tracking-tight leading-[1.12] mb-5">
+                Licencias Originales de{' '}
+                <span className="text-[#0078d4]">Microsoft Office</span> con Entrega Inmediata y Garantía Total
+              </h1>
+
+              {/* Short explanatory subtext */}
+              <p className="text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mb-8">
+                Olvídate de activadores inseguros o suscripciones ocultas. Recibe una licencia 100% genuina, permanente de por vida y vinculada directamente a tu cuenta o servidor oficial de Microsoft en menos de 2 minutos.
+              </p>
+
+              {/* Primary and Secondary CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-8">
+                <button
+                  id="hero-ver-catalogo-btn"
+                  onClick={() => handleScrollTo('destacados-section')}
+                  className="px-7 py-4 rounded-2xl bg-[#d83b01] hover:bg-[#b83201] text-white font-bold text-sm sm:text-base transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer flex items-center justify-center gap-2.5 active:scale-[0.99]"
+                >
+                  <span>Ver Licencias Disponibles</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                </button>
+
+                <button
+                  id="hero-whatsapp-support-btn"
+                  onClick={handleWhatsAppSupport}
+                  className="px-6 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm sm:text-base border border-slate-300 hover:border-[#0078d4] hover:text-[#0078d4] transition-all duration-200 cursor-pointer flex items-center justify-center gap-2.5 active:scale-[0.99]"
+                >
+                  <MessageCircle className="w-4 h-4 text-[#0078d4]" />
+                  <span>Soporte por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom Micro-Trust Metrics inside Main Bento Cell */}
+            <div className="pt-6 border-t border-slate-100 grid grid-cols-3 gap-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center shrink-0">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">100% Genuino</div>
+                  <div className="text-[11px] text-slate-500">Cero riesgos o virus</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center shrink-0">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">Envío Digital</div>
+                  <div className="text-[11px] text-slate-500">Clave al Email / WhatsApp</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center shrink-0">
+                  <Award className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">Pago Único</div>
+                  <div className="text-[11px] text-slate-500">Licencia vitalicia</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Bento Column (5 cols): Modular Bento Showcase */}
+          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5 content-between">
+            
+            {/* Top Wide Bento Box: Official Microsoft Ecosystem Status */}
+            <div className="sm:col-span-2 bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <div className="flex items-center gap-2">
+                  {/* Official 4-square Microsoft symbol */}
+                  <div className="grid grid-cols-2 gap-0.5 w-4 h-4 shrink-0">
+                    <span className="bg-[#f25022] block w-full h-full" />
+                    <span className="bg-[#7fba00] block w-full h-full" />
+                    <span className="bg-[#00a4ef] block w-full h-full" />
+                    <span className="bg-[#ffb900] block w-full h-full" />
+                  </div>
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Ecosistema Oficial Microsoft
+                  </span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Servidores Activos
+                </span>
+              </div>
+
+              {/* Suite App Pills Bento Row */}
+              <div className="grid grid-cols-4 gap-2.5 my-2">
+                {[
+                  { name: 'Word', color: 'bg-[#185abd]', letter: 'W' },
+                  { name: 'Excel', color: 'bg-[#107c41]', letter: 'X' },
+                  { name: 'PowerPoint', color: 'bg-[#d24726]', letter: 'P' },
+                  { name: 'Outlook', color: 'bg-[#0078d4]', letter: 'O' }
+                ].map((app) => (
+                  <div
+                    key={app.name}
+                    className="bg-slate-50 rounded-2xl p-3 border border-slate-200/70 flex flex-col items-center justify-center text-center group hover:border-[#0078d4]/40 transition-colors"
+                  >
+                    <div className={`w-9 h-9 rounded-xl ${app.color} text-white font-black text-sm flex items-center justify-center shadow-2xs mb-1.5`}>
+                      {app.letter}
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-800">{app.name}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <span>Descarga directa desde setup.office.com</span>
+                <span className="font-bold text-[#0078d4]">32 / 64 Bits</span>
+              </div>
+            </div>
+
+            {/* Bottom Left Bento Box: Flagship Office 2024 Quick Card */}
+            <div
+              onClick={() => navigateToProduct('office-2024-pro-plus')}
+              className="bg-white rounded-3xl p-5 border-2 border-[#0078d4]/20 hover:border-[#0078d4] shadow-xs transition-all cursor-pointer flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#d83b01]/10 text-[#d83b01] text-[10px] font-extrabold uppercase tracking-wider">
+                    Más Vendido
+                  </span>
+                  <span className="text-xs font-bold text-slate-400 line-through">
+                    {formatPrice(110)}
+                  </span>
+                </div>
+                <div className="w-full h-24 bg-slate-50 rounded-2xl p-2 mb-3 flex items-center justify-center border border-slate-100">
+                  <img
+                    src="/products/office-2024.webp"
+                    alt="Office 2024 Professional Plus"
                     onError={(e) => { e.currentTarget.src = '/products/office-2024.png'; }}
-                    className="w-full h-full object-contain mix-blend-multiply drop-shadow-xs"
+                    className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
                   />
                 </div>
-                <div className="text-xs sm:text-[13px] font-bold text-slate-900 truncate">Office 2024 Pro</div>
-                <div className="text-xs sm:text-sm font-extrabold text-[#0070ba] mt-0.5">{formatPrice(27)}</div>
-                <div className="text-[9.5px] text-emerald-600 font-bold">Permanente</div>
+                <h3 className="text-sm font-extrabold text-slate-900 group-hover:text-[#0078d4] transition-colors">
+                  Office Pro Plus 2024
+                </h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Licencia permanente • 1 PC
+                </p>
               </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-lg font-black text-slate-900">{formatPrice(27)}</span>
+                <span className="text-xs font-bold text-[#0078d4] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  Ver detalle <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </div>
+            </div>
 
-              {/* Card 3: Windows 11 Pro */}
-              <div 
-                onClick={() => navigateToProduct('windows-11-pro-key')}
-                className="w-28 sm:w-36 bg-white rounded-xl shadow-xl p-2.5 sm:p-3 text-center transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer border border-white/60 shrink-0 text-slate-900"
-              >
-                <div className="w-full aspect-square bg-slate-50 rounded-lg p-1.5 mb-1.5 flex items-center justify-center">
-                  <img 
-                    src="/products/windows-11-pro.webp" 
-                    alt="Windows 11 Pro"
-                    onError={(e) => { e.currentTarget.src = '/products/windows-11-pro.png'; }}
-                    className="w-full h-full object-contain mix-blend-multiply drop-shadow-xs"
-                  />
+            {/* Bottom Right Bento Box: Security & Verification Seal */}
+            <div className="bg-slate-900 text-white rounded-3xl p-5 border border-slate-800 shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-2xl bg-[#0078d4] flex items-center justify-center text-white mb-3.5 shadow-sm">
+                  <ShieldCheck className="w-5 h-5" />
                 </div>
-                <div className="text-[10px] sm:text-xs font-bold text-slate-900 truncate">Windows 11 Pro</div>
-                <div className="text-xs sm:text-sm font-extrabold text-[#0070ba] mt-0.5">{formatPrice(20)}</div>
-                <div className="text-[9.5px] text-emerald-600 font-bold">Oficial OEM</div>
+                <div className="text-[11px] font-bold uppercase tracking-wider text-sky-400 mb-1">
+                  Seguridad Verificada
+                </div>
+                <h3 className="text-base font-extrabold text-white leading-snug">
+                  Activación Oficial sin Programas Externos
+                </h3>
+                <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                  Ingresa tu clave de 25 caracteres directamente en tu aplicación de Office o en el portal oficial de Microsoft.
+                </p>
               </div>
 
-            </div>
-          </div>
-
-          {/* Right Column: Main Typography & Call To Actions */}
-          <div className="lg:col-span-6 text-center lg:text-left order-1 lg:order-2">
-            
-            {/* Badges: Envío Digital & Mercado Libre */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-400/20 border border-cyan-300/40 text-cyan-100 text-xs font-bold tracking-wide uppercase backdrop-blur-xs">
-                <Zap className="w-3.5 h-3.5 text-cyan-300 fill-cyan-300" />
-                <span>Envío Digital 10-30 min</span>
+              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center gap-2 text-[11px] text-emerald-400 font-semibold">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Factura y Garantía por escrito</span>
               </div>
-
-              <a
-                href={MERCADO_LIBRE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE600] text-[#2D3277] text-xs font-black tracking-wide uppercase shadow-xs hover:bg-[#fff066] transition-colors"
-                title="Visitar tienda oficial en Mercado Libre"
-              >
-                <ShoppingBag className="w-3.5 h-3.5 text-[#2D3277]" />
-                <span>Mercado Libre Líder Gold</span>
-                <ExternalLink className="w-3 h-3 opacity-80" />
-              </a>
-            </div>
-
-            {/* Massive Bold Headline: TU SOFTWARE LISTO EN MINUTOS */}
-            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] mb-4 sm:mb-6 drop-shadow-xs">
-              <span className="block text-white">TU SOFTWARE</span>
-              <span className="block text-[#FFC107]">LISTO EN MINUTOS</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xs sm:text-sm md:text-base text-cyan-50 font-normal leading-relaxed max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-7">
-              Licencias digitales oficiales de Windows, Microsoft Office y suscripciones profesionales como Canva Pro a S/ 10 con activación garantizada y soporte técnico personalizado en Perú.
-            </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-6">
-              <button
-                id="hero-ver-catalogo-btn"
-                onClick={() => handleScrollTo('catalogo-section', 'all')}
-                className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#00A3E0] hover:bg-[#0092cc] text-white font-black text-sm sm:text-base transition-all duration-150 shadow-md hover:shadow-lg cursor-pointer flex items-center gap-2 active:scale-95 border border-cyan-300/30"
-              >
-                <span>Ver Catálogo</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </button>
-
-              <button
-                id="hero-canva-btn"
-                onClick={() => navigateToProduct('canva-pro-12-meses')}
-                className="px-6 sm:px-8 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-sm sm:text-base shadow-md hover:shadow-lg transition-all duration-150 cursor-pointer flex items-center justify-center active:scale-95 border border-amber-300"
-              >
-                <span>Canva Pro a S/ 10</span>
-              </button>
-            </div>
-
-            {/* Trust badge under buttons without star icons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 text-xs font-bold text-cyan-100">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span>+100 Licencias verificadas con soporte directo en Perú</span>
-              </span>
             </div>
 
           </div>
 
         </div>
-
-        {/* Sección de 'Sellos de Garantía' */}
-        <div className="mt-10 sm:mt-14 pt-8 border-t border-white/15">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-cyan-200 text-xs font-black tracking-wider uppercase border border-white/25 self-start">
-              <ShieldCheck className="w-4 h-4 text-emerald-300" />
-              <span>Sellos de Garantía Oficial UpClic</span>
-            </div>
-            <span className="text-xs text-cyan-100 font-medium">
-              Compra 100% protegida y garantizada
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-            
-            {/* Sello 1: Garantía de Activación */}
-            <div className="bg-white/10 hover:bg-white/15 transition-all duration-300 rounded-2xl p-4 sm:p-4.5 border border-white/20 shadow-lg backdrop-blur-sm flex items-start gap-3.5 group">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-6 h-6 stroke-[2.2] text-white" />
-              </div>
-              <div>
-                <div className="text-[10.5px] font-black tracking-wider uppercase text-emerald-300 mb-0.5">
-                  100% Garantizado
-                </div>
-                <h3 className="text-sm sm:text-[15px] font-black text-white leading-tight">
-                  Garantía de Activación
-                </h3>
-                <p className="text-xs text-cyan-100/90 mt-1 leading-snug">
-                  Activación inmediata garantizada con soporte directo o reemplazo de clave.
-                </p>
-              </div>
-            </div>
-
-            {/* Sello 2: Soporte 24/7 WhatsApp */}
-            <div className="bg-white/10 hover:bg-white/15 transition-all duration-300 rounded-2xl p-4 sm:p-4.5 border border-white/20 shadow-lg backdrop-blur-sm flex items-start gap-3.5 group">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 text-slate-950 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                <Headphones className="w-6 h-6 stroke-[2.2] text-slate-900" />
-              </div>
-              <div>
-                <div className="text-[10.5px] font-black tracking-wider uppercase text-amber-300 mb-0.5">
-                  Atención en Perú
-                </div>
-                <h3 className="text-sm sm:text-[15px] font-black text-white leading-tight">
-                  Soporte 24/7 en Vivo
-                </h3>
-                <p className="text-xs text-cyan-100/90 mt-1 leading-snug">
-                  Asistencia técnica rápida y personalizada por WhatsApp durante tu instalación.
-                </p>
-              </div>
-            </div>
-
-            {/* Sello 3: Licencia 100% Original */}
-            <div className="bg-white/10 hover:bg-white/15 transition-all duration-300 rounded-2xl p-4 sm:p-4.5 border border-white/20 shadow-lg backdrop-blur-sm flex items-start gap-3.5 group">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                <Award className="w-6 h-6 stroke-[2.2] text-white" />
-              </div>
-              <div>
-                <div className="text-[10.5px] font-black tracking-wider uppercase text-cyan-300 mb-0.5">
-                  Software Oficial
-                </div>
-                <h3 className="text-sm sm:text-[15px] font-black text-white leading-tight">
-                  Licencia Original
-                </h3>
-                <p className="text-xs text-cyan-100/90 mt-1 leading-snug">
-                  Software legítimo y validado con los servidores oficiales de Microsoft.
-                </p>
-              </div>
-            </div>
-
-            {/* Sello 4: Entrega Inmediata */}
-            <div className="bg-white/10 hover:bg-white/15 transition-all duration-300 rounded-2xl p-4 sm:p-4.5 border border-white/20 shadow-lg backdrop-blur-sm flex items-start gap-3.5 group">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                <Zap className="w-6 h-6 stroke-[2.2] text-white" />
-              </div>
-              <div>
-                <div className="text-[10.5px] font-black tracking-wider uppercase text-rose-300 mb-0.5">
-                  Envío Inmediato
-                </div>
-                <h3 className="text-sm sm:text-[15px] font-black text-white leading-tight">
-                  Entrega 10-30 min
-                </h3>
-                <p className="text-xs text-cyan-100/90 mt-1 leading-snug">
-                  Recepción de claves de activación y enlaces de descarga directo a tu WhatsApp.
-                </p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
       </div>
     </section>
   );
 };
+

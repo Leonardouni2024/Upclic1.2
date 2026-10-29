@@ -1,116 +1,73 @@
-# Renovación Visual E-Commerce Pro y Actualización de Canva Pro
+# Rediseño UI/UX: Estilo Tecnológico Minimalista & Bento Box para Licencias Microsoft Office
 
-Plan integral para actualizar el precio de Canva Pro (12 meses) a S/ 10.00 y transformar la tienda UpClic en una experiencia e-commerce de alto impacto visual, profesional, no minimalista y plenamente responsiva en todos los dispositivos (móvil, tableta y escritorio).
-
-### User Review & Critical Decisions
-
-> [!IMPORTANT]
-> Decisiones confirmadas y acordadas para la ejecución de esta versión:
-
-- **Precio y Modalidad de Canva Pro**: Confirmado a **S/ 10.00** para la suscripción completa de **12 meses** (antes S/ 30.00 / S/ 79.00), manteniendo la entrega por invitación oficial directa a cuenta personal de correo.
-- **Dirección Visual & Estilo**: Confirmado **Estilo e-commerce con sellos de garantía, banners y ofertas destacadas**, alejándose de estéticas ultra-minimalistas frías para adoptar una presentación comercial rica, cálida y de alta confianza con relieves sutiles, microinteracciones, insignias de verificación y tarjetas llamativas.
-- **Alcance Responsivo Integral**: Confirmado para **todo el sitio**, optimizando la experiencia táctil en celulares (pantallas de 360px a 430px), tabletas (768px a 1024px) y pantallas de escritorio (1280px a 1440px+) en la barra superior, portada hero, grilla del catálogo, filtros de categoría, carrito deslizable y pantalla de checkout.
-- **Tienda Oficial Mercado Libre**: Integración destacada de los sellos y enlaces a la tienda oficial en Mercado Libre (`https://www.mercadolibre.com.pe/pagina/upclic`) como credencial de reputación y garantía.
+Este plan transforma la experiencia visual de la tienda hacia un diseño **Tecnológico Minimalista con arquitectura tipo Bento Box**, enfocado en transmitir máxima autoridad, seguridad oficial, transparencia y velocidad de entrega, alejándose por completo de la apariencia saturada de los sitios informales.
 
 ---
 
-### 1. Overview & Core Concept
+## 1. Sistema de Diseño & Paleta Visual
 
-- **What It Does**: Proporciona una tienda en línea moderna, vibrante y confiable de licencias digitales de software y apps educativas/creativas en Perú e internacional. Los usuarios pueden explorar productos con precios claros en Soles (PEN), USD y monedas locales, agregar al carrito con retroalimentación instantánea, y completar pagos rápidos vía Mercado Pago, Yape, Plin y PayPal con entrega garantizada.
-- **Target Audience / Persona**: Profesionales, diseñadores, estudiantes, educadores y pequeñas empresas que buscan licencias originales y suscripciones garantizadas (como Canva Pro 12 meses a S/ 10, Duolingo Super, Windows, Office, antivirus) con soporte local vía WhatsApp y compra segura.
-- **Key Value**: Acceso inmediato a precios de liquidación garantizados, soporte humano en tiempo real, respaldo de tienda líder en Mercado Libre y un proceso de compra claro sin fricciones técnicas.
-
----
-
-### 2. User Experience & Visual Design
-
-#### Key User Flows
-1. **Descubrimiento y Banners Destacados**: El usuario llega al sitio y visualiza un banner superior con anuncios clave (oferta de Canva Pro a S/ 10, entrega digital garantizada, enlace a Mercado Libre UpClic), seguido de un Hero comercial con tarjetas de ventajas (garantía oficial, soporte 24/7, activación inmediata).
-2. **Exploración del Catálogo**: Grilla responsiva adaptativa (1 columna en móviles pequeños, 2 columnas en móviles medianos/grandes, 3 en tabletas, 4 en desktop) con tarjetas de producto que destacan el porcentaje de ahorro, rating con estrellas reales, tipo de entrega y botón de adición rápida.
-3. **Ficha Detallada / Modal Rápido**: Vista rápida del producto que desglosa compatibilidad, pasos de instalación asistida, garantía y selector de cantidad con cálculo de total.
-4. **Carrito Deslizable Pro**: Drawer lateral responsivo con resumen dinámico, opción de cupón promocional, cálculo de impuestos/descuentos e insignias de métodos de pago aceptados (Mercado Pago, Yape, Plin, Tarjetas, PayPal).
-5. **Checkout & Confirmación**: Formulario de un solo paso optimizado para teclado móvil, selección visual de método de pago con confirmación guiada e instrucciones claras de activación.
-
-#### Visual Identity & Theme
-- **Aesthetic Direction**: E-commerce profesional dinámico y comercial. Elementos visuales nítidos, fondos con sutiles patrones de cuadrícula/degradado cálido, bordes definidos con iluminación sutil al pasar el cursor, y sellos de confianza tipo insignia de seguridad.
-- **Color Palette & Mood**:
-  - *Fondo Canvas*: Blanco puro (`#FFFFFF`) y gris ultra suave (`#F8FAFC` / `#F1F5F9`) para descanso visual y máxima legibilidad.
-  - *Color Primario*: Azul corporativo UpClic (`#0052CC` / `#1D4ED8` y acentos `#2563EB`) que inspira seguridad bancaria e institucional.
-  - *Color de Oferta & Ahorro*: Esmeralda / Verde éxito (`#059669` / `#10B981`) para precios en promoción, ahorros y etiquetas de disponibilidad.
-  - *Acentos Especiales*: Amarillo dorado (`#F59E0B` / `#D97706`) para estrellas de reseñas y sello de Mercado Libre Platinum / Mercado Líder Gold.
-- **Typography & Hierarchy**:
-  - Encabezados: `Plus Jakarta Sans` / `Inter` en pesos semibold (`font-semibold`) y bold (`font-bold`) con tamaños equilibrados que nunca se desbordan en móviles.
-  - Precios & Números: Fuentes monoespaciadas tabulares (`font-mono` / `tabular-nums`) para alineación perfecta de dígitos y símbolos monetarios (`S/ 10.00`).
-  - Textos de Soporte: Tamaño 13px–14px con alto contraste (WCAG AA compliant $\ge 4.5:1$).
-- **Component Styling & Layout**:
-  - Tarjetas de producto con sombra multinivel suave (`shadow-sm hover:shadow-lg transition-all duration-300`), esquinas redondeadas ergonómicas (`rounded-xl`), y cabecera de imagen enmarcada con proporciones fijas $4:3$.
-  - Barra de navegación adhesiva con altura contenida ($\le 64\text{px}$) con buscador integrado, selector de moneda accesible y contador de carrito con microanimación.
-  - Banner informativo deslizable o estático de 36px en la parte superior con avisos de ofertas y credenciales de Mercado Libre.
-
-#### Interactive Feedback & Motion
-- Hover con elevación suave (`translate-y-[-2px]`) en tarjetas de producto.
-- Micro-rebote sutil en el botón del carrito al agregar un ítem.
-- Transiciones CSS de 150ms–200ms en modales y drawers para máxima fluidez sin bloquear la interacción.
+- **Fondos y Superficies (Bento Box)**:
+  - Fondo general de página: Gris ultra claro (`#F8FAFC` / `bg-slate-50`).
+  - Bloques Bento: Blanco puro (`#FFFFFF`) con bordes sutiles (`border-slate-200/80`), esquinas ampliamente redondeadas (`rounded-2xl` y `rounded-3xl`) y sombras suaves de elevación progresiva (`shadow-xs hover:shadow-md`).
+- **Acentos Oficiales Microsoft & Office**:
+  - **Azul Oficial Microsoft (`#0078D4`)**: Acciones principales de navegación, insignias de verificación, iconos de confianza y tarjetas informativas.
+  - **Naranja Oficial Office (`#D83B01`)**: Botones de Llamada a la Acción (CTA) críticos de conversión (*"Comprar y Recibir Al Instante"*, etiqueta *"Más Popular"*).
+- **Tipografía**:
+  - Fuente Sans-Serif limpia (`Inter` / `system-ui`), jerarquía marcada con titulares en `text-slate-900` (`font-extrabold`, `tracking-tight`) y textos descriptivos en `text-slate-600`.
 
 ---
 
-### 3. Key Product Decisions & Trade-Offs
+## 2. Estructura de Secciones y Componentes a Implementar
 
-- **Decisión 1: Ajuste de Canva Pro en Catálogo y Motor de Precios**
-  - *Enfoque*: Establecer el precio de `prod-canva-pro` en `price: 10.00` PEN, con precio anterior tachado de `oldPrice: 79.00` PEN (ocho por ciento de descuento visible) y duración de 12 meses. Actualizar también las referencias en descripciones y en el asistente de atención para mantener coherencia total.
-  - *Justificación*: El cliente solicitó explícitamente fijar Canva Pro a 10 soles para maximizar la conversión como producto estrella.
-  - *Alternativas*: Mantener planes escalonados fue descartado a favor de la oferta única agresiva acordada en las respuestas de clarificación.
+### Sección 1: Hero Section (Primer Pantallazo en Formato Bento)
+- **Archivo a actualizar**: `src/components/Hero.tsx`
+- **Elementos clave**:
+  - **Badge flotante superior**: Píldora discreta y elegante con icono de escudo verificado en verde esmeralda y azul `#0078D4`: *"Garantía de activación del 100%"*.
+  - **Titular de alto impacto**: Enfoque directo en originalidad, entrega inmediata y respaldo técnico (*"Licencias Originales de Microsoft Office con Entrega Inmediata y Garantía Total"*).
+  - **Subtexto explicativo**: Aclara de forma transparente que la licencia es permanente, 100% genuina y se vincula o activa directamente en los servidores oficiales de Microsoft.
+  - **Doble CTA**:
+    - Botón Principal en Naranja Office (`#D83B01`) o Azul Microsoft (`#0078D4`): *"Ver Licencias Disponibles"* (desplazamiento suave a la tabla comparativa / catálogo).
+    - Botón Secundario limpio con borde sutil: *"Soporte por WhatsApp"* (conexión directa con especialista en vivo).
+  - **Panel Bento Visual Derecho**: Composición limpia de tarjetas modulares mostrando los iconos oficiales de las aplicaciones de Office (Word, Excel, PowerPoint, Outlook), estado de *"Servidor Microsoft: En línea"* y métrica de tiempo de entrega (*"< 2 min al correo"*).
 
-- **Decisión 2: Diseño E-Commerce Rico frente a Minimalismo Plano**
-  - *Enfoque*: Reemplazar espacios vacíos planos por bloques de valor: carrusel/banner de ofertas destacadas, sellos de confianza ("100% Original", "Garantía de 6 a 12 meses", "Tienda Oficial Mercado Libre"), contador de clientes satisfechos y testimonios reales.
-  - *Justificación*: Los compradores de software digital en Perú necesitan verificar la legitimidad de la tienda antes de transferir por Yape o tarjeta; los sellos de garantía y la presencia de Mercado Libre generan confianza inmediata.
+### Sección 2: Proceso Ultra Rápido (3 Pasos en Diseño Bento Box)
+- **Archivo a actualizar**: `src/components/BenefitsSection.tsx`
+- **Diseño**: Cuadrícula Bento de 3 columnas (`grid-cols-1 md:grid-cols-3 gap-6`) con numeración clara (`01`, `02`, `03`), iconos modernos en contenedores `#0078D4/10` y micro-indicadores visuales:
+  - **Paso 1**: *Elige tu versión de Office y paga de forma segura* (Icono de selección / escudo de pago encriptado).
+  - **Paso 2**: *Recibe tu clave de producto digital por Email en menos de 2 minutos* (Icono de envío instantáneo al correo y WhatsApp).
+  - **Paso 3**: *Sigue nuestra guía paso a paso y activa directamente en el sitio oficial de Microsoft* (Icono de verificación oficial Microsoft).
 
-- **Decisión 3: Arquitectura Responsiva de Grilla y Checkout**
-  - *Enfoque*: Usar grilla CSS fluida con breakpoints precisos: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`, inputs táctiles grandes ($\ge 44\text{px}$ de alto) y checkout de columna única en móviles con botón de acción flotante si la página es extensa.
-  - *Justificación*: Más del 75% del tráfico de compra en Perú proviene de teléfonos inteligentes (WhatsApp y redes sociales).
+### Sección 3: Tabla Comparativa de Productos (Las 3 Tarjetas Principales de Office)
+- **Archivo a actualizar**: `src/components/FeaturedProductsSection.tsx`
+- **Diseño**: 3 tarjetas comparativas alineadas en cuadrícula (`grid-cols-1 lg:grid-cols-3 gap-8 items-stretch`) conectadas directamente con el carrito y flujo de compra instantánea de la tienda:
+  1. **Tarjeta 1: Office Home & Student / Standard** (*Ideal para estudiantes y uso esencial en casa*)
+     - Aplicaciones con bullets limpios: Word, Excel, PowerPoint, OneNote.
+     - Licencia permanente para 1 PC, pago único sin anualidades.
+     - Botón CTA: *"Comprar y Recibir Al Instante"*.
+  2. **Tarjeta 2 (Destacada): Office Professional Plus 2024** (*El más vendido*)
+     - Resaltada con **borde de color (`border-2 border-[#0078D4]`)**, sombra superior y etiqueta flotante en Naranja Office (`#D83B01`): **"MÁS POPULAR"**.
+     - Aplicaciones incluidas con bullets limpios: Word, Excel, PowerPoint, Outlook, Access, Publisher, OneNote.
+     - Licencia permanente vitalicia, activación oficial y soporte incluido.
+     - Botón CTA principal en Naranja Office (`#D83B01`): *"Comprar y Recibir Al Instante"*.
+  3. **Tarjeta 3: Microsoft 365 Personal** (*Formato suscripción anual Multi-dispositivo*)
+     - Aplicaciones incluidas: Word, Excel, PowerPoint, Outlook, OneDrive (100 GB - 1 TB en la nube) para hasta 5 dispositivos (PC, Mac, iPad, móvil).
+     - Actualizaciones continuas e inteligencia artificial integrada.
+     - Botón CTA: *"Comprar y Recibir Al Instante"*.
+- *Nota*: Debajo de esta comparativa principal se mantiene disponible el catálogo completo interactivo (`ProductGrid`) para los usuarios que busquen Windows u otras versiones específicas.
+
+### Sección 4: Sección de Confianza, Pagos Seguros y Preguntas Frecuentes (FAQ Acordeón)
+- **Archivo a actualizar**: `src/components/TrustSection.tsx`
+- **Diseño en bloques Bento**:
+  - **Bloque A — Widget de Calificaciones de Clientes**: Resumen visual estilo Trustpilot / Google Reviews con 5 estrellas, puntuación **4.9 / 5.0** y tarjetas de reseñas verificadas de compradores reales.
+  - **Bloque B — Pasarelas y Métodos de Pago Seguros**: Barra Bento con distintivos limpios de **Tarjetas de Crédito/Débito (Visa, Mastercard, Amex), PayPal, Mercado Pago, Yape y Plin**, acompañado de sello de encriptación SSL de 256 bits.
+  - **Bloque C — Acordeón Interactivo de Preguntas Frecuentes (FAQ)**: Componente desplegable limpio que responde de forma clara y directa:
+    1. *¿Son licencias de por vida?*
+    2. *¿Qué pasa si tengo problemas para activar?*
+    3. *¿Entregan factura?*
 
 ---
 
-### 4. Technical Architecture & Data Strategy (Technical Reference)
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        UPCLIC DIGITAL STOREFRONT                       │
-├────────────────────────────────────────────────────────────────────────┤
-│  Top Trust Bar: Envío Digital Inmediato · Tienda Mercado Libre · Ayuda │
-├────────────────────────────────────────────────────────────────────────┤
-│  Navbar: Logo UpClic │ Buscador │ Selector Moneda (PEN/USD) │ Carrito   │
-├────────────────────────────────────────────────────────────────────────┤
-│  Promo Banner / Hero:                                                  │
-│   • Oferta Estrella: Canva Pro 12 Meses a solo S/ 10.00                │
-│   • Sellos: Mercado Libre Gold · Garantía UpClic · Soporte WhatsApp   │
-├────────────────────────────────────────────────────────────────────────┤
-│  Filter Bar: Todas │ Apps & Diseño │ Windows & Office │ Antivirus      │
-├────────────────────────────────────────────────────────────────────────┤
-│  Product Grid (Responsive 1/2/3/4 cols):                               │
-│   ┌───────────────────┐ ┌───────────────────┐ ┌───────────────────┐    │
-│   │ Canva Pro 12M     │ │ Duolingo Super    │ │ Office 365 Pro    │    │
-│   │ S/ 10.00 (-87%)   │ │ S/ 30.00          │ │ S/ 45.00          │    │
-│   │ [ Agregar Carrito]│ │ [ Agregar Carrito]│ │ [ Agregar Carrito]│    │
-│   └───────────────────┘ └───────────────────┘ └───────────────────┘    │
-├────────────────────────────────────────────────────────────────────────┤
-│  Trust & Warranty Section:                                             │
-│   • 3 Pasos Simples: Compra -> Recibe en minutos -> Activa con soporte │
-│   • Tienda Verificada en Mercado Libre con reputación Verde            │
-├────────────────────────────────────────────────────────────────────────┤
-│  Slide-over Cart Drawer  ◄───►  Checkout Screen (Mercado Pago / Yape)   │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
-#### Data Model & State Mapping
-- **Catálogo de Productos (`src/products.ts`)**:
-  - Actualización de `prod-canva-pro` con `price: 10.00`, `oldPrice: 79.00`, `duration: '12 meses'`, y viñetas optimizadas de IA Magic Studio, quitafondos y uso multidispositivo.
-  - Preservación íntegra de la sincronización de tipo de cambio PEN/USD/COP/MXN.
-- **Estado de Carrito (`src/context/CartContext.tsx`)**:
-  - Recálculo en tiempo real con el nuevo valor de S/ 10.00 en subtotales, conversiones de moneda y pasarelas de pago.
-- **Componentes de Interfaz**:
-  - `src/components/Header.tsx`: Barra superior comercial con enlaces a Mercado Libre, WhatsApp y buscador rápido.
-  - `src/components/Hero.tsx`: Banner de oferta destacada con tarjeta de Canva Pro a S/ 10 y credenciales de garantía.
-  - `src/components/ProductCard.tsx`: Tarjetas comerciales con porcentaje de descuento, etiquetas de garantía y feedback visual al agregar.
-  - `src/components/TrustBadges.tsx`: Sección de confianza con sellos de garantía y enlace oficial a Mercado Libre.
-  - `src/components/CheckoutPage.tsx` & `src/components/CartDrawer.tsx`: Flujo de pago responsivo y pulido con estilos comerciales integrados.
+## 3. Plan de Verificación
+1. Compilación de TypeScript y validación de tipos (`compile_applet` y `lint_applet`).
+2. Verificación de interactividad: los botones *"Comprar y Recibir Al Instante"* agregan el producto correspondiente y llevan al usuario directo al checkout o abren el carrito sin fricción; el acordeón FAQ abre y cierra suavemente.
+3. Revisión responsiva en móvil, tablet y escritorio verificando espaciados Bento y contraste tipográfico.

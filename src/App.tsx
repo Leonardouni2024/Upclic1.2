@@ -7,7 +7,6 @@ import { ProductCategoriesSection } from './components/ProductCategoriesSection.
 import { BenefitsSection } from './components/BenefitsSection.tsx';
 import { FeaturedProductsSection } from './components/FeaturedProductsSection.tsx';
 import { TrustSection } from './components/TrustSection.tsx';
-import { TrustpilotReviewsSection } from './components/TrustpilotReviewsSection.tsx';
 import { ProductGrid } from './components/ProductGrid.tsx';
 import { ProductDetailPage } from './components/ProductDetailPage.tsx';
 import { CheckoutPage } from './components/CheckoutPage.tsx';
@@ -48,23 +47,20 @@ const AppContent: React.FC = () => {
       <main>
         {activeCategory === 'all' && (
           <>
-            {/* 1. Página principal (Hero) */}
+            {/* 1. HERO SECTION (Primer Pantallazo en Diseño Bento Box) */}
             <Hero />
 
-            {/* 2. Categorías de productos */}
-            <ProductCategoriesSection />
-
-            {/* 3. Sección de beneficios */}
+            {/* 2. PROCESO ULTRA RÁPIDO (3 Pasos en Diseño Bento Box) */}
             <BenefitsSection />
 
-            {/* 4. Productos destacados (Estilo ecommerce con WhatsApp) */}
+            {/* 3. TABLA COMPARATIVA DE PRODUCTOS (Las 3 Tarjetas Principales de Office) */}
             <FeaturedProductsSection />
 
-            {/* 5. Sección de confianza */}
+            {/* 4. SECCIÓN DE CONFIANZA, PAGOS SEGUROS Y FAQ ACORDEÓN */}
             <TrustSection />
 
-            {/* 6. Reseñas y Valoraciones en Trustpilot */}
-            <TrustpilotReviewsSection />
+            {/* Explorador por Categorías */}
+            <ProductCategoriesSection />
           </>
         )}
         {/* Catálogo completo y buscador */}
