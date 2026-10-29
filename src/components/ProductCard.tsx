@@ -90,10 +90,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
         </div>
 
-        {/* Product Image Container */}
+        {/* Product Image Container with Ambient Hover Glow */}
         <div
           onClick={() => navigateToProduct(product.slug)}
-          className="w-full aspect-square max-h-[120px] sm:max-h-[165px] bg-[#f8fafc] rounded-xl sm:rounded-2xl p-2 sm:p-3 flex items-center justify-center cursor-pointer my-1 border border-slate-100 overflow-hidden"
+          className="relative w-full aspect-square max-h-[120px] sm:max-h-[165px] bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9]/70 group-hover:from-[#0078d4]/[0.05] group-hover:to-[#f8fafc] rounded-xl sm:rounded-2xl p-2 sm:p-3 flex items-center justify-center cursor-pointer my-1 border border-slate-100 group-hover:border-[#0078d4]/25 overflow-hidden transition-colors duration-300"
         >
           <img
             src={imgSrc}
@@ -103,6 +103,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             referrerPolicy="no-referrer"
             className="max-h-full max-w-full object-contain mix-blend-multiply group-hover:scale-106 transition-transform duration-300"
           />
+          <span className="hidden sm:inline-flex opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-white/95 text-[#0078d4] text-[10px] font-bold shadow-2xs border border-slate-200/80">
+            Ver ficha
+          </span>
         </div>
 
         {/* Category & Guarantee Kicker */}

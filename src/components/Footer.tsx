@@ -1,8 +1,8 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.tsx';
 import { ProductCategory } from '../types.ts';
-import { ShieldCheck, MessageCircle, Lock, Globe, ShoppingBag, ExternalLink } from 'lucide-react';
-import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL, MERCADO_LIBRE_DISPLAY } from '../products.ts';
+import { MessageCircle, Lock, Globe, ShoppingBag, ExternalLink, Headphones } from 'lucide-react';
+import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL } from '../products.ts';
 import { UpClicLogo } from './UpClicLogo.tsx';
 
 interface FooterProps {
@@ -23,8 +23,36 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
   };
 
   return (
-    <footer id="main-footer" className="bg-[#0B1F3A] text-slate-300 pt-16 pb-12 border-t border-[#173256] font-sans">
+    <footer id="main-footer" className="bg-[#0B1F3A] text-slate-300 pt-12 sm:pt-16 pb-12 border-t border-[#173256] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Pre-Footer Bento Advisory Card */}
+        <div className="mb-12 p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-[#102a4c] to-[#0f2544] border border-[#1e3f6d] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#0078d4] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Headphones className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
+                ¿Necesitas ayuda para elegir entre Office 2024, Office 2021 o Microsoft 365?
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Nuestros especialistas te asesoran gratis en vivo y te acompañan durante toda tu activación.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UpClic, necesito asesoría para elegir mi licencia original de Microsoft Office.')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full md:w-auto px-5 py-3 rounded-2xl bg-[#0078d4] hover:bg-[#0062ad] text-white font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 shrink-0 shadow-xs whitespace-nowrap"
+          >
+            <MessageCircle className="w-4 h-4 shrink-0" />
+            <span>Hablar con un Especialista</span>
+          </a>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#173256]">
           {/* Brand Info (2 cols on large screens) */}
           <div className="lg:col-span-2 space-y-4">
@@ -45,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
                 href={MERCADO_LIBRE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold text-xs shadow-xs transition-colors cursor-pointer group"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold text-xs shadow-xs transition-colors cursor-pointer group"
                 title="Visitar tienda oficial de UpClic en Mercado Libre Perú"
               >
                 <ShoppingBag className="w-3.5 h-3.5 text-[#2D3277]" />
@@ -225,12 +253,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-slate-400">
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">PayPal USD</span>
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Visa</span>
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Mastercard</span>
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Yape / Plin</span>
-            <span className="px-2.5 py-1 rounded bg-slate-900/80 border border-slate-800 text-slate-300">Transferencias</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs font-semibold text-slate-300">
+            <span>PayPal USD</span>
+            <span aria-hidden="true" className="text-slate-600">·</span>
+            <span>Visa</span>
+            <span aria-hidden="true" className="text-slate-600">·</span>
+            <span>Mastercard</span>
+            <span aria-hidden="true" className="text-slate-600">·</span>
+            <span>Yape / Plin</span>
+            <span aria-hidden="true" className="text-slate-600">·</span>
+            <span>Transferencias</span>
           </div>
         </div>
 
@@ -243,7 +275,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsRegionModalOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors cursor-pointer text-xs font-semibold"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors cursor-pointer text-xs font-semibold"
               title="Cambiar país, moneda e idioma"
             >
               <Globe className="w-3.5 h-3.5 text-blue-400" />

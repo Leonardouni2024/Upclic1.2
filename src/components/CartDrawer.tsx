@@ -71,11 +71,11 @@ export const CartDrawer: React.FC = () => {
           {/* Drawer Header */}
           <div className="px-5 py-4 sm:px-6 bg-white border-b border-slate-200/80 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center border border-blue-100">
+              <div className="w-8 h-8 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center border border-[#0078d4]/20">
                 <ShoppingBag className="w-4 h-4" />
               </div>
-              <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                {t('myOrder')} <span className="text-slate-400 font-semibold text-sm">({totalQuantity} {totalQuantity === 1 ? t('item') : t('items')})</span>
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                {t('myOrder')} <span className="text-slate-400 font-semibold text-sm font-mono">({totalQuantity} {totalQuantity === 1 ? t('item') : t('items')})</span>
               </h2>
             </div>
             <div className="flex items-center gap-2">
@@ -99,20 +99,55 @@ export const CartDrawer: React.FC = () => {
             </div>
           </div>
 
+          {/* Dynamic 10% Multi-License Discount Progress Indicator */}
+          {items.length > 0 && (
+            <div className={`px-5 py-2.5 border-b text-xs transition-colors ${
+              totalQuantity >= 2
+                ? 'bg-emerald-50/80 border-emerald-200/80 text-emerald-800'
+                : 'bg-[#f8fafc] border-slate-200/80 text-slate-700'
+            }`}>
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <span className="font-bold text-[11px] flex items-center gap-1.5">
+                  {totalQuantity >= 2 ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>¡10% de descuento automático activado!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Tag className="w-3.5 h-3.5 text-[#0078d4] shrink-0" />
+                      <span>Agrega <strong>1 licencia más</strong> para activar <strong>10% DCTO</strong></span>
+                    </>
+                  )}
+                </span>
+                <span className="font-mono text-[10px] font-extrabold tabular-nums">
+                  {Math.min(totalQuantity, 2)}/2
+                </span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-slate-200/80 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    totalQuantity >= 2 ? 'w-full bg-emerald-500' : 'w-1/2 bg-[#0078d4]'
+                  }`}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Cart Item List */}
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 divide-y divide-slate-100">
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-4">
                   <ShoppingBag className="w-8 h-8 stroke-[1.5]" />
                 </div>
-                <h3 className="font-bold text-slate-800 text-base">{t('emptyCartTitle')}</h3>
+                <h3 className="font-extrabold text-slate-800 text-base">{t('emptyCartTitle')}</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-xs leading-relaxed">
                   {t('emptyCartSub')}
                 </p>
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="mt-5 px-5 py-2.5 rounded-lg bg-[#0066FF] text-white text-xs font-bold hover:bg-[#0052cc] shadow-xs hover:shadow-md transition-all cursor-pointer border border-blue-500/20"
+                  className="mt-5 px-5 py-2.5 rounded-xl bg-[#0078d4] text-white text-xs font-bold hover:bg-[#0062ad] shadow-xs hover:shadow-md transition-all cursor-pointer"
                 >
                   {t('exploreProductsBtn')}
                 </button>
@@ -131,7 +166,7 @@ export const CartDrawer: React.FC = () => {
                 return (
                   <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
                     {/* 1:1 Image */}
-                    <div className="w-16 h-16 rounded-lg bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
+                    <div className="w-16 h-16 rounded-xl bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
                       <img
                         src={item.product.imageUrl}
                         alt={itemName}
@@ -151,7 +186,7 @@ export const CartDrawer: React.FC = () => {
                             {itemName}
                           </h4>
                           {displayVariantName && (
-                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0066FF] border border-blue-200">
+                            <span className="inline-block mt-0.5 text-[10px] font-bold text-[#0078d4]">
                               {displayVariantName}
                             </span>
                           )}
@@ -346,7 +381,7 @@ export const CartDrawer: React.FC = () => {
               <div className="space-y-2 text-xs font-medium text-slate-600 mb-4">
                 <div className="flex justify-between items-baseline py-0.5">
                   <span className="font-semibold text-slate-600">{t('subtotal')}:</span>
-                  <span className="font-bold text-slate-800 tabular-nums text-sm">{formatPrice(subtotal)}</span>
+                  <span className="font-bold text-slate-800 tabular-nums text-sm font-mono">{formatPrice(subtotal)}</span>
                 </div>
 
                 {hasDiscount && (
@@ -356,13 +391,13 @@ export const CartDrawer: React.FC = () => {
                         ? (language === 'ES' ? 'Descuento 10%' : 'Discount 10%')
                         : `${t('discount')} ${Math.round(discountRate * 100)}%`}:
                     </span>
-                    <span className="tabular-nums font-bold text-sm">-{formatPrice(discountAmount)}</span>
+                    <span className="tabular-nums font-bold text-sm font-mono">-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
 
-                <div className="flex justify-between items-baseline text-base font-black text-slate-950 pt-2.5 border-t border-slate-200">
+                <div className="flex justify-between items-baseline text-base font-extrabold text-slate-950 pt-2.5 border-t border-slate-200">
                   <span>TOTAL:</span>
-                  <span className="text-[#0066FF] text-xl tabular-nums font-black">{formatPrice(total)}</span>
+                  <span className="text-[#0078d4] text-xl tabular-nums font-extrabold font-mono">{formatPrice(total)}</span>
                 </div>
               </div>
 
@@ -371,7 +406,7 @@ export const CartDrawer: React.FC = () => {
                 <button
                   id="cart-go-to-checkout-btn"
                   onClick={navigateToCheckout}
-                  className="w-full py-3.5 px-4 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white font-black text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-blue-500/20"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#d83b01] hover:bg-[#b83201] text-white font-extrabold text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                 >
                   <span>{t('proceedToCheckout')}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -381,7 +416,7 @@ export const CartDrawer: React.FC = () => {
                   <button
                     id="cart-go-to-paypal-btn"
                     onClick={navigateToPayPal}
-                    className="w-full py-2.5 px-4 rounded-lg bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-extrabold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
+                    className="w-full py-2.5 px-4 rounded-xl bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-extrabold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
                   >
                     <img
                       src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"

@@ -3,7 +3,13 @@ import { motion } from 'motion/react';
 import { products } from '../products.ts';
 import { Product } from '../types.ts';
 import { useCart } from '../context/CartContext.tsx';
-import { Check, Zap, ChevronDown, ArrowRight, Cloud, Monitor, ShieldCheck } from 'lucide-react';
+import { Check, Zap, ChevronDown, ArrowRight, Cloud, Monitor, ShieldCheck, Layers } from 'lucide-react';
+
+interface AppChip {
+  code: string;
+  name: string;
+  color: string;
+}
 
 interface ComparisonTier {
   id: string;
@@ -17,6 +23,7 @@ interface ComparisonTier {
   popularLabel?: string;
   licenseType: string;
   compatibilityLabel: string;
+  appChips: AppChip[];
   appsIncluded: string[];
   highlights: string[];
   fallbackPrice: number;
@@ -53,6 +60,14 @@ export const FeaturedProductsSection: React.FC = () => {
       isPopular: false,
       licenseType: 'Licencia Permanente Vitalicia · 1 PC',
       compatibilityLabel: 'Windows 10 y Windows 11 (32/64 Bit)',
+      appChips: [
+        { code: 'W', name: 'Word', color: '#185abd' },
+        { code: 'X', name: 'Excel', color: '#107c41' },
+        { code: 'P', name: 'PowerPoint', color: '#d24726' },
+        { code: 'O', name: 'Outlook', color: '#0078d4' },
+        { code: 'A', name: 'Access', color: '#a4373a' },
+        { code: 'N', name: 'OneNote', color: '#7719aa' }
+      ],
       appsIncluded: [
         'Microsoft Word 2021 Pro',
         'Microsoft Excel 2021 Pro (Tablas dinámicas y macros)',
@@ -83,6 +98,14 @@ export const FeaturedProductsSection: React.FC = () => {
       popularLabel: 'Más Popular',
       licenseType: 'Licencia Permanente Vitalicia · 1 PC',
       compatibilityLabel: 'Windows 10 y Windows 11 (32/64 Bit)',
+      appChips: [
+        { code: 'W', name: 'Word', color: '#185abd' },
+        { code: 'X', name: 'Excel', color: '#107c41' },
+        { code: 'P', name: 'PowerPoint', color: '#d24726' },
+        { code: 'O', name: 'Outlook', color: '#0078d4' },
+        { code: 'A', name: 'Access', color: '#a4373a' },
+        { code: 'N', name: 'OneNote', color: '#7719aa' }
+      ],
       appsIncluded: [
         'Microsoft Word 2024 Pro',
         'Microsoft Excel 2024 Pro (Funciones y análisis avanzado)',
@@ -112,6 +135,13 @@ export const FeaturedProductsSection: React.FC = () => {
       isPopular: false,
       licenseType: 'Suscripción 12 Meses · Hasta 5 Dispositivos',
       compatibilityLabel: 'PC, Mac, iPad, iPhone y Android',
+      appChips: [
+        { code: 'W', name: 'Word', color: '#185abd' },
+        { code: 'X', name: 'Excel', color: '#107c41' },
+        { code: 'P', name: 'PowerPoint', color: '#d24726' },
+        { code: 'O', name: 'Outlook', color: '#0078d4' },
+        { code: '☁', name: 'OneDrive 100GB', color: '#0078d4' }
+      ],
       appsIncluded: [
         'Word, Excel, PowerPoint y Outlook siempre actualizados',
         '100 GB de almacenamiento seguro en OneDrive Cloud',
@@ -127,6 +157,33 @@ export const FeaturedProductsSection: React.FC = () => {
       fallbackOldPrice: 180.0,
       imageUrl: '/products/microsoft-365.webp',
       fallbackImage: '/products/microsoft-365.png'
+    }
+  ];
+
+  const specRows = [
+    {
+      label: 'Modalidad de licencia',
+      v2021: 'Permanente (Pago Único)',
+      v2024: 'Permanente (Pago Único)',
+      v365: 'Suscripción 12 Meses'
+    },
+    {
+      label: 'Equipos permitidos',
+      v2021: '1 PC (Windows 10 / 11)',
+      v2024: '1 PC (Windows 10 / 11)',
+      v365: 'Hasta 5 (PC, Mac, Móvil)'
+    },
+    {
+      label: 'Access y Macros VBA',
+      v2021: 'Incluido completo',
+      v2024: 'Incluido + motor 2024',
+      v365: 'Solo en PC Windows'
+    },
+    {
+      label: 'Almacenamiento Cloud',
+      v2021: 'Guardado local + básico',
+      v2024: 'Guardado local + básico',
+      v365: '100 GB OneDrive incluido'
     }
   ];
 
@@ -223,7 +280,7 @@ export const FeaturedProductsSection: React.FC = () => {
 
                 <div>
                   {/* Top Header & Product Thumbnail */}
-                  <div className="flex items-start justify-between gap-3 sm:gap-4 mb-4 pt-1">
+                  <div className="flex items-start justify-between gap-3 sm:gap-4 mb-3.5 pt-1">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1.5">
                         <span className="inline-block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#0078d4]">
@@ -257,12 +314,34 @@ export const FeaturedProductsSection: React.FC = () => {
                   </div>
 
                   {/* Subtitle */}
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5">
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
                     {tier.subtitle}
                   </p>
 
+                  {/* Visual App Suite Icons Row */}
+                  <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                    {tier.appChips.map((chip) => (
+                      <div
+                        key={chip.name}
+                        className="inline-flex items-center gap-1 pr-2 pl-1 py-0.5 rounded-lg bg-[#f8fafc] border border-slate-200/80"
+                      >
+                        <span
+                          style={{ backgroundColor: chip.color }}
+                          className="w-4 h-4 rounded text-white text-[9px] font-extrabold flex items-center justify-center shrink-0 font-mono"
+                        >
+                          {chip.code}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-700">{chip.name}</span>
+                      </div>
+                    ))}
+                  </div>
+
                   {/* Price Block */}
-                  <div className="p-4 rounded-2xl bg-[#f8fafc] border border-slate-200/80 mb-5">
+                  <div className={`p-4 rounded-2xl border mb-5 ${
+                    tier.isPopular
+                      ? 'bg-[#0078d4]/[0.04] border-[#0078d4]/25'
+                      : 'bg-[#f8fafc] border-slate-200/80'
+                  }`}>
                     <div className="flex items-baseline flex-wrap gap-2">
                       <span className="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums font-mono">
                         {formatPrice(price)}
@@ -346,6 +425,57 @@ export const FeaturedProductsSection: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Executive Bento Comparison Matrix below the 3 Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ ...cardTransition, delay: 0.2 }}
+          className="mt-8 sm:mt-10 bento-card rounded-3xl p-5 sm:p-7 overflow-hidden"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center shrink-0">
+                <Layers className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-extrabold text-slate-900">
+                  Resumen Técnico Comparativo de Ediciones
+                </h3>
+                <p className="text-[11px] sm:text-xs text-slate-500">
+                  Diferencias clave para elegir la licencia exacta según tu flujo de trabajo
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-emerald-700">
+              100% Licencias Originales Verificadas
+            </span>
+          </div>
+
+          <div className="mt-4 overflow-x-auto no-scrollbar">
+            <table className="w-full text-left border-collapse min-w-[540px]">
+              <thead>
+                <tr className="border-b border-slate-100 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                  <th className="py-2.5 pr-4">Característica</th>
+                  <th className="py-2.5 px-4 text-slate-700">Office 2021 Pro Plus</th>
+                  <th className="py-2.5 px-4 text-[#0078d4]">Office 2024 Pro Plus (Recomendado)</th>
+                  <th className="py-2.5 pl-4 text-slate-700">Microsoft 365 Personal</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-xs">
+                {specRows.map((row) => (
+                  <tr key={row.label} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3 pr-4 font-bold text-slate-800">{row.label}</td>
+                    <td className="py-3 px-4 text-slate-600 font-medium">{row.v2021}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900 bg-[#0078d4]/[0.03]">{row.v2024}</td>
+                    <td className="py-3 pl-4 text-slate-600 font-medium">{row.v365}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
 
       </div>
     </section>
