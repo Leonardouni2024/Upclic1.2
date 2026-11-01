@@ -33,17 +33,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
               <Headphones className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
-                ¿Necesitas ayuda para elegir entre Office 2024, Office 2021 o Microsoft 365?
+              <h3 className="font-display text-sm sm:text-base font-extrabold text-white leading-snug">
+                ¿Buscas licencias para tu estudio, oficina o suscripciones de cuentas premium?
               </h3>
               <p className="text-xs text-slate-300 mt-0.5">
-                Nuestros especialistas te asesoran gratis en vivo y te acompañan durante toda tu activación.
+                Te asesoramos gratis en vivo sobre programas de Diseño, Office, Windows, Productividad y alquiler de Cuentas Premium.
               </p>
             </div>
           </div>
 
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UpClic, necesito asesoría para elegir mi licencia original de Microsoft Office.')}`}
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UpClic, necesito asesoría sobre licencias de programas y cuentas premium.')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full md:w-auto px-5 py-3 rounded-2xl bg-[#0078d4] hover:bg-[#0062ad] text-white font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 shrink-0 shadow-xs whitespace-nowrap"
@@ -91,18 +91,18 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
             <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
               <li>
                 <button
-                  onClick={() => handleCategory('office')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('office')}
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => handleCategory('windows')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t('windows')}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategory('office')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  {t('office')}
                 </button>
               </li>
               <li>
@@ -123,10 +123,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
               </li>
               <li>
                 <button
-                  onClick={() => handleCategory('bestsellers')}
+                  onClick={() => handleCategory('apps')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  {t('bestSellers')}
+                  {t('apps')}
                 </button>
               </li>
               <li>

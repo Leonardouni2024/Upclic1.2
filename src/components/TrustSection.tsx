@@ -31,44 +31,44 @@ export const TrustSection: React.FC = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   const handleConsultWhatsApp = () => {
-    const text = 'Hola UpClic, tengo una consulta sobre las licencias originales de Microsoft Office.';
+    const text = 'Hola UpClic, tengo una consulta sobre sus licencias de programas y cuentas premium.';
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
   const faqs: FaqItem[] = [
     {
-      question: '¿Son licencias de por vida?',
+      question: '¿Cómo funcionan el alquiler de Cuentas Premium y las Licencias de Programas?',
       answer:
-        'Sí. Nuestras licencias de Office Professional Plus (2024, 2021, 2019 y 2016) y Windows son 100% permanentes de pago único. No caducan ni requieren pagos mensuales o anuales posteriores. Solo el plan Microsoft 365 Personal funciona bajo modalidad de suscripción anual renovable.'
+        'Contamos con dos modalidades: 1) Licencias Permanentes de pago único para programas como Office 2024/2021, Windows 11/10 Pro, CorelDRAW, Project y Visio. 2) Suscripciones y alquiler de Cuentas Premium (Canva Pro, Gemini AI Pro, Microsoft 365, Duolingo Super) activadas directamente en tu correo personal o mediante cuenta privada por el periodo contratado.'
     },
     {
-      question: '¿Cuál es la diferencia entre Office 2021 Pro Plus y Office 2024 Pro Plus?',
+      question: '¿En cuánto tiempo recibo mi licencia o acceso a cuenta premium?',
       answer:
-        'Ambas son ediciones completas Professional Plus permanentes de pago único que incluyen Word, Excel, PowerPoint, Outlook y Access. Office 2021 Pro Plus destaca por su máxima estabilidad en todo equipo con Windows 10/11, mientras que Office 2024 Pro Plus incorpora la interfaz más reciente, mayor velocidad de procesamiento y nuevas funciones analíticas en Excel.'
+        'El despacho es 100% digital. En pocos minutos tras confirmar tu pago, recibirás en tu correo electrónico y WhatsApp tu clave de activación original o la invitación oficial a tu cuenta premium, junto con los enlaces de descarga y guía paso a paso.'
     },
     {
-      question: '¿Qué pasa si tengo problemas para activar?',
+      question: '¿Qué garantía tienen los programas y las cuentas premium?',
       answer:
-        'Cuentas con nuestra Garantía de Activación del 100%. Junto con tu clave recibes una guía ilustrada paso a paso muy sencilla; además, nuestro equipo de soporte técnico en vivo por WhatsApp te asiste en minutos (incluso mediante conexión remota si lo deseas) o reemplaza tu licencia de inmediato sin costo adicional.'
+        'Todos nuestros productos cuentan con Garantía Oficial UpClic y soporte técnico en vivo por WhatsApp. Te acompañamos paso a paso durante la instalación o activación, y ante cualquier eventualidad te brindamos solución o reemplazo inmediato.'
     },
     {
-      question: '¿Entregan factura?',
+      question: '¿Entregan comprobante o factura electrónica para empresas?',
       answer:
-        'Sí, emitimos comprobante de pago electrónico y factura comercial para personas naturales, profesionales independientes y empresas (con RUC). Solo debes indicarlo al finalizar tu pedido en el checkout o solicitarlo por WhatsApp.'
+        'Sí, emitimos comprobante de pago electrónico y factura comercial para profesionales independientes, estudios de diseño y empresas (con RUC). Solo debes solicitarlo al completar tu pedido.'
     }
   ];
 
   const verifiedReviews = [
     {
       author: 'Carlos Mendoza',
-      role: 'Ingeniero Civil · Lima',
-      comment: 'Recibí la clave de Office 2024 Pro Plus en menos de 2 minutos en mi correo. Descargué desde el enlace oficial y activó a la primera.',
+      role: 'Ingeniero & Consultor · Lima',
+      comment: 'Adquirí el Combo Windows 11 Pro + Office 2024 Pro Plus y Project 2024. Recibí las claves digitales en minutos y todo activó a la primera.',
       date: 'Hace 2 días'
     },
     {
       author: 'Valeria Paredes',
-      role: 'Contadora Pública · Arequipa',
-      comment: 'Compré Office 2021 Professional Plus para mi estudio contable. Me enviaron factura electrónica y el soporte por WhatsApp es súper atento.',
+      role: 'Diseñadora Gráfica · Arequipa',
+      comment: 'Excelente servicio para nuestro estudio: compramos CorelDRAW 2024 y suscripciones de Canva Pro y Gemini AI Pro. Atención inmediata por WhatsApp.',
       date: 'Hace 4 días'
     }
   ];
@@ -125,7 +125,7 @@ export const TrustSection: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tabular-nums">
+                    <span className="font-display text-2xl sm:text-3xl font-extrabold text-[#0B1F3A] tabular-nums tracking-tight">
                       4.9 / 5.0
                     </span>
                     <span className="text-xs text-slate-500 font-medium">
@@ -140,7 +140,7 @@ export const TrustSection: React.FC = () => {
                     href="https://www.trustpilot.com/review/upclic.pe"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-1.5 text-[11px] font-bold text-[#0078d4] hover:underline inline-flex items-center gap-1"
+                    className="mt-1.5 text-[11px] font-bold text-[#1668E3] hover:underline inline-flex items-center gap-1"
                   >
                     <span>Ver opiniones verificadas</span>
                     <ExternalLink className="w-3 h-3 shrink-0" />
@@ -151,17 +151,17 @@ export const TrustSection: React.FC = () => {
               {/* Mini Verified Buyer Testimonials */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 mt-5">
                 {verifiedReviews.map((rev, i) => (
-                  <div key={i} className="p-4 rounded-2xl bg-[#f8fafc] border border-slate-200/70 flex flex-col justify-between">
-                    <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                  <div key={i} className="p-4 rounded-2xl bg-[#F4F7FB] border border-[#E2E8F0] flex flex-col justify-between">
+                    <p className="text-xs text-[#475569] leading-relaxed mb-3">
                       "{rev.comment}"
                     </p>
-                    <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-200/60">
+                    <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-[#E2E8F0]">
                       <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-900 truncate">{rev.author}</div>
-                        <div className="text-[10px] text-slate-500 truncate">{rev.role}</div>
+                        <div className="text-xs font-bold text-[#0B1F3A] truncate">{rev.author}</div>
+                        <div className="text-[10px] text-[#64748B] truncate">{rev.role}</div>
                       </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 shrink-0">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" /> Verificado
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0B7A64] shrink-0">
+                        <CheckCircle2 className="w-3 h-3 text-[#0B7A64] shrink-0" /> Verificado
                       </span>
                     </div>
                   </div>
@@ -179,16 +179,16 @@ export const TrustSection: React.FC = () => {
             >
               <div className="flex items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl tint-blue flex items-center justify-center shrink-0">
                     <CreditCard className="w-4 h-4" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
+                  <h3 className="text-sm sm:text-base font-extrabold text-[#0B1F3A] leading-snug">
                     Métodos de Pago 100% Seguros y Encriptados
                   </h3>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 shrink-0">
-                  <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="font-mono">SSL 256-Bit</span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0B7A64] shrink-0">
+                  <Lock className="w-3.5 h-3.5 text-[#0B7A64] shrink-0" />
+                  <span>SSL 256-Bit</span>
                 </span>
               </div>
 

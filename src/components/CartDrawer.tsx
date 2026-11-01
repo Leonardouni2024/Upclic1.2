@@ -381,7 +381,7 @@ export const CartDrawer: React.FC = () => {
               <div className="space-y-2 text-xs font-medium text-slate-600 mb-4">
                 <div className="flex justify-between items-baseline py-0.5">
                   <span className="font-semibold text-slate-600">{t('subtotal')}:</span>
-                  <span className="font-bold text-slate-800 tabular-nums text-sm font-mono">{formatPrice(subtotal)}</span>
+                  <span className="font-display font-bold text-slate-800 tabular-nums text-sm tracking-tight">{formatPrice(subtotal)}</span>
                 </div>
 
                 {hasDiscount && (
@@ -391,13 +391,13 @@ export const CartDrawer: React.FC = () => {
                         ? (language === 'ES' ? 'Descuento 10%' : 'Discount 10%')
                         : `${t('discount')} ${Math.round(discountRate * 100)}%`}:
                     </span>
-                    <span className="tabular-nums font-bold text-sm font-mono">-{formatPrice(discountAmount)}</span>
+                    <span className="font-display tabular-nums font-bold text-sm tracking-tight">-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between items-baseline text-base font-extrabold text-slate-950 pt-2.5 border-t border-slate-200">
                   <span>TOTAL:</span>
-                  <span className="text-[#0078d4] text-xl tabular-nums font-extrabold font-mono">{formatPrice(total)}</span>
+                  <span className="font-display text-[#0078d4] text-xl tabular-nums font-extrabold tracking-tight">{formatPrice(total)}</span>
                 </div>
               </div>
 

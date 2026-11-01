@@ -402,9 +402,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#00A3E0] hover:border-[#00A3E0] shadow-xs transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#0078d4] hover:border-[#0078d4]/40 shadow-2xs transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4 text-[#00A3E0]" />
+            <ArrowLeft className="w-4 h-4 text-[#0078d4]" />
             <span>{t('backToStore')}</span>
           </button>
 
@@ -414,20 +414,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
         </div>
 
         {/* Main Product Box */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-10 mb-12">
+        <div className="bento-card bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 lg:p-10 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column (1:1 Aspect Ratio, clean background) */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="relative w-full max-w-[480px] aspect-square rounded-2xl bg-white p-6 sm:p-8 border border-slate-200 shadow-xs flex items-center justify-center group overflow-hidden">
+              <div className="relative w-full max-w-[460px] aspect-square rounded-2xl bg-[#f8fafc] p-6 sm:p-8 border border-slate-200/80 shadow-inner flex items-center justify-center group overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,120,212,0.06),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 {/* Share Button on Top-Right of the image */}
                 <button
                   type="button"
                   onClick={() => setShowShareModal(true)}
-                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 shadow-xs transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share"
+                  className="absolute top-3.5 right-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-xs hover:bg-white text-slate-700 border border-slate-200/90 shadow-2xs transition-all duration-200 cursor-pointer text-xs font-bold active:scale-95 group/share"
                   title={t('productShareTitle')}
                   aria-label={t('productShareTitle')}
                 >
-                  <Share2 className="w-3.5 h-3.5 text-[#00A3E0]" />
+                  <Share2 className="w-3.5 h-3.5 text-[#0078d4]" />
                   <span className="text-[11px] sm:text-xs font-bold">{t('share')}</span>
                 </button>
 
@@ -598,12 +599,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
 
                 {/* Price Display */}
                 <div className="mt-5 sm:mt-6 flex flex-wrap items-baseline gap-2.5 sm:gap-3">
-                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-[#0070ba] tabular-nums tracking-tight">
+                  <div className="flex items-baseline gap-1 text-2xl sm:text-3xl font-black text-[#0f172a] tabular-nums tracking-tight">
                     {formatPrice(activePrice)}
                   </div>
                   {activeOldPrice && (
                     <span className="text-base sm:text-lg text-slate-400 line-through font-semibold tabular-nums">
                       {formatPrice(activeOldPrice)}
+                    </span>
+                  )}
+                  {discountPercent > 0 && (
+                    <span className="text-xs font-black text-[#d83b01] bg-orange-50 border border-orange-200/80 px-2 py-0.5 rounded-md tabular-nums">
+                      -{discountPercent}% OFF
                     </span>
                   )}
                 </div>
@@ -693,16 +699,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) =>
                     <button
                       id="detail-add-to-cart-btn"
                       onClick={handleAddToCart}
-                      className="py-3.5 px-6 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-slate-300"
+                      className="py-3.5 px-6 rounded-xl bg-white hover:bg-blue-50/50 text-[#0078d4] font-bold text-sm shadow-2xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border-2 border-[#0078d4]/25 hover:border-[#0078d4]"
                     >
-                      <ShoppingCart className="w-4 h-4 text-slate-600" />
+                      <ShoppingCart className="w-4 h-4 text-[#0078d4]" />
                       <span>{t('addToCart')}</span>
                     </button>
 
                     <button
                       id="detail-buy-now-btn"
                       onClick={handleBuyNow}
-                      className="py-3.5 px-6 rounded-xl bg-[#00A3E0] hover:bg-[#0092cc] text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-[#0092cc]"
+                      className="py-3.5 px-6 rounded-xl bg-[#d83b01] hover:bg-[#b83201] text-white font-black text-sm shadow-md shadow-[#d83b01]/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                     >
                       <Zap className="w-4 h-4 text-white fill-white" />
                       <span>{t('buyNow')}</span>

@@ -48,42 +48,42 @@ export const ProductGrid: React.FC = () => {
   return (
     <section
       id="catalogo-section"
-      className="py-12 sm:py-16 lg:py-20 bg-white text-slate-900 border-b border-slate-200/80 font-sans overflow-hidden"
+      className="py-10 sm:py-14 bg-[#F4F7FB] text-[#0B1F3A] border-b border-[#E2E8F0] font-sans overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-3 sm:gap-4"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-7 gap-3 sm:gap-4"
         >
           <div>
-            <p className="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-1.5 sm:mb-2">
+            <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#1668E3] mb-1.5">
               {t('catalogBadge')}
             </p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1F3A] tracking-[-0.02em] [text-wrap:balance]">
               {t('catalogTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1.5 font-normal">
+            <p className="text-[14.5px] sm:text-[15.5px] text-[#475569] mt-1.5 font-normal max-w-2xl">
               {t('catalogSubtitle')}
             </p>
           </div>
 
           {/* Results count indicator */}
-          <div className="text-xs font-semibold text-slate-600 bg-[#f8fafc] px-3.5 py-2 rounded-2xl border border-slate-200/90 self-start md:self-auto flex items-center gap-1.5 shrink-0">
+          <div className="text-xs font-semibold text-[#475569] bg-white px-4 py-2.5 rounded-full border border-[#E2E8F0] self-start md:self-auto flex items-center gap-1.5 shrink-0">
             <span>Mostrando</span>
-            <span className="font-extrabold text-[#0078d4] font-mono tabular-nums">
+            <span className="font-extrabold text-[#1668E3] tabular-nums">
               {filteredProducts.length}
             </span>
-            <span>licencias disponibles</span>
-            {searchQuery && <span className="text-slate-900 font-bold truncate max-w-[140px]"> · "{searchQuery}"</span>}
+            <span>productos disponibles</span>
+            {searchQuery && <span className="text-[#0B1F3A] font-bold truncate max-w-[140px]"> · "{searchQuery}"</span>}
           </div>
         </motion.div>
 
         {/* Interactive Segmented Category Filter Bar with Animated Active Pill */}
-        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 mb-7 sm:mb-8 rounded-2xl bg-[#f8fafc] border border-slate-200/80 no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 mb-7 rounded-[16px] bg-white border border-[#E2E8F0] no-scrollbar scroll-smooth">
           {categories.map(cat => {
             const isActive = activeCategory === cat.key;
             return (
@@ -91,17 +91,17 @@ export const ProductGrid: React.FC = () => {
                 key={cat.key}
                 id={`cat-filter-${cat.key}`}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`relative px-3.5 sm:px-4 py-2 min-h-[38px] rounded-xl text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 cursor-pointer font-bold shrink-0 ${
+                className={`relative px-3.5 sm:px-4 py-2 min-h-[38px] rounded-[12px] text-xs sm:text-[13.5px] whitespace-nowrap transition-colors duration-200 cursor-pointer font-semibold shrink-0 ${
                   isActive
                     ? 'text-white'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                    : 'text-[#475569] hover:text-[#0B1F3A] hover:bg-[#EEF4FF]'
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="catalogCategoryActivePill"
                     transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                    className="absolute inset-0 rounded-xl bg-[#0078d4] shadow-xs"
+                    className="absolute inset-0 rounded-[12px] bg-[#1668E3] shadow-2xs"
                   />
                 )}
                 <span className="relative z-10">{cat.label}</span>
@@ -144,9 +144,9 @@ export const ProductGrid: React.FC = () => {
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-400">
               <SearchX className="w-7 h-7 sm:w-8 sm:h-8 stroke-[1.5]" />
             </div>
-            <h3 className="text-base sm:text-lg font-extrabold text-slate-900">{t('noProductsMatch')}</h3>
+            <h3 className="font-display text-base sm:text-lg font-extrabold text-slate-900">{t('noProductsMatch')}</h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
-              No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Windows 11, Office 2024, Office 2021 o Combos.
+              No encontramos coincidencias para "<span className="font-semibold text-slate-900">{searchQuery}</span>". Prueba buscando Canva Pro, CorelDRAW, Office 2024, Windows 11 o Combos.
             </p>
             <button
               onClick={() => {

@@ -124,7 +124,7 @@ export const translations = {
     securePaymentNotice: "Pago 100% seguro y encriptado",
 
     // Footer
-    footerDesc: "Tienda líder en distribución oficial de licencias digitales de software Microsoft con entrega en 10 a 30 minutos.",
+    footerDesc: "Plataforma especializada en la venta de licencias de programas (Diseño, Office, Windows, Productividad) y alquiler/suscripción de cuentas premium con entrega digital inmediata.",
     techSupportTitle: "Atención al Cliente",
     paymentMethodsTitle: "Métodos de Pago Aceptados",
     legalNotice: "Todas las marcas y nombres comerciales pertenecen a sus respectivos propietarios.",
@@ -201,7 +201,7 @@ export const translations = {
     mercadoPagoOption: "Mercado Pago (Soles S/)",
     securePaymentMercadoPago: "Pago 100% seguro con Mercado Pago",
     deliveryTimeNotice: "Licencia digital enviada a tu correo en 10 a 30 minutos",
-    digitalLicensesSubtitle: "Licencias digitales oficiales y software original",
+    digitalLicensesSubtitle: "Licencias de Programas & Cuentas Premium",
 
     // Comparison Table
     ctWindows1Title: "Licencia para 1 PC (Permanente)",
