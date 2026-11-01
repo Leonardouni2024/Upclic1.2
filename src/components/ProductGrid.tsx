@@ -82,8 +82,12 @@ export const ProductGrid: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 pb-6 border-b border-slate-200/80">
           <div>
-            <span className="inline-flex items-center gap-1.5 text-[#1668E3] font-bold text-xs uppercase tracking-widest mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-2 text-[#1668E3] font-bold text-xs uppercase tracking-widest mb-2">
+              <img
+                src="/assets/aistudio/image_776e6470.png"
+                alt="Catálogo Oficial UPCLIC"
+                className="w-5 h-5 object-contain shrink-0"
+              />
               Catálogo Oficial UPCLIC
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1F3A] tracking-tight">

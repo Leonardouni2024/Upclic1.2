@@ -335,15 +335,6 @@ export const Header: React.FC = () => {
                 <span className="hidden lg:inline">Mis Pedidos</span>
               </button>
 
-              {/* Help / FAQ Button */}
-              <button
-                onClick={() => handleHelpClick('faq')}
-                className="hidden sm:flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <HelpCircle className="w-4 h-4 text-slate-500" />
-                <span className="hidden xl:inline">Ayuda</span>
-              </button>
-
               {/* Cart Button (Orange CTA highlight when items present) */}
               <button
                 onClick={() => setIsCartOpen(true)}
@@ -395,23 +386,6 @@ export const Header: React.FC = () => {
                 );
               })}
             </div>
-
-            <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-500 shrink-0">
-              <button
-                onClick={() => handleHelpClick('garantia')}
-                className="hover:text-[#1668E3] transition-colors cursor-pointer"
-              >
-                Garantía Oficial
-              </button>
-              <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, deseo atención personalizada para una compra.')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#1668E3] hover:underline font-bold"
-              >
-                WhatsApp Directo
-              </a>
-            </div>
           </nav>
         </div>
 
@@ -447,25 +421,17 @@ export const Header: React.FC = () => {
               ))}
             </div>
 
-            <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+            <div className="pt-3 border-t border-slate-100 text-xs">
               <button
                 onClick={() => {
                   setIsUserOrdersOpen(true);
                   setMobileMenuOpen(false);
                 }}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-slate-100 font-bold text-slate-800"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-slate-100 font-bold text-slate-800"
               >
                 <Package className="w-4 h-4 text-[#1668E3]" />
                 Mis Pedidos
               </button>
-              <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, tengo una consulta sobre sus productos.')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-[#E8440A] font-bold text-white"
-              >
-                WhatsApp Soporte
-              </a>
             </div>
           </div>
         )}

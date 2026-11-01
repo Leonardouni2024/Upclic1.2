@@ -191,31 +191,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product, o
                 </div>
               </div>
             </div>
-
-            {/* Support Card */}
-            <div className="bg-[#0B1F3A] text-white rounded-2xl p-5 sm:p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-2.5">
-                <div className="w-10 h-10 rounded-xl bg-white/10 text-[#7DB2FF] flex items-center justify-center shrink-0">
-                  <HelpCircle className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm sm:text-base">¿Tienes dudas antes de comprar?</h3>
-                  <p className="text-xs text-slate-300">Atención personalizada en Perú</p>
-                </div>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                Nuestro equipo técnico valida la compatibilidad con tu equipo y te acompaña paso a paso durante la instalación por WhatsApp.
-              </p>
-              <a
-                href={whatsappDirectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Hablar con un asesor por WhatsApp</span>
-              </a>
-            </div>
           </div>
 
           {/* Right Column: Commercial Details & Purchase Box */}
@@ -278,7 +253,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product, o
               )}
 
               {/* Price & Primary Actions Box (Adapted cleanly so buttons never wrap awkwardly) */}
-              <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200/90 mb-5 space-y-4">
+              <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200/90 mb-6 space-y-4">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
                     <span className="text-xs text-slate-500 font-semibold block mb-1">
@@ -321,19 +296,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product, o
                     <span>Añadir al Carrito</span>
                   </button>
                 </div>
-              </div>
-
-              {/* Direct WhatsApp Inquiry Button */}
-              <div className="mb-6">
-                <a
-                  href={whatsappDirectUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3.5 px-5 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors text-center"
-                >
-                  <MessageCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Consultar por WhatsApp sobre {product.name}</span>
-                </a>
               </div>
 
               {/* Transparent Commercial Details Grid */}

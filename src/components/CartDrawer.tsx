@@ -257,7 +257,7 @@ export const CartDrawer: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Button */}
               <div className="space-y-2">
                 <button
                   onClick={goToCheckout}
@@ -266,16 +266,6 @@ export const CartDrawer: React.FC = () => {
                   <span>Continuar al Pago Seguro</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
-
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappCartMessage())}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-[#0B1F3A] border border-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4 text-emerald-600" />
-                  <span>Consultar este carrito por WhatsApp</span>
-                </a>
               </div>
 
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 text-center">
