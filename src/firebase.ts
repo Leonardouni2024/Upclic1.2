@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import firebaseConfig from '../firebase-applet-config.json';
 
 const app = initializeApp({
@@ -12,3 +13,6 @@ const app = initializeApp({
 });
 
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId || '(default)');
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+export const ADMIN_EMAIL = 'leoch5829@gmail.com';

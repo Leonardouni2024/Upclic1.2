@@ -93,19 +93,26 @@ export interface DynamicCoupon {
   minItems?: number;
   description: string;
   expiresAt?: number;
+  active?: boolean;
 }
 
-export const DYNAMIC_COUPONS: DynamicCoupon[] = [
-  { code: 'UPCLIC10', discountPercent: 10, description: '10% de descuento oficial UpClic' },
-  { code: 'COMBO15', discountPercent: 15, minItems: 2, description: '15% de descuento por llevar 2 o más productos' },
-  { code: 'VIP20', discountPercent: 20, description: '20% de descuento especial clientes VIP' },
-  { code: 'PRICLIC1', discountPercent: 10, description: '10% de descuento exclusivo', expiresAt: 1791417599000 },
-  { code: 'UPCLICPROMO', discountPercent: 5, description: '5% de descuento adicional', expiresAt: 1791417599000 }
+export let DYNAMIC_COUPONS: DynamicCoupon[] = [
+  { code: 'UPCLIC10', discountPercent: 10, description: '10% de descuento oficial UpClic', active: true },
+  { code: 'COMBO15', discountPercent: 15, minItems: 2, description: '15% de descuento por llevar 2 o más productos', active: true },
+  { code: 'VIP20', discountPercent: 20, description: '20% de descuento especial clientes VIP', active: true },
+  { code: 'PRICLIC1', discountPercent: 10, description: '10% de descuento exclusivo', expiresAt: 1791417599000, active: true },
+  { code: 'UPCLICPROMO', discountPercent: 5, description: '5% de descuento adicional', expiresAt: 1791417599000, active: true }
 ];
+
+export function setRuntimeCoupons(coupons: DynamicCoupon[]) {
+  if (Array.isArray(coupons) && coupons.length > 0) {
+    DYNAMIC_COUPONS = coupons;
+  }
+}
 
 export function validateCoupon(code: string, itemCount: number = 1): { valid: boolean; discountPercent: number; message: string } {
   const cleanCode = code.trim().toUpperCase();
-  const found = DYNAMIC_COUPONS.find(c => c.code === cleanCode);
+  const found = DYNAMIC_COUPONS.find(c => c.code === cleanCode && c.active !== false);
   if (!found) {
     return { valid: false, discountPercent: 0, message: 'Cupón no válido o no encontrado' };
   }
@@ -181,28 +188,54 @@ export function calculateCartTotals(
   };
 }
 
-export function searchProducts(query: string, category: string = 'all'): Product[] {
+export function searchProducts(query: string, category: string = 'all', customList?: Product[]): Product[] {
   const q = query.toLowerCase().trim();
-  let list = products;
+  let list = (customList || products).filter(p => p.active !== false);
   if (category && category !== 'all') {
-    list = list.filter(p => p.category === category);
+    list = getProductsByCategory(category, list);
   }
   if (!q) return list;
 
   const tokens = q.split(/\s+/).filter(Boolean);
   return list.filter(p => {
-    const text = `${p.name} ${p.slug} ${p.description} ${p.category} ${p.badge || ''}`.toLowerCase();
+    const text = `${p.name} ${p.slug} ${p.description} ${p.category} ${p.subcategory || ''} ${p.badge || ''}`.toLowerCase();
     return tokens.every(t => text.includes(t));
   });
 }
 
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find(p => p.slug === slug || p.id === slug);
+export function getProductBySlug(slug: string, customList?: Product[]): Product | undefined {
+  const list = customList || products;
+  return list.find(p => p.slug === slug || p.id === slug);
 }
 
-export function getProductsByCategory(category: string): Product[] {
-  if (!category || category === 'all') return products;
-  return products.filter(p => p.category === category);
+export function getProductsByCategory(category: string, customList?: Product[]): Product[] {
+  const activeList = (customList || products).filter(p => p.active !== false);
+  if (!category || category === 'all') return activeList;
+  if (category === 'offers') {
+    return activeList.filter(p => p.oldPrice && p.oldPrice > p.price);
+  }
+  if (category === 'bestsellers' || category === 'top') {
+    return activeList.filter(p => p.bestSeller || p.featured);
+  }
+  if (category === 'profesional') {
+    return activeList.filter(
+      p => p.category === 'profesional' || p.category === 'project-visio' || p.category === 'combos'
+    );
+  }
+  if (category === 'combos') {
+    return activeList.filter(p => p.id.includes('combo') || p.category === 'combos' || p.subcategory === 'Combos');
+  }
+  if (category === 'project-visio') {
+    return activeList.filter(
+      p => p.id.includes('project') || p.id.includes('visio') || p.category === 'project-visio'
+    );
+  }
+  if (category === 'apps') {
+    return activeList.filter(
+      p => p.category === 'ia' || p.category === 'diseno' || p.category === 'streaming' || p.category === 'apps'
+    );
+  }
+  return activeList.filter(p => p.category === category);
 }
 
 export const WINDOWS_STANDARD_STEPS = [
@@ -1554,10 +1587,248 @@ const rawProducts: Product[] = [
   }
 ];
 
-export const products: Product[] = rawProducts.map(p => ({
-  ...p,
-  stock: p.stock ?? DEFAULT_PRODUCT_STOCK
-}));
+function mapOfficialCategory(p: Product): Product['category'] {
+  if (p.category === 'streaming' || p.category === 'ia' || p.category === 'diseno' || p.category === 'profesional') {
+    return p.category;
+  }
+  const slugAndId = `${p.id} ${p.slug}`.toLowerCase();
+  if (
+    slugAndId.includes('prime') ||
+    slugAndId.includes('netflix') ||
+    slugAndId.includes('hbo') ||
+    slugAndId.includes('disney') ||
+    slugAndId.includes('crunchyroll') ||
+    slugAndId.includes('paramount') ||
+    slugAndId.includes('apple-tv') ||
+    slugAndId.includes('streaming')
+  ) {
+    return 'streaming';
+  }
+  if (slugAndId.includes('gemini') || slugAndId.includes('chatgpt') || slugAndId.includes('copilot')) {
+    return 'ia';
+  }
+  if (
+    slugAndId.includes('canva') ||
+    slugAndId.includes('coreldraw') ||
+    slugAndId.includes('capcut') ||
+    slugAndId.includes('adobe')
+  ) {
+    return 'diseno';
+  }
+  if (p.category === 'office') return 'office';
+  if (p.category === 'windows') return 'windows';
+  if (
+    p.category === 'project-visio' ||
+    p.category === 'combos' ||
+    slugAndId.includes('mcafee') ||
+    slugAndId.includes('duolingo') ||
+    slugAndId.includes('project') ||
+    slugAndId.includes('visio') ||
+    slugAndId.includes('autodesk')
+  ) {
+    return 'profesional';
+  }
+  return p.category;
+}
+
+export function getProductIncludes(product: Product): string[] {
+  if (product.includes && product.includes.length > 0) return product.includes;
+
+  if (product.id === 'prod-canva-pro') {
+    return [
+      'Invitación oficial a Canva Pro enviada directamente a tu correo personal (1 usuario)',
+      'Acceso a más de 100 millones de fotos, plantillas, videos y gráficos premium',
+      'Herramientas de IA Magic Studio y quitafondos de imagen/video en 1 clic',
+      'Soporte de activación y garantía durante la vigencia contratada'
+    ];
+  }
+  if (product.id === 'prod-gemini-ai-pro') {
+    return [
+      'Enlace oficial de activación de suscripción Google Gemini AI Pro (18 meses) en tu Gmail',
+      'Capacidad de compartir el grupo familiar hasta con 5 usuarios adicionales',
+      '5 TB de almacenamiento privado en Google One Cloud',
+      'Integración de Gemini en Docs, Sheets, Slides y Gmail'
+    ];
+  }
+  if (product.id === 'prod-gemini-ai-pro-12m') {
+    return [
+      'Invitación oficial de activación a tu cuenta personal de Gmail (1 usuario)',
+      'Acceso a modelos avanzados Gemini AI Pro por 12 meses',
+      'Almacenamiento en la nube Google One privado e independiente',
+      'Soporte personalizado por WhatsApp y correo'
+    ];
+  }
+  if (product.id === 'prod-duolingo-super') {
+    return [
+      'Invitación oficial de activación para tu cuenta personal de Duolingo (1 usuario)',
+      '12 meses de vidas infinitas, práctica personalizada y cero anuncios',
+      'Soporte y garantía de funcionamiento'
+    ];
+  }
+  if (product.id === 'prod-microsoft-365') {
+    return [
+      'Credenciales de cuenta oficial exclusiva Microsoft 365 (1 usuario, hasta 5 dispositivos)',
+      'Word, Excel, PowerPoint, Outlook y OneNote siempre actualizados por 1 año',
+      '100 GB de almacenamiento privado en OneDrive',
+      'Guía de acceso e instalación paso a paso'
+    ];
+  }
+  if (product.category === 'streaming') {
+    return [
+      'Credenciales de acceso verificadas según la modalidad elegida (Perfil o Cuenta Completa)',
+      'Instrucciones claras de ingreso y normas de uso para evitar bloqueos',
+      'Garantía y soporte técnico durante todo el periodo contratado'
+    ];
+  }
+  if (product.id.includes('combo')) {
+    return [
+      'Claves digitales alfanuméricas independientes de 25 caracteres para cada programa del pack',
+      'Enlaces directos a los instaladores oficiales limpios (.exe / .img)',
+      'Guía detallada de instalación y activación paso a paso',
+      'Soporte técnico por WhatsApp y garantía de activación'
+    ];
+  }
+  return [
+    'Clave de licencia digital alfanumérica de 25 caracteres',
+    'Enlace de descarga directa del instalador oficial',
+    'Guía paso a paso de instalación y activación',
+    'Asistencia técnica por WhatsApp y garantía aplicable'
+  ];
+}
+
+export function getProductTermsOfUse(product: Product, selectedVariantId?: string): string {
+  if (product.termsOfUse) return product.termsOfUse;
+
+  if (product.variants && product.variants.length > 0) {
+    const v = product.variants.find(va => va.id === selectedVariantId) || product.variants[0];
+    if (v.id === 'oem' || v.type === 'OEM') {
+      return 'Licencia tipo OEM: Se vincula de forma permanente a la placa madre (hardware) de 1 equipo específico. Es reinstalable en esa misma PC tras formatear, pero no es transferible a otra computadora distinta.';
+    }
+    if (v.id === 'retail' || v.type === 'Retail') {
+      return 'Licencia tipo Retail: Permite activación en 1 PC y puede transferirse a otro equipo en caso de cambio o renovación de computadora (desactivándola previamente del equipo anterior).';
+    }
+  }
+
+  if (product.id.includes('-tel')) {
+    return 'Modalidad de Activación Telefónica: Requiere validar el Identificador de Instalación en el sistema automatizado oficial de Microsoft siguiendo la guía incluida. Válida para 1 equipo específico sin pagos recurrentes.';
+  }
+  if (product.id === 'prod-canva-pro' || product.id === 'prod-duolingo-super' || product.id === 'prod-gemini-ai-pro-12m') {
+    return 'Suscripción individual por invitación a tu propio correo personal (1 usuario). No necesitas compartir tu contraseña. El acceso es personal e intransferible a cuentas distintas una vez aceptada la invitación.';
+  }
+  if (product.id === 'prod-gemini-ai-pro') {
+    return 'Suscripción activable en tu correo personal Gmail mediante enlace oficial. Permite invitar hasta 5 miembros adicionales desde tu panel de Google One.';
+  }
+  if (product.id === 'prod-microsoft-365') {
+    return 'Cuenta dedicada exclusiva para 1 titular, utilizable hasta en 5 dispositivos simultáneos (PC, Mac, tablet o celular). Requiere cambiar la contraseña temporal en el primer inicio de sesión.';
+  }
+  if (product.category === 'streaming') {
+    return 'Uso sujeto a la modalidad adquirida: En modalidad Perfil Individual se debe utilizar únicamente el perfil asignado sin modificar contraseñas ni agregar perfiles extra. En modalidad Cuenta Completa tienes control de todos los perfiles durante la vigencia contratada.';
+  }
+  if (product.id.includes('3pc')) {
+    return 'Licencia válida para activar hasta 3 computadoras (PC) independientes con Windows 10 u 11. Activación permanente sin cobros mensuales.';
+  }
+  return 'Licencia digital válida para 1 equipo (según compatibilidad indicada). Activación permanente sin mensualidades. Se vincula al equipo donde se realiza la activación.';
+}
+
+export function getProductWarranty(product: Product): string {
+  if (product.warranty) return product.warranty;
+  if (product.id.includes('-tel')) {
+    return 'Garantía de activación de 30 días (1 mes) con soporte técnico asistido por WhatsApp.';
+  }
+  if (product.category === 'streaming') {
+    return `Garantía completa durante todo el periodo contratado (${product.duration}) con reemplazo o soporte ante cualquier incidencia.`;
+  }
+  return 'Garantía oficial UPCLIC de 6 meses de funcionamiento y activación, con soporte técnico directo por WhatsApp.';
+}
+
+export const OFFICIAL_CATEGORIES: {
+  id: Product['category'];
+  name: string;
+  shortName: string;
+  description: string;
+}[] = [
+  {
+    id: 'streaming',
+    name: 'Streaming y Entretenimiento',
+    shortName: 'Streaming',
+    description: 'Prime Video, Netflix, HBO Max, Disney Plus, Crunchyroll, Paramount Plus, Apple TV y más.'
+  },
+  {
+    id: 'office',
+    name: 'Microsoft Office',
+    shortName: 'Microsoft Office',
+    description: 'Office 365, Office 2024, Office 2021, Office 2019, Office 2016 y Office Standard.'
+  },
+  {
+    id: 'windows',
+    name: 'Windows',
+    shortName: 'Windows',
+    description: 'Licencias OEM y Retail para Windows 11, Windows 10, Windows 8.1 y versiones anteriores.'
+  },
+  {
+    id: 'ia',
+    name: 'Inteligencia Artificial',
+    shortName: 'Inteligencia Artificial',
+    description: 'Gemini AI Pro y herramientas avanzadas de productividad con Inteligencia Artificial.'
+  },
+  {
+    id: 'diseno',
+    name: 'Diseño y Edición',
+    shortName: 'Diseño y Edición',
+    description: 'Canva Pro, CorelDRAW Graphics Suite, CapCut, Adobe y herramientas creativas.'
+  },
+  {
+    id: 'profesional',
+    name: 'Software Profesional y Seguridad',
+    shortName: 'Software Profesional',
+    description: 'Microsoft Project, Visio, McAfee Antivirus, packs corporativos y herramientas técnicas.'
+  }
+];
+
+export function getCategoryLabel(category: string): string {
+  const found = OFFICIAL_CATEGORIES.find(c => c.id === category);
+  if (found) return found.name;
+  switch (category) {
+    case 'combos':
+      return 'Combos Software Profesional';
+    case 'project-visio':
+      return 'Project y Visio';
+    case 'apps':
+      return 'Suscripciones y Herramientas';
+    case 'offers':
+      return 'Ofertas Especiales';
+    case 'bestsellers':
+    case 'top':
+      return 'Más Vendidos';
+    default:
+      return 'Catálogo General';
+  }
+}
+
+function enrichProduct(p: Product): Product {
+  const mappedCategory = mapOfficialCategory(p);
+  const base: Product = {
+    ...p,
+    category: mappedCategory,
+    stock: p.stock ?? DEFAULT_PRODUCT_STOCK,
+    active: p.active ?? true
+  };
+  return {
+    ...base,
+    includes: p.includes && p.includes.length > 0 ? p.includes : getProductIncludes(base),
+    termsOfUse: p.termsOfUse || getProductTermsOfUse(base),
+    deliveryMode: p.deliveryMode || getProductDeliveryType(base, 'ES'),
+    warranty: p.warranty || getProductWarranty(base)
+  };
+}
+
+export let products: Product[] = rawProducts.map(enrichProduct);
+
+export function setRuntimeProducts(customList: Product[]) {
+  if (Array.isArray(customList) && customList.length > 0) {
+    products = customList.map(enrichProduct);
+  }
+}
 
 export function getProductDeviceTag(product: Product, language: 'ES' | 'EN' = 'ES'): string {
   const isEn = language === 'EN';
@@ -1583,7 +1854,7 @@ export function getProductDeviceTag(product: Product, language: 'ES' | 'EN' = 'E
   if (product.id.includes('365') || product.id.includes('m365')) {
     return isEn ? '5 devices' : '5 dispositivos';
   }
-  if (product.category === 'apps' && product.isAccountAccess) {
+  if ((product.category === 'apps' || product.category === 'ia' || product.category === 'diseno' || product.category === 'streaming') && product.isAccountAccess) {
     return isEn ? '1 user' : '1 usuario';
   }
   if (product.id.includes('3pc')) {
@@ -1596,33 +1867,34 @@ export function getProductDeviceTag(product: Product, language: 'ES' | 'EN' = 'E
 }
 
 export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' = 'ES'): string {
+  if (product.deliveryMode && language === 'ES') return product.deliveryMode;
   const isEn = language === 'EN';
 
   if (product.isImmediateDelivery) {
     return isEn
-      ? '⚡ Instant Automatic Delivery: Account credentials generated immediately on screen and sent to your email right after payment.'
-      : '⚡ Entrega Inmediata y Automática: Credenciales de acceso generadas al instante en pantalla y enviadas a tu correo al completar el pago.';
+      ? 'Instant Automatic Delivery: Account credentials generated immediately on screen and sent to your email right after payment verification.'
+      : 'Entrega Digital Rápida: Credenciales generadas y enviadas a tu correo y WhatsApp tras verificar el pago.';
   }
 
   if (product.id === 'prod-gemini-ai-pro') {
     return isEn
       ? 'Subscription activation link sent to your personal Gmail account (up to 5 users on your devices).'
-      : 'Link de activación suscripción (enviado a tu correo personal Gmail, hasta 5 usuarios en sus dispositivos).';
+      : 'Enlace de activación de suscripción enviado a tu correo personal Gmail (hasta 5 usuarios en sus dispositivos).';
   }
   if (product.id === 'prod-gemini-ai-pro-12m') {
     return isEn
       ? 'Official email invitation sent to your personal Gmail account (1 user on your devices).'
-      : 'Invitación a correo (enviada a tu correo personal Gmail, 1 usuario en sus dispositivos).';
+      : 'Invitación oficial enviada a tu correo personal Gmail (1 usuario en sus dispositivos).';
   }
   if (product.id === 'prod-canva-pro') {
     return isEn
       ? 'Official email invitation to your personal Canva account (1 user on your devices).'
-      : 'Invitación a correo oficial a tu cuenta personal de Canva (1 usuario en sus dispositivos).';
+      : 'Invitación oficial enviada a tu correo personal de Canva (1 usuario en sus dispositivos, sin pedir tu contraseña).';
   }
   if (product.id === 'prod-duolingo-super') {
     return isEn
       ? 'Official email invitation to your personal Duolingo account (1 user on your devices).'
-      : 'Invitación a correo oficial para tu cuenta personal de Duolingo (1 usuario en sus dispositivos).';
+      : 'Invitación oficial enviada a tu correo personal de Duolingo (1 usuario en sus dispositivos).';
   }
   if (product.id === 'prod-microsoft-365' || product.isAccountAccess) {
     return isEn
@@ -1636,8 +1908,8 @@ export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' =
           ? 'Includes official OEM-type activation key + step-by-step phone activation guide (Official Microsoft automated phone activation, 1-month warranty) + direct installer link.'
           : 'Includes activation key + step-by-step phone activation guide (Official Microsoft automated phone activation, 1-month warranty) + direct installer link.')
       : (isWindowsTel
-          ? 'Incluye clave de activación tipo OEM + guía de activación (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.'
-          : 'Incluye clave de activación + guía de activación (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.');
+          ? 'Incluye clave de activación tipo OEM + guía paso a paso (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.'
+          : 'Incluye clave de activación + guía paso a paso (activación telefónica automatizada ante Microsoft, garantía de 1 mes) + instalador directo.');
   }
   if (product.id === 'prod-mcafee-antivirus') {
     return isEn
@@ -1649,17 +1921,18 @@ export function getProductDeliveryType(product: Product, language: 'ES' | 'EN' =
       ? 'Official lifetime digital license for 1 Mac + official DMG installer (6-month warranty).'
       : 'Clave de licencia digital permanente para 1 Mac + instalador oficial (.dmg) (Garantía de 6 meses).';
   }
-  if (product.category === 'combos') {
+  if (product.id.includes('combo')) {
     return isEn
       ? 'Independent official 25-character digital product keys for each suite + official direct installers (6-month warranty).'
-      : 'Claves digitales oficiales independientes de 25 caracteres para cada software + instaladores directos (Garantía de 6 meses).';
+      : 'Claves digitales oficiales independientes de 25 caracteres para cada programa + instaladores directos (Garantía de 6 meses).';
   }
   if (product.category === 'windows') {
     return isEn
       ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for activation in Settings > System > Activation (6-month warranty).'
-      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación en Ajustes > Sistema > Activación (Garantía de 6 meses).';
+      : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) enviada por correo y WhatsApp para activación en Configuración > Sistema > Activación (Garantía de 6 meses).';
   }
   return isEn
     ? 'Official 25-character alphanumeric digital key (Genuine Microsoft) for direct activation (6-month warranty).'
-    : 'Clave digital alfanumérica de 25 caracteres (Original Microsoft) para activación directa en tu suite (Garantía de 6 meses).';
+    : 'Clave digital alfanumérica de 25 caracteres enviada por correo y WhatsApp + instalador oficial directo (Garantía de 6 meses).';
 }
+

@@ -1,92 +1,224 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Página de Inicio -->
+  <!-- Página Principal -->
   <url>
     <loc>https://upclic.store/</loc>
-    <lastmod>2026-09-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Categorías de Productos -->
+  <!-- 6 Categorías Oficiales UPCLIC -->
   <url>
-    <loc>https://upclic.store/#office</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/categoria/streaming</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://upclic.store/#windows</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/categoria/office</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://upclic.store/#combos</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/categoria/windows</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://upclic.store/#project-visio</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/categoria/ia</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://upclic.store/#antivirus-apps</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/categoria/diseno</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/categoria/profesional</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
-  <!-- Productos Destacados -->
+  <!-- Productos Microsoft Office -->
   <url>
     <loc>https://upclic.store/producto/office-2024-pro-plus</loc>
-    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2024-pro-plus-telefono</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://upclic.store/producto/office-365-personal-1-ano</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/producto/office-2024-pro-plus-3pc</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2024-standard</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upclic.store/producto/office-2021-pro-plus</loc>
-    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2021-pro-plus-telefono</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://upclic.store/producto/windows-11-pro-digital-license</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/producto/office-2021-pro-plus-3pc</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://upclic.store/producto/windows-10-pro-digital-license</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/producto/office-2019-pro-plus</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://upclic.store/producto/combo-win11-office2024</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/producto/office-2019-pro-plus-telefono</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2016-pro-plus</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2016-pro-plus-telefono</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2013-pro-plus</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/office-2010-pro-plus</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/microsoft-365-personal-1-ano</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Productos Windows -->
+  <url>
+    <loc>https://upclic.store/producto/windows-11-pro-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-11-pro-telefono</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-11-home-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-11-home-telefono</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-11-enterprise-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-10-pro-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-10-pro-telefono</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-10-home-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-10-home-telefono</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-10-enterprise-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-8-1-pro-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-7-pro-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/windows-7-ultimate-key</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Inteligencia Artificial y Diseño -->
   <url>
     <loc>https://upclic.store/producto/canva-pro-12-meses</loc>
-    <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://upclic.store/producto/adobe-acrobat-pro-dc-permanente</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://upclic.store/producto/google-gemini-ia-pro-18-meses</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/gemini-ai-pro-12-meses</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/coreldraw-graphics-suite-2024-mac</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Software Profesional y Seguridad -->
+  <url>
+    <loc>https://upclic.store/producto/microsoft-project-professional-2024</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/microsoft-visio-professional-2024</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/mcafee-antivirus-1pc-12-meses</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upclic.store/producto/duolingo-super-12-meses</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

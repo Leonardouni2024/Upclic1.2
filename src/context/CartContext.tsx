@@ -1,121 +1,159 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { Product, CartItem, ProductCategory, CartTotals, Currency } from '../types.ts';
-import { products, calculateCartTotals, DynamicCoupon, DYNAMIC_COUPONS, formatPrice } from '../products.ts';
-import { 
-  getTranslation, 
-  translations, 
-  getProductName, 
-  getProductDesc, 
-  getProductFeatures, 
-  getProductCompatibility, 
-  getDurationLabel, 
-  getBadgeLabel 
-} from '../utils/i18n.ts';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import {
+  Product,
+  CartItem,
+  ProductCategory,
+  CartTotals,
+  Currency,
+  PromoCoupon,
+  PaymentSettings
+} from '../types';
+import {
+  products as initialProducts,
+  calculateCartTotals,
+  getProductBySlug,
+  DynamicCoupon,
+  validateCoupon,
+  setRuntimeProducts,
+  setRuntimeCoupons
+} from '../products';
+import { translations, getTranslation } from '../utils/i18n';
+import {
+  trackAddToCart,
+  trackBeginCheckout,
+  trackViewItem,
+  trackPageView,
+  configureAnalyticsIds,
+  initAnalyticsScripts
+} from '../utils/analytics';
 
-interface ToastData {
-  id: string;
-  type: 'added' | 'discount' | 'info' | 'coupon' | 'warning' | 'success';
-  title: string;
-  message?: string;
-}
+export type HelpSection =
+  | 'quienes-somos'
+  | 'contacto'
+  | 'faq'
+  | 'privacidad'
+  | 'terminos'
+  | 'garantia'
+  | 'reembolsos'
+  | 'envio';
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number, selectedVariant?: string) => void;
-  removeItem: (itemKeyOrProductId: string, variantId?: string) => void;
-  updateQuantity: (itemKeyOrProductId: string, delta: number, variantId?: string) => void;
-  setQuantity: (itemKeyOrProductId: string, quantity: number, variantId?: string) => void;
+  addToCart: (product: Product, quantity?: number, selectedVariantId?: string) => void;
+  buyNow: (product: Product, quantity?: number, selectedVariantId?: string) => void;
+  removeFromCart: (itemId: string) => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
-  // Totals & Discount details
-  totalQuantity: number;
-  subtotal: number;
-  hasDiscount: boolean;
-  discountRate: number;
-  discountAmount: number;
-  total: number;
-  discountReason?: string;
-  isMultiItemDiscount: boolean;
-  isCouponApplied: boolean;
-  isDiscountPopupOpen: boolean;
-  setIsDiscountPopupOpen: (open: boolean) => void;
-  isMultiItemDiscountActive: boolean;
-  handleDiscountPopupComplete: () => void;
-  // Promo Coupon System
-  appliedCoupon: string;
+  cartTotals: CartTotals;
+  selectedCategory: ProductCategory;
+  setSelectedCategory: (cat: ProductCategory) => void;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+  selectedProduct: Product | null;
+  setSelectedProduct: (product: Product | null) => void;
+  activeHelpSection: HelpSection | null;
+  setActiveHelpSection: (sec: HelpSection | null) => void;
+  currentView: 'home' | 'product' | 'checkout' | 'admin';
+  setCurrentView: (view: 'home' | 'product' | 'checkout' | 'admin') => void;
+  goToHome: () => void;
+  goToCheckout: () => void;
+  goToAdmin: () => void;
+  couponCode: string;
   applyCoupon: (code: string) => { success: boolean; message: string };
   removeCoupon: () => void;
-  couponFeedback: { type: 'success' | 'error' | 'info'; message: string } | null;
-  toasts: ToastData[];
-  removeToast: (id: string) => void;
-  // Navigation & Filtering
-  activeCategory: ProductCategory;
-  setActiveCategory: (cat: ProductCategory) => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  navigateToProduct: (slug: string) => void;
-  navigateToHome: () => void;
-  navigateToCheckout: () => void;
-  navigateToPayPal: () => void;
-  currentPath: string;
-  currentProductSlug?: string;
-  // Region, Currency & Language System
+  promoCoupon: PromoCoupon | null;
+  setPromoCoupon: (coupon: PromoCoupon | null) => void;
+  activeDynamicCoupon: DynamicCoupon | null;
+  setActiveDynamicCoupon: (coupon: DynamicCoupon | null) => void;
+  isEntryPopupOpen: boolean;
+  setIsEntryPopupOpen: (open: boolean) => void;
+  isUserOrdersOpen: boolean;
+  setIsUserOrdersOpen: (open: boolean) => void;
+  isDiscountUnlocked: boolean;
+  unlockDiscount: () => void;
   currency: Currency;
-  setCurrency: (currency: Currency, manual?: boolean, newLang?: 'ES' | 'EN') => void;
-  language: 'ES' | 'EN';
-  setLanguage: (language: 'ES' | 'EN') => void;
+  setCurrency: (c: Currency) => void;
   exchangeRate: number;
-  setExchangeRate: (rate: number) => void;
-  detectedCountry: string | null;
-  isDetectingCountry: boolean;
-  detectUserCountry: (force?: boolean) => Promise<string | null>;
-  isRegionModalOpen: boolean;
-  setIsRegionModalOpen: (open: boolean) => void;
+  rates: { PEN: number; COP: number; MXN: number; USD: number };
+  ratesSource: string;
+  ratesLastUpdated: string;
+  refreshExchangeRates: () => Promise<void>;
+  countryCode: string;
+  language: 'ES' | 'EN';
+  setLanguage: (lang: 'ES' | 'EN') => void;
+  selectCountry: (country: string, manual?: boolean) => void;
+  t: ((key: keyof typeof translations.ES) => any) & typeof translations.ES;
   formatPrice: (priceInPEN: number) => string;
-  t: (key: keyof typeof translations['ES']) => string;
-  getProductName: (product: { id: string; name: string }) => string;
-  getProductDesc: (product: { id: string; description: string }) => string;
-  getProductFeatures: (product: { id: string; features?: string[] }) => string[];
-  getProductCompatibility: (product: { id: string; compatibility?: string }) => string;
-  getDurationLabel: (duration: string) => string;
-  getBadgeLabel: (badge?: string) => string | undefined;
+  productStocks: Record<string, number>;
+  decrementStock: (items: { id: string; quantity: number }[]) => void;
+  getStock: (productId: string) => number;
+  catalogProducts: Product[];
+  paymentSettings: PaymentSettings | null;
+  refreshCatalog: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'upclic_cart_v3';
-const COUPON_STORAGE_KEY = 'upclic_coupon_v2';
+const STORAGE_KEY = 'upclic_cart_v1';
+const COUPON_STORAGE_KEY = 'upclic_coupon_v1';
+const PROMO_COUPON_STORAGE_KEY = 'upclic_promo_coupon_v1';
+const DYNAMIC_COUPON_STORAGE_KEY = 'upclic_dynamic_coupon_v1';
+const DISCOUNT_UNLOCKED_KEY = 'upclic_discount_unlocked_v1';
+
+const VALID_CATEGORIES: ProductCategory[] = [
+  'all',
+  'streaming',
+  'office',
+  'windows',
+  'ia',
+  'diseno',
+  'profesional',
+  'combos',
+  'project-visio',
+  'apps',
+  'offers',
+  'bestsellers',
+  'top'
+];
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [catalogProducts, setCatalogProducts] = useState<Product[]>(initialProducts);
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings | null>(null);
+
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
-      if (typeof window !== 'undefined') {
-        // One-time cleanup of legacy test carts from previous test versions on any device/mobile browser
-        if (!localStorage.getItem('upclic_cart_v3_init')) {
-          localStorage.removeItem('upclic_cart_v1');
-          localStorage.removeItem('upclic_cart_v2');
-          localStorage.removeItem('upclic_cart');
-          localStorage.removeItem('upclic_last_order');
-          localStorage.setItem('upclic_cart_v3_init', 'true');
-          return [];
-        }
-
-        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return [];
+      const parsed: CartItem[] = JSON.parse(saved);
+      return parsed
+        .map(item => {
+          const freshProduct = initialProducts.find(p => p.id === item.product.id);
+          if (!freshProduct) return null;
+          let unitPrice = freshProduct.price;
+          let variantName = item.variantName;
+          if (item.selectedVariant && freshProduct.variants) {
+            const v = freshProduct.variants.find(va => va.id === item.selectedVariant);
+            if (v) {
+              unitPrice = v.price;
+              variantName = v.name;
+            }
           }
-        }
-      }
-    } catch (e) {
-      console.error('Error loading cart from localStorage', e);
+          return {
+            ...item,
+            product: freshProduct,
+            unitPrice,
+            variantName
+          };
+        })
+        .filter(Boolean) as CartItem[];
+    } catch {
+      return [];
     }
-    return [];
   });
 
-  const [appliedCoupon, setAppliedCoupon] = useState<string>(() => {
+  const [couponCode, setCouponCode] = useState<string>(() => {
     try {
       return localStorage.getItem(COUPON_STORAGE_KEY) || '';
     } catch {
@@ -123,778 +161,697 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
-  const [dynamicCoupon, setDynamicCoupon] = useState<DynamicCoupon | null>(() => {
+  const [promoCoupon, setPromoCouponState] = useState<PromoCoupon | null>(() => {
     try {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('upclic_dynamic_coupon');
-      }
-    } catch(e) {}
-    return null;
+      const saved = localStorage.getItem(PROMO_COUPON_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
 
-  const [isMultiItemDiscountActive, setIsMultiItemDiscountActive] = useState<boolean>(() => {
+  const [activeDynamicCoupon, setActiveDynamicCouponState] = useState<DynamicCoupon | null>(() => {
     try {
-      if (typeof window !== 'undefined') {
-        return localStorage.getItem('upclic_multi_discount_active') === 'true';
+      const saved = localStorage.getItem(DYNAMIC_COUPON_STORAGE_KEY);
+      if (!saved) return null;
+      const parsed: DynamicCoupon = JSON.parse(saved);
+      if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+        localStorage.removeItem(DYNAMIC_COUPON_STORAGE_KEY);
+        return null;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  });
+
+  const [isEntryPopupOpen, setIsEntryPopupOpen] = useState(false);
+  const [isUserOrdersOpen, setIsUserOrdersOpen] = useState(false);
+
+  const [isDiscountUnlocked, setIsDiscountUnlocked] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(DISCOUNT_UNLOCKED_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Primary market: Peru (S/ PEN) and Spanish (ES) by default
+  const [currency, setCurrencyState] = useState<Currency>(() => {
+    try {
+      const manualLock = localStorage.getItem('upclic_manual_country') === 'true';
+      if (manualLock) {
+        const saved = localStorage.getItem('upclic_currency') as Currency;
+        if (['PEN', 'USD', 'COP', 'MXN'].includes(saved)) return saved;
       }
     } catch {}
-    return false;
-  });
-
-  const [isDiscountPopupOpen, setIsDiscountPopupOpen] = useState(false);
-
-  // Region, Language & Currency State
-  const [currency, setCurrencyState] = useState<Currency>(() => {
-    if (typeof window !== 'undefined') {
-      const c = localStorage.getItem('upclic_currency') as Currency;
-      if (['PEN', 'USD', 'COP', 'MXN'].includes(c)) return c;
-    }
     return 'PEN';
   });
 
-  const [language, setLanguageState] = useState<'ES' | 'EN'>(() => {
-    if (typeof window !== 'undefined') {
-      const l = localStorage.getItem('upclic_language');
-      if (l === 'EN' || l === 'ES') return l;
-    }
-    return 'ES';
-  });
-
-  const [exchangeRate, setExchangeRateState] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const r = localStorage.getItem('upclic_exchange_rate');
-      if (r) {
-        const parsed = parseFloat(r);
+  const [exchangeRate, setExchangeRate] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('upclic_exchange_rate');
+      if (saved) {
+        const parsed = parseFloat(saved);
         if (!isNaN(parsed) && parsed > 0) return parsed;
       }
-    }
+    } catch {}
     return 3.75;
   });
 
-  const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
-  const [detectedCountry, setDetectedCountry] = useState<string | null>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('upclic_detected_country');
-    }
-    return null;
+  const [rates, setRates] = useState<{ PEN: number; COP: number; MXN: number; USD: number }>(() => {
+    try {
+      const saved = localStorage.getItem('upclic_rates');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          PEN: Number(parsed.PEN) || 3.75,
+          COP: Number(parsed.COP) || 4100,
+          MXN: Number(parsed.MXN) || 19.8,
+          USD: 1.0
+        };
+      }
+    } catch {}
+    return { PEN: 3.75, COP: 4100, MXN: 19.8, USD: 1.0 };
   });
-  const [isDetectingCountry, setIsDetectingCountry] = useState(false);
 
-  const setCurrency = (c: Currency, manual: boolean = true, newLang?: 'ES' | 'EN') => {
-    setCurrencyState(c);
-    let targetLang = language;
-    if (newLang) {
-      targetLang = newLang;
-    } else if (c === 'PEN' || c === 'COP' || c === 'MXN') {
-      targetLang = 'ES';
+  const [ratesSource, setRatesSource] = useState<string>('Google Finance');
+  const [ratesLastUpdated, setRatesLastUpdated] = useState<string>(new Date().toISOString());
+
+  const [countryCode, setCountryCode] = useState<string>(() => {
+    try {
+      const manualLock = localStorage.getItem('upclic_manual_country') === 'true';
+      if (manualLock) {
+        return localStorage.getItem('upclic_country') || 'PE';
+      }
+    } catch {}
+    return 'PE';
+  });
+
+  const [language, setLanguageState] = useState<'ES' | 'EN'>(() => {
+    try {
+      const manualLock = localStorage.getItem('upclic_manual_country') === 'true';
+      if (manualLock) {
+        const saved = localStorage.getItem('upclic_language');
+        if (saved === 'EN' || saved === 'ES') return saved;
+      }
+    } catch {}
+    return 'ES';
+  });
+
+  const [productStocks, setProductStocks] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem('upclic_product_stocks_v1');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    const initial: Record<string, number> = {};
+    initialProducts.forEach(p => {
+      initial[p.id] = p.stock ?? 30;
+    });
+    return initial;
+  });
+
+  const refreshCatalog = useCallback(async () => {
+    try {
+      const res = await fetch('/api/catalog');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data.products) && data.products.length > 0) {
+        setRuntimeProducts(data.products);
+        // Re-read enriched products from module
+        const { products: updatedProducts } = await import('../products');
+        setCatalogProducts([...updatedProducts]);
+      }
+      if (Array.isArray(data.coupons) && data.coupons.length > 0) {
+        setRuntimeCoupons(data.coupons);
+      }
+      if (data.paymentSettings) {
+        setPaymentSettings(data.paymentSettings);
+        if (data.paymentSettings.analytics) {
+          configureAnalyticsIds(
+            data.paymentSettings.analytics.ga4MeasurementId,
+            data.paymentSettings.analytics.metaPixelId
+          );
+        }
+      }
+    } catch {
+      // Fallback to local static catalog
     }
-    setLanguageState(targetLang);
+  }, []);
+
+  useEffect(() => {
+    initAnalyticsScripts();
+    refreshCatalog();
+  }, [refreshCatalog]);
+
+  const decrementStock = (purchasedItems: { id: string; quantity: number }[]) => {
+    setProductStocks(prev => {
+      const next = { ...prev };
+      purchasedItems.forEach(item => {
+        const current = next[item.id] ?? 30;
+        next[item.id] = Math.max(0, current - item.quantity);
+      });
+      try {
+        localStorage.setItem('upclic_product_stocks_v1', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const getStock = (productId: string): number => {
+    const prod = catalogProducts.find(p => p.id === productId);
+    if (prod && typeof prod.stock === 'number') return prod.stock;
+    return productStocks[productId] ?? 30;
+  };
+
+  const setCurrency = (c: Currency) => {
+    setCurrencyState(c);
     try {
       localStorage.setItem('upclic_currency', c);
-      localStorage.setItem('upclic_language', targetLang);
-      if (manual) {
-        const currentCountry = localStorage.getItem('upclic_detected_country') || 'MANUAL';
-        localStorage.setItem('upclic_currency_manual_for_country', currentCountry);
-      }
     } catch {}
   };
 
-  const setLanguage = (l: 'ES' | 'EN') => {
-    setLanguageState(l);
+  const setLanguage = (lang: 'ES' | 'EN') => {
+    setLanguageState(lang);
     try {
-      localStorage.setItem('upclic_language', l);
-      const currentCountry = localStorage.getItem('upclic_detected_country') || 'MANUAL';
-      localStorage.setItem('upclic_currency_manual_for_country', currentCountry);
+      localStorage.setItem('upclic_language', lang);
     } catch {}
   };
 
-  const setExchangeRate = (r: number) => {
-    setExchangeRateState(r);
-    try {
-      localStorage.setItem('upclic_exchange_rate', r.toString());
-    } catch {}
-  };
+  const selectCountry = (code: string, manual: boolean = true) => {
+    const clean = code.toUpperCase();
+    setCountryCode(clean);
+    let targetCurrency: Currency = 'PEN';
+    let targetLang: 'ES' | 'EN' = 'ES';
 
-  // Fetch real-time exchange rates from API
-  useEffect(() => {
-    let isMounted = true;
-    
-    async function fetchLiveRates() {
-      try {
-        const res = await fetch('https://open.er-api.com/v6/latest/USD');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.rates) {
-            const pen = parseFloat(data.rates.PEN) || 3.75;
-            const cop = parseFloat(data.rates.COP) || 4100;
-            const mxn = parseFloat(data.rates.MXN) || 19.8;
-            if (isMounted) {
-              setExchangeRateState(pen);
-              try {
-                localStorage.setItem('upclic_exchange_rate', pen.toString());
-                localStorage.setItem(
-                  'upclic_rates',
-                  JSON.stringify({ PEN: pen, COP: cop, MXN: mxn })
-                );
-              } catch {}
-            }
-          }
-        }
-      } catch {
-        // Fallback silently
-      }
+    if (clean === 'PE') {
+      targetCurrency = 'PEN';
+      targetLang = 'ES';
+    } else if (clean === 'CO') {
+      targetCurrency = 'COP';
+      targetLang = 'ES';
+    } else if (clean === 'MX') {
+      targetCurrency = 'MXN';
+      targetLang = 'ES';
+    } else if (clean === 'US') {
+      targetCurrency = 'USD';
+      targetLang = 'EN';
+    } else {
+      targetCurrency = 'USD';
+      targetLang = 'ES';
     }
-    
-    fetchLiveRates();
-    return () => { isMounted = false; };
-  }, []);
 
-  // Resilient Country & Currency Auto-Detection
-  const detectUserCountry = async (force: boolean = false): Promise<string | null> => {
-    if (typeof window === 'undefined') return null;
+    setCurrency(targetCurrency);
+    setLanguage(targetLang);
 
-    setIsDetectingCountry(true);
-    let detected: string | null = null;
-
-    // 1. Primary: backend /api/geo (with server-side IP extraction, caching & multiple providers)
     try {
-      const res = await fetch('/api/geo');
+      localStorage.setItem('upclic_country', clean);
+      if (manual) {
+        localStorage.setItem('upclic_manual_country', 'true');
+      }
+    } catch {}
+  };
+
+  const refreshExchangeRates = async () => {
+    try {
+      const res = await fetch('/api/rates');
       if (res.ok) {
         const data = await res.json();
-        if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
-          detected = data.country.toUpperCase();
+        if (data && data.rates) {
+          const newRates = {
+            PEN: Number(data.rates.PEN) || 3.75,
+            COP: Number(data.rates.COP) || 4100,
+            MXN: Number(data.rates.MXN) || 19.8,
+            USD: 1.0
+          };
+          setRates(newRates);
+          setExchangeRate(newRates.PEN);
+          if (data.source) setRatesSource(data.source);
+          if (data.lastUpdated) setRatesLastUpdated(data.lastUpdated);
+          try {
+            localStorage.setItem('upclic_rates', JSON.stringify(newRates));
+            localStorage.setItem('upclic_exchange_rate', newRates.PEN.toString());
+          } catch {}
+          return;
         }
       }
     } catch {}
-
-    // 2. Direct client fallback 1: country.is
-    if (!detected) {
-      try {
-        const res = await fetch('https://api.country.is/');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.country && typeof data.country === 'string' && data.country.length === 2) {
-            detected = data.country.toUpperCase();
-          }
-        }
-      } catch {}
-    }
-
-    // 3. Direct client fallback 2: ipwho.is
-    if (!detected) {
-      try {
-        const res = await fetch('https://ipwho.is/');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.success && data.country_code && data.country_code.length === 2) {
-            detected = data.country_code.toUpperCase();
-          }
-        }
-      } catch {}
-    }
-
-    // 4. Direct client fallback 3: ipinfo.io
-    if (!detected) {
-      try {
-        const res = await fetch('https://ipinfo.io/json');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.country && data.country.length === 2) {
-            detected = data.country.toUpperCase();
-          }
-        }
-      } catch {}
-    }
-
-    // 5. Direct client fallback 4: ipapi.co
-    if (!detected) {
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.country_code && data.country_code.length === 2) {
-            detected = data.country_code.toUpperCase();
-          }
-        }
-      } catch {}
-    }
-
-    // 6. Direct client fallback 5: freeipapi.com
-    if (!detected) {
-      try {
-        const res = await fetch('https://freeipapi.com/api/json');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.countryCode && data.countryCode.length === 2) {
-            detected = data.countryCode.toUpperCase();
-          }
-        }
-      } catch {}
-    }
-
-    setIsDetectingCountry(false);
-
-    if (!detected) {
-      return null;
-    }
-
-    setDetectedCountry(detected);
-    try {
-      localStorage.setItem('upclic_detected_country', detected);
-    } catch {}
-
-    const LATAM_COUNTRIES = [
-      'AR', 'BO', 'BR', 'CL', 'EC', 'FK', 'GF', 'GY', 'PY', 'SR', 'UY', 'VE',
-      'CR', 'CU', 'DO', 'GT', 'HN', 'NI', 'PA', 'PR', 'SV', 'BZ'
-    ];
-
-    if (detected === 'PE') {
-      setCurrencyState('PEN');
-      setLanguageState('ES');
-      try {
-        localStorage.setItem('upclic_currency', 'PEN');
-        localStorage.setItem('upclic_language', 'ES');
-      } catch {}
-    } else if (detected === 'CO') {
-      setCurrencyState('COP');
-      setLanguageState('ES');
-      try {
-        localStorage.setItem('upclic_currency', 'COP');
-        localStorage.setItem('upclic_language', 'ES');
-      } catch {}
-    } else if (detected === 'MX') {
-      setCurrencyState('MXN');
-      setLanguageState('ES');
-      try {
-        localStorage.setItem('upclic_currency', 'MXN');
-        localStorage.setItem('upclic_language', 'ES');
-      } catch {}
-    } else if (LATAM_COUNTRIES.includes(detected)) {
-      setCurrencyState('USD');
-      setLanguageState('ES');
-      try {
-        localStorage.setItem('upclic_currency', 'USD');
-        localStorage.setItem('upclic_language', 'ES');
-      } catch {}
-    } else if (['US', 'CA', 'GB', 'AU', 'NZ', 'IE'].includes(detected)) {
-      setCurrencyState('USD');
-      setLanguageState('EN');
-      try {
-        localStorage.setItem('upclic_currency', 'USD');
-        localStorage.setItem('upclic_language', 'EN');
-      } catch {}
-    } else {
-      const isSpanish = typeof navigator !== 'undefined' && (
-        navigator.language?.toLowerCase().startsWith('es') ||
-        (Array.isArray(navigator.languages) && navigator.languages.some(l => l.toLowerCase().startsWith('es')))
-      );
-      setCurrencyState('USD');
-      setLanguageState(isSpanish ? 'ES' : 'EN');
-      try {
-        localStorage.setItem('upclic_currency', 'USD');
-        localStorage.setItem('upclic_language', isSpanish ? 'ES' : 'EN');
-      } catch {}
-    }
-
-    return detected;
   };
 
-  // Run country detection on mount
   useEffect(() => {
-    detectUserCountry(false);
+    // Ensure default currency in storage is PEN unless manually locked
+    try {
+      if (localStorage.getItem('upclic_manual_country') !== 'true') {
+        localStorage.setItem('upclic_currency', 'PEN');
+        localStorage.setItem('upclic_country', 'PE');
+        localStorage.setItem('upclic_language', 'ES');
+      }
+    } catch {}
+    refreshExchangeRates();
   }, []);
 
-  const formatPriceLocal = (priceInPEN: number): string => {
-    return formatPrice(priceInPEN, currency, exchangeRate);
+  const formatPrice = (priceInPEN: number): string => {
+    const penRate = rates.PEN || exchangeRate || 3.75;
+    const priceInUSD = priceInPEN / penRate;
+
+    if (currency === 'USD') {
+      return `$ ${priceInUSD.toFixed(2)} USD`;
+    }
+    if (currency === 'COP') {
+      const copRate = rates.COP || 4100;
+      const priceInCOP = Math.round(priceInUSD * copRate);
+      return `$ ${priceInCOP.toLocaleString('es-CO')} COP`;
+    }
+    if (currency === 'MXN') {
+      const mxnRate = rates.MXN || 19.8;
+      const priceInMXN = priceInUSD * mxnRate;
+      return `$ ${priceInMXN.toFixed(2)} MXN`;
+    }
+    return `S/ ${priceInPEN.toFixed(2)}`;
   };
 
-  const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
-  const couponFeedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const t = Object.assign(
+    (key: keyof typeof translations.ES): any => getTranslation(language, key),
+    translations[language] || translations.ES
+  );
 
-  const showCouponFeedback = (feedback: { type: 'success' | 'error' | 'info'; message: string } | null, durationMs: number = 4000) => {
-    if (couponFeedbackTimerRef.current) {
-      clearTimeout(couponFeedbackTimerRef.current);
-      couponFeedbackTimerRef.current = null;
-    }
-    setCouponFeedback(feedback);
-    if (feedback) {
-      couponFeedbackTimerRef.current = setTimeout(() => {
-        setCouponFeedback(null);
-        couponFeedbackTimerRef.current = null;
-      }, durationMs);
-    }
+  const unlockDiscount = () => {
+    setIsDiscountUnlocked(true);
+    try {
+      localStorage.setItem(DISCOUNT_UNLOCKED_KEY, 'true');
+    } catch {}
+  };
+
+  const setPromoCoupon = (coupon: PromoCoupon | null) => {
+    setPromoCouponState(coupon);
+    try {
+      if (coupon) {
+        localStorage.setItem(PROMO_COUPON_STORAGE_KEY, JSON.stringify(coupon));
+      } else {
+        localStorage.removeItem(PROMO_COUPON_STORAGE_KEY);
+      }
+    } catch {}
+  };
+
+  const setActiveDynamicCoupon = (coupon: DynamicCoupon | null) => {
+    setActiveDynamicCouponState(coupon);
+    try {
+      if (coupon) {
+        localStorage.setItem(DYNAMIC_COUPON_STORAGE_KEY, JSON.stringify(coupon));
+        setCouponCode(coupon.code);
+        localStorage.setItem(COUPON_STORAGE_KEY, coupon.code);
+      } else {
+        localStorage.removeItem(DYNAMIC_COUPON_STORAGE_KEY);
+      }
+    } catch {}
   };
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [toasts, setToasts] = useState<ToastData[]>([]);
-  const [activeCategory, setActiveCategory] = useState<ProductCategory>('all');
+  const [selectedCategory, setSelectedCategoryState] = useState<ProductCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProduct, setSelectedProductState] = useState<Product | null>(null);
+  const [activeHelpSection, setActiveHelpSection] = useState<HelpSection | null>(null);
+  const [currentView, setCurrentView] = useState<'home' | 'product' | 'checkout' | 'admin'>('home');
 
-  const resolvePath = (): string => {
-    if (typeof window === 'undefined') return '/';
-    try {
-      const hash = window.location.hash || '';
-      if (hash.startsWith('#/producto/')) {
-        return hash.replace('#', '');
-      }
-      if (hash.includes('/checkout/paypal') || hash.includes('/paypal')) {
-        return '/checkout/paypal';
-      }
-      if (hash === '#/checkout' || hash === '#checkout' || hash.startsWith('#/checkout?') || hash.startsWith('#checkout?')) {
-        return '/checkout';
-      }
+  const resolveRoute = useCallback(() => {
+    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
 
-      const search = window.location.search || '';
-      if (search.startsWith('?/')) {
-        const raw = search.slice(2).split('&')[0];
-        if (raw.includes('checkout/paypal') || raw.includes('paypal')) {
-          return '/checkout/paypal';
-        }
-        if (raw.includes('producto/') || raw === 'checkout' || raw === '/checkout') {
-          return raw.startsWith('/') ? raw : `/${raw}`;
-        }
-      }
-
-      const path = window.location.pathname || '/';
-      const prodIndex = path.indexOf('/producto/');
-      if (prodIndex !== -1) {
-        return path.slice(prodIndex);
-      }
-      if (path.includes('/checkout/paypal') || path.includes('/paypal')) {
-        return '/checkout/paypal';
-      }
-      if (path.endsWith('/checkout') || path === '/checkout' || path.includes('/checkout')) {
-        return '/checkout';
-      }
-    } catch {
-      // ignore
+    if (path === '/admin' || path.startsWith('/admin/')) {
+      setSelectedProductState(null);
+      setCurrentView('admin');
+      return;
     }
-    return '/';
+
+    if (params.get('cart') === 'open') {
+      setIsCartOpen(true);
+    }
+
+    const statusParam = params.get('status');
+    if (path === '/checkout' || statusParam === 'success' || statusParam === 'approved' || statusParam === 'pending') {
+      setSelectedProductState(null);
+      setCurrentView('checkout');
+      return;
+    }
+
+    const productMatch = path.match(/^\/producto\/([^/]+)\/?$/);
+    if (productMatch) {
+      const slug = decodeURIComponent(productMatch[1]);
+      const found = getProductBySlug(slug, catalogProducts);
+      if (found) {
+        setSelectedProductState(found);
+        setCurrentView('product');
+        return;
+      }
+    }
+
+    const catMatch = path.match(/^\/categoria\/([^/]+)\/?$/);
+    if (catMatch) {
+      const cat = decodeURIComponent(catMatch[1]) as ProductCategory;
+      if (VALID_CATEGORIES.includes(cat)) {
+        setSelectedCategoryState(cat);
+        setSelectedProductState(null);
+        setCurrentView('home');
+        return;
+      }
+    }
+
+    const querySlug = params.get('producto');
+    if (querySlug) {
+      const found = getProductBySlug(querySlug, catalogProducts);
+      if (found) {
+        setSelectedProductState(found);
+        setCurrentView('product');
+        window.history.replaceState({}, '', `/producto/${found.slug}`);
+        return;
+      }
+    }
+
+    const queryCat = params.get('categoria') as ProductCategory | null;
+    if (queryCat && VALID_CATEGORIES.includes(queryCat)) {
+      setSelectedCategoryState(queryCat);
+      setSelectedProductState(null);
+      setCurrentView('home');
+      window.history.replaceState({}, '', queryCat === 'all' ? '/' : `/categoria/${queryCat}`);
+      return;
+    }
+
+    setSelectedProductState(null);
+    setCurrentView('home');
+  }, [catalogProducts]);
+
+  useEffect(() => {
+    resolveRoute();
+    const handlePopState = () => resolveRoute();
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [resolveRoute]);
+
+  const setSelectedProduct = (product: Product | null) => {
+    setSelectedProductState(product);
+    if (product) {
+      setCurrentView('product');
+      const newUrl = `/producto/${product.slug}`;
+      if (window.location.pathname !== newUrl) {
+        window.history.pushState({ productSlug: product.slug }, '', newUrl);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      trackViewItem(product, currency);
+      trackPageView(newUrl, `${product.name} | UPCLIC`);
+    } else {
+      setCurrentView('home');
+      const newUrl = selectedCategory === 'all' ? '/' : `/categoria/${selectedCategory}`;
+      if (window.location.pathname !== newUrl) {
+        window.history.pushState({}, '', newUrl);
+      }
+    }
   };
 
-  // Routing state
-  const [currentPath, setCurrentPath] = useState<string>(resolvePath);
-
-  // Auto-detect returning from Mercado Pago / payment gateway
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const search = window.location.search;
-      if (!search) return;
-      const params = new URLSearchParams(search);
-      const status = params.get('status') || params.get('collection_status');
-
-      if (status === 'return' || status === 'failure' || status === 'null' || params.get('cart') === 'open') {
-        // User returned from Mercado Pago without completing payment
-        // Keep their cart open and intact
-        setIsCartOpen(true);
-      }
-    } catch {}
-  }, []);
-
-  // Keep localStorage updated for cart
-  useEffect(() => {
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items));
-    } catch (e) {
-      console.error('Error saving cart to localStorage', e);
+  const setSelectedCategory = (cat: ProductCategory) => {
+    setSelectedCategoryState(cat);
+    setSelectedProductState(null);
+    setCurrentView('home');
+    const newUrl = cat === 'all' ? '/' : `/categoria/${cat}`;
+    if (window.location.pathname !== newUrl) {
+      window.history.pushState({ category: cat }, '', newUrl);
     }
+    trackPageView(newUrl, `UPCLIC - ${cat}`);
+  };
+
+  const goToHome = () => {
+    setSelectedProductState(null);
+    setCurrentView('home');
+    if (window.location.pathname !== '/') {
+      window.history.pushState({}, '', '/');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToCheckout = () => {
+    setIsCartOpen(false);
+    setSelectedProductState(null);
+    setCurrentView('checkout');
+    if (window.location.pathname !== '/checkout') {
+      window.history.pushState({}, '', '/checkout');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const totals = calculateCartTotals(items, couponCode, activeDynamicCoupon || undefined, isDiscountUnlocked);
+    trackBeginCheckout(items, totals.total, currency);
+  };
+
+  const goToAdmin = () => {
+    setIsCartOpen(false);
+    setSelectedProductState(null);
+    setCurrentView('admin');
+    if (window.location.pathname !== '/admin') {
+      window.history.pushState({}, '', '/admin');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (selectedProduct) {
+      document.title = `${selectedProduct.name} | UPCLIC`;
+    } else if (currentView === 'checkout') {
+      document.title = `Finalizar Compra Segura | UPCLIC`;
+    } else if (currentView === 'admin') {
+      document.title = `Panel de Administración | UPCLIC`;
+    } else {
+      document.title = `UPCLIC | Todo lo digital, en un solo lugar`;
+    }
+  }, [selectedProduct, currentView]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch {}
   }, [items]);
 
-  // Keep localStorage updated for coupon
-  useEffect(() => {
-    try {
-      if (appliedCoupon) {
-        localStorage.setItem(COUPON_STORAGE_KEY, appliedCoupon);
-      } else {
-        localStorage.removeItem(COUPON_STORAGE_KEY);
-      }
-    } catch (e) {
-      console.error('Error saving coupon to localStorage', e);
+  const buildCartItemDetails = (product: Product, selectedVariantId?: string) => {
+    let unitPrice = product.price;
+    let variantName: string | undefined = undefined;
+    let finalVariantId = selectedVariantId;
+
+    if (product.variants && product.variants.length > 0) {
+      const variant = product.variants.find(v => v.id === selectedVariantId) || product.variants[0];
+      finalVariantId = variant.id;
+      variantName = variant.name;
+      unitPrice = variant.price;
     }
-  }, [appliedCoupon]);
 
-  // Sync with browser back/forward buttons and hash changes
-  useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPath(resolvePath());
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('hashchange', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('hashchange', handlePopState);
-    };
-  }, []);
-
-  const addToast = (toast: Omit<ToastData, 'id'>) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setToasts(prev => [...prev.slice(-3), { ...toast, id }]);
-    setTimeout(() => {
-      removeToast(id);
-    }, 4500);
+    const itemId = finalVariantId ? `${product.id}__${finalVariantId}` : product.id;
+    return { itemId, unitPrice, variantName, finalVariantId };
   };
 
-  const removeToast = (id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
+  const addToCart = (product: Product, quantity = 1, selectedVariantId?: string) => {
+    const availableStock = getStock(product.id);
+    if (availableStock <= 0) return;
+
+    const { itemId, unitPrice, variantName, finalVariantId } = buildCartItemDetails(product, selectedVariantId);
+    setItems(prev => {
+      const existing = prev.find(i => (i.id || i.product.id) === itemId);
+      if (existing) {
+        const nextQty = Math.min(availableStock, existing.quantity + quantity);
+        return prev.map(i => ((i.id || i.product.id) === itemId ? { ...i, quantity: nextQty } : i));
+      }
+      return [
+        ...prev,
+        {
+          id: itemId,
+          product,
+          quantity: Math.min(availableStock, quantity),
+          selectedVariant: finalVariantId,
+          variantName,
+          unitPrice
+        }
+      ];
+    });
+    trackAddToCart(product, quantity, variantName, unitPrice, currency);
+    setIsCartOpen(true);
+  };
+
+  const buyNow = (product: Product, quantity = 1, selectedVariantId?: string) => {
+    const availableStock = getStock(product.id);
+    if (availableStock <= 0) return;
+
+    const { itemId, unitPrice, variantName, finalVariantId } = buildCartItemDetails(product, selectedVariantId);
+    setItems(prev => {
+      const existing = prev.find(i => (i.id || i.product.id) === itemId);
+      if (existing) {
+        const nextQty = Math.min(availableStock, existing.quantity + quantity);
+        return prev.map(i => ((i.id || i.product.id) === itemId ? { ...i, quantity: nextQty } : i));
+      }
+      return [
+        ...prev,
+        {
+          id: itemId,
+          product,
+          quantity: Math.min(availableStock, quantity),
+          selectedVariant: finalVariantId,
+          variantName,
+          unitPrice
+        }
+      ];
+    });
+    trackAddToCart(product, quantity, variantName, unitPrice, currency);
+    setIsCartOpen(false);
+    setSelectedProductState(null);
+    setCurrentView('checkout');
+    if (window.location.pathname !== '/checkout') {
+      window.history.pushState({}, '', '/checkout');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const removeFromCart = (itemId: string) => {
+    setItems(prev => prev.filter(i => (i.id || i.product.id) !== itemId));
+  };
+
+  const updateQuantity = (itemId: string, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(itemId);
+      return;
+    }
+    setItems(prev =>
+      prev.map(i => {
+        if ((i.id || i.product.id) === itemId) {
+          const maxStock = getStock(i.product.id);
+          return { ...i, quantity: Math.min(maxStock, quantity) };
+        }
+        return i;
+      })
+    );
+  };
+
+  const clearCart = () => {
+    setItems([]);
+    setCouponCode('');
+    try {
+      localStorage.removeItem(COUPON_STORAGE_KEY);
+    } catch {}
   };
 
   const applyCoupon = (code: string): { success: boolean; message: string } => {
     const clean = code.trim().toUpperCase();
     if (!clean) {
-      const msg = 'Por favor ingresa un código promocional.';
-      showCouponFeedback({ type: 'error', message: msg }, 4000);
-      return { success: false, message: msg };
+      return { success: false, message: 'Ingresa un código de cupón válido.' };
     }
-    
-    // Check if it's the dynamic coupon
-    if (dynamicCoupon && clean === dynamicCoupon.code.toUpperCase()) {
-      if (dynamicCoupon.expiresAt > Date.now()) {
-        setAppliedCoupon(clean);
-        try {
-          localStorage.setItem(COUPON_STORAGE_KEY, clean);
-        } catch {}
-        
-        const msg = `¡Cupón de ${dynamicCoupon.discountPercent}% aplicado correctamente!`;
-        showCouponFeedback({ type: 'success', message: msg }, 5000);
-        return { success: true, message: msg };
-      } else {
-        const msg = 'El cupón especial ha expirado.';
-        showCouponFeedback({ type: 'error', message: msg }, 4000);
-        return { success: false, message: msg };
-      }
+    const totalQuantity = items.reduce((sum, i) => sum + i.quantity, 0);
+
+    const validation = validateCoupon(clean, Math.max(1, totalQuantity));
+    if (validation.valid) {
+      setCouponCode(clean);
+      try {
+        localStorage.setItem(COUPON_STORAGE_KEY, clean);
+      } catch {}
+      return {
+        success: true,
+        message: `¡Cupón ${clean} aplicado! (${validation.message})`
+      };
     }
 
-    // Check static DYNAMIC_COUPONS
-    const matchedStatic = DYNAMIC_COUPONS.find(c => c.code.toUpperCase() === clean);
-    if (matchedStatic) {
-      const isNotExpired = !matchedStatic.expiresAt || Date.now() <= matchedStatic.expiresAt;
-      if (isNotExpired) {
-        const currentTotalQty = items.reduce((sum, item) => sum + item.quantity, 0);
-        if (matchedStatic.minItems && currentTotalQty < matchedStatic.minItems) {
-          const msg = `Este cupón requiere al menos ${matchedStatic.minItems} productos en el carrito.`;
-          showCouponFeedback({ type: 'error', message: msg }, 4500);
-          return { success: false, message: msg };
-        }
-        setAppliedCoupon(clean);
-        try {
-          localStorage.setItem(COUPON_STORAGE_KEY, clean);
-        } catch {}
-        const msg = `¡Cupón ${clean} (${matchedStatic.discountPercent}% OFF) aplicado correctamente!`;
-        showCouponFeedback({ type: 'success', message: msg }, 5000);
-        return { success: true, message: msg };
-      } else {
-        const msg = 'El cupón promocional ha expirado.';
-        showCouponFeedback({ type: 'error', message: msg }, 4000);
-        return { success: false, message: msg };
+    if (activeDynamicCoupon && activeDynamicCoupon.code === clean) {
+      if (activeDynamicCoupon.expiresAt && Date.now() > activeDynamicCoupon.expiresAt) {
+        setActiveDynamicCoupon(null);
+        return { success: false, message: 'Este cupón especial ha expirado.' };
       }
+      setCouponCode(clean);
+      try {
+        localStorage.setItem(COUPON_STORAGE_KEY, clean);
+      } catch {}
+      return {
+        success: true,
+        message: `¡Cupón exclusivo ${clean} (${activeDynamicCoupon.discountPercent}% OFF) aplicado!`
+      };
     }
-    
-    const msg = `El código "${code}" no es válido o ha expirado.`;
-    showCouponFeedback({ type: 'error', message: msg }, 4500);
-    return { success: false, message: msg };
+
+    if (promoCoupon && promoCoupon.code === clean) {
+      setCouponCode(clean);
+      try {
+        localStorage.setItem(COUPON_STORAGE_KEY, clean);
+      } catch {}
+      return {
+        success: true,
+        message: `¡Cupón ${clean} (${Math.round(promoCoupon.discountRate * 100)}% OFF) aplicado correctamente!`
+      };
+    }
+    return {
+      success: false,
+      message: validation.message || 'El código ingresado no es válido o ha expirado.'
+    };
   };
 
   const removeCoupon = () => {
-    setAppliedCoupon('');
+    setCouponCode('');
     try {
       localStorage.removeItem(COUPON_STORAGE_KEY);
     } catch {}
-    showCouponFeedback(null);
   };
 
-  const getItemKey = (productId: string, variantId?: string) => {
-    return variantId ? `${productId}-${variantId}` : productId;
-  };
-
-  const addItem = (product: Product, quantity: number = 1, selectedVariant?: string) => {
-    // Automatically open the cart drawer when adding a product as requested
-    setIsCartOpen(true);
-
-    const maxStock = typeof product.stock === 'number' && product.stock > 0 ? product.stock : 99;
-    const safeQuantity = Math.max(1, Math.min(maxStock, Math.floor(Number(quantity) || 1)));
-
-    const variant = product.variants
-      ? (product.variants.find(v => v.id === selectedVariant) || product.variants[0])
-      : undefined;
-
-    const variantKey = variant ? variant.id : undefined;
-    const itemKey = getItemKey(product.id, variantKey);
-    const itemPrice = Number(variant ? variant.price : product.price) || product.price;
-    const variantName = variant ? variant.name : undefined;
-
-    setItems(prevItems => {
-      const existingIndex = prevItems.findIndex(
-        item => (item.id === itemKey) || (!item.id && item.product.id === product.id && item.selectedVariant === variantKey)
-      );
-      let updated: CartItem[];
-
-      if (existingIndex > -1) {
-        const itemStock = typeof prevItems[existingIndex].product?.stock === 'number' && prevItems[existingIndex].product.stock > 0
-          ? prevItems[existingIndex].product.stock
-          : maxStock;
-        updated = prevItems.map((item, idx) =>
-          idx === existingIndex
-            ? { ...item, quantity: Math.min(itemStock, Math.max(1, (Number(item.quantity) || 1) + safeQuantity)) }
-            : item
-        );
-      } else {
-        updated = [
-          ...prevItems,
-          {
-            id: itemKey,
-            product,
-            quantity: safeQuantity,
-            selectedVariant: variantKey,
-            variantName,
-            unitPrice: itemPrice
-          }
-        ];
-      }
-
-      return updated;
-    });
-  };
-
-  const removeItem = (itemKeyOrProductId: string, variantId?: string) => {
-    setItems(prev => {
-      return prev.filter(item => {
-        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
-        if (itemKey === itemKeyOrProductId || item.id === itemKeyOrProductId) return false;
-        if (variantId) {
-          return !(item.product.id === itemKeyOrProductId && item.selectedVariant === variantId);
-        }
-        return item.product.id !== itemKeyOrProductId;
-      });
-    });
-  };
-
-  const updateQuantity = (itemKeyOrProductId: string, delta: number, variantId?: string) => {
-    const safeDelta = Number(delta) || 0;
-    setItems(prev => {
-      const updated = prev
-        .map(item => {
-          const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
-          const isMatch =
-            itemKey === itemKeyOrProductId ||
-            item.id === itemKeyOrProductId ||
-            (variantId
-              ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
-              : item.product.id === itemKeyOrProductId);
-
-          if (isMatch) {
-            const currentQty = Number(item.quantity) || 1;
-            const itemStock = typeof item.product?.stock === 'number' && item.product.stock > 0
-              ? item.product.stock
-              : 99;
-            const newQty = currentQty + safeDelta;
-            if (newQty <= 0) {
-              return null;
-            }
-            return { ...item, quantity: Math.min(itemStock, Math.max(1, Math.floor(newQty))) };
-          }
-          return item;
-        })
-        .filter(Boolean) as CartItem[];
-
-      return updated;
-    });
-  };
-
-  const setQuantity = (itemKeyOrProductId: string, quantity: number, variantId?: string) => {
-    const rawNum = Number(quantity);
-    if (isNaN(rawNum) || rawNum <= 0) {
-      removeItem(itemKeyOrProductId, variantId);
-      return;
-    }
-
-    setItems(prev => {
-      const updated = prev.map(item => {
-        const itemKey = item.id || getItemKey(item.product.id, item.selectedVariant);
-        const isMatch =
-          itemKey === itemKeyOrProductId ||
-          item.id === itemKeyOrProductId ||
-          (variantId
-            ? item.product.id === itemKeyOrProductId && item.selectedVariant === variantId
-            : item.product.id === itemKeyOrProductId);
-
-        if (!isMatch) return item;
-
-        const itemStock = typeof item.product?.stock === 'number' && item.product.stock > 0
-          ? item.product.stock
-          : 99;
-        const validQty = Math.min(itemStock, Math.max(1, Math.floor(rawNum)));
-
-        return { ...item, quantity: validQty };
-      });
-
-      return updated;
-    });
-  };
-
-  const clearCart = () => {
-    setItems([]);
-    try {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      localStorage.removeItem('upclic_last_order');
-    } catch {}
-  };
-
-  useEffect(() => {
-    const qty = items.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
-    if (qty < 2) {
-      if (isMultiItemDiscountActive) {
-        setIsMultiItemDiscountActive(false);
-        try {
-          localStorage.removeItem('upclic_multi_discount_active');
-        } catch {}
-      }
-      if (isDiscountPopupOpen) {
-        setIsDiscountPopupOpen(false);
-      }
-    } else if (qty >= 2) {
-      if (!isMultiItemDiscountActive && !isDiscountPopupOpen) {
-        setIsDiscountPopupOpen(true);
-      }
-    }
-  }, [items, isMultiItemDiscountActive, isDiscountPopupOpen]);
-
-  const handleDiscountPopupComplete = () => {
-    setIsDiscountPopupOpen(false);
-    setIsMultiItemDiscountActive(true);
-    try {
-      localStorage.setItem('upclic_multi_discount_active', 'true');
-    } catch {}
-  };
-
-  const totals: CartTotals = calculateCartTotals(
+  const cartTotals = calculateCartTotals(
     items,
-    appliedCoupon || dynamicCoupon?.code,
-    dynamicCoupon || undefined,
-    isMultiItemDiscountActive
+    couponCode,
+    activeDynamicCoupon || undefined,
+    isDiscountUnlocked
   );
-
-  const navigateToProduct = (slug: string) => {
-    const target = `/producto/${slug}`;
-    setCurrentPath(target);
-    try {
-      window.history.pushState(null, '', target);
-    } catch {
-      window.location.hash = `#${target}`;
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToHome = () => {
-    setCurrentPath('/');
-    try {
-      window.history.pushState(null, '', '/');
-    } catch {
-      window.location.hash = '';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToCheckout = () => {
-    setIsCartOpen(false);
-    setCurrentPath('/checkout');
-    try {
-      window.history.pushState(null, '', '/checkout');
-    } catch {
-      window.location.hash = '#/checkout';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToPayPal = () => {
-    // Check if any product in cart strictly requires another payment gateway
-    const hasNonPayPalItem = items.some(it => {
-      return Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'));
-    });
-
-    if (hasNonPayPalItem) {
-      navigateToCheckout();
-      return;
-    }
-
-    setIsCartOpen(false);
-    setCurrentPath('/checkout/paypal');
-    try {
-      window.history.pushState(null, '', '/checkout/paypal');
-    } catch {
-      window.location.hash = '#/checkout/paypal';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const currentProductSlug = (() => {
-    if (!currentPath.includes('/producto/')) return undefined;
-    const prodIndex = currentPath.indexOf('/producto/');
-    const raw = currentPath.slice(prodIndex + '/producto/'.length);
-    const clean = raw.replace(/\/+$/, '').split('?')[0].split('#')[0];
-    return clean ? decodeURIComponent(clean) : undefined;
-  })();
 
   return (
     <CartContext.Provider
       value={{
         items,
-        addItem,
-        removeItem,
+        addToCart,
+        buyNow,
+        removeFromCart,
         updateQuantity,
-        setQuantity,
         clearCart,
         isCartOpen,
         setIsCartOpen,
-        totalQuantity: totals.totalQuantity,
-        subtotal: totals.subtotal,
-        hasDiscount: totals.hasDiscount,
-        discountRate: totals.discountRate,
-        discountAmount: totals.discountAmount,
-        total: totals.total,
-        discountReason: totals.discountReason,
-        isMultiItemDiscount: totals.isMultiItemDiscount,
-        isCouponApplied: totals.isCouponApplied,
-        isDiscountPopupOpen,
-        setIsDiscountPopupOpen,
-        isMultiItemDiscountActive,
-        handleDiscountPopupComplete,
-        appliedCoupon,
-        applyCoupon,
-        removeCoupon,
-        couponFeedback,
-        toasts,
-        removeToast,
-        activeCategory,
-        setActiveCategory,
+        cartTotals,
+        selectedCategory,
+        setSelectedCategory,
         searchQuery,
         setSearchQuery,
-        navigateToProduct,
-        navigateToHome,
-        navigateToCheckout,
-        navigateToPayPal,
-        currentPath,
-        currentProductSlug,
+        selectedProduct,
+        setSelectedProduct,
+        activeHelpSection,
+        setActiveHelpSection,
+        currentView,
+        setCurrentView,
+        goToHome,
+        goToCheckout,
+        goToAdmin,
+        couponCode,
+        applyCoupon,
+        removeCoupon,
+        promoCoupon,
+        setPromoCoupon,
+        activeDynamicCoupon,
+        setActiveDynamicCoupon,
+        isEntryPopupOpen,
+        setIsEntryPopupOpen,
+        isUserOrdersOpen,
+        setIsUserOrdersOpen,
+        isDiscountUnlocked,
+        unlockDiscount,
         currency,
         setCurrency,
+        exchangeRate,
+        rates,
+        ratesSource,
+        ratesLastUpdated,
+        refreshExchangeRates,
+        countryCode,
         language,
         setLanguage,
-        exchangeRate,
-        setExchangeRate,
-        detectedCountry,
-        isDetectingCountry,
-        detectUserCountry,
-        isRegionModalOpen,
-        setIsRegionModalOpen,
-        formatPrice: formatPriceLocal,
-        t: (key: keyof typeof translations['ES']) => getTranslation(language, key),
-        getProductName: (p: { id: string; name: string }) => getProductName(p, language),
-        getProductDesc: (p: { id: string; description: string }) => getProductDesc(p, language),
-        getProductFeatures: (p: { id: string; features?: string[] }) => getProductFeatures(p, language),
-        getProductCompatibility: (p: { id: string; compatibility?: string }) => getProductCompatibility(p, language),
-        getDurationLabel: (d: string) => getDurationLabel(d, language),
-        getBadgeLabel: (b?: string) => getBadgeLabel(b, language)
+        selectCountry,
+        t,
+        formatPrice,
+        productStocks,
+        decrementStock,
+        getStock,
+        catalogProducts,
+        paymentSettings,
+        refreshCatalog
       }}
     >
       {children}

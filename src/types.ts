@@ -1,15 +1,49 @@
-export type ProductCategory = 'all' | 'office' | 'windows' | 'combos' | 'project-visio' | 'apps' | 'offers' | 'bestsellers' | 'top';
+export type CatalogCategory =
+  | 'streaming'
+  | 'office'
+  | 'windows'
+  | 'ia'
+  | 'diseno'
+  | 'profesional'
+  | 'combos'
+  | 'project-visio'
+  | 'apps';
+
+export type ProductCategory =
+  | 'all'
+  | CatalogCategory
+  | 'offers'
+  | 'bestsellers'
+  | 'top';
+
 export type Currency = 'PEN' | 'USD' | 'COP' | 'MXN';
 
+export type OrderStatus =
+  | 'Pendiente de pago'
+  | 'Pago en revisión'
+  | 'Pagado'
+  | 'En preparación'
+  | 'Entregado'
+  | 'Cancelado';
+
+export type PaymentMethodId =
+  | 'yape'
+  | 'plin'
+  | 'transferencia'
+  | 'mercadopago'
+  | 'paypal';
+
 export interface ProductVariant {
-  id: string; // e.g. 'oem' | 'retail' | '1-mes' | '3-meses' | '6-meses'
-  name: string; // e.g. "Clave tipo OEM" | "1 Mes"
+  id: string; // e.g. 'oem' | 'retail' | '1-mes' | '3-meses' | '6-meses' | 'perfil' | 'cuenta-completa'
+  name: string; // e.g. "Clave tipo OEM (1 PC)" | "Clave tipo Retail (Reinstalable)" | "Perfil Individual"
   type?: string;
   price: number;
   oldPrice?: number;
   badge?: string;
   shortDesc: string;
   months?: number;
+  devices?: string;
+  licenseType?: 'OEM' | 'Retail' | 'Suscripción' | 'Perfil' | 'Cuenta Completa';
 }
 
 export interface ProductDownloadOption {
@@ -25,7 +59,8 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
-  category: 'office' | 'windows' | 'combos' | 'project-visio' | 'apps';
+  category: CatalogCategory;
+  subcategory?: string;
   price: number;
   oldPrice?: number;
   duration: string;
@@ -52,7 +87,13 @@ export interface Product {
   variants?: ProductVariant[];
   stock?: number;
   isImmediateDelivery?: boolean;
-  acceptedPaymentGateways?: ('mercadopago' | 'paypal')[];
+  acceptedPaymentGateways?: ('mercadopago' | 'paypal' | 'yape' | 'plin' | 'transferencia')[];
+  // Structured fields for full product transparency
+  includes?: string[];
+  termsOfUse?: string;
+  deliveryMode?: string;
+  warranty?: string;
+  active?: boolean;
 }
 
 export interface DeliveredCredentials {
@@ -71,10 +112,11 @@ export interface DeliveredCredentials {
 
 export interface PromoCoupon {
   code: string;
-  discountRate: number; // e.g. 0.30 (30%)
+  discountRate: number; // e.g. 0.10 (10%)
   description: string;
   expirationDays: number;
   nonCombinable: boolean;
+  active?: boolean;
 }
 
 export interface CartTotals {
@@ -129,4 +171,75 @@ export interface ProductStats {
     2: number;
     1: number;
   };
+}
+
+export interface PaymentSettings {
+  yape: {
+    enabled: boolean;
+    phone: string;
+    holderName: string;
+    qrImageUrl?: string;
+    instructions: string;
+  };
+  plin: {
+    enabled: boolean;
+    phone: string;
+    holderName: string;
+    qrImageUrl?: string;
+    instructions: string;
+  };
+  transferencia: {
+    enabled: boolean;
+    bankName: string;
+    accountNumber: string;
+    cci: string;
+    holderName: string;
+    accountType: string;
+    instructions: string;
+  };
+  mercadopago: {
+    enabled: boolean;
+    label: string;
+  };
+  paypal: {
+    enabled: boolean;
+    label: string;
+  };
+  analytics?: {
+    ga4MeasurementId?: string;
+    metaPixelId?: string;
+  };
+}
+
+export interface OrderRecord {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  items: {
+    productId?: string;
+    slug?: string;
+    name: string;
+    variantName?: string;
+    quantity: number;
+    unitPrice: number;
+  }[];
+  subtotal?: number;
+  discountAmount?: number;
+  couponCode?: string;
+  total: number;
+  currency: Currency;
+  gateway: PaymentMethodId | string;
+  status: 'pending' | 'review' | 'paid' | 'preparing' | 'delivered' | 'cancelled';
+  orderStatus: OrderStatus;
+  deliveryStatus: 'Pendiente de envío' | 'En preparación' | 'Entregado' | 'Cancelado';
+  createdAt: string;
+  paidAt?: string;
+  deliveredAt?: string;
+  paymentId?: string;
+  operationNumber?: string;
+  receiptImage?: string;
+  receiptSubmittedAt?: string;
+  adminNotes?: string;
+  deliveredCredentials?: DeliveredCredentials[];
 }

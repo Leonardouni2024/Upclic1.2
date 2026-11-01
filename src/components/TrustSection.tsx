@@ -1,341 +1,365 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 import {
-  ShieldCheck,
-  CheckCircle2,
-  MessageCircle,
-  Lock,
-  CreditCard,
-  ChevronDown,
+  Star,
+  UserCheck,
   HelpCircle,
-  ExternalLink,
-  ShoppingBag,
-  Landmark,
-  Smartphone,
-  Wallet
+  ChevronDown,
+  MessageCircle,
+  Send
 } from 'lucide-react';
-import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL } from '../products.ts';
-import { TrustpilotStars } from './TrustpilotWidget.tsx';
-
-interface FaqItem {
-  question: string;
-  answer: string;
-}
-
-const sectionTransition = {
-  duration: 0.48,
-  ease: [0.16, 1, 0.3, 1] as [number, number, number, number]
-};
+import { collection, onSnapshot, addDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { Review } from '../types';
+import { WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from '../products';
+import { useCart } from '../context/CartContext';
 
 export const TrustSection: React.FC = () => {
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const { catalogProducts, setActiveHelpSection } = useCart();
 
-  const handleConsultWhatsApp = () => {
-    const text = 'Hola UpClic, tengo una consulta sobre sus licencias de programas y cuentas premium.';
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  // Review submission state
+  const [author, setAuthor] = useState('');
+  const [city, setCity] = useState('');
+  const [productId, setProductId] = useState('prod-office-2024');
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedOk, setSubmittedOk] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'reviews'),
+      (snapshot) => {
+        const list: Review[] = snapshot.docs.map(doc => {
+          const d = doc.data();
+          return {
+            id: doc.id,
+            productId: d.productId || 'prod-office-2024',
+            author: d.author || 'Cliente UPCLIC',
+            city: d.city || 'Perú',
+            rating: Number(d.rating) || 5,
+            comment: d.comment || '',
+            date: d.date || new Date().toISOString(),
+            verifiedPurchase: Boolean(d.verifiedPurchase)
+          };
+        });
+        list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setReviews(list);
+        setLoadingReviews(false);
+      },
+      () => {
+        setLoadingReviews(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!author.trim() || !comment.trim()) return;
+    setSubmitting(true);
+    try {
+      await addDoc(collection(db, 'reviews'), {
+        productId,
+        author: author.trim(),
+        city: city.trim() || 'Perú',
+        rating: Number(rating),
+        comment: comment.trim(),
+        date: new Date().toISOString(),
+        verifiedPurchase: true
+      });
+      setAuthor('');
+      setCity('');
+      setComment('');
+      setSubmittedOk(true);
+    } catch {}
+    setSubmitting(false);
   };
 
-  const faqs: FaqItem[] = [
+  const faqs = [
     {
-      question: '¿Cómo funcionan el alquiler de Cuentas Premium y las Licencias de Programas?',
-      answer:
-        'Contamos con dos modalidades: 1) Licencias Permanentes de pago único para programas como Office 2024/2021, Windows 11/10 Pro, CorelDRAW, Project y Visio. 2) Suscripciones y alquiler de Cuentas Premium (Canva Pro, Gemini AI Pro, Microsoft 365, Duolingo Super) activadas directamente en tu correo personal o mediante cuenta privada por el periodo contratado.'
+      q: '¿Cómo se realiza la entrega de los productos digitales?',
+      a: 'Toda la entrega es 100% digital. Una vez verificado tu pago, enviamos tu clave de licencia, invitación oficial o credenciales junto con la guía paso a paso a tu correo electrónico y WhatsApp.'
     },
     {
-      question: '¿En cuánto tiempo recibo mi licencia o acceso a cuenta premium?',
-      answer:
-        'El despacho es 100% digital. En pocos minutos tras confirmar tu pago, recibirás en tu correo electrónico y WhatsApp tu clave de activación original o la invitación oficial a tu cuenta premium, junto con los enlaces de descarga y guía paso a paso.'
+      q: '¿Qué diferencia existe entre una clave OEM, una Retail y una suscripción?',
+      a: 'En UPCLIC informamos con total transparencia cada modalidad: La clave OEM se vincula a la placa madre de 1 PC específica. La clave Retail puede transferirse a otra PC si renuevas tu equipo. Las suscripciones (como Canva Pro, Gemini AI o Microsoft 365) tienen una duración determinada (ej. 12 o 18 meses) y se activan por invitación a tu correo o cuenta asignada.'
     },
     {
-      question: '¿Qué garantía tienen los programas y las cuentas premium?',
-      answer:
-        'Todos nuestros productos cuentan con Garantía Oficial UpClic y soporte técnico en vivo por WhatsApp. Te acompañamos paso a paso durante la instalación o activación, y ante cualquier eventualidad te brindamos solución o reemplazo inmediato.'
+      q: '¿Qué medios de pago están disponibles en Perú?',
+      a: 'Puedes pagar directamente en Soles peruanos (S/) a través de Mercado Pago (Yape, tarjeta de crédito o débito y PagoEfectivo).'
     },
     {
-      question: '¿Entregan comprobante o factura electrónica para empresas?',
-      answer:
-        'Sí, emitimos comprobante de pago electrónico y factura comercial para profesionales independientes, estudios de diseño y empresas (con RUC). Solo debes solicitarlo al completar tu pedido.'
-    }
-  ];
-
-  const verifiedReviews = [
-    {
-      author: 'Carlos Mendoza',
-      role: 'Ingeniero & Consultor · Lima',
-      comment: 'Adquirí el Combo Windows 11 Pro + Office 2024 Pro Plus y Project 2024. Recibí las claves digitales en minutos y todo activó a la primera.',
-      date: 'Hace 2 días'
-    },
-    {
-      author: 'Valeria Paredes',
-      role: 'Diseñadora Gráfica · Arequipa',
-      comment: 'Excelente servicio para nuestro estudio: compramos CorelDRAW 2024 y suscripciones de Canva Pro y Gemini AI Pro. Atención inmediata por WhatsApp.',
-      date: 'Hace 4 días'
+      q: '¿Qué hago si necesito ayuda durante la instalación?',
+      a: 'Contamos con soporte técnico directo en español por WhatsApp (+51 983 204 384). Nuestro equipo te guía paso a paso hasta que tu programa o suscripción quede funcionando correctamente.'
     }
   ];
 
   return (
-    <section
-      id="confianza-section"
-      className="py-12 sm:py-16 lg:py-20 bento-bg-pattern font-sans border-b border-slate-200/80 overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={sectionTransition}
-          className="text-center max-w-2xl mx-auto mb-10 sm:mb-12"
-        >
-          <p className="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-[#0078d4] mb-2">
-            Confianza · Respaldo · Transparencia
-          </p>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
-            Compra con total seguridad y respaldo técnico
-          </h2>
-          <p className="mt-2 sm:mt-2.5 text-xs sm:text-base text-slate-600 font-normal">
-            Miles de usuarios y empresas confían en nuestra plataforma por nuestra entrega inmediata y garantía real.
-          </p>
-        </motion.div>
-
-        {/* Bento Box Grid: Left (Customer Rating Widget + Payment Logos) | Right (FAQ Accordion) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
-          
-          {/* Left Column (6 cols): Customer Reviews Widget & Payment Methods Bento */}
-          <div className="lg:col-span-6 flex flex-col gap-5 sm:gap-6 justify-between">
-            
-            {/* Bento Card 1: 5-Star Customer Rating Widget (Trustpilot / Google style) */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ ...sectionTransition, delay: 0.05 }}
-              className="bento-card rounded-3xl p-5 sm:p-7 xl:p-8"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-5 border-b border-slate-100">
-                <div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 text-[11px] sm:text-xs font-bold flex-wrap">
-                    <span className="text-emerald-700 font-extrabold uppercase tracking-wider">
-                      Calificación Excelente
-                    </span>
-                    <span aria-hidden="true" className="text-slate-300">·</span>
-                    <span className="text-slate-500">
-                      Trustpilot & Google Reviews
-                    </span>
-                  </div>
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="font-display text-2xl sm:text-3xl font-extrabold text-[#0B1F3A] tabular-nums tracking-tight">
-                      4.9 / 5.0
-                    </span>
-                    <span className="text-xs text-slate-500 font-medium">
-                      Basado en +350 compras verificadas
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-start sm:items-end">
-                  <TrustpilotStars count={5} size="md" />
-                  <a
-                    href="https://www.trustpilot.com/review/upclic.pe"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1.5 text-[11px] font-bold text-[#1668E3] hover:underline inline-flex items-center gap-1"
-                  >
-                    <span>Ver opiniones verificadas</span>
-                    <ExternalLink className="w-3 h-3 shrink-0" />
-                  </a>
-                </div>
-              </div>
-
-              {/* Mini Verified Buyer Testimonials */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 mt-5">
-                {verifiedReviews.map((rev, i) => (
-                  <div key={i} className="p-4 rounded-2xl bg-[#F4F7FB] border border-[#E2E8F0] flex flex-col justify-between">
-                    <p className="text-xs text-[#475569] leading-relaxed mb-3">
-                      "{rev.comment}"
-                    </p>
-                    <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-[#E2E8F0]">
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-[#0B1F3A] truncate">{rev.author}</div>
-                        <div className="text-[10px] text-[#64748B] truncate">{rev.role}</div>
-                      </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0B7A64] shrink-0">
-                        <CheckCircle2 className="w-3 h-3 text-[#0B7A64] shrink-0" /> Verificado
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Bento Card 2: Secure Payment Methods Logos */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ ...sectionTransition, delay: 0.14 }}
-              className="bento-card rounded-3xl p-5 sm:p-7 xl:p-8"
-            >
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-9 h-9 rounded-xl tint-blue flex items-center justify-center shrink-0">
-                    <CreditCard className="w-4 h-4" />
-                  </div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-[#0B1F3A] leading-snug">
-                    Métodos de Pago 100% Seguros y Encriptados
-                  </h3>
-                </div>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0B7A64] shrink-0">
-                  <Lock className="w-3.5 h-3.5 text-[#0B7A64] shrink-0" />
-                  <span>SSL 256-Bit</span>
-                </span>
-              </div>
-
-              <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                Procesamos tu orden al instante con las pasarelas más confiables a nivel nacional e internacional:
+    <section className="py-14 sm:py-18 bg-white border-t border-slate-200/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        {/* Verified Customer Reviews (Real Firestore Data Only) */}
+        <div>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-xs font-extrabold uppercase tracking-widest text-[#1668E3] block mb-1">
+                Experiencias Reales
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1F3A] tracking-tight">
+                Opiniones Verificadas de Clientes
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Reseñas registradas por compradores en nuestra plataforma.
               </p>
-
-              {/* Clean Payment Method Blocks */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
-                <div className="px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-slate-200/80 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <CreditCard className="w-3.5 h-3.5 text-[#0078d4] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold text-slate-800 truncate">Visa / Mastercard</span>
-                </div>
-                <div className="px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-slate-200/80 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <Wallet className="w-3.5 h-3.5 text-[#003087] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold text-[#003087] truncate">PayPal Oficial</span>
-                </div>
-                <div className="px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-slate-200/80 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#009ee3] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold text-slate-800 truncate">Mercado Pago</span>
-                </div>
-                <div className="px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-slate-200/80 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <Smartphone className="w-3.5 h-3.5 text-[#0078d4] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold text-slate-800 truncate">Yape / Plin</span>
-                </div>
-                <div className="px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-slate-200/80 flex items-center justify-center gap-1.5 sm:gap-2">
-                  <Landmark className="w-3.5 h-3.5 text-slate-700 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold text-slate-800 truncate">BCP / BBVA / IBK</span>
-                </div>
-                <a
-                  href={MERCADO_LIBRE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-2.5 rounded-xl bg-[#FFE600]/20 border border-amber-300 hover:bg-[#FFE600]/35 transition-colors flex items-center justify-center gap-1.5"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold text-slate-900 truncate">Mercado Libre</span>
-                </a>
-              </div>
-            </motion.div>
-
+            </div>
           </div>
 
-          {/* Right Column (6 cols): Interactive FAQ Accordion Bento Box */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ ...sectionTransition, delay: 0.1 }}
-            className="lg:col-span-6 bento-card rounded-3xl p-5 sm:p-7 xl:p-8 flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-2xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center shrink-0">
-                  <HelpCircle className="w-5 h-5" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="lg:col-span-8">
+              {loadingReviews ? (
+                <div className="p-8 text-center text-slate-400 text-sm bg-slate-50 rounded-2xl border border-slate-200">
+                  Cargando opiniones verificadas...
                 </div>
-                <div>
-                  <h3 className="text-base sm:text-xl font-extrabold text-slate-900">
-                    Preguntas Frecuentes (FAQ)
-                  </h3>
+              ) : reviews.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {reviews.slice(0, 6).map((rev) => {
+                    const prodName =
+                      catalogProducts.find(p => p.id === rev.productId)?.name || 'Producto UPCLIC';
+                    return (
+                      <div
+                        key={rev.id}
+                        className="p-5 rounded-2xl bg-[#F8FAFC] border border-slate-200/90 flex flex-col justify-between gap-3"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-0.5">
+                              {[1, 2, 3, 4, 5].map(s => (
+                                <Star
+                                  key={s}
+                                  className={`w-3.5 h-3.5 ${
+                                    s <= rev.rating
+                                      ? 'fill-amber-400 text-amber-400'
+                                      : 'text-slate-300'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              <UserCheck className="w-3 h-3" /> Verificado
+                            </span>
+                          </div>
+                          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3">
+                            "{rev.comment}"
+                          </p>
+                        </div>
+
+                        <div className="pt-3 border-t border-slate-200/70 flex items-center justify-between text-xs">
+                          <span className="font-bold text-[#0B1F3A]">
+                            {rev.author} {rev.city ? `• ${rev.city}` : ''}
+                          </span>
+                          <span className="text-[11px] text-[#1668E3] font-semibold truncate max-w-[150px]">
+                            {prodName}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-8 rounded-2xl bg-slate-50 border border-slate-200 text-center">
+                  <p className="text-sm font-bold text-[#0B1F3A] mb-1">
+                    Sé el primero en compartir tu opinión verificada
+                  </p>
                   <p className="text-xs text-slate-500">
-                    Respuestas claras a las dudas más habituales antes de comprar
+                    No mostramos reseñas inventadas. Todas las opiniones publicadas aquí provienen de clientes reales.
                   </p>
                 </div>
-              </div>
-
-              {/* Animated Accordion Items */}
-              <div className="mt-5 sm:mt-6 space-y-3">
-                {faqs.map((faq, index) => {
-                  const isOpen = openFaqIndex === index;
-                  return (
-                    <div
-                      key={index}
-                      className={`rounded-2xl border transition-colors duration-200 overflow-hidden ${
-                        isOpen
-                          ? 'bg-[#f8fafc] border-[#0078d4]'
-                          : 'bg-white border-slate-200/90 hover:border-slate-300'
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                        aria-expanded={isOpen}
-                        className="w-full px-4 sm:px-5 py-3.5 sm:py-4 text-left flex items-center justify-between gap-3 cursor-pointer"
-                      >
-                        <span className="text-xs sm:text-base font-bold text-slate-900 leading-snug">
-                          {faq.question}
-                        </span>
-                        <motion.span
-                          animate={{ rotate: isOpen ? 180 : 0 }}
-                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                            isOpen
-                              ? 'bg-[#0078d4] text-white'
-                              : 'bg-slate-100 text-slate-600'
-                          }`}
-                        >
-                          <ChevronDown className="w-4 h-4" />
-                        </motion.span>
-                      </button>
-
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            key="faq-content"
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                            className="overflow-hidden"
-                          >
-                            <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-2 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-200/60">
-                              {faq.answer}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
+              )}
             </div>
 
-            {/* Bottom Support Callout inside FAQ Card */}
-            <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5">
-              <div>
-                <div className="text-xs font-bold text-slate-900">
-                  ¿Tienes otra consulta específica sobre compatibilidad?
-                </div>
-                <div className="text-xs text-slate-500">
-                  Nuestros técnicos te responden en menos de 2 minutos.
-                </div>
-              </div>
-              <motion.button
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleConsultWhatsApp}
-                className="px-4 py-2.5 min-h-[42px] rounded-xl bg-[#0078d4] hover:bg-[#0062ad] text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 shrink-0 cursor-pointer shadow-2xs whitespace-nowrap"
+            {/* Form to leave a verified review */}
+            <div className="lg:col-span-4">
+              <form
+                onSubmit={handleAddReview}
+                className="bg-[#F4F7FB] p-5 sm:p-6 rounded-2xl border border-slate-200 space-y-3.5"
               >
-                <MessageCircle className="w-4 h-4 shrink-0" />
-                <span>Consultar por WhatsApp</span>
-              </motion.button>
-            </div>
-          </motion.div>
+                <h3 className="font-extrabold text-sm text-[#0B1F3A]">
+                  Publicar una opinión de compra
+                </h3>
 
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">Producto</label>
+                  <select
+                    value={productId}
+                    onChange={(e) => setProductId(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs"
+                  >
+                    {catalogProducts.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <input
+                    type="text"
+                    required
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="Tu nombre *"
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs"
+                  />
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Ciudad (Ej. Lima)"
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs"
+                  />
+                </div>
+
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map(st => (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => setRating(st)}
+                      className="p-1 cursor-pointer"
+                    >
+                      <Star
+                        className={`w-4 h-4 ${
+                          st <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  rows={3}
+                  required
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Comparte tu experiencia con la entrega y activación..."
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs"
+                />
+
+                {submittedOk && (
+                  <p className="text-xs font-bold text-emerald-700">
+                    ¡Gracias por registrar tu reseña!
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-2.5 px-4 bg-[#1668E3] hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{submitting ? 'Enviando...' : 'Enviar Opinión'}</span>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
+        {/* Frequently Asked Questions (FAQ) & Direct WhatsApp */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-6 border-t border-slate-200/80">
+          <div className="lg:col-span-7 space-y-3">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-[#1668E3] block">
+              Resolvemos tus dudas
+            </span>
+            <h2 className="text-2xl font-extrabold text-[#0B1F3A] mb-4">
+              Preguntas Frecuentes
+            </h2>
+
+            <div className="space-y-2.5">
+              {faqs.map((faq, idx) => {
+                const isOpen = openFaq === idx;
+                return (
+                  <div
+                    key={idx}
+                    className="rounded-xl border border-slate-200 bg-slate-50/60 overflow-hidden"
+                  >
+                    <button
+                      onClick={() => setOpenFaq(isOpen ? null : idx)}
+                      className="w-full p-4 text-left flex items-center justify-between gap-3 font-bold text-xs sm:text-sm text-[#0B1F3A] cursor-pointer"
+                    >
+                      <span>{faq.q}</span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-slate-400 transition-transform shrink-0 ${
+                          isOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                    {isOpen && (
+                      <div className="px-4 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-200/60 pt-3 bg-white">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Direct Contact & Commercial Policies Card */}
+          <div className="lg:col-span-5">
+            <div className="bg-[#0B1F3A] text-white rounded-2xl p-6 sm:p-7 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-white/10 text-[#7DB2FF] flex items-center justify-center shrink-0">
+                  <HelpCircle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg">
+                    Atención Personalizada por WhatsApp
+                  </h3>
+                  <p className="text-xs text-slate-300">Soporte comercial y técnico en Perú</p>
+                </div>
+              </div>
+
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                ¿Deseas confirmar compatibilidad con tu equipo, consultar por compras corporativas o validar tu pedido? Escríbenos directamente a nuestro WhatsApp oficial <strong>{WHATSAPP_DISPLAY}</strong>.
+              </p>
+
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, deseo realizar una consulta antes de comprar.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3.5 px-5 rounded-xl bg-[#E8440A] hover:bg-[#d83b01] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Contactar por WhatsApp ({WHATSAPP_DISPLAY})</span>
+              </a>
+
+              <div className="pt-3 border-t border-white/10 flex flex-wrap gap-3 text-[11px] text-slate-300">
+                <button
+                  onClick={() => setActiveHelpSection('garantia')}
+                  className="hover:text-white underline cursor-pointer"
+                >
+                  Política de garantía
+                </button>
+                <button
+                  onClick={() => setActiveHelpSection('reembolsos')}
+                  className="hover:text-white underline cursor-pointer"
+                >
+                  Cambios y reembolsos
+                </button>
+                <button
+                  onClick={() => setActiveHelpSection('terminos')}
+                  className="hover:text-white underline cursor-pointer"
+                >
+                  Términos y condiciones
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

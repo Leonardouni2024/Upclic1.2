@@ -1,698 +1,475 @@
-import { formatPrice, searchProducts } from '../products.ts';
 import React, { useState, useRef, useEffect } from 'react';
-import { useCart } from '../context/CartContext.tsx';
-import { ProductCategory, Product } from '../types.ts';
-import { Search, Menu, X, ArrowRight, ShoppingCart, User, Globe, ChevronDown, Check } from 'lucide-react';
-import { UpClicLogo } from './UpClicLogo.tsx';
+import {
+  ShoppingCart,
+  Search,
+  Menu,
+  X,
+  HelpCircle,
+  ChevronDown,
+  ArrowRight,
+  Package,
+  RefreshCw,
+  Tv,
+  Layers,
+  Monitor,
+  Sparkles,
+  Palette,
+  Briefcase,
+  Tag
+} from 'lucide-react';
+import { useCart, HelpSection } from '../context/CartContext';
+import { ProductCategory, Product } from '../types';
+import { WHATSAPP_NUMBER, searchProducts, getCategoryLabel } from '../products';
+import { UpClicLogo } from './UpClicLogo';
 
-interface HeaderProps { onOpenUserOrders?: () => void; setIsCartOpen?: (open: boolean) => void; setIsHelpModalOpen?: (open: boolean) => void; }
+const COUNTRIES = [
+  { code: 'PE', name: 'Perú', currency: 'PEN', symbol: 'S/', flag: '🇵🇪', lang: 'ES' },
+  { code: 'CO', name: 'Colombia', currency: 'COP', symbol: '$', flag: '🇨🇴', lang: 'ES' },
+  { code: 'MX', name: 'México', currency: 'MXN', symbol: '$', flag: '🇲🇽', lang: 'ES' },
+  { code: 'US', name: 'United States / Global', currency: 'USD', symbol: '$', flag: '🇺🇸', lang: 'EN' },
+];
 
-export const Header: React.FC<HeaderProps> = ({ onOpenUserOrders }) => {
+export const Header: React.FC = () => {
   const {
-    total,
-    totalQuantity,
+    cartTotals,
     setIsCartOpen,
-    activeCategory,
-    setActiveCategory,
+    selectedCategory,
+    setSelectedCategory,
     searchQuery,
     setSearchQuery,
-    navigateToProduct,
-    navigateToHome,
-    currentPath,
+    setSelectedProduct,
+    setActiveHelpSection,
+    goToHome,
+    setIsUserOrdersOpen,
+    countryCode,
+    selectCountry,
     currency,
+    rates,
+    ratesSource,
+    refreshExchangeRates,
     language,
-    setCurrency,
-    setLanguage,
-    detectedCountry,
-    isDetectingCountry,
-    detectUserCountry,
-    setIsRegionModalOpen,
-    t
+    formatPrice,
+    catalogProducts
   } = useCart();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [regionDropdownOpen, setRegionDropdownOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const [isRefreshingRates, setIsRefreshingRates] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  const mobileSearchRef = useRef<HTMLDivElement>(null);
-  const regionDropdownRef = useRef<HTMLDivElement>(null);
+  const countryDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Live matching products using the prefix/token search engine
-  const liveResults: Product[] = searchQuery.trim() ? searchProducts(searchQuery).slice(0, 5) : [];
+  const currentCountry = COUNTRIES.find(c => c.code === countryCode) || COUNTRIES[0];
 
-  // Close search and region dropdowns on click outside
+  const handleManualRateRefresh = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRefreshingRates(true);
+    await refreshExchangeRates();
+    setTimeout(() => setIsRefreshingRates(false), 500);
+  };
+
+  const navCategories: { id: ProductCategory; label: string; icon: React.ReactNode }[] = [
+    { id: 'all', label: language === 'EN' ? 'All Catalog' : 'Catálogo', icon: null },
+    { id: 'streaming', label: 'Streaming', icon: <Tv className="w-3.5 h-3.5" /> },
+    { id: 'office', label: 'Microsoft Office', icon: <Layers className="w-3.5 h-3.5" /> },
+    { id: 'windows', label: 'Windows', icon: <Monitor className="w-3.5 h-3.5" /> },
+    {
+      id: 'ia',
+      label: 'Inteligencia Artificial',
+      icon: (
+        <img
+          src="https://static.vecteezy.com/system/resources/thumbnails/068/082/380/small/artificial-intelligence-design-png.png"
+          alt="IA"
+          className="w-4 h-4 object-contain"
+        />
+      )
+    },
+    { id: 'diseno', label: 'Diseño y Edición', icon: <Palette className="w-3.5 h-3.5" /> },
+    { id: 'profesional', label: 'Software Profesional', icon: <Briefcase className="w-3.5 h-3.5" /> },
+    { id: 'offers', label: 'Ofertas', icon: <Tag className="w-3.5 h-3.5" /> },
+  ];
+
+  const handleCategorySelect = (catId: ProductCategory) => {
+    setSelectedCategory(catId);
+    setMobileMenuOpen(false);
+    setTimeout(() => {
+      document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  };
+
+  const handleHelpClick = (sec: HelpSection) => {
+    setActiveHelpSection(sec);
+    setMobileMenuOpen(false);
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchContainerRef.current &&
-        !searchContainerRef.current.contains(event.target as Node) &&
-        mobileSearchRef.current &&
-        !mobileSearchRef.current.contains(event.target as Node)
-      ) {
-        setIsSearchFocused(false);
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setSearchFocused(false);
       }
-      if (
-        regionDropdownRef.current &&
-        !regionDropdownRef.current.contains(event.target as Node)
-      ) {
-        setRegionDropdownOpen(false);
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+        setCountryDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelectProduct = (slug: string) => {
-    setIsSearchFocused(false);
-    setMobileSearchOpen(false);
-    navigateToProduct(slug);
+  const searchResults =
+    searchQuery.trim().length > 0
+      ? searchProducts(searchQuery, 'all', catalogProducts).slice(0, 6)
+      : [];
+
+  const handleSelectSearchResult = (product: Product) => {
+    setSelectedProduct(product);
+    setSearchFocused(false);
+    setMobileMenuOpen(false);
   };
 
-  const handleCategoryClick = (category: ProductCategory) => {
-    setActiveCategory(category);
-    if (currentPath !== '/') {
-      navigateToHome();
+  const handleSearchEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setSearchFocused(false);
+      setSelectedProduct(null);
+      setTimeout(() => {
+        document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
     }
-    setMobileMenuOpen(false);
-    // Smooth scroll to catalog if already on home
-    const catalogEl = document.getElementById('catalogo-section');
-    if (catalogEl) {
-      catalogEl.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleTopClick = () => {
-    setActiveCategory('top');
-    if (currentPath !== '/') {
-      navigateToHome();
-    }
-    setMobileMenuOpen(false);
-    setTimeout(() => {
-      const el = document.getElementById('catalogo-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 80);
-  };
-
-  const handleBestSellersClick = () => {
-    setActiveCategory('bestsellers');
-    if (currentPath !== '/') {
-      navigateToHome();
-    }
-    setMobileMenuOpen(false);
-    setTimeout(() => {
-      const el = document.getElementById('catalogo-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 80);
   };
 
   return (
-    <header id="main-header" className="sticky top-0 z-40 text-white shadow-sm transition-all font-sans">
-      {/* Top Header Row in Official Microsoft Blue (#0078d4) */}
-      <div className="bg-[#0078d4] border-b border-[#0062ad]">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-15 sm:h-18 gap-2 sm:gap-5">
-            {/* Mobile menu toggle button */}
-            <div className="flex items-center lg:hidden shrink-0">
-              <button
-                id="mobile-menu-btn"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 -ml-1 rounded-xl text-white hover:bg-white/15 transition-all cursor-pointer"
-                aria-label="Abrir menú"
-              >
-                {mobileMenuOpen ? <X className="w-5.5 h-5.5" /> : <Menu className="w-5.5 h-5.5" />}
-              </button>
+    <header className="sticky top-0 z-40 flex flex-col">
+      {/* Main Brand Navigation Bar */}
+      <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-xs transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6">
+            {/* Brand Logo */}
+            <div
+              className="flex items-center gap-3 cursor-pointer shrink-0 group"
+              onClick={() => {
+                setSelectedCategory('all');
+                setSearchQuery('');
+                goToHome();
+              }}
+            >
+              <UpClicLogo size="md" />
             </div>
 
-            {/* Logo */}
-            <div className="flex items-center shrink-0">
-              <button
-                id="logo-btn"
-                onClick={navigateToHome}
-                className="flex items-center group text-left cursor-pointer focus:outline-none hover:opacity-95 transition-opacity shrink-0"
-                aria-label="UpClic - Inicio"
-              >
-                <UpClicLogo size="md" variant="full" theme="dark" />
-              </button>
-            </div>
+            {/* Search Bar (Desktop) */}
+            <div ref={searchContainerRef} className="hidden md:flex flex-1 max-w-md relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onFocus={() => setSearchFocused(true)}
+                onKeyDown={handleSearchEnter}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setSearchFocused(true);
+                }}
+                placeholder="Buscar Office 2024, Windows 11, Canva Pro, Gemini AI..."
+                className="w-full pl-10 pr-9 py-2 bg-slate-100/90 border border-slate-200/90 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1668E3]/25 focus:border-[#1668E3] focus:bg-white transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
 
-            {/* Central Search Bar in Clean Crisp White */}
-            <div ref={searchContainerRef} className="flex-1 max-w-2xl relative hidden sm:block">
-              <div className="relative">
-                <input
-                  id="search-input-desktop"
-                  type="text"
-                  value={searchQuery}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onChange={e => {
-                    setSearchQuery(e.target.value);
-                    setIsSearchFocused(true);
-                    if (currentPath !== '/') navigateToHome();
-                  }}
-                  placeholder={t('searchPlaceholder')}
-                  className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-medium rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none shadow-xs focus:ring-2 focus:ring-white/60 transition-all border border-white/20"
-                />
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
-                {searchQuery && (
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setIsSearchFocused(false);
-                    }}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700 text-xs p-1 rounded cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Live Search Autocomplete Dropdown */}
-              {isSearchFocused && searchQuery.trim().length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-4 py-2.5 bg-slate-50 text-slate-800 flex items-center justify-between text-xs font-bold border-b border-slate-200/80">
-                    <span>{t('searchResultsFor')} "{searchQuery}"</span>
-                    <span className="text-[#0078d4]">{liveResults.length} {language === 'EN' ? 'found' : 'encontrados'}</span>
-                  </div>
-
-                  {liveResults.length === 0 ? (
-                    <div className="p-4 text-center text-xs text-slate-500">
-                      <p className="font-semibold text-slate-700">{t('noProductsMatch')}</p>
-                      <p className="text-[11px] text-slate-400 mt-1">
-                        {t('searchSuggestionsText')}
-                      </p>
+              {/* Instant Live Search Results Dropdown */}
+              {searchFocused && searchQuery.trim().length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-50">
+                  {searchResults.length > 0 ? (
+                    <div>
+                      <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                          Resultados en catálogo
+                        </span>
+                        <span className="text-[11px] text-[#1668E3] font-semibold">
+                          {searchProducts(searchQuery, 'all', catalogProducts).length} encontrados
+                        </span>
+                      </div>
+                      <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                        {searchResults.map(product => (
+                          <button
+                            key={product.id}
+                            onClick={() => handleSelectSearchResult(product)}
+                            className="w-full px-4 py-3 flex items-center gap-3.5 hover:bg-blue-50/50 transition-colors text-left group"
+                          >
+                            <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200/70 p-1 flex items-center justify-center shrink-0">
+                              <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                                className="max-h-full max-w-full object-contain"
+                                onError={(e) => {
+                                  const target = e.currentTarget;
+                                  if (product.fallbackImage && target.src !== product.fallbackImage) {
+                                    target.src = product.fallbackImage;
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-bold text-slate-900 truncate group-hover:text-[#1668E3] transition-colors">
+                                {product.name}
+                              </p>
+                              <p className="text-[11px] text-slate-500 truncate">
+                                {getCategoryLabel(product.category)} • {product.duration}
+                              </p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="text-sm font-black text-[#0B1F3A] block">
+                                {formatPrice(product.price)}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => {
+                          setSearchFocused(false);
+                          setSelectedProduct(null);
+                          document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-[#1668E3] flex items-center justify-center gap-1.5 border-t border-slate-200/80 transition-colors"
+                      >
+                        Ver todos los resultados para "{searchQuery}"
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   ) : (
-                    <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                      {liveResults.map(prod => (
-                        <button
-                          key={prod.id}
-                          onClick={() => handleSelectProduct(prod.slug)}
-                          className="w-full text-left p-3 hover:bg-blue-50/50 transition-colors flex items-center gap-3 group cursor-pointer"
-                        >
-                          <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200/80 p-1 shrink-0 flex items-center justify-center">
-                            <img
-                              src={prod.imageUrl}
-                              alt={prod.name}
-                              onError={(e) => { e.currentTarget.src = prod.fallbackImage; }}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-bold text-xs text-slate-900 group-hover:text-[#0078d4] truncate transition-colors">
-                              {prod.name}
-                            </div>
-                            <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 font-semibold">
-                              <span className="text-[#0078d4] font-bold uppercase">
-                                {prod.category === 'combos' ? 'Combo' : prod.category}
-                              </span>
-                              <span>·</span>
-                              <span>{prod.duration}</span>
-                            </div>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <div className="font-black text-xs text-slate-900 tabular-nums">
-                              {formatPrice(prod.price)}
-                            </div>
-                            {prod.oldPrice && (
-                              <div className="text-[10px] text-slate-400 line-through tabular-nums">
-                                {formatPrice(prod.oldPrice)}
-                              </div>
-                            )}
-                          </div>
-                        </button>
-                      ))}
-
-                      <div className="p-2.5 bg-slate-50 text-center border-t border-slate-100">
-                        <button
-                          onClick={() => {
-                            setIsSearchFocused(false);
-                            const catalogEl = document.getElementById('catalogo-section');
-                            if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
-                          }}
-                          className="text-xs font-bold text-[#0078d4] hover:text-[#0062ad] hover:underline flex items-center justify-center gap-1 w-full cursor-pointer py-1"
-                        >
-                          <span>{t('viewAllCatalogProducts')}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                    <div className="p-5 text-center">
+                      <p className="text-xs font-semibold text-slate-700 mb-1">
+                        No encontramos "{searchQuery}"
+                      </p>
+                      <p className="text-[11px] text-slate-500 mb-3">
+                        Prueba buscando: Office 2024, Windows 11, Canva Pro, Gemini AI, Project o Visio.
+                      </p>
+                      <a
+                        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola UPCLIC, estoy buscando información sobre: ${searchQuery}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700"
+                      >
+                        Consultar disponibilidad por WhatsApp →
+                      </a>
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Right Controls: Language/Currency | Cart | Account */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              {/* Inline Region & Currency Selector Dropdown */}
-              <div ref={regionDropdownRef} className="relative">
+            {/* Right Actions */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Country & Currency Selector */}
+              <div ref={countryDropdownRef} className="relative">
                 <button
-                  onClick={() => setRegionDropdownOpen(!regionDropdownOpen)}
-                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold border border-white/25 transition-all cursor-pointer shadow-xs active:scale-95 backdrop-blur-xs"
-                  title={t("changeRegionCurrency")}
+                  onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
+                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200/80 transition-colors cursor-pointer"
+                  title="Moneda principal: Soles peruanos (S/)"
                 >
-                  <Globe className="w-3.5 h-3.5 text-cyan-200" />
-                  <span className="hidden sm:inline">
-                    {currency === 'PEN' && 'PE | Español (S/)'}
-                    {currency === 'COP' && 'CO | Español ($ COP)'}
-                    {currency === 'MXN' && 'MX | Español ($ MXN)'}
-                    {currency === 'USD' && language === 'ES' && 'LatAm | Español ($ USD)'}
-                    {currency === 'USD' && language === 'EN' && 'Global | English ($ USD)'}
-                  </span>
-                  <span className="sm:hidden text-[11px] font-bold">
-                    {currency === 'PEN' && '🇵🇪 S/'}
-                    {currency === 'COP' && '🇨🇴 COP'}
-                    {currency === 'MXN' && '🇲🇽 MXN'}
-                    {currency === 'USD' && language === 'ES' && '🌎 USD'}
-                    {currency === 'USD' && language === 'EN' && '🇺🇸 USD'}
-                  </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-white/80 transition-transform ${regionDropdownOpen ? 'rotate-180' : ''}`} />
+                  <span className="text-base leading-none">{currentCountry.flag}</span>
+                  <span className="hidden sm:inline">{currentCountry.currency}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                 </button>
 
-                {/* Dropdown Menu in White */}
-                {regionDropdownOpen && (
-                  <div className="absolute right-0 sm:right-0 top-full mt-2 w-[240px] sm:w-[260px] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 p-2 divide-y divide-slate-100 origin-top-right text-slate-800">
-                    <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                      <span>{t('regionCurrencyLangLabel')}</span>
+                {countryDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50">
+                    <div className="px-3 py-1.5 border-b border-slate-100 flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Moneda / País
+                      </span>
+                      <button
+                        onClick={handleManualRateRefresh}
+                        className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#1668E3] hover:text-blue-700"
+                      >
+                        <RefreshCw className={`w-2.5 h-2.5 ${isRefreshingRates ? 'animate-spin' : ''}`} />
+                        {ratesSource}
+                      </button>
                     </div>
-
-                    <div className="py-1.5 space-y-1">
-                      {/* Option 1: Perú */}
-                      <button
-                        onClick={() => {
-                          setCurrency('PEN');
-                          setLanguage('ES');
-                          setRegionDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          currency === 'PEN'
-                            ? 'bg-[#00A3E0] text-white shadow-sm'
-                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-lg">🇵🇪</span>
-                          <div>
-                            <div className="font-bold leading-none">Perú</div>
-                            <div className={`text-[10px] mt-0.5 ${currency === 'PEN' ? 'text-cyan-100' : 'text-slate-400'}`}>Soles (S/ PEN) • ES</div>
+                    {COUNTRIES.map((c) => {
+                      const isSelected = c.code === countryCode && c.currency === currency;
+                      return (
+                        <button
+                          key={c.code}
+                          onClick={() => {
+                            selectCountry(c.code, true);
+                            setCountryDropdownOpen(false);
+                          }}
+                          className={`w-full px-3 py-2 text-left flex items-center justify-between text-xs hover:bg-blue-50/60 transition-colors ${
+                            isSelected ? 'bg-blue-50/80 font-bold text-[#1668E3]' : 'text-slate-700 font-medium'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-base">{c.flag}</span>
+                            <div>
+                              <span className="block leading-tight">{c.name}</span>
+                              <span className="text-[10px] text-slate-400">
+                                {c.currency} ({c.symbol})
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        {currency === 'PEN' && <Check className="w-4 h-4 stroke-[3]" />}
-                      </button>
-
-                      {/* Option 2: Colombia */}
-                      <button
-                        onClick={() => {
-                          setCurrency('COP');
-                          setLanguage('ES');
-                          setRegionDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          currency === 'COP'
-                            ? 'bg-[#00A3E0] text-white shadow-sm'
-                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-lg">🇨🇴</span>
-                          <div>
-                            <div className="font-bold leading-none">Colombia</div>
-                            <div className={`text-[10px] mt-0.5 ${currency === 'COP' ? 'text-cyan-100' : 'text-slate-400'}`}>Pesos ($ COP) • ES</div>
-                          </div>
-                        </div>
-                        {currency === 'COP' && <Check className="w-4 h-4 stroke-[3]" />}
-                      </button>
-
-                      {/* Option 3: México */}
-                      <button
-                        onClick={() => {
-                          setCurrency('MXN');
-                          setLanguage('ES');
-                          setRegionDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          currency === 'MXN'
-                            ? 'bg-[#00A3E0] text-white shadow-sm'
-                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-lg">🇲🇽</span>
-                          <div>
-                            <div className="font-bold leading-none">México</div>
-                            <div className={`text-[10px] mt-0.5 ${currency === 'MXN' ? 'text-cyan-100' : 'text-slate-400'}`}>Pesos ($ MXN) • ES</div>
-                          </div>
-                        </div>
-                        {currency === 'MXN' && <Check className="w-4 h-4 stroke-[3]" />}
-                      </button>
-
-                      {/* Option 4: Sudamérica & Latinoamérica */}
-                      <button
-                        onClick={() => {
-                          setCurrency('USD', true, 'ES');
-                          setLanguage('ES');
-                          setRegionDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          currency === 'USD' && language === 'ES'
-                            ? 'bg-[#00A3E0] text-white shadow-sm'
-                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-lg">🌎</span>
-                          <div>
-                            <div className="font-bold leading-none">Sudamérica & LatAm</div>
-                            <div className={`text-[10px] mt-0.5 ${currency === 'USD' && language === 'ES' ? 'text-cyan-100' : 'text-slate-400'}`}>Dólares ($ USD) • ES</div>
-                          </div>
-                        </div>
-                        {currency === 'USD' && language === 'ES' && <Check className="w-4 h-4 stroke-[3]" />}
-                      </button>
-
-                      {/* Option 5: USA / Global */}
-                      <button
-                        onClick={() => {
-                          setCurrency('USD', true, 'EN');
-                          setLanguage('EN');
-                          setRegionDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          currency === 'USD' && language === 'EN'
-                            ? 'bg-[#00A3E0] text-white shadow-sm'
-                            : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-lg">🇺🇸</span>
-                          <div>
-                            <div className="font-bold leading-none">Global / USA</div>
-                            <div className={`text-[10px] mt-0.5 ${currency === 'USD' && language === 'EN' ? 'text-cyan-100' : 'text-slate-400'}`}>Dollars ($ USD) • EN</div>
-                          </div>
-                        </div>
-                        {currency === 'USD' && language === 'EN' && <Check className="w-4 h-4 stroke-[3]" />}
-                      </button>
+                          {isSelected && <span className="w-2 h-2 rounded-full bg-[#1668E3]"></span>}
+                        </button>
+                      );
+                    })}
+                    <div className="px-3 py-1.5 border-t border-slate-100 bg-slate-50/70 text-[10px] text-slate-500 flex items-center justify-between">
+                      <span>Moneda base: Soles (S/)</span>
+                      <span className="font-mono font-bold text-slate-700">
+                        1 USD = S/ {rates.PEN.toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Mobile Search Icon Toggle */}
+              {/* My Orders Button */}
               <button
-                id="search-toggle-mobile"
-                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="sm:hidden p-2 rounded-xl text-white hover:bg-white/15 transition-colors cursor-pointer"
-                aria-label="Buscar productos"
+                onClick={() => setIsUserOrdersOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:text-[#1668E3] hover:bg-blue-50/60 transition-colors cursor-pointer"
+                title="Consultar estado de mi pedido"
               >
-                <Search className="w-5 h-5" />
+                <Package className="w-4 h-4 text-[#1668E3]" />
+                <span className="hidden lg:inline">Mis Pedidos</span>
               </button>
 
-              {/* Shopping Cart Button */}
+              {/* Help / FAQ Button */}
               <button
-                id="cart-header-btn"
-                onClick={() => setIsCartOpen(true)}
-                className="relative flex items-center justify-center p-2 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-slate-50 text-[#0078d4] font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 shadow-xs border border-white/40 shrink-0"
-                aria-label={`Ver carrito: ${totalQuantity} productos`}
-                title={`Carrito: ${totalQuantity} productos`}
+                onClick={() => handleHelpClick('faq')}
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <ShoppingCart className="w-4.5 h-4.5 text-[#0078d4]" />
-                {totalQuantity > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-[#d83b01] text-white text-[10.5px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white tabular-nums">
-                    {totalQuantity}
+                <HelpCircle className="w-4 h-4 text-slate-500" />
+                <span className="hidden xl:inline">Ayuda</span>
+              </button>
+
+              {/* Cart Button (Orange CTA highlight when items present) */}
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className={`relative flex items-center gap-2 px-3.5 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                  cartTotals.totalQuantity > 0
+                    ? 'bg-[#E8440A] hover:bg-[#d83b01] text-white shadow-orange-600/20'
+                    : 'bg-[#0B1F3A] hover:bg-[#1668E3] text-white'
+                }`}
+                aria-label="Abrir carrito de compras"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span className="hidden sm:inline">Carrito</span>
+                {cartTotals.totalQuantity > 0 && (
+                  <span className="px-1.5 py-0.5 text-[11px] font-extrabold bg-white text-[#0B1F3A] rounded-md leading-none">
+                    {cartTotals.totalQuantity}
                   </span>
                 )}
               </button>
 
-              {/* User Account / Orders Button */}
+              {/* Mobile Menu Button */}
               <button
-                onClick={() => onOpenUserOrders && onOpenUserOrders()}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer border border-white/25 shrink-0 backdrop-blur-xs"
-                title={t('myOrders')}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                aria-label="Menú principal"
               >
-                <User className="w-4 h-4 text-white/90" />
-                <span className="hidden md:inline">{t('myOrders')}</span>
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Second Navigation Bar in Harmonious Celeste */}
-      <div className="bg-[#0070ba] border-b border-[#00609e] shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-2 no-scrollbar text-xs sm:text-sm font-bold">
-          {/* Categorías Button */}
-          <button
-            onClick={() => handleCategoryClick('all')}
-            className={`px-3.5 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer shrink-0 transition-all font-bold ${
-              activeCategory === 'all' && currentPath === '/'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'bg-white/15 hover:bg-white/25 text-white border border-white/20'
-            }`}
-          >
-            <Menu className="w-4 h-4" />
-            <span>{t('categories')}</span>
-          </button>
-
-          {/* Category Chips */}
-          <button
-            onClick={() => handleCategoryClick('combos')}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'combos'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('combos')}
-          </button>
-
-          <button
-            onClick={() => handleCategoryClick('office')}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'office'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('office')}
-          </button>
-
-          <button
-            onClick={() => handleCategoryClick('windows')}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'windows'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('windows')}
-          </button>
-
-          <button
-            onClick={() => handleCategoryClick('project-visio')}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'project-visio'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('projectVisio')}
-          </button>
-
-          <button
-            onClick={() => handleCategoryClick('apps')}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'apps'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('apps')}
-          </button>
-
-          <button
-            onClick={handleTopClick}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'top'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('topLicenses')}
-          </button>
-
-          <button
-            onClick={handleBestSellersClick}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'bestsellers'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('bestSellers')}
-          </button>
-
-          <button
-            onClick={() => handleCategoryClick('offers')}
-            className={`px-3 py-1.5 rounded-lg cursor-pointer shrink-0 transition-all ${
-              activeCategory === 'offers'
-                ? 'bg-white text-[#0070ba] font-black shadow-xs'
-                : 'text-cyan-50 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {t('deals')}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Search Bar Drawer in Celeste */}
-      {mobileSearchOpen && (
-        <div ref={mobileSearchRef} className="sm:hidden bg-[#0070ba] p-3 border-b border-[#00609e]">
-          <div className="relative">
-            <input
-              id="search-input-mobile"
-              type="text"
-              autoFocus
-              value={searchQuery}
-              onChange={e => {
-                setSearchQuery(e.target.value);
-                if (currentPath !== '/') navigateToHome();
-              }}
-              placeholder={t("searchPlaceholderMobile")}
-              className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-300 shadow-sm border border-transparent"
-            />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2 text-slate-400 hover:text-slate-700 text-sm font-bold"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Mobile Live Results */}
-          {searchQuery.trim().length > 0 && (
-            <div className="mt-2 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden divide-y divide-slate-100">
-              {liveResults.length === 0 ? (
-                <div className="p-3 text-center text-xs text-slate-500">
-                  No encontramos coincidencias para "{searchQuery}"
-                </div>
-              ) : (
-                liveResults.map(prod => (
+          {/* Desktop 6-Category Navigation Bar */}
+          <nav className="hidden lg:flex items-center justify-between py-2 border-t border-slate-100 text-xs">
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+              {navCategories.map(cat => {
+                const isActive = selectedCategory === cat.id;
+                return (
                   <button
-                    key={prod.id}
-                    onClick={() => handleSelectProduct(prod.slug)}
-                    className="w-full text-left p-2.5 hover:bg-slate-50 flex items-center gap-2.5"
+                    key={cat.id}
+                    onClick={() => handleCategorySelect(cat.id)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer whitespace-nowrap ${
+                      isActive
+                        ? 'bg-[#1668E3] text-white shadow-xs'
+                        : 'text-slate-600 hover:text-[#0B1F3A] hover:bg-slate-100'
+                    }`}
                   >
-                    <img
-                      src={prod.imageUrl}
-                      alt={prod.name}
-                      onError={(e) => { e.currentTarget.src = prod.fallbackImage; }}
-                      className="w-9 h-9 object-contain rounded p-0.5 bg-slate-50 border border-slate-200 shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-xs text-slate-900 truncate">{prod.name}</div>
-                      <div className="text-[10px] text-slate-500">{formatPrice(prod.price)} • {prod.duration}</div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    {cat.icon}
+                    <span>{cat.label}</span>
                   </button>
-                ))
-              )}
+                );
+              })}
             </div>
-          )}
+
+            <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-500 shrink-0">
+              <button
+                onClick={() => handleHelpClick('garantia')}
+                className="hover:text-[#1668E3] transition-colors cursor-pointer"
+              >
+                Garantía Oficial
+              </button>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, deseo atención personalizada para una compra.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#1668E3] hover:underline font-bold"
+              >
+                WhatsApp Directo
+              </a>
+            </div>
+          </nav>
         </div>
-      )}
 
-      {/* Mobile Navigation Dropdown Menu in Celeste */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0070ba] py-3 border-b border-[#00609e] flex flex-col space-y-1 px-4 text-white">
-          <button
-            onClick={() => {
-              setActiveCategory('all');
-              navigateToHome();
-              setMobileMenuOpen(false);
-            }}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('home')}
-          </button>
-          <button
-            onClick={() => handleCategoryClick('combos')}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('combos')}
-          </button>
-          <button
-            onClick={() => handleCategoryClick('office')}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('office')}
-          </button>
-          <button
-            onClick={() => handleCategoryClick('windows')}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('windows')}
-          </button>
-          <button
-            onClick={() => handleCategoryClick('project-visio')}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('projectVisio')}
-          </button>
-          <button
-            onClick={() => handleCategoryClick('apps')}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('apps')}
-          </button>
-          <button
-            onClick={handleTopClick}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('topLicenses')}
-          </button>
-          <button
-            onClick={handleBestSellersClick}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('bestSellers')}
-          </button>
-          <button
-            onClick={() => handleCategoryClick('offers')}
-            className="w-full text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
-          >
-            {t('deals')}
-          </button>
+        {/* Mobile Search & Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-4 shadow-xl">
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onKeyDown={handleSearchEnter}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar software o suscripción..."
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1668E3]"
+              />
+            </div>
 
-          <div className="pt-2 border-t border-white/20 mt-1">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setIsRegionModalOpen(true);
-              }}
-              className="w-full text-left py-2.5 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-between cursor-pointer"
-            >
-              <span className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-cyan-200" />
-                <span>
-                  {currency === 'PEN' && '🇵🇪 Perú (S/ PEN)'}
-                  {currency === 'COP' && '🇨🇴 Colombia ($ COP)'}
-                  {currency === 'MXN' && '🇲🇽 México ($ MXN)'}
-                  {currency === 'USD' && language === 'ES' && '🌎 Sudamérica / LatAm ($ USD)'}
-                  {currency === 'USD' && language === 'EN' && '🇺🇸 Global / USA ($ USD)'}
-                </span>
-              </span>
-              <span className="text-[11px] underline text-cyan-100 hover:text-white">
-                {language === 'ES' ? 'Cambiar país/moneda' : 'Change country/currency'}
-              </span>
-            </button>
+            <div className="grid grid-cols-2 gap-1.5">
+              {navCategories.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategorySelect(cat.id)}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold text-left transition-all ${
+                    selectedCategory === cat.id
+                      ? 'bg-[#1668E3] text-white'
+                      : 'text-slate-700 bg-slate-50 hover:bg-slate-100'
+                  }`}
+                >
+                  {cat.icon}
+                  <span className="truncate">{cat.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+              <button
+                onClick={() => {
+                  setIsUserOrdersOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-slate-100 font-bold text-slate-800"
+              >
+                <Package className="w-4 h-4 text-[#1668E3]" />
+                Mis Pedidos
+              </button>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, tengo una consulta sobre sus productos.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-[#E8440A] font-bold text-white"
+              >
+                WhatsApp Soporte
+              </a>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </header>
   );
 };

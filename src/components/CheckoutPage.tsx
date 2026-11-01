@@ -1,1468 +1,741 @@
-import { formatPrice } from '../products.ts';
-import React, { useEffect, useState, useRef } from 'react';
-import { useCart } from '../context/CartContext.tsx';
+import React, { useState, useEffect } from 'react';
 import {
-  MERCADO_PAGO_URL,
-  MERCADO_LIBRE_URL,
-  WHATSAPP_NUMBER,
-  WHATSAPP_DISPLAY
-} from '../products.ts';
-import {
-  CreditCard,
-  MessageCircle,
-  ShieldCheck,
-  CheckCircle2,
-  Sparkles,
   ArrowLeft,
-  ExternalLink,
-  ShoppingBag,
-  Clock,
-  Tag,
+  ShieldCheck,
+  Lock,
+  CheckCircle2,
   AlertCircle,
-  Trash2,
-  Plus,
-  Minus,
   Loader2,
-  Mail,
-  User,
-  Phone,
-  RefreshCw,
-  X,
+  MessageCircle,
   Copy,
   Check,
-  Eye,
-  EyeOff,
-  Tv,
-  Key,
-  Zap
+  Upload,
+  CreditCard,
+  Smartphone,
+  Building2,
+  Globe,
+  Clock,
+  FileCheck2
 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { WHATSAPP_NUMBER } from '../products';
+import { PaymentMethodId } from '../types';
+import { trackPurchase } from '../utils/analytics';
 
 export const CheckoutPage: React.FC = () => {
   const {
     items,
-    totalQuantity,
-    subtotal,
-    hasDiscount,
-    discountRate,
-    discountAmount,
-    total,
-    discountReason,
-    isMultiItemDiscount,
-    isCouponApplied,
-    appliedCoupon,
-    applyCoupon,
-    removeCoupon,
-    couponFeedback,
-    removeItem,
-    updateQuantity,
-    setQuantity,
-    addItem,
+    cartTotals,
     clearCart,
-    navigateToHome,
-    navigateToPayPal,
-    t,
-    language,
-    getProductName,
-    exchangeRate
- } = useCart();
+    goToHome,
+    couponCode,
+    formatPrice,
+    currency,
+    paymentSettings
+  } = useCart();
 
-  const isEn = language === 'EN';
-  const penRate = exchangeRate || 3.75;
-  const totalUSD = (total / penRate).toFixed(2);
+  // Required Buyer Fields
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodId>('mercadopago');
 
-  const [selectedPaymentGateway, setSelectedPaymentGateway] = useState<'mercadopago' | 'paypal'>('mercadopago');
-  const [inputCoupon, setInputCoupon] = useState('');
+  // Manual Payment Fields (Yape / Plin / Transferencia)
+  const [operationNumber, setOperationNumber] = useState('');
+  const [receiptImage, setReceiptImage] = useState<string>('');
+  const [receiptFileName, setReceiptFileName] = useState<string>('');
 
-  // Check if any product in cart strictly requires Mercado Pago
-  const hasOnlyMercadoPagoItem = items.some(it => {
-    return Boolean(it.product?.acceptedPaymentGateways && !it.product.acceptedPaymentGateways.includes('paypal'));
-  });
+  // Processing & Order Confirmation States
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [confirmedOrder, setConfirmedOrder] = useState<any | null>(null);
+  const [mpPaymentUrl, setMpPaymentUrl] = useState<string | null>(null);
+  const [copiedPhone, setCopiedPhone] = useState(false);
 
+  // Late receipt submission on confirmation screen
+  const [lateOpNumber, setLateOpNumber] = useState('');
+  const [lateReceiptImg, setLateReceiptImg] = useState('');
+  const [isUpdatingReceipt, setIsUpdatingReceipt] = useState(false);
+  const [receiptUpdatedSuccess, setReceiptUpdatedSuccess] = useState(false);
+
+  // Check if returning from Mercado Pago redirect
   useEffect(() => {
-    if (hasOnlyMercadoPagoItem && selectedPaymentGateway !== 'mercadopago') {
-      setSelectedPaymentGateway('mercadopago');
-    }
-  }, [hasOnlyMercadoPagoItem, selectedPaymentGateway]);
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status') || params.get('collection_status');
+    const orderId = params.get('orderId') || params.get('external_reference');
+    const paymentId = params.get('payment_id') || params.get('collection_id');
 
-  // Delivered immediate credentials state (from server confirmation or stored order)
-  const [deliveredCredentials, setDeliveredCredentials] = useState<any[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const raw = localStorage.getItem('upclic_last_credentials');
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    return [];
-  });
-  const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState<Record<string, boolean>>({});
-
-  const copyToClipboard = (text: string, fieldId: string) => {
-    try {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text);
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      }
-      setCopiedField(fieldId);
-      setTimeout(() => setCopiedField(null), 2500);
-    } catch (e) {
-      console.error('Error copying text:', e);
-    }
-  };
-
-  const toggleShowPassword = (id: string) => {
-    setShowPassword(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  // Only recommend coupon if the cart meets the requirements:
-  // Not already applied, no multi-item 10% discount already active, and has at least 1 product >= S/ 40.00
-  const isEligibleForCoupon =
-    !appliedCoupon &&
-    !isMultiItemDiscount &&
-    true;
-
-  const [isCreatingPreference, setIsCreatingPreference] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
-
-  // Check if PayPal is allowed for current cart
-  const isPayPalAllowed = !hasOnlyMercadoPagoItem && items.length > 0;
-
-  // Customer contact state for digital delivery and notification
-  const [customerEmail, setCustomerEmail] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    try {
-      return localStorage.getItem('upclic_customer_email') || '';
-    } catch {
-      return '';
-    }
-  });
-
-  const [customerName, setCustomerName] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    try {
-      return localStorage.getItem('upclic_customer_name') || '';
-    } catch {
-      return '';
-    }
-  });
-
-  const [customerPhone, setCustomerPhone] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    try {
-      return localStorage.getItem('upclic_customer_phone') || '';
-    } catch {
-      return '';
-    }
-  });
-
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [emailTouched, setEmailTouched] = useState(false);
-  const emailInputRef = useRef<HTMLInputElement | null>(null);
-
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-  };
-
-  const handleEmailChange = (val: string) => {
-    setCustomerEmail(val);
-    try {
-      localStorage.setItem('upclic_customer_email', val);
-    } catch {}
-    if (emailTouched) {
-      if (!val.trim()) {
-        setEmailError('El correo electrónico es obligatorio para enviarte tu licencia.');
-      } else if (!isValidEmail(val)) {
-        setEmailError('Ingresa un formato de correo válido (ej: cliente@gmail.com).');
-      } else {
-        setEmailError(null);
-      }
-    }
-  };
-
-  const handleNameChange = (val: string) => {
-    setCustomerName(val);
-    try {
-      localStorage.setItem('upclic_customer_name', val);
-    } catch {}
-  };
-
-  const handlePhoneChange = (val: string) => {
-    setCustomerPhone(val);
-    try {
-      localStorage.setItem('upclic_customer_phone', val);
-    } catch {}
-  };
-
-  // Check URL params for Mercado Pago return (success, approved, payment_id)
-  const [paymentResult, setPaymentResult] = useState<{
-    isSuccess: boolean;
-    paymentId?: string | null;
-    status?: string | null;
-  } | null>(() => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const searchParams = new URLSearchParams(window.location.search);
-      const hash = window.location.hash || '';
-      const hashParams = hash.includes('?') ? new URLSearchParams(hash.substring(hash.indexOf('?'))) : null;
-
-      const status = searchParams.get('status') || searchParams.get('collection_status') || hashParams?.get('status') || hashParams?.get('collection_status');
-      const paymentId = searchParams.get('payment_id') || searchParams.get('collection_id') || hashParams?.get('payment_id') || hashParams?.get('collection_id');
-
-      const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
-
-      if (status === 'success' || status === 'approved' || searchParams.get('collection_status') === 'approved' || pathname.includes('/checkout/success')) {
-        return { isSuccess: true, paymentId, status: status || 'approved' };
-      }
-    } catch (e) {
-      console.error('Error parsing payment status:', e);
-    }
-    return null;
-  });
-
-  const [returnNotice, setReturnNotice] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    try {
-      const searchParams = new URLSearchParams(window.location.search);
-      const hash = window.location.hash || '';
-      const hashParams = hash.includes('?') ? new URLSearchParams(hash.substring(hash.indexOf('?'))) : null;
-      const status = searchParams.get('status') || searchParams.get('collection_status') || hashParams?.get('status');
-
-      if (status === 'return' || status === 'failure' || status === 'null' || searchParams.get('cart') === 'open') {
-        return true;
-      }
-    } catch {}
-    return false;
-  });
-
-  const hasConfirmedPaymentRef = useRef(false);
-  const isCreatingPreferenceRef = useRef(false);
-
-  // Retrieve last order details saved before redirecting to Mercado Pago
-  const lastOrderSnapshot = (() => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const raw = localStorage.getItem('upclic_last_order');
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    return null;
-  })();
-
-  // Automatic synchronization: actively detect when Mercado Pago payment is approved
-  useEffect(() => {
-    if (paymentResult?.isSuccess) return;
-
-    const storedRaw = typeof window !== 'undefined' ? localStorage.getItem('upclic_last_order') : null;
-    let orderIdToTrack: string | null = null;
-    let emailToTrack: string | null = null;
-    if (storedRaw) {
+    if ((status === 'success' || status === 'approved' || status === 'pending') && orderId) {
+      const savedCustomerStr = localStorage.getItem('upclic_last_checkout_customer');
+      let savedCustomer: any = {};
       try {
-        const parsed = JSON.parse(storedRaw);
-        orderIdToTrack = parsed.orderId || null;
-        emailToTrack = parsed.customerEmail || null;
+        if (savedCustomerStr) savedCustomer = JSON.parse(savedCustomerStr);
       } catch {}
-    }
 
-    if (!orderIdToTrack && !emailToTrack) return;
-
-    const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
-      (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
-        ? 'https://upclic12-rypnq.sevalla.app'
-        : '');
-
-    let isMounted = true;
-
-    const checkStatus = async () => {
-      try {
-        const query = orderIdToTrack 
-          ? `orderId=${encodeURIComponent(orderIdToTrack)}` 
-          : `email=${encodeURIComponent(emailToTrack || '')}`;
-        const res = await fetch(`${apiBase}/api/mercadopago/check_payment?${query}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data?.isPaid && isMounted) {
-          console.log('🎉 [PAYMENT DETECTED] Pago confirmado automáticamente:', data);
-          setPaymentResult({
-            isSuccess: true,
-            paymentId: data.order?.paymentId || 'MP-APPROVED',
-            status: 'approved'
-          });
-          if (Array.isArray(data.deliveredCredentials) && data.deliveredCredentials.length > 0) {
-            setDeliveredCredentials(data.deliveredCredentials);
-            try {
-              localStorage.setItem('upclic_last_credentials', JSON.stringify(data.deliveredCredentials));
-            } catch {}
-          }
-          clearCart();
-        }
-      } catch {}
-    };
-
-    checkStatus();
-    const handleFocus = () => checkStatus();
-    window.addEventListener('focus', handleFocus);
-    const interval = setInterval(checkStatus, 2500);
-
-    return () => {
-      isMounted = false;
-      window.removeEventListener('focus', handleFocus);
-      clearInterval(interval);
-    };
-  }, [paymentResult?.isSuccess, clearCart]);
-
-  const paidOrderItems = (lastOrderSnapshot?.items && lastOrderSnapshot.items.length > 0)
-    ? lastOrderSnapshot.items
-    : items;
-  const paidCoupon = lastOrderSnapshot?.appliedCoupon || appliedCoupon;
-  const paidTotal = lastOrderSnapshot?.total ?? total;
-  const paidCustomerEmail = lastOrderSnapshot?.customerEmail || customerEmail;
-  const paidCustomerName = lastOrderSnapshot?.customerName || customerName;
-  const paidCustomerPhone = lastOrderSnapshot?.customerPhone || customerPhone;
-
-  // On payment success: clear cart and dispatch confirmation email with 10-30 min delivery message
-  useEffect(() => {
-    if (!paymentResult?.isSuccess || hasConfirmedPaymentRef.current) return;
-    hasConfirmedPaymentRef.current = true;
-
-    // Clear cart
-    clearCart();
-
-    const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
-      (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
-        ? 'https://upclic12-rypnq.sevalla.app'
-        : '');
-
-    // Notify backend to record payment and send purchase confirmation email to customer & admin
-    fetch(`${apiBase}/api/confirm_payment_success`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId: lastOrderSnapshot?.orderId,
-        paymentId: paymentResult?.paymentId,
-        customerEmail: paidCustomerEmail,
-        customerName: paidCustomerName,
-        customerPhone: paidCustomerPhone,
-        items: paidOrderItems,
-        total: paidTotal,
+      fetch('/api/confirm_payment_success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          paymentId,
+          customerEmail: savedCustomer.email || 'cliente@upclic.store',
+          customerName: savedCustomer.name || 'Cliente UPCLIC',
+          customerPhone: savedCustomer.phone || '',
+          items: savedCustomer.items || items
+        })
       })
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log('Confirmación de compra procesada y correo despachado:', data);
-        if (data?.deliveredCredentials && Array.isArray(data.deliveredCredentials) && data.deliveredCredentials.length > 0) {
-          setDeliveredCredentials(data.deliveredCredentials);
-          try {
-            localStorage.setItem('upclic_last_credentials', JSON.stringify(data.deliveredCredentials));
-          } catch {}
-        }
-      })
-      .catch(err => {
-        console.error('Error al registrar confirmación de pago:', err);
-      });
-  }, [paymentResult?.isSuccess, paidCustomerEmail, paidCustomerName, paidCustomerPhone, paidOrderItems, paidTotal, lastOrderSnapshot?.orderId, paymentResult?.paymentId, clearCart]);
-
-  // Lookup order credentials if not already loaded and payment is successful
-  useEffect(() => {
-    if (!paymentResult?.isSuccess || deliveredCredentials.length > 0) return;
-    const orderId = lastOrderSnapshot?.orderId || paymentResult.paymentId;
-    if (!orderId) return;
-
-    const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
-      (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
-        ? 'https://upclic12-rypnq.sevalla.app'
-        : '');
-
-    const timer = setTimeout(() => {
-      fetch(`${apiBase}/api/orders/lookup?id=${encodeURIComponent(orderId)}`)
-        .then(res => res.json())
+        .then(r => r.json())
         .then(data => {
-          if (data?.success && data.orders?.[0]?.deliveredCredentials?.length > 0) {
-            setDeliveredCredentials(data.orders[0].deliveredCredentials);
-            try {
-              localStorage.setItem('upclic_last_credentials', JSON.stringify(data.orders[0].deliveredCredentials));
-            } catch {}
+          if (data.success && data.order) {
+            setConfirmedOrder(data.order);
+            if (data.order.orderStatus === 'Pagado') {
+              trackPurchase(
+                data.order.id,
+                data.order.total,
+                data.order.items || [],
+                currency
+              );
+            }
+            clearCart();
           }
         })
         .catch(() => {});
-    }, 1200);
+    }
+  }, []);
 
-    return () => clearTimeout(timer);
-  }, [paymentResult?.isSuccess, deliveredCredentials.length, lastOrderSnapshot?.orderId, paymentResult?.paymentId]);
-
-  const handleMercadoPago = async () => {
-    if (items.length === 0 || isCreatingPreferenceRef.current) return;
-    setEmailTouched(true);
-    setPaymentError(null);
-
-    const trimmedEmail = customerEmail.trim();
-    if (!trimmedEmail || !isValidEmail(trimmedEmail)) {
-      setEmailError('Por favor ingresa tu correo electrónico para que podamos enviarte tu licencia y registrar tu pedido.');
-      emailInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      emailInputRef.current?.focus();
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isLate: boolean = false) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3.5 * 1024 * 1024) {
+      setErrorMsg('La imagen del comprobante no debe superar los 3.5 MB.');
       return;
     }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        if (isLate) {
+          setLateReceiptImg(reader.result);
+        } else {
+          setReceiptImage(reader.result);
+          setReceiptFileName(file.name);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
-    // Pre-open window synchronously in direct click handler to prevent browser popup blockers
-    let popupWindow: Window | null = null;
-    const isStandalone = typeof window !== 'undefined' && window.top === window;
+  const handleCopyText = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedPhone(true);
+    setTimeout(() => setCopiedPhone(false), 2000);
+  };
 
-    if (!isStandalone) {
-      try {
-        popupWindow = window.open('about:blank', '_blank');
-      } catch {}
+  const validateBuyerForm = (): boolean => {
+    if (!customerName.trim() || customerName.trim().length < 2) {
+      setErrorMsg('Por favor ingresa tu nombre completo.');
+      return false;
     }
-    
+    if (!customerEmail.trim() || !customerEmail.includes('@') || !customerEmail.includes('.')) {
+      setErrorMsg('Por favor ingresa un correo electrónico válido para enviarte tu pedido.');
+      return false;
+    }
+    if (!customerPhone.trim() || customerPhone.trim().length < 6) {
+      setErrorMsg('Por favor ingresa tu número de WhatsApp para coordinar la entrega.');
+      return false;
+    }
+    if (items.length === 0) {
+      setErrorMsg('Tu carrito está vacío.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleCompleteOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    if (!validateBuyerForm()) return;
+
+    setIsSubmitting(true);
+
     try {
-      isCreatingPreferenceRef.current = true;
-      setIsCreatingPreference(true);
-
-      // Save order snapshot in localStorage so when the user returns after paying, we have full details
-      try {
-        localStorage.setItem('upclic_last_order', JSON.stringify({
-          items: items.map(it => ({
-            product: it.product,
-            quantity: it.quantity,
-            unitPrice: it.unitPrice,
-            variantName: it.variantName
-          })),
-          appliedCoupon,
-          total,
-          discountAmount,
-          discountReason,
-          customerEmail: trimmedEmail,
-          customerName: customerName.trim(),
-          customerPhone: customerPhone.trim(),
-          timestamp: new Date().toISOString()
-        }));
-      } catch (e) {
-        console.error('Error saving last order to localStorage', e);
-      }
-
-      const apiBase = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
-        (typeof window !== 'undefined' && (window.location.hostname === 'upclic.store' || window.location.hostname.endsWith('github.io'))
-          ? 'https://upclic12-rypnq.sevalla.app'
-          : '');
-
-      const response = await fetch(`${apiBase}/api/create_preference`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          origin: typeof window !== 'undefined' && window.location.origin.startsWith('https://') ? window.location.origin : 'https://upclic.store',
-          returnUrl: typeof window !== 'undefined' && window.location.origin.startsWith('https://') ? `${window.location.origin}/checkout?status=return&cart=open` : 'https://upclic.store/checkout?status=return&cart=open',
-          items,
-          discountAmount,
-          discountReason,
-          total,
-          customerEmail: trimmedEmail,
-          customerName: customerName.trim(),
-          customerPhone: customerPhone.trim()
+      // Save buyer info locally in case of gateway redirect
+      localStorage.setItem(
+        'upclic_last_checkout_customer',
+        JSON.stringify({
+          name: customerName.trim(),
+          email: customerEmail.trim(),
+          phone: customerPhone.trim(),
+          items
         })
-      });
-      
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        if (text.toLowerCase().includes('502 bad gateway') || response.status === 502) {
-          throw new Error('El servidor de Sevalla está temporalmente apagado (502 Bad Gateway). Por favor revisa los Logs en Sevalla o coordina tu compra por WhatsApp.');
+      );
+
+      if (selectedMethod === 'yape' || selectedMethod === 'plin' || selectedMethod === 'transferencia') {
+        const res = await fetch('/api/orders/create_manual', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName: customerName.trim(),
+            customerEmail: customerEmail.trim(),
+            customerPhone: customerPhone.trim(),
+            items,
+            couponCode,
+            paymentMethod: selectedMethod,
+            operationNumber: operationNumber.trim(),
+            receiptImage
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'No se pudo registrar el pedido.');
         }
-        if (text.toLowerCase().includes('<!html') || text.toLowerCase().includes('<html')) {
-          throw new Error('El servidor devolvió una página HTML en lugar de JSON. Por favor revisa los Logs en Sevalla o coordina tu compra directamente por WhatsApp.');
-        }
-        throw new Error('El servidor devolvió una respuesta no válida al crear la preferencia de pago.');
+        setConfirmedOrder(data.order);
+        clearCart();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al conectar con Mercado Pago');
-      }
-      
-      if (data.init_point) {
-        if (data.orderId) {
-          try {
-            const rawStored = localStorage.getItem('upclic_last_order');
-            const stored = rawStored ? JSON.parse(rawStored) : {};
-            stored.orderId = data.orderId;
-            stored.paymentUrl = data.init_point;
-            localStorage.setItem('upclic_last_order', JSON.stringify(stored));
-          } catch (e) {
-            console.error('Error actualizando orderId en localStorage', e);
-          }
+
+      if (selectedMethod === 'mercadopago') {
+        const res = await fetch('/api/create_preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items,
+            couponCode,
+            discountAmount: cartTotals.discountAmount,
+            discountReason: cartTotals.discountReason,
+            total: cartTotals.total,
+            customerName: customerName.trim(),
+            customerEmail: customerEmail.trim(),
+            customerPhone: customerPhone.trim(),
+            origin: window.location.origin
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.init_point) {
+          throw new Error(
+            data.error ||
+              'No se pudo generar el enlace de pago con Mercado Pago. Intenta nuevamente en unos segundos.'
+          );
         }
 
-        // Standalone window (production store on desktop / mobile): redirect directly to Mercado Pago
-        if (isStandalone) {
-          window.location.href = data.init_point;
+        setMpPaymentUrl(data.init_point);
+
+        // If running inside an iframe (e.g. preview), Mercado Pago blocks embedded checkout/cookies,
+        // so open in a top-level browser tab and display the order confirmation with the payment link.
+        const isInIframe = (() => {
+          try {
+            return window.self !== window.top;
+          } catch {
+            return true;
+          }
+        })();
+
+        if (isInIframe) {
+          const link = document.createElement('a');
+          link.href = data.init_point;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          setConfirmedOrder(
+            data.order || {
+              id: data.orderId || `ORD-${Date.now()}`,
+              customerName: customerName.trim(),
+              customerEmail: customerEmail.trim(),
+              customerPhone: customerPhone.trim(),
+              total: cartTotals.total,
+              items: items.map((it) => ({
+                name: it.product.name,
+                variantName: it.variantName || null,
+                quantity: it.quantity,
+                unitPrice: it.unitPrice ?? it.product.price
+              })),
+              orderStatus: 'Pendiente de pago',
+              deliveryStatus: 'Pendiente de envío',
+              channel: 'mercado_pago',
+              createdAt: new Date().toISOString()
+            }
+          );
+          clearCart();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
 
-        let windowOpened = false;
-
-        // 1. Inside iframe / preview: navigate pre-opened popup window
-        if (popupWindow && !popupWindow.closed) {
-          try {
-            popupWindow.location.href = data.init_point;
-            popupWindow.focus();
-            windowOpened = true;
-          } catch (e) {
-            console.warn('Could not redirect pre-opened popup:', e);
-          }
-        }
-
-        // 2. Fallback: try window.open
-        if (!windowOpened) {
-          try {
-            const openedWin = window.open(data.init_point, '_blank', 'noopener,noreferrer');
-            if (openedWin) {
-              openedWin.focus();
-              windowOpened = true;
-            }
-          } catch (e) {
-            console.warn('Could not window.open:', e);
-          }
-        }
-
-        // 3. Fallback: simulate synthetic anchor click
-        if (!windowOpened) {
-          try {
-            const anchor = document.createElement('a');
-            anchor.href = data.init_point;
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-            windowOpened = true;
-          } catch (e) {
-            console.warn('Could not click anchor:', e);
-          }
-        }
-      } else {
-        throw new Error('No se obtuvo la URL de pago de Mercado Pago.');
+        window.location.href = data.init_point;
+        return;
       }
-    } catch (error: any) {
-      if (popupWindow && !popupWindow.closed) {
-        try {
-          popupWindow.close();
-        } catch {}
-      }
-      console.error("Error Mercado Pago:", error);
-      setPaymentError(error.message || 'Error al iniciar pago seguro con Mercado Pago. Verifica que MERCADOPAGO_ACCESS_TOKEN esté configurado.');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Ocurrió un error al procesar tu solicitud.');
     } finally {
-      isCreatingPreferenceRef.current = false;
-      setIsCreatingPreference(false);
+      setIsSubmitting(false);
     }
   };
 
-  useEffect(() => {
-    document.title = 'Checkout y Pago | UpClic';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const handleApply = (e: React.FormEvent) => {
+  const handleLateReceiptSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputCoupon.trim()) return;
-    applyCoupon(inputCoupon);
-    setInputCoupon('');
+    if (!confirmedOrder?.id) return;
+    if (!lateOpNumber.trim() && !lateReceiptImg) {
+      setErrorMsg('Ingresa el número de operación o adjunta la captura del comprobante.');
+      return;
+    }
+    setIsUpdatingReceipt(true);
+    setErrorMsg(null);
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(confirmedOrder.id)}/submit_receipt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operationNumber: lateOpNumber.trim(),
+          receiptImage: lateReceiptImg
+        })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Error al enviar comprobante.');
+      }
+      setConfirmedOrder(data.order);
+      setReceiptUpdatedSuccess(true);
+    } catch (err: any) {
+      setErrorMsg(err.message);
+    } finally {
+      setIsUpdatingReceipt(false);
+    }
   };
 
+  const yapeConfig = paymentSettings?.yape || {
+    enabled: true,
+    phone: '983 204 384',
+    holderName: 'UPCLIC STORE PERÚ',
+    instructions:
+      'Realiza el pago por Yape al número indicado, ingresa el número de operación y adjunta tu comprobante para validar tu pedido.'
+  };
 
-  if (paymentResult?.isSuccess) {
-    const contactWhatsAppUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20UpClic,%20mi%20pago%20fue%20aprobado%20para%20el%20pedido%20${encodeURIComponent(lastOrderSnapshot?.orderId || paymentResult.paymentId || 'UpClic')}.%20Deseo%20soporte%20con%20mi%20compra.`;
+  const plinConfig = paymentSettings?.plin || {
+    enabled: true,
+    phone: '983 204 384',
+    holderName: 'UPCLIC STORE PERÚ',
+    instructions:
+      'Realiza el pago por Plin al número indicado, ingresa el número de operación y adjunta tu comprobante para validar tu pedido.'
+  };
+
+  const bankConfig = paymentSettings?.transferencia || {
+    enabled: true,
+    bankName: 'BCP / Interbank / BBVA',
+    accountNumber: 'Solicitar cuenta corporativa o transferir vía CCI',
+    cci: 'Consultar en soporte WhatsApp o usar Yape/Plin',
+    holderName: 'UPCLIC STORE PERÚ',
+    accountType: 'Cuenta Soles (S/)',
+    instructions:
+      'Realiza la transferencia en Soles (S/), ingresa el número de operación bancaria y adjunta tu constancia.'
+  };
+
+  // --- ORDER CONFIRMATION VIEW ---
+  if (confirmedOrder) {
+    const orderStatusLabel = confirmedOrder.orderStatus || 'Pendiente de pago';
+    const deliveryStatusLabel = confirmedOrder.deliveryStatus || 'Pendiente de envío';
+    const isPaid = orderStatusLabel === 'Pagado' || orderStatusLabel === 'Entregado';
+    const isReview = orderStatusLabel === 'Pago en revisión';
+
+    const whatsappOrderConfirmUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      `Hola UPCLIC, acabo de registrar mi pedido *${confirmedOrder.id}*.\n• Cliente: ${
+        confirmedOrder.customerName || customerName
+      }\n• Correo: ${confirmedOrder.customerEmail || customerEmail}\n• Total: S/ ${Number(
+        confirmedOrder.total || 0
+      ).toFixed(2)}\n• Método: ${String(confirmedOrder.channel || selectedMethod).toUpperCase()}\n• Estado: ${orderStatusLabel}${
+        confirmedOrder.operationNumber ? `\n• N° Operación: ${confirmedOrder.operationNumber}` : ''
+      }`
+    )}`;
 
     return (
-      <div id="checkout-success-view" className="py-12 sm:py-16 bg-slate-50/80 min-h-screen flex items-center justify-center px-4">
-        <div className="max-w-xl w-full bg-white rounded-lg border border-emerald-100 shadow-md p-6 sm:p-10 text-center relative overflow-hidden">
-          {/* Top decorative gradient glow */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-600" />
-
-          {/* Success Icon */}
-          <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-6 border-4 border-emerald-100/80 shadow-sm">
-            <CheckCircle2 className="w-10 h-10" />
-          </div>
-
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 mb-3">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            {language === 'ES' ? 'Pago Aprobado con Mercado Pago' : 'Payment Approved with Mercado Pago'}
-          </span>
-
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            {language === 'ES' ? '¡Se Completó su Compra!' : 'Purchase Completed!'}
-          </h1>
-
-          <p className="text-sm text-slate-600 mt-2.5 leading-relaxed">
-            {language === 'ES'
-              ? 'Hemos verificado tu transacción con Mercado Pago. Tu pago ha sido aprobado con éxito y te enviamos la confirmación oficial a tu correo electrónico'
-              : 'We have verified your transaction with Mercado Pago. Your payment has been successfully approved and official confirmation has been sent to your email'}{paidCustomerEmail ? `: ` : '.'}
-            {paidCustomerEmail && <strong className="text-slate-900 break-all">{paidCustomerEmail}</strong>}
-          </p>
-
-          {/* License delivery notice within 10 to 30 minutes */}
-          <div className="mt-6 p-4 sm:p-5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-left flex items-start gap-3.5 shadow-xs">
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-emerald-950">
-                {language === 'ES' ? 'Entrega de tu licencia digital:' : 'Digital license delivery:'}
-              </h4>
-              <p className="text-xs sm:text-sm text-emerald-800 mt-1 leading-relaxed">
-                <strong>{language === 'ES' ? 'Tu licencia será enviada a tu correo dentro de 10 a 30 minutos.' : 'Your license will be sent to your email within 10 to 30 minutes.'}</strong> {language === 'ES' ? 'Nuestro equipo técnico está validando tu clave de producto y preparando tu comprobante e instrucciones de activación.' : 'Our technical team is validating your product key and preparing your receipt and activation instructions.'}
-              </p>
-            </div>
-          </div>
-
-          {/* Order summary box */}
-          <div className="mt-6 text-left rounded-lg bg-slate-50 border border-slate-200/80 p-5 space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-              <span>{t('orderStatusLabel')}</span>
-              <span className="font-bold text-emerald-700 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200 text-[11px] tracking-wide">
-                {t('paidConfirmedStatus')}
+      <div className="min-h-screen bg-[#F4F7FB] py-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
+          <div className="p-6 sm:p-8 bg-[#0B1F3A] text-white">
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+              <span className="px-3 py-1 rounded-full bg-white/10 text-[#7DB2FF] text-xs font-bold uppercase tracking-wider">
+                Confirmación de Pedido UPCLIC
+              </span>
+              <span className="text-xs text-slate-300 font-mono">
+                Fecha: {new Date(confirmedOrder.createdAt || Date.now()).toLocaleString('es-PE')}
               </span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              ¡Pedido {confirmedOrder.id} registrado!
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1">
+              Hemos enviado el resumen de tu pedido a <strong>{confirmedOrder.customerEmail}</strong>.
+            </p>
+          </div>
 
-            {lastOrderSnapshot?.orderId && (
-              <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>{t('orderNumberLabel')}</span>
-                <span className="font-mono font-bold text-slate-800 text-xs">
-                  {lastOrderSnapshot.orderId}
+          <div className="p-6 sm:p-8 space-y-6">
+            {/* Key Order Metadata Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-[11px] font-bold uppercase text-slate-400 block mb-1">
+                  Número de Pedido
+                </span>
+                <span className="text-sm font-mono font-extrabold text-[#0B1F3A]">
+                  {confirmedOrder.id}
                 </span>
               </div>
-            )}
 
-            {paidCustomerEmail && (
-              <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>{t('deliveryEmailLabel')}</span>
-                <span className="font-mono font-bold text-emerald-900 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200 break-all text-[11px]">
-                  {paidCustomerEmail}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-[11px] font-bold uppercase text-slate-400 block mb-1">
+                  Estado del Pago
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1.5 text-xs font-extrabold px-2.5 py-1 rounded-full ${
+                    isPaid
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : isReview
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  {orderStatusLabel}
                 </span>
               </div>
-            )}
 
-            {paidCustomerName && (
-              <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>{t('cardHolderLabel')}</span>
-                <span className="font-bold text-slate-800 text-xs">
-                  {paidCustomerName}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-[11px] font-bold uppercase text-slate-400 block mb-1">
+                  Estado de Entrega
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-800 bg-slate-200/70 px-2.5 py-1 rounded-full">
+                  {deliveryStatusLabel}
                 </span>
               </div>
-            )}
+            </div>
 
-            {paymentResult.paymentId && (
-              <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2.5">
-                <span>{t('mpTxLabel')}</span>
-                <span className="font-mono font-bold text-slate-700">
-                  #{paymentResult.paymentId}
-                </span>
+            {/* Purchased Products */}
+            <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-600">
+                Productos del Pedido
               </div>
-            )}
-
-            <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{t('purchasedProductsLabel')}</span>
-              {paidOrderItems.map((item: any, idx: number) => {
-                const name = item.product?.name || item.name || 'Licencia Microsoft';
-                const price = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
-                const qty = Number(item.quantity) || 1;
-                return (
-                  <div key={idx} className="flex justify-between items-center text-xs text-slate-700 font-medium">
-                    <span className="truncate pr-2">• {name} {item.variantName ? `(${item.variantName})` : ''} x{qty}</span>
-                    <span className="shrink-0 font-bold">{formatPrice((price * qty))}</span>
+              <div className="divide-y divide-slate-100">
+                {(confirmedOrder.items || []).map((item: any, idx: number) => (
+                  <div key={idx} className="px-4 py-3 flex items-center justify-between text-xs sm:text-sm">
+                    <div>
+                      <span className="font-bold text-[#0B1F3A]">
+                        {item.quantity}x {item.name}
+                      </span>
+                      {item.variantName && (
+                        <span className="ml-2 text-xs text-[#1668E3] font-semibold">
+                          ({item.variantName})
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-bold text-slate-800">
+                      S/ {(Number(item.unitPrice || 0) * Number(item.quantity || 1)).toFixed(2)}
+                    </span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+              <div className="bg-slate-50 px-4 py-3 border-t border-slate-200 flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-700">Monto Total:</span>
+                <span className="text-xl font-extrabold text-[#0B1F3A]">
+                  S/ {Number(confirmedOrder.total || 0).toFixed(2)} PEN
+                </span>
+              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-sm font-black text-slate-900">
-              <span>{t('totalPaidLabel')}</span>
-              <span className="text-emerald-700 font-black text-base">{formatPrice(paidTotal)}</span>
+            {mpPaymentUrl && !isPaid && (
+              <div className="p-5 rounded-2xl bg-sky-50 border-2 border-[#009EE3] space-y-3">
+                <div className="flex items-center gap-2 text-sm font-extrabold text-[#0B1F3A]">
+                  <CreditCard className="w-5 h-5 text-[#009EE3]" />
+                  <span>Completa tu pago seguro en Mercado Pago Perú</span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Hemos abierto la pasarela oficial de Mercado Pago en una pestaña nueva. Si tu navegador bloqueó la ventana emergente, haz clic en el botón de abajo para pagar con <strong>Yape, Tarjeta de crédito/débito o PagoEfectivo</strong>:
+                </p>
+                <a
+                  href={mpPaymentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 px-5 rounded-xl bg-[#009EE3] hover:bg-[#0089c7] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md transition-colors"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>Pagar ahora en Mercado Pago (S/ {Number(confirmedOrder.total || 0).toFixed(2)})</span>
+                </a>
+              </div>
+            )}
+
+            {/* If Pending Payment, allow attaching Receipt / Operation Number */}
+            {orderStatusLabel === 'Pendiente de pago' && (
+              <form
+                onSubmit={handleLateReceiptSubmit}
+                className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-4"
+              >
+                <h3 className="text-sm font-extrabold text-[#0B1F3A] flex items-center gap-2">
+                  <FileCheck2 className="w-4 h-4 text-[#E8440A]" />
+                  ¿Ya realizaste el pago? Envía tu comprobante para revisión
+                </h3>
+                <p className="text-xs text-slate-600">
+                  Los pagos manuales pasan a <strong>Pago en revisión</strong> una vez adjuntado el número de operación o captura, y nunca se marcan como pagados sin verificación real.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    value={lateOpNumber}
+                    onChange={(e) => setLateOpNumber(e.target.value)}
+                    placeholder="Número de operación Yape / Plin / Banco"
+                    className="px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#1668E3]"
+                  />
+                  <label className="flex items-center justify-center gap-2 px-3.5 py-2.5 bg-white border border-dashed border-slate-300 rounded-xl text-xs font-bold text-[#1668E3] cursor-pointer hover:bg-blue-50/40">
+                    <Upload className="w-4 h-4" />
+                    <span>{lateReceiptImg ? 'Captura cargada ✓' : 'Adjuntar captura de pago'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, true)}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {errorMsg && <p className="text-xs text-rose-600 font-bold">{errorMsg}</p>}
+                {receiptUpdatedSuccess && (
+                  <p className="text-xs text-emerald-700 font-bold">
+                    Comprobante recibido. Tu pedido ahora está en estado: Pago en revisión.
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={isUpdatingReceipt}
+                  className="px-5 py-2.5 rounded-xl bg-[#1668E3] hover:bg-blue-700 text-white font-bold text-xs cursor-pointer"
+                >
+                  {isUpdatingReceipt ? 'Enviando comprobante...' : 'Enviar Comprobante a Revisión'}
+                </button>
+              </form>
+            )}
+
+            {/* Direct WhatsApp Fulfillment & Support */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <a
+                href={whatsappOrderConfirmUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:flex-1 py-3.5 px-5 rounded-xl bg-[#E8440A] hover:bg-[#d83b01] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Notificar y Agilizar Entrega por WhatsApp</span>
+              </a>
+
+              <button
+                onClick={goToHome}
+                className="w-full sm:w-auto py-3.5 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition-colors cursor-pointer"
+              >
+                Volver a la Tienda
+              </button>
             </div>
-          </div>
-
-          {/* Direct action buttons */}
-          <div className="mt-6 space-y-3">
-            <a
-              href={contactWhatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
-            >
-              <MessageCircle className="w-5 h-5 fill-current" />
-              <span>{t('contactSupport')}</span>
-            </a>
-
-            <button
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  const url = new URL(window.location.href);
-                  url.search = '';
-                  window.history.replaceState({}, '', url.pathname);
-                }
-                navigateToHome();
-              }}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t('backToStore')}</span>
-            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  if (items.length === 0) {
-    return (
-      <div className="py-20 max-w-xl mx-auto px-4 text-center min-h-screen">
-        <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6 text-[#0070ba]">
-          <ShoppingBag className="w-10 h-10" />
-        </div>
-        <h2 className="text-2xl font-black text-slate-900">{t('emptyCartTitle')}</h2>
-        <p className="text-sm text-slate-600 mt-2 mb-8">
-          {t('emptyCartSub')}
-        </p>
-        <button
-          onClick={navigateToHome}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#0070ba] to-[#0088cc] text-white font-bold text-sm shadow-md hover:from-[#005a96] hover:to-[#0070ba] transition-all cursor-pointer"
-        >
-          {t('backToStore')}
-        </button>
-      </div>
-    );
-  }
-
+  // --- CHECKOUT FORM VIEW ---
   return (
-    <div id="checkout-view" className="py-8 sm:py-12 bg-slate-50 text-slate-800 min-h-screen font-sans relative">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Navigation back and Steps progress bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <button
-            onClick={navigateToHome}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 transition-all cursor-pointer shadow-xs hover:shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4 text-[#0070ba]" />
-            <span>{t('backToCatalog')}</span>
-          </button>
-
-          {/* Visual Step Indicator */}
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200 text-slate-700 border border-slate-300">
-              <span className="w-4 h-4 rounded-full bg-slate-700 text-white flex items-center justify-center text-[10px] font-black">1</span>
-              {language === 'ES' ? 'Carrito' : 'Cart'}
-            </span>
-            <span className="text-slate-400">→</span>
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0070ba] border border-blue-200 ring-2 ring-blue-500/10">
-              <span className="w-4 h-4 rounded-full bg-[#0070ba] text-white flex items-center justify-center text-[10px] font-black">2</span>
-              {language === 'ES' ? 'Datos & Pago' : 'Checkout'}
-            </span>
-            <span className="text-slate-400">→</span>
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-400 border border-slate-200">
-              <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] font-black">3</span>
-              {language === 'ES' ? 'Entrega' : 'Delivery'}
-            </span>
-          </div>
-        </div>
-
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#0070ba] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
-            <ShieldCheck className="w-4 h-4" />
-            <span>{language === 'ES' ? 'Pasarela Segura & Oficial UpClic' : 'Secure & Official Checkout'}</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-            <span>{language === 'ES' ? 'Finalizar ' : 'Complete '}</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#00a2e8]">
-              {language === 'ES' ? 'tu Compra' : 'your Purchase'}
-            </span>
-          </h1>
-          <p className="text-sm sm:text-base text-slate-600 mt-2 font-medium">
-            {t('checkoutSubtitle')}
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F4F7FB] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <button
+          onClick={goToHome}
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-600 hover:text-[#1668E3] mb-6 cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver al catálogo
+        </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Col 1: Detalle de Productos en el Carrito (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7 text-slate-900 relative overflow-hidden">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
-                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0070ba] flex items-center justify-center border border-blue-100">
-                    <ShieldCheck className="w-4.5 h-4.5" />
-                  </div>
-                  <span>{language === 'ES' ? 'Productos en tu orden' : 'Products in your order'}</span>
-                </h2>
-                <span className="text-xs font-bold text-[#0070ba] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-                  {totalQuantity} {totalQuantity === 1 ? t('item') : t('items')}
+          {/* Left Column: Checkout Form */}
+          <form onSubmit={handleCompleteOrder} className="lg:col-span-7 space-y-6">
+            {/* Step 1: Buyer Data */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="w-6 h-6 rounded-full bg-[#1668E3] text-white text-xs font-bold flex items-center justify-center">
+                  1
                 </span>
+                <h2 className="text-base sm:text-lg font-extrabold text-[#0B1F3A]">
+                  Datos para la Entrega Digital
+                </h2>
               </div>
 
-              {/* Products list */}
-              <div className="divide-y divide-slate-100 mb-6 pr-1">
-                {items.map(item => {
-                  const itemUnitPrice = item.unitPrice ?? item.product.price;
-                  const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
-                  const displayVariantName = item.variantName || (
-                    item.selectedVariant === 'oem' ? t('licenseTypeOEM') || 'OEM Key' :
-                    item.selectedVariant === 'retail' ? t('licenseTypeRetail') || 'Retail Key' : undefined
-                  );
-                  const itemName = getProductName(item.product);
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Nombre completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Ej. Juan Pérez"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1668E3]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Correo electrónico (donde recibirás tu pedido) *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="tucorreo@ejemplo.com"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1668E3]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Número de WhatsApp *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="Ej. 987 654 321"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1668E3]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2: Payment Method Selection (Peru) */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="w-6 h-6 rounded-full bg-[#1668E3] text-white text-xs font-bold flex items-center justify-center">
+                  2
+                </span>
+                <h2 className="text-base sm:text-lg font-extrabold text-[#0B1F3A]">
+                  Selecciona el Método de Pago
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 mb-5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedMethod('mercadopago')}
+                  className="p-4 rounded-xl border-2 border-[#009EE3] bg-sky-50/50 text-left transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <CreditCard className="w-4 h-4 text-[#009EE3]" />
+                    <span className="font-extrabold text-xs sm:text-sm text-[#0B1F3A]">
+                      Mercado Pago
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 block">
+                    Yape, Tarjeta de crédito o débito y PagoEfectivo
+                  </span>
+                </button>
+              </div>
+
+              <div className="p-4 rounded-xl bg-sky-50/60 border border-sky-200 text-xs text-slate-700 leading-relaxed">
+                Serás redirigido de forma segura a <strong>Mercado Pago Perú</strong> para pagar con <strong>Yape, tarjeta de crédito o débito, o PagoEfectivo</strong> en Soles (S/). UPCLIC nunca almacena números de tarjeta ni códigos CVV.
+              </div>
+            </div>
+
+            {errorMsg && (
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-2.5 text-xs font-bold text-rose-700">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting || items.length === 0}
+              className="w-full py-4 px-6 rounded-xl bg-[#E8440A] hover:bg-[#d83b01] disabled:opacity-50 text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Procesando tu pedido...</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4" />
+                  <span>
+                    Confirmar Pedido por {formatPrice(cartTotals.total)}
+                  </span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Right Column: Order Summary */}
+          <div className="lg:col-span-5">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs sticky top-24">
+              <h3 className="text-base font-extrabold text-[#0B1F3A] pb-4 border-b border-slate-100">
+                Resumen de Productos ({cartTotals.totalQuantity})
+              </h3>
+
+              <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto my-3">
+                {items.map((item) => {
+                  const unitPrice = item.unitPrice ?? item.product.price;
                   return (
-                    <div key={itemKey} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-14 h-14 rounded-xl bg-slate-50 p-1.5 border border-slate-200 shrink-0 flex items-center justify-center shadow-xs">
-                          <img
-                            src={item.product.imageUrl}
-                            alt={itemName}
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              e.currentTarget.src = item.product.fallbackImage;
-                            }}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-bold text-slate-900 text-sm truncate" title={itemName}>
-                            {itemName}
-                          </div>
-                          {displayVariantName && (
-                            <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#0070ba] border border-blue-200">
-                              {displayVariantName}
-                            </span>
-                          )}
-                          <div className="text-[11px] text-slate-500 mt-0.5">
-                            {language === 'ES' ? 'Precio unitario:' : 'Unit price:'} <strong className="text-slate-800">{formatPrice(itemUnitPrice)}</strong>
-                          </div>
-                        </div>
+                    <div key={item.id || item.product.id} className="py-3 flex items-center gap-3">
+                      <img
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        className="w-12 h-12 object-contain rounded-lg border border-slate-200/80 p-1 bg-slate-50 shrink-0"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (item.product.fallbackImage && target.src !== item.product.fallbackImage) {
+                            target.src = item.product.fallbackImage;
+                          }
+                        }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-[#0B1F3A] truncate">
+                          {item.quantity}x {item.product.name}
+                        </p>
+                        {item.variantName && (
+                          <span className="text-[10px] font-bold text-[#1668E3] block">
+                            {item.variantName}
+                          </span>
+                        )}
+                        <span className="text-[11px] text-slate-400">{item.product.duration}</span>
                       </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
-                        {/* Quantity Stepper */}
-                        {(() => {
-                          const itemMaxStock = typeof item.product?.stock === 'number' && item.product.stock > 0
-                            ? item.product.stock
-                            : 99;
-                          const isAtMax = item.quantity >= itemMaxStock;
-
-                          return (
-                            <div className="flex items-center gap-1.5">
-                              <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5">
-                                <button
-                                  type="button"
-                                  onClick={() => updateQuantity(itemKey, -1)}
-                                  className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer font-bold active:scale-95"
-                                  aria-label={t('decrease') || 'Decrease'}
-                                  title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
-                                >
-                                  -
-                                </button>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max={itemMaxStock}
-                                  value={item.quantity}
-                                  onChange={(e) => {
-                                    const val = parseInt(e.target.value, 10);
-                                    if (!isNaN(val)) {
-                                      setQuantity(itemKey, Math.min(itemMaxStock, Math.max(1, val)));
-                                    }
-                                  }}
-                                  onBlur={(e) => {
-                                    const val = parseInt(e.target.value, 10);
-                                    if (isNaN(val) || val < 1) {
-                                      setQuantity(itemKey, 1);
-                                    } else if (val > itemMaxStock) {
-                                      setQuantity(itemKey, itemMaxStock);
-                                    }
-                                  }}
-                                  className="w-9 text-center text-xs font-black text-slate-900 bg-transparent focus:bg-white focus:outline-none rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                  aria-label={t('editQuantity') || 'Edit quantity'}
-                                />
-                                <button
-                                  type="button"
-                                  disabled={isAtMax}
-                                  onClick={() => updateQuantity(itemKey, 1)}
-                                  className={`w-7 h-7 flex items-center justify-center rounded font-bold transition-colors ${
-                                    isAtMax
-                                      ? 'text-slate-400 bg-slate-100 cursor-not-allowed'
-                                      : 'hover:bg-slate-200 text-slate-700 cursor-pointer active:scale-95'
-                                  }`}
-                                  aria-label={t('increase') || 'Increase'}
-                                  title={isAtMax ? `Stock máximo alcanzado (${itemMaxStock})` : (t('increase') || 'Increase')}
-                                >
-                                  <Plus className="w-3 h-3" />
-                                </button>
-                              </div>
-                              {isAtMax && item.product?.stock && (
-                                <span className="text-[10px] font-bold text-amber-600">
-                                  Máx. {itemMaxStock}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })()}
-                        <span className="font-black text-[#0070ba] shrink-0 tabular-nums text-sm min-w-[75px] text-right">
-                          {formatPrice((itemUnitPrice * item.quantity))}
-                        </span>
-
-                        <button
-                          type="button"
-                          onClick={() => removeItem(itemKey)}
-                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                          title={t('removeProduct') || 'Remove product'}
-                          aria-label={t('removeProduct') || 'Remove product'}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                      <span className="text-xs font-extrabold text-[#0B1F3A] shrink-0">
+                        {formatPrice(unitPrice * item.quantity)}
+                      </span>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Coupon input on Checkout */}
-              <div className="pt-4 border-t border-slate-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-[#0070ba]" />
-                    {t('hasCouponPrompt')}
-                  </span>
+              <div className="border-t border-slate-200 pt-4 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-600">
+                  <span>Subtotal:</span>
+                  <span className="font-bold">{formatPrice(cartTotals.subtotal)}</span>
                 </div>
-
-                {appliedCoupon ? (
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="font-mono font-bold text-xs text-emerald-800">
-                        {appliedCoupon}
-                      </span>
-                      <span className="text-[11px] text-emerald-700 font-medium">
-                        {language === 'ES'
-                          ? `(${Math.round(discountRate * 100)}% de descuento aplicado)`
-                          : `(${Math.round(discountRate * 100)}% discount applied)`}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={removeCoupon}
-                      className="text-xs text-slate-400 hover:text-red-500 font-bold px-1 transition-colors cursor-pointer"
-                      title={t('removeCoupon') || 'Quitar cupón'}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleApply} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={inputCoupon}
-                      onChange={e => setInputCoupon(e.target.value)}
-                      placeholder={t('couponCode')}
-                      className="flex-1 px-3.5 py-2.5 text-xs uppercase font-mono rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-1 focus:ring-[#0070ba]"
-                    />
-                    <button
-                      type="submit"
-                      className="px-5 py-2.5 bg-gradient-to-r from-[#0070ba] to-[#0088cc] hover:from-[#005a96] hover:to-[#0070ba] text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
-                    >
-                      {t('apply')}
-                    </button>
-                  </form>
-                )}
-
-                {couponFeedback && (
-                  <div
-                    className={`mt-2 text-[11px] p-2.5 rounded-xl flex items-start gap-2 transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
-                      couponFeedback.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                        : couponFeedback.type === 'info'
-                        ? 'bg-slate-100 text-slate-700 border border-slate-200'
-                        : 'bg-red-50 text-red-800 border border-red-200 shadow-xs'
-                    }`}
-                  >
-                    {couponFeedback.type === 'error' ? (
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-600" />
-                    ) : (
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />
-                    )}
-                    <span className="leading-snug">{couponFeedback.message}</span>
+                {cartTotals.hasDiscount && (
+                  <div className="flex justify-between text-emerald-700 font-bold">
+                    <span>Descuento ({cartTotals.discountReason}):</span>
+                    <span>- {formatPrice(cartTotals.discountAmount)}</span>
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* 2. Datos del Cliente para la Entrega Digital */}
-            <div id="customer-delivery-card" className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7 space-y-5 text-slate-900">
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070ba] flex items-center justify-center shrink-0 border border-blue-100">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight flex items-center gap-2">
-                      <span>{t('digitalDeliveryData')}</span>
-                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0070ba] border border-blue-200 tracking-wider">
-                        {t('requiredLabel')}
-                      </span>
-                    </h2>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      {t('digitalDeliverySubtitle')}
-                    </p>
-                  </div>
+                <div className="flex justify-between items-baseline text-base font-extrabold text-[#0B1F3A] pt-2 border-t border-slate-100">
+                  <span>Total en Soles:</span>
+                  <span className="text-2xl text-[#0B1F3A]">S/ {cartTotals.total.toFixed(2)}</span>
                 </div>
               </div>
 
-              {/* Email field (Mandatory) */}
-              <div className="space-y-1.5">
-                <label htmlFor="customer-email-input" className="block text-xs font-bold text-slate-700 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-[#0070ba]" />
-                    {t('customerEmailLabel')} <span className="text-red-500 font-black">*</span>
-                  </span>
-                  {customerEmail && isValidEmail(customerEmail) && (
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      {t('emailVerifiedForDelivery')}
-                    </span>
-                  )}
-                </label>
-                <div className="relative">
-                  <input
-                    ref={emailInputRef}
-                    id="customer-email-input"
-                    type="email"
-                    autoComplete="email"
-                    value={customerEmail}
-                    onChange={e => handleEmailChange(e.target.value)}
-                    onBlur={() => {
-                      setEmailTouched(true);
-                      if (!customerEmail.trim()) {
-                        setEmailError(t('emailRequiredError'));
-                      } else if (!isValidEmail(customerEmail)) {
-                        setEmailError(t('validEmailError'));
-                      } else {
-                        setEmailError(null);
-                      }
-                    }}
-                    placeholder="ej: nombre@gmail.com"
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl text-sm border font-medium transition-all focus:outline-none ${
-                      emailError
-                        ? 'border-red-400 bg-red-50 text-slate-900 placeholder-red-300 focus:ring-2 focus:ring-red-300'
-                        : customerEmail && isValidEmail(customerEmail)
-                        ? 'border-emerald-400 bg-emerald-50/50 text-slate-900 focus:ring-2 focus:ring-emerald-300'
-                        : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20'
-                    }`}
-                  />
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Mail className="w-4 h-4" />
-                  </div>
+              <div className="mt-5 pt-4 border-t border-slate-100 space-y-2 text-[11px] text-slate-600">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Entrega digital en tu correo y WhatsApp</span>
                 </div>
-                {emailError && (
-                  <p className="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{emailError}</span>
-                  </p>
-                )}
-              </div>
-
-              {/* Optional Name and Phone in 2 cols */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                <div className="space-y-1.5">
-                  <label htmlFor="customer-name-input" className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-slate-400" />
-                    {t('customerNameLabel')} <span className="text-slate-400 font-normal">({t('optionalLabel') || 'Opcional'})</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="customer-name-input"
-                      type="text"
-                      autoComplete="name"
-                      value={customerName}
-                      onChange={e => handleNameChange(e.target.value)}
-                      placeholder={language === 'ES' ? 'ej: Roberto M. / IT Dept' : 'e.g.: Robert M. / IT Dept'}
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20"
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                      <User className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-500">
-                    {language === 'ES' ? 'Para personalizar tu comprobante de compra' : 'To customize your purchase receipt'}
-                  </p>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label htmlFor="customer-phone-input" className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" />
-                    {language === 'ES' ? 'Teléfono / WhatsApp' : 'Phone / WhatsApp'} <span className="text-slate-400 font-normal">({t('optionalLabel') || 'Opcional'})</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="customer-phone-input"
-                      type="tel"
-                      autoComplete="tel"
-                      value={customerPhone}
-                      onChange={e => handlePhoneChange(e.target.value)}
-                      placeholder="ej: 555-0123"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0070ba] focus:ring-2 focus:ring-[#0070ba]/20"
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-500">
-                    {language === 'ES' ? 'Para darte soporte directo en la activación' : 'For direct activation assistance'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Flow notice on Mercado Pago registration */}
-              <div className="pt-3 border-t border-slate-100 flex flex-col gap-2.5 text-xs text-slate-600">
-                <div className="flex items-start gap-2.5">
-                  <CreditCard className="w-4 h-4 text-[#0070ba] shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">
-                    {language === 'ES'
-                      ? 'Para Perú, Colombia, México y otros países, acepta pagos con Yape, Plin, tarjeta de crédito o débito.'
-                      : 'For international payments, please select credit or debit card payment.'}
-                  </span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">
-                    {language === 'ES'
-                      ? 'La información es encriptada y procesada de forma segura por Mercado Pago. Solo se te cobrará el monto elegido, sin recargos.'
-                      : 'Information is encrypted and processed securely by Mercado Pago. You are only charged the selected amount, with no extra fees.'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Privacy note */}
-              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start gap-2.5 text-xs text-slate-600">
-                <ShieldCheck className="w-4 h-4 text-[#0070ba] shrink-0 mt-0.5" />
-                <span className="text-[11px] leading-relaxed">
-                  <strong className="text-slate-800">{language === 'ES' ? 'Privacidad y entrega garantizada:' : 'Privacy and guaranteed delivery:'}</strong>{' '}
-                  {language === 'ES'
-                    ? 'Tus datos están protegidos y se usan exclusivamente para asignarte tus pedidos y emitir tu comprobante.'
-                    : 'Your data is protected and used exclusively to assign your orders and issue your receipt.'}
-                </span>
-              </div>
-            </div>
-
-            {/* Garantías de UpClic */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3 text-slate-800 shadow-xs">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070ba] flex items-center justify-center shrink-0 border border-blue-100">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900">
-                    {language === 'ES' ? 'Compra Segura 100%' : '100% Secure Purchase'}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'ES' ? 'Garantía oficial completa' : 'Full official warranty'}
-                  </p>
-                </div>
-              </div>
-              <div className="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3 text-slate-800 shadow-xs">
-                <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0 border border-cyan-100">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900">
-                    {language === 'ES' ? 'Entrega Garantizada' : 'Guaranteed Delivery'}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'ES' ? 'Envío digital protegido' : 'Fast & protected dispatch'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3 text-slate-800 shadow-xs">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900">
-                    {language === 'ES' ? 'Soporte Técnico' : 'Technical Support'}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'ES' ? 'Asistencia remota personalizada' : 'Personalized remote assistance'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Col 2: Resumen de Compra & Payment Buttons (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 sm:p-7 sticky top-24 text-slate-900 ring-1 ring-slate-100">
-              <h2 className="text-base font-black text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
-                <span>{t('paymentSummaryLabel')}</span>
-              </h2>
-
-              {/* Subtotal & Discount breakdown */}
-              <div className="space-y-2.5 text-xs text-slate-600">
-                <div className="flex justify-between">
-                  <span>{t('subtotalLabel')}</span>
-                  <span className="font-bold text-slate-900 tabular-nums">{formatPrice(subtotal)}</span>
-                </div>
-
-                {hasDiscount && (
-                  <div className="flex justify-between items-baseline py-0.5 text-emerald-600 font-semibold text-xs">
-                    <span>
-                      {isMultiItemDiscount
-                        ? (language === 'ES' ? 'Descuento 10%:' : 'Discount 10%:')
-                        : `${language === 'ES' ? 'Descuento' : 'Discount'} ${Math.round(discountRate * 100)}%:`}
-                    </span>
-                    <span className="tabular-nums font-bold">-{formatPrice(discountAmount)}</span>
-                  </div>
-                )}
-
-                <div className="flex justify-between items-baseline text-base font-black text-slate-900 pt-3 border-t border-slate-100">
-                  <span>{t('totalLabel')}</span>
-                  <div className="text-right">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0070ba] to-[#0088cc] text-2xl sm:text-3xl font-black tabular-nums tracking-tight">
-                      {formatPrice(total)}
-                    </span>
-                    <div className="text-[11px] text-slate-500 font-medium">
-                      ≈ ${totalUSD} USD
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Method Selector Tabs */}
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-3.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                    <CreditCard className="w-3.5 h-3.5 text-[#0070ba]" />
-                    <span>{isEn ? 'Payment Method:' : 'Método de Pago:'}</span>
-                  </label>
-                  <span className="text-[10px] font-bold text-[#0070ba] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-[#0070ba]" />
-                    <span>SSL 256-bit</span>
-                  </span>
-                </div>
-
-                {hasOnlyMercadoPagoItem ? (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedPaymentGateway('mercadopago')}
-                      className="w-full p-4 rounded-2xl border-2 flex items-center justify-between gap-3 bg-blue-50/70 border-[#0070ba] ring-2 ring-[#0070ba]/20 text-slate-900 cursor-pointer shadow-sm transition-all text-left"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-xs border border-slate-200">
-                          <img
-                            src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                            alt="Mercado Pago"
-                            className="h-7 w-auto object-contain"
-                          />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs sm:text-sm font-black text-slate-900">Mercado Pago</span>
-                            <span className="text-[10px] font-extrabold text-[#0070ba] bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200">
-                              Oficial
-                            </span>
-                          </div>
-                          <span className="text-[11px] text-slate-600 font-medium block mt-0.5">
-                            Yape, Plin, Tarjeta Débito / Crédito, PagoEfectivo
-                          </span>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 rounded-full bg-[#0070ba] text-white flex items-center justify-center shrink-0 shadow-xs">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                      </div>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Mercado Pago Option */}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedPaymentGateway('mercadopago')}
-                      className={`p-3.5 rounded-2xl border-2 flex flex-col items-start justify-between gap-2.5 transition-all cursor-pointer relative overflow-hidden text-left ${
-                        selectedPaymentGateway === 'mercadopago'
-                          ? 'bg-blue-50/70 border-[#0070ba] ring-2 ring-[#0070ba]/20 text-slate-900 shadow-sm'
-                          : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between w-full">
-                        <div className="h-8 bg-white px-2 py-1 rounded-lg flex items-center justify-center shadow-xs border border-slate-200">
-                          <img
-                            src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                            alt="Mercado Pago"
-                            className="h-5 w-auto object-contain"
-                          />
-                        </div>
-                        <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                          selectedPaymentGateway === 'mercadopago' ? 'bg-[#0070ba] text-white' : 'border border-slate-300'
-                        }`}>
-                          {selectedPaymentGateway === 'mercadopago' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-xs font-black block text-slate-900">Mercado Pago</span>
-                        <span className="text-[10px] text-slate-500 font-medium line-clamp-1 mt-0.5">
-                          Yape, Plin, Tarjetas, Soles
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* PayPal Option */}
-                    <button
-                      type="button"
-                      onClick={() => navigateToPayPal()}
-                      className={`p-3.5 rounded-2xl border-2 flex flex-col items-start justify-between gap-2.5 transition-all cursor-pointer relative overflow-hidden text-left ${
-                        selectedPaymentGateway === 'paypal'
-                          ? 'bg-amber-50/70 border-amber-400 ring-2 ring-amber-400/20 text-slate-900 shadow-sm'
-                          : 'bg-white border-slate-200 hover:border-amber-300 text-slate-700 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between w-full">
-                        <div className="h-8 bg-white px-2.5 py-1 rounded-lg flex items-center justify-center shadow-xs border border-slate-200">
-                          <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                            alt="PayPal"
-                            className="h-4.5 w-auto object-contain"
-                          />
-                        </div>
-                        <span className="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">
-                          USD
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-xs font-black block text-slate-900">PayPal</span>
-                        <span className="text-[10px] text-amber-700 font-medium block mt-0.5">
-                          ${totalUSD} USD (Internacional) →
-                        </span>
-                      </div>
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-5 pt-1">
-                {selectedPaymentGateway === 'paypal' ? (
-                  /* PayPal Option Details */
-                  <div className="space-y-3">
-                    <button
-                      id="paypal-go-btn"
-                      onClick={navigateToPayPal}
-                      className="w-full py-4 px-5 rounded-2xl bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-black text-sm sm:text-base shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-amber-300"
-                    >
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                        alt="PayPal"
-                        className="h-5 w-auto object-contain"
-                      />
-                      <span>{isEn ? `Pay $ ${totalUSD} USD with PayPal` : `Continuar a PayPal ($ ${totalUSD} USD)`}</span>
-                      <ExternalLink className="w-4 h-4 ml-0.5 opacity-90 text-[#003087]" />
-                    </button>
-                  </div>
-                ) : (
-                  /* Mercado Pago Option */
-                  <div className="space-y-3.5">
-                    {/* Payment badges pill bar */}
-                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2 shadow-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#0070ba]" />
-                        <span className="text-[11px] font-bold text-slate-700">
-                          {language === 'ES' ? 'Métodos de pago habilitados' : 'Available payment channels'}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[9px] font-black text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded border border-purple-200">Yape</span>
-                        <span className="text-[9px] font-black text-cyan-700 bg-cyan-100 px-1.5 py-0.5 rounded border border-cyan-200">Plin</span>
-                        <span className="text-[9px] font-black text-[#0070ba] bg-blue-100 px-1.5 py-0.5 rounded border border-blue-200">Tarjetas</span>
-                      </div>
-                    </div>
-
-                    {emailError && (
-                      <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-700 flex items-start gap-2.5">
-                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-bold">{t('requiredFieldNotice')}</p>
-                          <p className="mt-0.5 text-[11px] leading-relaxed">{emailError}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {paymentError && (
-                      <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-700 flex items-start gap-2.5">
-                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-bold">{t('paymentErrorNotice')}</p>
-                          <p className="mt-0.5 text-[11px] leading-relaxed">{paymentError}</p>
-                          <p className="mt-1 text-[10px] text-red-600 font-medium">
-                            {t('contactSupportIfPersists')}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    <button
-                      id="mercado-pago-pay-btn"
-                      onClick={handleMercadoPago}
-                      disabled={isCreatingPreference}
-                      className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#0070ba] via-[#0088cc] to-[#0099e6] hover:from-[#0060a0] hover:to-[#0088cc] text-white font-black text-sm sm:text-base shadow-xl shadow-blue-500/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 border border-blue-400/30 disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
-                    >
-                      {isCreatingPreference ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin text-white" />
-                          <span className="tracking-tight">{t('connectingStatus') || 'Conectando con Mercado Pago...'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard className="w-5 h-5 text-white" />
-                          <span className="tracking-tight">{t('finishPurchaseMercadoPago')}</span>
-                          <ExternalLink className="w-4 h-4 ml-0.5 opacity-90 group-hover:translate-x-0.5 transition-transform" />
-                        </>
-                      )}
-                    </button>
-
-                    {isPayPalAllowed && (
-                      <div className="pt-1 text-center">
-                        <button
-                          type="button"
-                          onClick={navigateToPayPal}
-                          className="text-[11px] text-[#0070ba] hover:text-[#005a96] hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
-                        >
-                          <span>{isEn ? `Or pay with PayPal ($ ${totalUSD} USD) →` : `O pagar en Dólares con PayPal ($ ${totalUSD} USD) →`}</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Security guarantee footnote */}
-              <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-2.5">
-                <div className="flex items-center gap-2 text-slate-700 font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-[#0070ba] shrink-0" />
-                  <span>{t('securePaymentMercadoPago')}</span>
-                </div>
-                <div className="flex items-center gap-2 text-slate-500 font-medium">
-                  <Clock className="w-4 h-4 text-cyan-600 shrink-0" />
-                  <span>{t('deliveryTimeNotice')}</span>
-                </div>
-                <div className="flex items-center justify-between pt-1 text-slate-600">
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <ShoppingBag className="w-3.5 h-3.5 text-yellow-600 shrink-0" />
-                    <span>{isEn ? 'Also on Mercado Libre' : 'También en Mercado Libre'}</span>
-                  </span>
-                  <a
-                    href={MERCADO_LIBRE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#0070ba] hover:text-[#005a96] font-bold hover:underline inline-flex items-center gap-1"
-                  >
-                    <span>{isEn ? 'Official Store' : 'Tienda Oficial'}</span>
-                    <ExternalLink className="w-3 h-3 opacity-80" />
-                  </a>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#1668E3] shrink-0" />
+                  <span>Garantía oficial UPCLIC y soporte técnico en vivo</span>
                 </div>
               </div>
             </div>

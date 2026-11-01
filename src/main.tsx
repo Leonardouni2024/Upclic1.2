@@ -1,13 +1,15 @@
 // Ensure window.fetch can be safely assigned without throwing getter-only TypeError
 if (typeof window !== 'undefined' && window.fetch) {
   try {
-    let currentFetch = window.fetch;
+    let currentFetch = window.fetch.bind(window);
     Object.defineProperty(window, 'fetch', {
       get() {
         return currentFetch;
       },
       set(fn: typeof fetch) {
-        currentFetch = fn;
+        if (typeof fn === 'function') {
+          currentFetch = fn;
+        }
       },
       configurable: true,
       enumerable: true

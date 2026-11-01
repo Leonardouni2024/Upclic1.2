@@ -30,6 +30,7 @@
 
 @layer base {
   html {
+    font-family: var(--font-sans);
     scroll-behavior: smooth;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
@@ -40,7 +41,7 @@
 
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
 }
 
@@ -60,19 +61,19 @@
     background-color: var(--bg);
   }
 
-  /* Clean White Card Surface */
+  /* Clean Executive Bento Card Surface */
   .bento-card {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    transition: transform 0.2s ease,
-                box-shadow 0.2s ease,
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.2s ease;
   }
 
   .bento-card-interactive:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 32px rgba(11, 31, 58, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -6px rgba(11, 31, 58, 0.07);
     border-color: #CBD5E1;
   }
 

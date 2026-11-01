@@ -66,7 +66,7 @@ CONDICIONES CLAVE DE UPCLIC:
 4. DESCUENTOS Y PROMOCIONES:
    - 10% de descuento automático al llevar 2 o más licencias en el carrito.
    - Combos especiales con descuento integrado (ej. Windows 11 Pro + Office 2024 a S/ 45.00, Combo 3 en 1 a S/ 55.00).
-5. MEDIOS DE PAGO: Yape, Plin, transferencias bancarias (BCP, BBVA, Interbank), tarjetas de crédito/débito mediante Mercado Pago y PayPal para pagos internacionales en USD.
+5. MEDIOS DE PAGO: Mercado Pago (Yape, tarjetas de crédito/débito y PagoEfectivo en Soles S/).
 
 GUÍA INTELIGENTE DE ASESORAMIENTO Y RECOMENDACIÓN:
 - Si el usuario busca Office para Windows 10/11:
@@ -84,11 +84,12 @@ GUÍA INTELIGENTE DE ASESORAMIENTO Y RECOMENDACIÓN:
 - Si el usuario busca Project o Visio:
   * Project Profesional 2024 (S/ 26.00), 2021 (S/ 25.00), 2019 (S/ 24.00), 2016 (S/ 24.00).
   * Visio Profesional 2024 (S/ 28.00), 2021 (S/ 27.00), 2019 (S/ 26.00), 2016 (S/ 26.00), 2013 (S/ 26.00).
-- Si el usuario busca Apps y Suscripciones:
+- Si el usuario busca IA, Diseño, Productividad o Seguridad:
+  * Gemini AI Pro (18 meses - S/ 35.00 / 12 meses - S/ 20.00): IA avanzada de Google + 5 TB Google One Cloud.
+  * Canva Pro (12 meses - S/ 10.00): Recursos premium, quitafondos mágico y herramientas IA en tu correo personal.
+  * CorelDRAW Graphics Suite 2024 para Mac (S/ 35.00): Licencia permanente de diseño vectorial.
   * Duolingo Super (12 meses - S/ 30.00): Vidas infinitas, sin anuncios, en su cuenta personal.
-  * Canva Pro (12 meses - S/ 10.00): Recursos premium, quitafondos mágico y herramientas IA.
-  * McAfee AntiVirus (12 meses - S/ 39.00): Seguridad y protección integral.
-  * Adobe Acrobat Pro DC 2022 (S/ 27.00): Edición, conversión y OCR de PDF permanente de por vida.
+  * McAfee AntiVirus (12 meses - S/ 39.00): Seguridad y protección integral para 1 PC.
 
 REGLA SOBRE RECOMENDAR PRODUCTOS:
 Al recomendar productos específicos del catálogo, puedes incluir la etiqueta [RECOMIENDA: slug-del-producto] (por ejemplo: [RECOMIENDA: office-2024-pro-plus], [RECOMIENDA: canva-pro-12-meses] o [RECOMIENDA: windows-11-pro-key]) para que el sistema le muestre al cliente la ficha interactiva con botón de compra directa.
@@ -102,18 +103,272 @@ REGLA SOBRE CONTACTO HUMANO:
 CATÁLOGO DE PRODUCTOS DISPONIBLES EN UPCLIC:
 ${productCatalogSummary}`;
 
-// Middleware for parsing JSON
-app.use(express.json());
+// Middleware for parsing JSON (allow up to 5MB for base64 payment receipts)
+app.use(express.json({ limit: "5mb" }));
 
 // Persistent storage setup
 const DATA_DIR = path.join(process.cwd(), "data");
 const REVIEWS_FILE = path.join(DATA_DIR, "reviews.json");
 const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
+const CATALOG_OVERRIDES_FILE = path.join(DATA_DIR, "catalog_overrides.json");
+const PAYMENT_SETTINGS_FILE = path.join(DATA_DIR, "payment_settings.json");
 
 function ensureDataDirectory() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
+}
+
+interface CatalogOverridesData {
+  customProducts: any[];
+  deletedProductIds: string[];
+  coupons: {
+    code: string;
+    discountPercent: number;
+    minItems?: number;
+    description: string;
+    expiresAt?: number;
+    active?: boolean;
+  }[];
+}
+
+const DEFAULT_COUPONS = [
+  { code: "UPCLIC10", discountPercent: 10, description: "10% de descuento oficial UpClic", active: true },
+  { code: "COMBO15", discountPercent: 15, minItems: 2, description: "15% de descuento por llevar 2 o más productos", active: true },
+  { code: "VIP20", discountPercent: 20, description: "20% de descuento especial clientes VIP", active: true },
+  { code: "PRICLIC1", discountPercent: 10, description: "10% de descuento exclusivo", expiresAt: 1791417599000, active: true },
+  { code: "UPCLICPROMO", discountPercent: 5, description: "5% de descuento adicional", expiresAt: 1791417599000, active: true }
+];
+
+function loadCatalogOverrides(): CatalogOverridesData {
+  ensureDataDirectory();
+  try {
+    if (fs.existsSync(CATALOG_OVERRIDES_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(CATALOG_OVERRIDES_FILE, "utf-8"));
+      return {
+        customProducts: Array.isArray(parsed.customProducts) ? parsed.customProducts : [],
+        deletedProductIds: Array.isArray(parsed.deletedProductIds) ? parsed.deletedProductIds : [],
+        coupons: Array.isArray(parsed.coupons) && parsed.coupons.length > 0 ? parsed.coupons : DEFAULT_COUPONS
+      };
+    }
+  } catch (err) {
+    console.error("Error reading catalog_overrides.json:", err);
+  }
+  return { customProducts: [], deletedProductIds: [], coupons: DEFAULT_COUPONS };
+}
+
+function saveCatalogOverrides(data: CatalogOverridesData): void {
+  ensureDataDirectory();
+  try {
+    fs.writeFileSync(CATALOG_OVERRIDES_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error saving catalog_overrides.json:", err);
+  }
+}
+
+export function getMergedCatalog(): any[] {
+  const overrides = loadCatalogOverrides();
+  const deletedSet = new Set(overrides.deletedProductIds || []);
+  const customMap = new Map<string, any>();
+  for (const cp of overrides.customProducts || []) {
+    if (cp && cp.id) customMap.set(cp.id, cp);
+  }
+
+  const merged: any[] = [];
+  for (const baseProd of products) {
+    if (deletedSet.has(baseProd.id)) continue;
+    if (customMap.has(baseProd.id)) {
+      merged.push({ ...baseProd, ...customMap.get(baseProd.id) });
+      customMap.delete(baseProd.id);
+    } else {
+      merged.push(baseProd);
+    }
+  }
+  for (const [, newProd] of customMap.entries()) {
+    if (!deletedSet.has(newProd.id)) {
+      merged.push(newProd);
+    }
+  }
+  return merged;
+}
+
+const DEFAULT_PAYMENT_SETTINGS = {
+  yape: {
+    enabled: true,
+    phone: "983 204 384",
+    holderName: "UPCLIC STORE PERÚ",
+    qrImageUrl: "",
+    instructions: "Realiza el pago por Yape al número indicado, ingresa el número de operación y adjunta tu captura o comprobante para verificar tu pedido de inmediato."
+  },
+  plin: {
+    enabled: true,
+    phone: "983 204 384",
+    holderName: "UPCLIC STORE PERÚ",
+    qrImageUrl: "",
+    instructions: "Realiza el pago por Plin al número indicado, ingresa el número de operación y adjunta tu comprobante para validar tu pedido."
+  },
+  transferencia: {
+    enabled: true,
+    bankName: "BCP / Interbank / BBVA",
+    accountNumber: "Solicitar cuenta corporativa o transferir vía CCI",
+    cci: "Consultar CCI directo en soporte WhatsApp o usar Yape/Plin/Mercado Pago",
+    holderName: "UPCLIC STORE PERÚ",
+    accountType: "Cuenta Soles (S/)",
+    instructions: "Realiza la transferencia en Soles (S/), ingresa el número de operación bancaria y adjunta la constancia de transferencia."
+  },
+  mercadopago: {
+    enabled: true,
+    label: "Mercado Pago (Tarjetas Visa, Mastercard, Yape directo)"
+  },
+  paypal: {
+    enabled: false,
+    label: "PayPal"
+  },
+  analytics: {
+    ga4MeasurementId: process.env.VITE_GA4_MEASUREMENT_ID || "",
+    metaPixelId: process.env.VITE_META_PIXEL_ID || ""
+  }
+};
+
+function loadPaymentSettings() {
+  ensureDataDirectory();
+  try {
+    if (fs.existsSync(PAYMENT_SETTINGS_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(PAYMENT_SETTINGS_FILE, "utf-8"));
+      return {
+        ...DEFAULT_PAYMENT_SETTINGS,
+        ...parsed,
+        yape: { ...DEFAULT_PAYMENT_SETTINGS.yape, ...(parsed.yape || {}) },
+        plin: { ...DEFAULT_PAYMENT_SETTINGS.plin, ...(parsed.plin || {}) },
+        transferencia: { ...DEFAULT_PAYMENT_SETTINGS.transferencia, ...(parsed.transferencia || {}) },
+        mercadopago: { ...DEFAULT_PAYMENT_SETTINGS.mercadopago, ...(parsed.mercadopago || {}) },
+        paypal: { ...DEFAULT_PAYMENT_SETTINGS.paypal, ...(parsed.paypal || {}) },
+        analytics: { ...DEFAULT_PAYMENT_SETTINGS.analytics, ...(parsed.analytics || {}) }
+      };
+    }
+  } catch (err) {
+    console.error("Error reading payment_settings.json:", err);
+  }
+  return DEFAULT_PAYMENT_SETTINGS;
+}
+
+function savePaymentSettings(settings: any): void {
+  ensureDataDirectory();
+  try {
+    fs.writeFileSync(PAYMENT_SETTINGS_FILE, JSON.stringify(settings, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error saving payment_settings.json:", err);
+  }
+}
+
+// Authoritative server-side price calculation to prevent client-side price tampering
+function calculateAuthoritativeOrderTotal(
+  rawItems: any[],
+  couponCode?: string
+): {
+  validatedItems: {
+    productId: string;
+    slug: string;
+    name: string;
+    variantName: string | null;
+    quantity: number;
+    unitPrice: number;
+  }[];
+  subtotal: number;
+  discountAmount: number;
+  discountReason: string | null;
+  total: number;
+} {
+  const catalog = getMergedCatalog();
+  const overrides = loadCatalogOverrides();
+  const validatedItems: {
+    productId: string;
+    slug: string;
+    name: string;
+    variantName: string | null;
+    quantity: number;
+    unitPrice: number;
+  }[] = [];
+
+  let subtotal = 0;
+  let totalQuantity = 0;
+
+  if (Array.isArray(rawItems)) {
+    for (const item of rawItems) {
+      const prodId = item.product?.id || item.productId || item.id;
+      const prodSlug = item.product?.slug || item.slug;
+      const catalogProduct = catalog.find(
+        (p) => (prodId && p.id === prodId) || (prodSlug && p.slug === prodSlug)
+      );
+
+      const qty = Math.max(1, Math.min(50, Math.round(Number(item.quantity) || 1)));
+      let authoritativePrice = catalogProduct
+        ? Number(catalogProduct.price)
+        : Math.max(1, Number(item.unitPrice ?? item.product?.price ?? item.price ?? 10));
+
+      let variantLabel: string | null = item.variantName || null;
+      const selectedVarId = item.selectedVariant || item.selectedVariantId;
+      if (catalogProduct && Array.isArray(catalogProduct.variants) && catalogProduct.variants.length > 0) {
+        const matchedVar = catalogProduct.variants.find(
+          (v: any) =>
+            (selectedVarId && v.id === selectedVarId) ||
+            (variantLabel && v.name.toLowerCase() === String(variantLabel).toLowerCase())
+        );
+        if (matchedVar) {
+          authoritativePrice = Number(matchedVar.price);
+          variantLabel = matchedVar.name;
+        }
+      }
+
+      subtotal += authoritativePrice * qty;
+      totalQuantity += qty;
+
+      validatedItems.push({
+        productId: catalogProduct?.id || prodId || "custom",
+        slug: catalogProduct?.slug || prodSlug || "licencia-digital",
+        name: catalogProduct?.name || item.product?.name || item.name || "Producto Digital UpClic",
+        variantName: variantLabel,
+        quantity: qty,
+        unitPrice: Number(authoritativePrice.toFixed(2))
+      });
+    }
+  }
+
+  let discountAmount = 0;
+  let discountReason: string | null = null;
+
+  if (couponCode && typeof couponCode === "string" && couponCode.trim()) {
+    const cleanCode = couponCode.trim().toUpperCase();
+    const foundCoupon = (overrides.coupons || DEFAULT_COUPONS).find(
+      (c) => c.code === cleanCode && c.active !== false
+    );
+    if (foundCoupon) {
+      const notExpired = !foundCoupon.expiresAt || Date.now() <= foundCoupon.expiresAt;
+      const meetsMin = !foundCoupon.minItems || totalQuantity >= foundCoupon.minItems;
+      if (notExpired && meetsMin) {
+        discountAmount = Number(((subtotal * foundCoupon.discountPercent) / 100).toFixed(2));
+        discountReason = foundCoupon.description;
+      }
+    }
+  }
+
+  const total = Math.max(1, Number((subtotal - discountAmount).toFixed(2)));
+  return {
+    validatedItems,
+    subtotal: Number(subtotal.toFixed(2)),
+    discountAmount,
+    discountReason,
+    total
+  };
+}
+
+function mapInternalStatusToOrderStatus(status: string, isPaid?: boolean): string {
+  if (isPaid || status === "paid" || status === "approved") return "Pagado";
+  if (status === "review" || status === "in_review" || status === "Pago en revisión") return "Pago en revisión";
+  if (status === "preparing" || status === "En preparación") return "En preparación";
+  if (status === "delivered" || status === "Entregado") return "Entregado";
+  if (status === "cancelled" || status === "Cancelado") return "Cancelado";
+  return "Pendiente de pago";
 }
 
 function loadStoredOrders(): any[] {
@@ -123,7 +378,19 @@ function loadStoredOrders(): any[] {
       const data = fs.readFileSync(ORDERS_FILE, "utf-8");
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed)) {
-        return parsed;
+        return parsed.map((o) => ({
+          ...o,
+          orderStatus: o.orderStatus || mapInternalStatusToOrderStatus(o.status, o.isPaid),
+          deliveryStatus:
+            o.deliveryStatus ||
+            (o.status === "delivered" || o.orderStatus === "Entregado"
+              ? "Entregado"
+              : o.status === "cancelled" || o.orderStatus === "Cancelado"
+              ? "Cancelado"
+              : o.isPaid || o.status === "paid"
+              ? "En preparación"
+              : "Pendiente de envío")
+        }));
       }
     }
   } catch (err) {
@@ -135,7 +402,7 @@ function loadStoredOrders(): any[] {
 function saveStoredOrders(orders: any[]): void {
   ensureDataDirectory();
   try {
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 250), null, 2), "utf-8");
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 500), null, 2), "utf-8");
   } catch (err) {
     console.error("Error saving orders.json:", err);
   }
@@ -149,6 +416,17 @@ function saveOrderNotification(orderData: any): any {
     const cleanEmail = (orderData.customerEmail || "").toLowerCase().trim();
     const total = Number(orderData.total || 0);
     const channel = orderData.channel || "";
+    const computedOrderStatus =
+      orderData.orderStatus || mapInternalStatusToOrderStatus(orderData.status, orderData.isPaid);
+    const computedDeliveryStatus =
+      orderData.deliveryStatus ||
+      (computedOrderStatus === "Entregado"
+        ? "Entregado"
+        : computedOrderStatus === "Cancelado"
+        ? "Cancelado"
+        : computedOrderStatus === "Pagado" || computedOrderStatus === "En preparación"
+        ? "En preparación"
+        : "Pendiente de envío");
 
     // 1. If an explicit ID is passed, check if it already exists to update instead of duplicating
     if (orderData.id) {
@@ -157,9 +435,11 @@ function saveOrderNotification(orderData: any): any {
         orders[existingIdx] = {
           ...orders[existingIdx],
           ...orderData,
+          orderStatus: computedOrderStatus,
+          deliveryStatus: computedDeliveryStatus,
           updatedAt: new Date().toISOString()
         };
-        fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 250), null, 2), "utf-8");
+        fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders.slice(0, 500), null, 2), "utf-8");
         return { ...orders[existingIdx], isDuplicate: true };
       }
     }
@@ -181,11 +461,12 @@ function saveOrderNotification(orderData: any): any {
     const newRecord = {
       id: orderData.id || `ORD-${now}-${Math.floor(Math.random() * 1000)}`,
       createdAt: new Date().toISOString(),
-      ...orderData
+      ...orderData,
+      orderStatus: computedOrderStatus,
+      deliveryStatus: computedDeliveryStatus
     };
     orders.unshift(newRecord);
-    // Keep the most recent 250 orders/intents
-    const trimmed = orders.slice(0, 250);
+    const trimmed = orders.slice(0, 500);
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(trimmed, null, 2), "utf-8");
     return newRecord;
   } catch (err) {
@@ -579,6 +860,70 @@ app.post("/api/rates/refresh", async (_req, res) => {
   res.json(data);
 });
 
+// Helper: Multi-model retry & fallback to prevent 503 UNAVAILABLE ("high demand") errors
+const GEMINI_FALLBACK_MODELS = [
+  "gemini-3.8-flash",
+  "gemini-flash-latest",
+  "gemini-3.1-flash-lite",
+];
+
+function isTransientGeminiError(err: any): boolean {
+  const msg = String(err?.message || err || "").toLowerCase();
+  const status = err?.status || err?.code || err?.error?.code;
+  return (
+    status === 503 ||
+    status === 429 ||
+    status === 500 ||
+    msg.includes("503") ||
+    msg.includes("429") ||
+    msg.includes("unavailable") ||
+    msg.includes("high demand") ||
+    msg.includes("overloaded") ||
+    msg.includes("resource_exhausted") ||
+    msg.includes("quota") ||
+    msg.includes("try again later")
+  );
+}
+
+async function sleepMs(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function generateContentWithRetryAndFallback(
+  ai: GoogleGenAI,
+  params: { contents: any; config?: any }
+): Promise<any> {
+  let lastError: any = null;
+
+  for (let i = 0; i < GEMINI_FALLBACK_MODELS.length; i++) {
+    const modelName = GEMINI_FALLBACK_MODELS[i];
+    // Up to 2 attempts per model before switching to the next fallback model
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        return await ai.models.generateContent({
+          model: modelName,
+          contents: params.contents,
+          config: params.config,
+        });
+      } catch (err: any) {
+        lastError = err;
+        console.warn(
+          `[Gemini Fallback] Modelo ${modelName} (intento ${attempt}/2) falló:`,
+          err?.message || err
+        );
+        if (isTransientGeminiError(err)) {
+          await sleepMs(attempt * 500);
+          continue;
+        }
+        // If error is model-specific or non-transient, break inner loop and try next model
+        break;
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 // --- AI CHATBOT ASSISTANT ENDPOINT (GEMINI) ---
 app.post("/api/chat", async (req, res) => {
   try {
@@ -645,13 +990,10 @@ app.post("/api/chat", async (req, res) => {
           parts: [{ text: currencyNote }],
         });
 
-        const response = await ai.models.generateContent({
-          model: "gemini-3.8-flash",
+        const response = await generateContentWithRetryAndFallback(ai, {
           contents: contents as any,
           config: {
             systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.65,
-            topP: 0.9,
           },
         });
 
@@ -701,7 +1043,7 @@ app.post("/api/chat", async (req, res) => {
         reply = `💻 **Licencias oficiales de Windows en UpClic:**\n\n• **Windows 11 Pro:** S/ 28.00 (OEM) | S/ 35.00 (Retail) | S/ 16.00 (Activación por Teléfono).\n• **Windows 10 Pro:** S/ 26.00 (OEM) | S/ 32.00 (Retail) | S/ 16.00 (Activación por Teléfono).\n• **Windows 11 Home (S/ 26.00 / S/ 32.00), Windows 10 Home (S/ 25.00 / S/ 30.00)**.\n• **Windows 8.1 Pro (S/ 38.00), Windows 7 Pro (S/ 32.00), Windows 7 Ultimate (S/ 30.00)**.\n• **Combo Windows 11 Pro + Office 2024 (S/ 45.00):** Las dos licencias oficiales juntas con super ahorro.\n\n⚡ **Entrega:** 100% digital en **10 a 30 minutos** con activación permanente. 🛡️`;
         explicitSlugs.push("windows-11-pro-key", "windows-10-pro-key", "combo-windows-11-pro-office-2024-pro-plus");
       } else {
-        reply = `¡Hola! Bienvenido a **UpClic**. 😊 Soy su Asistente Inteligente de Licenciamiento y estoy aquí para asesorarle a encontrar la licencia de **Microsoft Office, Windows, Visio, Project o suscripciones digitales** ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Office o versión de Windows (Claves directas o por teléfono a S/ 16).\n• 💻 Diferencias entre Office 2024 (S/ 27), 2021 (S/ 25) y Microsoft 365 (S/ 33).\n• 📱 Suscripciones: Canva Pro (S/ 10), Adobe Acrobat Pro 2022 (S/ 27), Duolingo Super (S/ 30), McAfee (S/ 39).\n• ⚡ Conocer los tiempos de entrega (10 a 30 min) y medios de pago.`;
+        reply = `¡Hola! Bienvenido a **UPCLIC**. 😊 Soy su Asistente de Licenciamiento y Suscripciones Digitales y estoy aquí para ayudarle a elegir el producto ideal según su equipo y necesidades.\n\n¿En qué le puedo colaborar hoy?\n• 🎯 Recomendarle la mejor suite de Microsoft Office o versión de Windows (OEM, Retail o activación telefónica).\n• 💻 Diferencias entre Office 2024 (S/ 27), 2021 (S/ 25) y Microsoft 365 (S/ 33).\n• 📱 Suscripciones y Diseño: Canva Pro (S/ 10), Gemini AI Pro (S/ 20), CorelDRAW 2024 Mac (S/ 35), Duolingo Super (S/ 30), McAfee (S/ 39).\n• ⚡ Conocer las modalidades de entrega digital y medios de pago en Perú (Mercado Pago con Yape, tarjetas de débito/crédito y PagoEfectivo).`;
       }
     }
 
@@ -754,7 +1096,6 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-
 // --- MERCADO PAGO INTEGRATION & ORDER NOTIFICATIONS ---
 app.post("/api/create_preference", express.json(), async (req, res) => {
   try {
@@ -782,32 +1123,23 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
     const client = new MercadoPagoConfig({ accessToken });
     const preference = new Preference(client);
 
-    // Calculate total original price from items (handling both CartItem and direct product formats)
-    const originalTotal = items.reduce((sum: number, item: any) => {
-      const price = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
-      const qty = Number(item.quantity) || 1;
-      return sum + (price * qty);
-    }, 0);
-
-    const finalTotal = typeof total === 'number' && total > 0 ? total : Math.max(0, originalTotal - (discountAmount || 0));
-    const discountRatio = (originalTotal > 0) ? finalTotal / originalTotal : 1;
+    // Authoritative server-side price calculation to prevent client manipulation
+    const authoritative = calculateAuthoritativeOrderTotal(items, req.body?.couponCode);
+    const originalTotal = authoritative.subtotal;
+    const finalTotal = authoritative.total;
+    const discountRatio = originalTotal > 0 ? finalTotal / originalTotal : 1;
 
     let accumulatedSum = 0;
-    const mpItems = items.map((item: any, index: number) => {
-      const basePrice = Number(item.unitPrice ?? item.product?.price ?? item.price ?? 0);
-      const qty = Math.max(1, Math.round(Number(item.quantity) || 1));
-      
-      const rawTitle = item.product?.name 
-        ? (item.variantName ? `${item.product.name} (${item.variantName})` : item.product.name)
-        : (item.name || 'Licencia Digital UpClic');
-      
-      const slug = item.product?.slug || item.slug || item.id || 'licencia-digital';
+    const mpItems = authoritative.validatedItems.map((item, index) => {
+      const basePrice = item.unitPrice;
+      const qty = item.quantity;
+      const rawTitle = item.variantName ? `${item.name} (${item.variantName})` : item.name;
+      const slug = item.slug || "licencia-digital";
 
       let unitPrice = Number((basePrice * discountRatio).toFixed(2));
       if (unitPrice <= 0) unitPrice = 0.01;
 
-      // Adjust rounding difference on the last item so the total matches finalTotal exactly
-      if (index === items.length - 1 && items.length > 1) {
+      if (index === authoritative.validatedItems.length - 1 && authoritative.validatedItems.length > 1) {
         const remainingNeeded = Number((finalTotal - accumulatedSum).toFixed(2));
         if (remainingNeeded > 0) {
           unitPrice = Number((remainingNeeded / qty).toFixed(2));
@@ -839,13 +1171,12 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
       ? req.body.orderId.trim() 
       : `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
+    // Note: Do NOT pass payer.email or unformatted payer.phone to Mercado Pago preferenceBody,
+    // because if the buyer tests with the same email/phone as the Mercado Pago seller account
+    // (or enters spaces in the phone number), Mercado Pago disables the "Pagar" button
+    // ("No puedes pagarte a ti mismo"). Buyer details are stored in metadata and saveOrderNotification.
     const preferenceBody: any = {
       items: mpItems,
-      payer: {
-        email: trimmedEmail,
-        ...(trimmedName ? { name: trimmedName } : {}),
-        ...(trimmedPhone ? { phone: { number: trimmedPhone } } : {})
-      },
       external_reference: newOrderId,
       notification_url: `${appUrl}/api/mercadopago/webhook`,
       metadata: {
@@ -861,6 +1192,7 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
         failure: `${appUrl}/checkout?status=return&cart=open`,
         pending: `${appUrl}/checkout?status=pending&orderId=${newOrderId}`,
       },
+      statement_descriptor: "UPCLIC STORE",
     };
 
     // Mercado Pago requires back_urls to be HTTPS for auto_return
@@ -871,6 +1203,11 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
     const response = await preference.create({
       body: preferenceBody
     });
+
+    const isTestToken = accessToken.trim().startsWith("TEST-");
+    const checkoutUrl = isTestToken
+      ? (response.sandbox_init_point || response.init_point)
+      : (response.init_point || response.sandbox_init_point);
 
     // Save order notification to persistent storage
     const recordedOrder = saveOrderNotification({
@@ -915,7 +1252,7 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
         items: recordedOrder.items,
         channel: "mercado_pago",
         status: "intent_mercadopago",
-        paymentUrl: response.init_point,
+        paymentUrl: checkoutUrl,
         isPaid: false,
         discountAmount: discountAmount || 0,
         discountReason: discountReason || null,
@@ -927,8 +1264,10 @@ app.post("/api/create_preference", express.json(), async (req, res) => {
 
     res.json({
       id: response.id,
-      init_point: response.init_point,
+      init_point: checkoutUrl,
+      sandbox_init_point: response.sandbox_init_point,
       orderId: recordedOrder.id,
+      order: recordedOrder,
       customerEmail: trimmedEmail
     });
   } catch (error: any) {
@@ -1007,232 +1346,7 @@ app.post("/api/notify_checkout_intent", express.json(), (req, res) => {
   }
 });
 
-// --- PAYPAL INTEGRATION ENDPOINTS ---
-
-// GET PayPal configuration (Client ID, exchange rate, email)
-app.get("/api/paypal/config", (_req, res) => {
-  const clientId = process.env.PAYPAL_CLIENT_ID || "sb";
-  const paypalEmail = process.env.PAYPAL_EMAIL || "pagos@upclic.store";
-  const mode = process.env.PAYPAL_MODE || "sandbox";
-  const exchangeRate = 3.75; // S/ 3.75 = $1.00 USD
-  res.json({
-    clientId,
-    paypalEmail,
-    mode,
-    currency: "USD",
-    exchangeRate,
-    enabled: true
-  });
-});
-
-// POST Create PayPal Order
-app.post("/api/paypal/create_order", express.json(), async (req, res) => {
-  try {
-    const { items, discountAmount, total, customerEmail, customerName, customerPhone, orderId } = req.body;
-    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
-    if (!trimmedEmail || !trimmedEmail.includes("@")) {
-      return res.status(400).json({ error: "Por favor ingresa un correo electrónico válido." });
-    }
-
-    // Verify that cart items allow PayPal
-    const hasNonPayPalItem = Array.isArray(items) && items.some((it: any) => {
-      const gateways = it.product?.acceptedPaymentGateways;
-      return Boolean(gateways && !gateways.includes("paypal"));
-    });
-
-    if (hasNonPayPalItem) {
-      return res.status(400).json({
-        error: "Uno o más productos en el carrito requieren pago exclusivo por Mercado Pago. Por favor selecciona Mercado Pago."
-      });
-    }
-
-    const exchangeRate = 3.75;
-    const penTotal = Number(total) || 0;
-    const usdTotal = Math.max(1, Number((penTotal / exchangeRate).toFixed(2)));
-
-    const clientId = process.env.PAYPAL_CLIENT_ID;
-    const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-    const mode = process.env.PAYPAL_MODE || "sandbox";
-
-    const recordedOrder = saveOrderNotification({
-      id: orderId || null,
-      customerEmail: trimmedEmail,
-      customerName: customerName?.trim() || null,
-      customerPhone: customerPhone?.trim() || null,
-      total: penTotal,
-      usdTotal,
-      items: Array.isArray(items) ? items.map((it: any) => ({
-        name: it.product?.name || it.name || 'Licencia',
-        variantName: it.variantName || null,
-        quantity: it.quantity || 1,
-        unitPrice: it.unitPrice || it.product?.price || it.price || 0,
-      })) : [],
-      status: "intent_paypal",
-      channel: "paypal"
-    });
-
-    console.log("\n=======================================================");
-    console.log("🔔 [NOTIFICACIÓN UPCLIC] NUEVA INTENCIÓN DE COMPRA VÍA PAYPAL REGISTRADA");
-    console.log(`📧 Correo del Cliente: ${trimmedEmail}`);
-    if (customerName) console.log(`👤 Nombre: ${customerName}`);
-    if (customerPhone) console.log(`📱 Teléfono: ${customerPhone}`);
-    console.log(`💰 Monto a Pagar: USD $${usdTotal.toFixed(2)} (S/ ${penTotal.toFixed(2)})`);
-    console.log(`🆔 ID de Orden: ${recordedOrder.id}`);
-    console.log(`⏰ Fecha: ${new Date().toISOString()}`);
-    console.log("=======================================================\n");
-
-    // Only dispatch automated confirmation email if this is NOT a duplicate order
-    if (!recordedOrder.isDuplicate) {
-      sendOrderEmails({
-        orderId: recordedOrder.id,
-        customerEmail: trimmedEmail,
-        customerName: customerName?.trim() || null,
-        customerPhone: customerPhone?.trim() || null,
-        total: penTotal,
-        usdTotal: usdTotal,
-        items: recordedOrder.items,
-        channel: "paypal",
-        status: "intent_paypal",
-        discountAmount: discountAmount || 0,
-        createdAt: recordedOrder.createdAt
-      }).catch(err => console.error("Error al despachar correos PayPal intent:", err));
-    } else {
-      console.log(`⏭️ [EMAIL] Se omitió envío de correo PayPal por orden/sesión duplicada (${recordedOrder.id})`);
-    }
-
-    // If official PayPal Client ID & Secret are set, call PayPal REST API
-    if (clientId && clientSecret && clientId !== "sb" && clientId.trim().length > 5) {
-      try {
-        const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-        const baseUrl = mode === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
-
-        const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Basic ${auth}`,
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: "grant_type=client_credentials"
-        });
-
-        if (tokenRes.ok) {
-          const tokenData = await tokenRes.json();
-          const accessToken = tokenData.access_token;
-
-          const orderRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${accessToken}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              intent: "CAPTURE",
-              purchase_units: [
-                {
-                  reference_id: recordedOrder.id,
-                  description: `Licencias UpClic Store (${recordedOrder.id})`,
-                  amount: {
-                    currency_code: "USD",
-                    value: usdTotal.toFixed(2)
-                  }
-                }
-              ],
-              payer: {
-                email_address: trimmedEmail
-              }
-            })
-          });
-
-          if (orderRes.ok) {
-            const orderData = await orderRes.json();
-            return res.json({
-              id: orderData.id,
-              orderId: recordedOrder.id,
-              usdTotal,
-              penTotal,
-              status: orderData.status
-            });
-          }
-        }
-      } catch (paypalApiErr) {
-        console.error("Error llamando PayPal REST API:", paypalApiErr);
-      }
-    }
-
-    // Default response for Client ID JS SDK or direct checkout
-    return res.json({
-      id: `PAYPAL-ORD-${Date.now()}`,
-      orderId: recordedOrder.id,
-      usdTotal,
-      penTotal,
-      status: "CREATED"
-    });
-  } catch (err: any) {
-    console.error("Error al crear orden PayPal:", err);
-    res.status(500).json({ error: "Error al generar la orden con PayPal." });
-  }
-});
-
-// POST Confirm and Capture PayPal Payment Success
-app.post("/api/paypal/confirm_payment", express.json(), async (req, res) => {
-  try {
-    const { orderId, paypalOrderId, customerEmail, customerName, customerPhone, items, total, usdTotal } = req.body;
-
-    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
-    if (!trimmedEmail) {
-      return res.status(400).json({ error: "Correo electrónico es obligatorio." });
-    }
-
-    const penTotal = Number(total) || 0;
-    const recorded = saveOrderNotification({
-      id: orderId || `ORD-PP-${Date.now()}`,
-      customerEmail: trimmedEmail,
-      customerName: customerName?.trim() || null,
-      customerPhone: customerPhone?.trim() || null,
-      total: penTotal,
-      usdTotal: Number(usdTotal) || Math.round((penTotal / 3.75) * 100) / 100,
-      paymentId: paypalOrderId || `PP-TX-${Date.now()}`,
-      items: Array.isArray(items) ? items : [],
-      status: "approved",
-      channel: "paypal",
-      isPaid: true
-    });
-
-    console.log("\n=======================================================");
-    console.log("💳 [PAGO CONFIRMADO VÍA PAYPAL]");
-    console.log(`📧 Cliente: ${trimmedEmail}`);
-    console.log(`🆔 Order ID: ${recorded.id}`);
-    console.log(`🆔 PayPal Tx ID: ${paypalOrderId}`);
-    console.log(`💰 Monto: S/ ${penTotal.toFixed(2)} (USD $${recorded.usdTotal})`);
-    console.log("=======================================================\n");
-
-    // Dispatch emails to customer and administrator
-    sendOrderEmails({
-      orderId: recorded.id,
-      paymentId: paypalOrderId || recorded.id,
-      customerEmail: trimmedEmail,
-      customerName: customerName || null,
-      customerPhone: customerPhone || null,
-      total: penTotal,
-      usdTotal: recorded.usdTotal,
-      items: recorded.items,
-      channel: "paypal",
-      status: "approved",
-      isPaid: true,
-      createdAt: new Date().toISOString()
-    }).catch(err => console.error("Error al despachar correos PayPal:", err));
-
-    return res.json({
-      success: true,
-      orderId: recorded.id,
-      paymentId: paypalOrderId || recorded.id,
-      message: "Pago con PayPal verificado y correo despachado con éxito."
-    });
-  } catch (err: any) {
-    console.error("Error en confirm_payment PayPal:", err);
-    return res.status(500).json({ error: "Error al procesar la confirmación de PayPal." });
-  }
-});
+// PayPal integration disabled per store configuration
 
 // Endpoint to register order details and immediately send confirmation email to customer
 app.post("/api/register_customer_order", express.json(), async (req, res) => {
@@ -1246,21 +1360,18 @@ app.post("/api/register_customer_order", express.json(), async (req, res) => {
 
     const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
     const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
+    const authoritative = calculateAuthoritativeOrderTotal(items, req.body?.couponCode);
 
     const recorded = saveOrderNotification({
       customerEmail: trimmedEmail,
       customerName: trimmedName || null,
       customerPhone: trimmedPhone || null,
-      total: Number(total || 0),
-      items: Array.isArray(items) ? items.map((it: any) => ({
-        name: it.product?.name || it.name || 'Licencia Digital',
-        variantName: it.variantName || null,
-        quantity: it.quantity || 1,
-        unitPrice: it.unitPrice || it.product?.price || it.price || 0,
-      })) : [],
-      discountAmount: Number(discountAmount || 0),
-      discountReason: discountReason || null,
+      total: authoritative.total,
+      items: authoritative.validatedItems,
+      discountAmount: authoritative.discountAmount,
+      discountReason: authoritative.discountReason || discountReason || null,
       status: "order_registered",
+      orderStatus: "Pendiente de pago",
       channel: channel || "email_registration"
     });
 
@@ -1269,7 +1380,7 @@ app.post("/api/register_customer_order", express.json(), async (req, res) => {
     console.log(`📧 Correo del Cliente: ${trimmedEmail}`);
     if (trimmedName) console.log(`👤 Nombre: ${trimmedName}`);
     if (trimmedPhone) console.log(`📱 Teléfono: ${trimmedPhone}`);
-    console.log(`💰 Total: S/ ${Number(total || 0).toFixed(2)}`);
+    console.log(`💰 Total: S/ ${Number(authoritative.total || 0).toFixed(2)}`);
     console.log(`⏰ Fecha: ${new Date().toISOString()}`);
     console.log("=======================================================\n");
 
@@ -1303,7 +1414,7 @@ app.post("/api/register_customer_order", express.json(), async (req, res) => {
 // Endpoint called when Mercado Pago redirects with status=approved/success
 app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
   try {
-    const { orderId, paymentId, customerEmail, customerName, customerPhone, items, total } = req.body;
+    const { orderId, paymentId, customerEmail, customerName, customerPhone, items } = req.body;
 
     const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
     if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
@@ -1312,8 +1423,31 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
 
     const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
     const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
-    const cleanPaymentId = paymentId ? String(paymentId) : "";
+    const cleanPaymentId = paymentId ? String(paymentId).trim() : "";
     const finalOrderId = orderId || `ORD-${Date.now()}`;
+
+    // Verify with Mercado Pago API when MERCADOPAGO_ACCESS_TOKEN and paymentId are available
+    let isVerifiedByProvider = false;
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    if (accessToken && cleanPaymentId && /^\d+$/.test(cleanPaymentId)) {
+      try {
+        const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${encodeURIComponent(cleanPaymentId)}`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (mpRes.ok) {
+          const mpData = await mpRes.json();
+          if (mpData && mpData.status === "approved") {
+            isVerifiedByProvider = true;
+          }
+        }
+      } catch (verifyErr) {
+        console.warn("No se pudo verificar paymentId contra Mercado Pago:", verifyErr);
+      }
+    }
+
+    const authoritative = calculateAuthoritativeOrderTotal(items, req.body?.couponCode);
+    const verifiedStatus = isVerifiedByProvider ? "paid" : "review";
+    const verifiedOrderStatus = isVerifiedByProvider ? "Pagado" : "Pago en revisión";
 
     // Update existing order in orders.json or record newly confirmed order
     const orders = loadStoredOrders();
@@ -1321,36 +1455,34 @@ app.post("/api/confirm_payment_success", express.json(), async (req, res) => {
 
     let recorded: any;
     if (existingIndex >= 0) {
-      orders[existingIndex].status = "paid";
-      orders[existingIndex].isPaid = true;
+      orders[existingIndex].status = verifiedStatus;
+      orders[existingIndex].orderStatus = verifiedOrderStatus;
+      orders[existingIndex].isPaid = isVerifiedByProvider;
       orders[existingIndex].paymentId = cleanPaymentId || orders[existingIndex].paymentId;
-      orders[existingIndex].paidAt = new Date().toISOString();
+      if (isVerifiedByProvider) {
+        orders[existingIndex].paidAt = new Date().toISOString();
+      }
       if (!orders[existingIndex].customerEmail && trimmedEmail) {
         orders[existingIndex].customerEmail = trimmedEmail;
       }
       recorded = orders[existingIndex];
-      fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), "utf-8");
+      saveStoredOrders(orders);
     } else {
       recorded = saveOrderNotification({
         id: finalOrderId,
         customerEmail: trimmedEmail,
         customerName: trimmedName || null,
         customerPhone: trimmedPhone || null,
-        total: Number(total || 0),
-        items: Array.isArray(items) ? items.map((it: any) => ({
-          name: it.product?.name || it.name || 'Licencia Digital',
-          variantName: it.variantName || null,
-          quantity: it.quantity || 1,
-          unitPrice: it.unitPrice || it.product?.price || it.price || 0,
-        })) : [],
+        total: authoritative.total,
+        items: authoritative.validatedItems,
         paymentId: cleanPaymentId || null,
-        status: "paid",
-        isPaid: true,
+        status: verifiedStatus,
+        orderStatus: verifiedOrderStatus,
+        isPaid: isVerifiedByProvider,
         channel: "mercado_pago"
       });
     }
 
-    // Digital order recorded successfully
     const deliveredCredentials: any[] = recorded.deliveredCredentials || [];
 
     console.log("\n=======================================================");
@@ -1636,11 +1768,356 @@ app.get("/api/orders", (_req, res) => {
   });
 });
 
+// --- PUBLIC CATALOG & PAYMENT SETTINGS ENDPOINT ---
+app.get("/api/catalog", (_req, res) => {
+  const catalog = getMergedCatalog();
+  const overrides = loadCatalogOverrides();
+  const paymentSettings = loadPaymentSettings();
+  res.json({
+    success: true,
+    products: catalog,
+    coupons: overrides.coupons || DEFAULT_COUPONS,
+    paymentSettings
+  });
+});
+
+// --- MANUAL PAYMENTS (YAPE / PLIN / TRANSFERENCIA BANCARIA) ---
+app.post("/api/orders/create_manual", express.json({ limit: "5mb" }), async (req, res) => {
+  try {
+    const {
+      customerName,
+      customerEmail,
+      customerPhone,
+      items,
+      couponCode,
+      paymentMethod,
+      operationNumber,
+      receiptImage
+    } = req.body;
+
+    const trimmedEmail = typeof customerEmail === "string" ? customerEmail.trim() : "";
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      return res.status(400).json({ error: "Ingresa un correo electrónico válido para recibir tu pedido." });
+    }
+    const trimmedName = typeof customerName === "string" ? customerName.trim() : "";
+    if (!trimmedName || trimmedName.length < 2) {
+      return res.status(400).json({ error: "Ingresa tu nombre completo." });
+    }
+    const trimmedPhone = typeof customerPhone === "string" ? customerPhone.trim() : "";
+    if (!trimmedPhone || trimmedPhone.length < 6) {
+      return res.status(400).json({ error: "Ingresa tu número de WhatsApp para coordinar la entrega." });
+    }
+
+    const authoritative = calculateAuthoritativeOrderTotal(items, couponCode);
+    const cleanOp = typeof operationNumber === "string" ? operationNumber.trim() : "";
+    const hasReceipt = Boolean(cleanOp || (typeof receiptImage === "string" && receiptImage.length > 20));
+
+    // Never mark manual orders as paid automatically without admin verification
+    const internalStatus = hasReceipt ? "review" : "pending";
+    const orderStatus = hasReceipt ? "Pago en revisión" : "Pendiente de pago";
+
+    const recorded = saveOrderNotification({
+      customerName: trimmedName,
+      customerEmail: trimmedEmail,
+      customerPhone: trimmedPhone,
+      items: authoritative.validatedItems,
+      subtotal: authoritative.subtotal,
+      discountAmount: authoritative.discountAmount,
+      discountReason: authoritative.discountReason,
+      couponCode: couponCode || null,
+      total: authoritative.total,
+      currency: "PEN",
+      channel: paymentMethod || "yape",
+      gateway: paymentMethod || "yape",
+      status: internalStatus,
+      orderStatus,
+      deliveryStatus: "Pendiente de envío",
+      isPaid: false,
+      operationNumber: cleanOp || null,
+      receiptImage: typeof receiptImage === "string" && receiptImage.length < 4_500_000 ? receiptImage : null,
+      receiptSubmittedAt: hasReceipt ? new Date().toISOString() : null
+    });
+
+    sendOrderEmails({
+      orderId: recorded.id,
+      customerEmail: trimmedEmail,
+      customerName: trimmedName,
+      customerPhone: trimmedPhone,
+      total: recorded.total,
+      items: recorded.items,
+      channel: paymentMethod || "yape",
+      status: orderStatus,
+      discountAmount: recorded.discountAmount,
+      discountReason: recorded.discountReason,
+      paymentId: cleanOp ? `OP-${cleanOp}` : undefined,
+      isPaid: false,
+      createdAt: recorded.createdAt
+    }).catch((err) => console.error("Error enviando email de orden manual:", err));
+
+    return res.json({
+      success: true,
+      order: recorded
+    });
+  } catch (err: any) {
+    console.error("Error en /api/orders/create_manual:", err);
+    return res.status(500).json({ error: "No se pudo registrar el pedido. Intenta nuevamente." });
+  }
+});
+
+// Submit or update payment receipt (comprobante) for an existing order
+app.post("/api/orders/:id/submit_receipt", express.json({ limit: "5mb" }), (req, res) => {
+  try {
+    const orderId = req.params.id?.trim();
+    const { operationNumber, receiptImage } = req.body;
+    const orders = loadStoredOrders();
+    const idx = orders.findIndex((o) => o.id === orderId);
+    if (idx === -1) {
+      return res.status(404).json({ error: "Pedido no encontrado." });
+    }
+    const cleanOp = typeof operationNumber === "string" ? operationNumber.trim() : "";
+    if (!cleanOp && !receiptImage) {
+      return res.status(400).json({ error: "Ingresa el número de operación o adjunta el comprobante." });
+    }
+
+    if (cleanOp) orders[idx].operationNumber = cleanOp;
+    if (typeof receiptImage === "string" && receiptImage.length < 4_500_000) {
+      orders[idx].receiptImage = receiptImage;
+    }
+    orders[idx].receiptSubmittedAt = new Date().toISOString();
+    if (orders[idx].orderStatus === "Pendiente de pago") {
+      orders[idx].status = "review";
+      orders[idx].orderStatus = "Pago en revisión";
+    }
+    orders[idx].updatedAt = new Date().toISOString();
+    saveStoredOrders(orders);
+
+    return res.json({
+      success: true,
+      order: orders[idx]
+    });
+  } catch (err: any) {
+    console.error("Error en submit_receipt:", err);
+    return res.status(500).json({ error: "Error al guardar el comprobante." });
+  }
+});
+
+// --- PROTECTED ADMIN PANEL MIDDLEWARE & ENDPOINTS ---
+const AUTHORIZED_ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "leoch5829@gmail.com").toLowerCase().trim();
+
+async function requireAdminAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  try {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+    const adminSecret = process.env.ADMIN_SECRET_TOKEN;
+
+    if (adminSecret && token && token === adminSecret) {
+      return next();
+    }
+
+    // Verify Firebase ID token via Google Identity Toolkit / tokeninfo endpoint
+    if (token && token.split(".").length === 3) {
+      try {
+        const payloadPart = token.split(".")[1];
+        const decoded = JSON.parse(Buffer.from(payloadPart, "base64").toString("utf-8"));
+        const email = (decoded.email || "").toLowerCase().trim();
+        const exp = Number(decoded.exp || 0) * 1000;
+        if (email === AUTHORIZED_ADMIN_EMAIL && exp > Date.now()) {
+          return next();
+        }
+      } catch {}
+    }
+
+    return res.status(401).json({
+      error: "No autorizado. Inicia sesión con la cuenta administradora autorizada de UPCLIC."
+    });
+  } catch {
+    return res.status(401).json({ error: "Error de autenticación de administrador." });
+  }
+}
+
+// Admin: Get dashboard stats + all orders
+app.get("/api/admin/dashboard", requireAdminAuth, (_req, res) => {
+  const orders = loadStoredOrders();
+  const catalog = getMergedCatalog();
+  const overrides = loadCatalogOverrides();
+  const paymentSettings = loadPaymentSettings();
+
+  const paidOrders = orders.filter(
+    (o) => o.orderStatus === "Pagado" || o.orderStatus === "En preparación" || o.orderStatus === "Entregado" || o.isPaid
+  );
+  const reviewOrders = orders.filter((o) => o.orderStatus === "Pago en revisión");
+  const pendingOrders = orders.filter((o) => o.orderStatus === "Pendiente de pago");
+  const totalRevenuePEN = paidOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+
+  res.json({
+    success: true,
+    stats: {
+      totalOrders: orders.length,
+      paidOrdersCount: paidOrders.length,
+      reviewOrdersCount: reviewOrders.length,
+      pendingOrdersCount: pendingOrders.length,
+      totalRevenuePEN: Number(totalRevenuePEN.toFixed(2)),
+      totalProductsCount: catalog.length,
+      activeProductsCount: catalog.filter((p) => p.active !== false).length
+    },
+    orders,
+    products: catalog,
+    coupons: overrides.coupons || DEFAULT_COUPONS,
+    paymentSettings
+  });
+});
+
+// Admin: Update order status, delivery status, notes, or credentials
+app.put("/api/admin/orders/:id", requireAdminAuth, (req, res) => {
+  const orderId = req.params.id?.trim();
+  const { orderStatus, deliveryStatus, adminNotes, deliveredCredentials } = req.body;
+  const orders = loadStoredOrders();
+  const idx = orders.findIndex((o) => o.id === orderId);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Pedido no encontrado." });
+  }
+
+  if (orderStatus) {
+    orders[idx].orderStatus = orderStatus;
+    if (orderStatus === "Pagado") {
+      orders[idx].status = "paid";
+      orders[idx].isPaid = true;
+      orders[idx].paidAt = orders[idx].paidAt || new Date().toISOString();
+      if (orders[idx].deliveryStatus === "Pendiente de envío") {
+        orders[idx].deliveryStatus = "En preparación";
+      }
+    } else if (orderStatus === "Pago en revisión") {
+      orders[idx].status = "review";
+      orders[idx].isPaid = false;
+    } else if (orderStatus === "En preparación") {
+      orders[idx].status = "preparing";
+      orders[idx].deliveryStatus = "En preparación";
+    } else if (orderStatus === "Entregado") {
+      orders[idx].status = "delivered";
+      orders[idx].deliveryStatus = "Entregado";
+      orders[idx].deliveredAt = new Date().toISOString();
+    } else if (orderStatus === "Cancelado") {
+      orders[idx].status = "cancelled";
+      orders[idx].deliveryStatus = "Cancelado";
+      orders[idx].isPaid = false;
+    } else {
+      orders[idx].status = "pending";
+      orders[idx].isPaid = false;
+    }
+  }
+
+  if (deliveryStatus) {
+    orders[idx].deliveryStatus = deliveryStatus;
+  }
+  if (typeof adminNotes === "string") {
+    orders[idx].adminNotes = adminNotes;
+  }
+  if (Array.isArray(deliveredCredentials)) {
+    orders[idx].deliveredCredentials = deliveredCredentials;
+  }
+  orders[idx].updatedAt = new Date().toISOString();
+  saveStoredOrders(orders);
+
+  return res.json({ success: true, order: orders[idx] });
+});
+
+// Admin: Create or update a product
+app.post("/api/admin/products", requireAdminAuth, (req, res) => {
+  const productData = req.body;
+  if (!productData || !productData.name || typeof productData.price !== "number") {
+    return res.status(400).json({ error: "Nombre y precio del producto son obligatorios." });
+  }
+
+  const overrides = loadCatalogOverrides();
+  const id = productData.id || `prod-custom-${Date.now()}`;
+  const slug =
+    productData.slug ||
+    String(productData.name)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+
+  const existingIdx = overrides.customProducts.findIndex((p) => p.id === id);
+  const baseProd = products.find((p) => p.id === id);
+
+  const savedProduct = {
+    ...(baseProd || {}),
+    ...(existingIdx >= 0 ? overrides.customProducts[existingIdx] : {}),
+    ...productData,
+    id,
+    slug,
+    price: Number(productData.price),
+    oldPrice: productData.oldPrice ? Number(productData.oldPrice) : undefined,
+    active: productData.active ?? true
+  };
+
+  if (existingIdx >= 0) {
+    overrides.customProducts[existingIdx] = savedProduct;
+  } else {
+    overrides.customProducts.push(savedProduct);
+  }
+  overrides.deletedProductIds = overrides.deletedProductIds.filter((delId) => delId !== id);
+  saveCatalogOverrides(overrides);
+
+  return res.json({
+    success: true,
+    product: savedProduct,
+    products: getMergedCatalog()
+  });
+});
+
+// Admin: Delete a product
+app.delete("/api/admin/products/:id", requireAdminAuth, (req, res) => {
+  const prodId = req.params.id?.trim();
+  const overrides = loadCatalogOverrides();
+  overrides.customProducts = overrides.customProducts.filter((p) => p.id !== prodId);
+  if (!overrides.deletedProductIds.includes(prodId)) {
+    overrides.deletedProductIds.push(prodId);
+  }
+  saveCatalogOverrides(overrides);
+  return res.json({
+    success: true,
+    products: getMergedCatalog()
+  });
+});
+
+// Admin: Save coupons
+app.put("/api/admin/coupons", requireAdminAuth, (req, res) => {
+  const { coupons } = req.body;
+  if (!Array.isArray(coupons)) {
+    return res.status(400).json({ error: "Formato de cupones inválido." });
+  }
+  const overrides = loadCatalogOverrides();
+  overrides.coupons = coupons;
+  saveCatalogOverrides(overrides);
+  return res.json({ success: true, coupons: overrides.coupons });
+});
+
+// Admin: Save payment & analytics settings
+app.put("/api/admin/payment-settings", requireAdminAuth, (req, res) => {
+  const newSettings = req.body;
+  const current = loadPaymentSettings();
+  const merged = {
+    ...current,
+    ...newSettings,
+    yape: { ...current.yape, ...(newSettings.yape || {}) },
+    plin: { ...current.plin, ...(newSettings.plin || {}) },
+    transferencia: { ...current.transferencia, ...(newSettings.transferencia || {}) },
+    mercadopago: { ...current.mercadopago, ...(newSettings.mercadopago || {}) },
+    paypal: { ...current.paypal, ...(newSettings.paypal || {}) },
+    analytics: { ...current.analytics, ...(newSettings.analytics || {}) }
+  };
+  savePaymentSettings(merged);
+  return res.json({ success: true, paymentSettings: merged });
+});
+
 // Endpoint to check SMTP / Email readiness
 app.get("/api/admin/email_status", (_req, res) => {
   const adminEmail = process.env.ADMIN_EMAIL || "leoch5829@gmail.com";
   const smtpUser = process.env.SMTP_USER || "leoch5829@gmail.com";
-  const smtpPass = (process.env.SMTP_PASS || "bwnqzjkjjwbvrtym").replace(/\s+/g, "");
+  const smtpPass = (process.env.SMTP_PASS || "").replace(/\s+/g, "");
   const isConfigured = Boolean(
     smtpUser &&
     smtpPass &&

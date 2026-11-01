@@ -1,276 +1,293 @@
 import React from 'react';
-import { useCart } from '../context/CartContext.tsx';
-import { X, HelpCircle, FileText, Shield, Mail, Phone, CheckCircle2, ShoppingBag, ExternalLink } from 'lucide-react';
-import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL } from '../products.ts';
+import {
+  X,
+  ShieldCheck,
+  FileText,
+  Lock,
+  HelpCircle,
+  MessageCircle,
+  CheckCircle2,
+  Building2,
+  RefreshCcw
+} from 'lucide-react';
+import { useCart, HelpSection } from '../context/CartContext';
+import { WHATSAPP_NUMBER, WHATSAPP_DISPLAY } from '../products';
 
-interface HelpModalProps {
-  topic: string | null;
-  onClose: () => void;
-}
+export const HelpModal: React.FC = () => {
+  const { activeHelpSection, setActiveHelpSection } = useCart();
 
-export const HelpModal: React.FC<HelpModalProps> = ({ topic, onClose }) => {
-  const { language } = useCart();
-  if (!topic) return null;
+  if (!activeHelpSection) return null;
 
-  const isEn = language === 'EN';
+  const tabs: { id: HelpSection; label: string; icon: React.ReactNode }[] = [
+    { id: 'quienes-somos', label: 'Quiénes somos', icon: <Building2 className="w-4 h-4" /> },
+    { id: 'contacto', label: 'Contacto', icon: <MessageCircle className="w-4 h-4" /> },
+    { id: 'faq', label: 'Preguntas frecuentes', icon: <HelpCircle className="w-4 h-4" /> },
+    { id: 'garantia', label: 'Política de garantía', icon: <ShieldCheck className="w-4 h-4" /> },
+    { id: 'reembolsos', label: 'Cambios y reembolsos', icon: <RefreshCcw className="w-4 h-4" /> },
+    { id: 'terminos', label: 'Términos y condiciones', icon: <FileText className="w-4 h-4" /> },
+    { id: 'privacidad', label: 'Política de privacidad', icon: <Lock className="w-4 h-4" /> },
+  ];
 
-  const renderContent = () => {
-    switch (topic) {
-      case 'faq':
-        return isEn ? (
-          <div className="space-y-4 text-xs sm:text-sm text-slate-700">
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">How do I pay?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                Directly in the store via Mercado Pago. You can pay with credit card, debit card, or cash. Payment is processed in your local currency with real-time confirmation.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">How and when do I receive my license?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                It will be delivered digitally to your email address within <strong>10 to 30 minutes</strong> after payment confirmation, including your 25-character genuine product key and step-by-step activation guide.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">Do I need to send payment proof screenshot?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                No. Mercado Pago automatically validates the transaction. The system generates your order and dispatches your license details to your email without manual receipts.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">What warranty do the licenses have?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                They come with an official 6-month activation warranty (1-month warranty for automated phone activation). If any issue arises during installation or redemption, our technical team will assist you immediately or provide a replacement key.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">Can I reinstall if I format my PC?</h4>
-              <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
-                <p>• <strong className="text-slate-800">Windows OEM:</strong> Tied to the motherboard. You can reformat and reinstall as many times as needed on the same PC.</p>
-                <p>• <strong className="text-slate-800">Windows Retail:</strong> Tied to your Microsoft Account and can be transferred to another PC in the future.</p>
-                <p>• <strong className="text-slate-800">Microsoft Office 365:</strong> Reinstallable by logging in with your credentials on portal.office.com on up to 5 devices.</p>
-                <p>• <strong className="text-slate-800">Office, Project & Visio:</strong> Keys are not reinstallable; the permanent lifetime license is maintained on your PC as long as you do not format it.</p>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">How do volume discounts work?</h4>
-              <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
-                <p>• <strong className="text-emerald-700">10% automatic volume discount:</strong> Applies automatically when you have 2 or more products in your cart.</p>
-                <p className="text-[11px] text-slate-500 italic">Discounts cannot be combined; the highest benefit available applies.</p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4 text-xs sm:text-sm text-slate-700">
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Cómo realizo el pago?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                Directamente en la tienda a través de Mercado Pago. Puedes pagar con tarjeta de débito o crédito, o efectivo. El cobro se procesará en tu moneda local y la confirmación es en tiempo real.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Cómo y en cuánto tiempo recibo mi licencia?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                La entrega es 100% digital a tu correo electrónico en un lapso de <strong>10 a 30 minutos</strong> tras confirmarse el pago. Recibirás tu clave original de 25 caracteres, el enlace de descarga oficial de Microsoft y la guía paso a paso de activación.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Debo enviar captura o comprobante de pago?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                No. Mercado Pago valida la transacción de forma automática. El sistema genera tu pedido y despacha tus datos de activación directamente a tu correo sin requerir comprobantes manuales.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Qué garantía tienen las licencias?</h4>
-              <p className="text-slate-600 leading-relaxed">
-                Cuentan con garantía oficial de activación de 6 meses (para productos con activación telefónica la garantía es de 1 mes) y soporte técnico especializado. Ante cualquier problema técnico durante la instalación o validación, te asistimos de inmediato o te proporcionamos una clave de reemplazo.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Puedo reinstalar si formateo mi PC?</h4>
-              <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
-                <p>• <strong className="text-slate-800">Windows OEM:</strong> Queda asociada a la placa madre de tu PC, permitiéndote formatear y reinstalar todas las veces que desees sin perder la activación.</p>
-                <p>• <strong className="text-slate-800">Windows Retail:</strong> Se vincula a tu cuenta Microsoft y es transferible a otro equipo en el futuro.</p>
-                <p>• <strong className="text-slate-800">Microsoft Office 365:</strong> Reinstalable iniciando sesión con tus credenciales en portal.office.com en hasta 5 dispositivos.</p>
-                <p>• <strong className="text-slate-800">Office, Project y Visio:</strong> Las claves no son reinstalables; la licencia se mantiene permanente de por vida en tu equipo siempre y cuando no lo formatees.</p>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-900 mb-1">¿Cómo funcionan los descuentos?</h4>
-              <div className="text-slate-600 leading-relaxed space-y-1 mt-0.5">
-                <p>• <strong className="text-emerald-700">10% automático por volumen:</strong> Aplica directo al tener 2 o más productos en el carrito.</p>
-                <p className="text-[11px] text-slate-500 italic">Los descuentos no son acumulables entre sí; se aplica el mayor beneficio disponible.</p>
-              </div>
-            </div>
-          </div>
-        );
-      case 'contact':
-        return isEn ? (
-          <div className="space-y-4 text-xs sm:text-sm text-slate-700">
-            <p className="text-slate-600">
-              Our technical support team is available to help you before and after your purchase.
-            </p>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-emerald-600" />
-                  <span className="font-bold">WhatsApp: Official Support</span>
-                </div>
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition-colors"
-                >
-                  Chat
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-600" />
-                <span className="font-bold">Hours: Monday to Sunday 24/7 (Continuous Support)</span>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4 text-yellow-600" />
-                  <div>
-                    <span className="font-bold block text-slate-800">Official Store on Mercado Libre</span>
-                    <span className="text-[11px] text-slate-500">Verified seller with 100% positive reputation</span>
-                  </div>
-                </div>
-                <a
-                  href={MERCADO_LIBRE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2.5 py-1 bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold rounded-lg text-xs transition-colors inline-flex items-center gap-1 shrink-0"
-                >
-                  <span>Visit</span>
-                  <ExternalLink className="w-3 h-3 opacity-80" />
-                </a>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4 text-xs sm:text-sm text-slate-700">
-            <p className="text-slate-600">
-              Nuestro equipo de soporte técnico está disponible para atender dudas antes y después de tu compra.
-            </p>
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-emerald-600" />
-                  <span className="font-bold">WhatsApp: Soporte Oficial</span>
-                </div>
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition-colors"
-                >
-                  Chatear
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-600" />
-                <span className="font-bold">Horario: Lunes a Domingo 24/7 (Atención Continua)</span>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4 text-yellow-600" />
-                  <div>
-                    <span className="font-bold block text-slate-800">Tienda Oficial en Mercado Libre</span>
-                    <span className="text-[11px] text-slate-500">Ventas verificadas con protección y garantía al comprador</span>
-                  </div>
-                </div>
-                <a
-                  href={MERCADO_LIBRE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2.5 py-1 bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold rounded-lg text-xs transition-colors inline-flex items-center gap-1 shrink-0"
-                >
-                  <span>Visitar</span>
-                  <ExternalLink className="w-3 h-3 opacity-80" />
-                </a>
-              </div>
-            </div>
-          </div>
-        );
-      case 'terms':
-      case 'sales_terms':
-        return isEn ? (
-          <div className="space-y-3 text-xs sm:text-sm text-slate-600">
-            <h4 className="font-bold text-slate-900">General Sales and Delivery Terms:</h4>
-            <p>1. All licenses sold by UpClic are 100% genuine and backed by official activation warranty.</p>
-            <p>2. Delivery is carried out 100% digitally to your registered email address within <strong>10 to 30 minutes</strong> following payment confirmation via Mercado Pago.</p>
-            <p>3. Official warranty: 6-month warranty (1-month warranty for automated phone activation). In case of any technical verification issue, our team provides immediate support or key replacement.</p>
-          </div>
-        ) : (
-          <div className="space-y-3 text-xs sm:text-sm text-slate-600">
-            <h4 className="font-bold text-slate-900">Condiciones de Venta y Entrega:</h4>
-            <p>1. Todas las licencias comercializadas por UpClic corresponden a claves digitales 100% originales y cuentan con garantía oficial de activación.</p>
-            <p>2. La entrega se efectúa de manera 100% digital a tu correo electrónico en un lapso estimado de <strong>10 a 30 minutos</strong> tras la confirmación del pago en Mercado Pago.</p>
-            <p>3. Garantía oficial de activación de 6 meses (1 mes para activación telefónica): ante cualquier inconveniente técnico durante la activación, brindamos asistencia inmediata o reemplazo de clave sin costo.</p>
-          </div>
-        );
-      case 'privacy':
-        return isEn ? (
-          <div className="space-y-3 text-xs sm:text-sm text-slate-600">
-            <h4 className="font-bold text-slate-900">Privacy Policy and Data Protection:</h4>
-            <p>At UpClic we respect your privacy. Data provided for delivery (name, ID number, or email address) is used exclusively to process your order, provide technical assistance, and send your invoice.</p>
-            <p>We do not store credit or debit card details; all payments are processed securely through certified Mercado Pago servers.</p>
-          </div>
-        ) : (
-          <div className="space-y-3 text-xs sm:text-sm text-slate-600">
-            <h4 className="font-bold text-slate-900">Política de Privacidad y Protección de Datos:</h4>
-            <p>En UpClic respetamos su privacidad. Los datos proporcionados para la entrega (nombre, número de documento de identidad, y correo electrónico) se emplean exclusivamente para procesar su orden, enviar comprobantes de compra y brindar asistencia técnica.</p>
-            <p>No almacenamos datos de tarjetas bancarias; todos los cobros se gestionan de forma 100% segura a través de los servidores certificados de Mercado Pago.</p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const titles: Record<string, string> = isEn ? {
-    faq: 'Frequently Asked Questions',
-    contact: 'Contact & Support',
-    terms: 'Terms of Service',
-    sales_terms: 'Sales Conditions',
-    privacy: 'Privacy Policy'
-  } : {
-    faq: 'Preguntas Frecuentes',
-    contact: 'Contacto y Soporte',
-    terms: 'Términos del Servicio',
-    sales_terms: 'Condiciones de Venta',
-    privacy: 'Política de Privacidad'
-  };
+  const normalizedSection: HelpSection =
+    activeHelpSection === 'envio' ? 'faq' : activeHelpSection;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-lg rounded-lg shadow-md border border-slate-200/90 overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
-          <h3 className="font-black text-slate-900 text-base">
-            {titles[topic] || (isEn ? 'Information' : 'Información')}
-          </h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+        {/* Header */}
+        <div className="p-5 sm:p-6 bg-[#0B1F3A] text-white flex items-center justify-between border-b border-slate-800">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#7DB2FF] block">
+              Centro de Transparencia y Políticas Comerciales
+            </span>
+            <h2 className="text-lg sm:text-xl font-extrabold">UPCLIC</h2>
+          </div>
           <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
-            aria-label="Cerrar modal"
+            onClick={() => setActiveHelpSection(null)}
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
-            <X className="w-4.5 h-4.5" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
-          {renderContent()}
+        {/* Navigation Pills */}
+        <div className="px-5 py-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          {tabs.map((tab) => {
+            const isActive = normalizedSection === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveHelpSection(tab.id)}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#1668E3] text-white shadow-xs'
+                    : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80'
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+        {/* Content Body */}
+        <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-slate-700 text-xs sm:text-sm leading-relaxed">
+          {normalizedSection === 'quienes-somos' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">Quiénes Somos — UPCLIC</h3>
+              <p>
+                <strong>UPCLIC</strong> es una tienda especializada en la comercialización de productos digitales, licencias de software (Microsoft Office, Windows, Project, Visio, CorelDRAW, Antivirus), herramientas de Inteligencia Artificial, diseño y suscripciones digitales.
+              </p>
+              <p>
+                Nuestro compromiso principal es ofrecer una experiencia de compra clara, transparente y segura, detallando siempre las condiciones reales de cada producto (ya sea clave OEM, Retail, activación telefónica, invitación a correo personal o acceso a cuenta) y brindando acompañamiento técnico paso a paso por WhatsApp y correo electrónico.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <strong className="text-[#0B1F3A] block mb-1">Transparencia Total</strong>
+                  <span className="text-xs text-slate-600">
+                    Cada ficha indica qué incluye, duración, dispositivos permitidos y condiciones de uso.
+                  </span>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <strong className="text-[#0B1F3A] block mb-1">Entrega Digital</strong>
+                  <span className="text-xs text-slate-600">
+                    Envío directo a tu correo electrónico y WhatsApp tras verificar tu pago.
+                  </span>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <strong className="text-[#0B1F3A] block mb-1">Soporte en Español</strong>
+                  <span className="text-xs text-slate-600">
+                    Asistencia personalizada durante la instalación y activación de tu producto.
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {normalizedSection === 'contacto' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">Información de Contacto Oficial</h3>
+              <p>
+                Para consultas comerciales, soporte de instalación, validación de pagos o seguimiento de pedidos, puedes comunicarte directamente con nuestro equipo de atención al cliente:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[11px] font-bold uppercase text-slate-400 block">
+                    WhatsApp Comercial y Soporte
+                  </span>
+                  <p className="font-extrabold text-[#0B1F3A] text-base">{WHATSAPP_DISPLAY}</p>
+                  <a
+                    href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-bold text-[#1668E3] hover:underline pt-1"
+                  >
+                    Abrir chat directo en WhatsApp →
+                  </a>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[11px] font-bold uppercase text-slate-400 block">
+                    Horario y Canales de Atención
+                  </span>
+                  <p className="font-extrabold text-[#0B1F3A] text-base">Atención Personalizada</p>
+                  <p className="text-xs text-slate-500">
+                    Asesoría previa a la compra y soporte técnico de activación paso a paso.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {normalizedSection === 'faq' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">Preguntas Frecuentes (FAQ)</h3>
+              <div className="space-y-3">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <h4 className="font-bold text-[#0B1F3A] mb-1">
+                    1. ¿Cómo recibo mi producto digital después de comprar?
+                  </h4>
+                  <p className="text-xs text-slate-600">
+                    Una vez verificado tu pago, enviamos tu clave de licencia, enlace de invitación o credenciales de acceso junto con la guía de instalación paso a paso a tu correo electrónico y WhatsApp registrados en el checkout.
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <h4 className="font-bold text-[#0B1F3A] mb-1">
+                    2. ¿Cuál es la diferencia entre una licencia OEM y una Retail?
+                  </h4>
+                  <p className="text-xs text-slate-600">
+                    Una licencia <strong>OEM</strong> se vincula a la placa madre (hardware) de 1 equipo específico y no puede transferirse a otra PC distinta, aunque sí permite formatear y reinstalar en esa misma máquina. Una licencia <strong>Retail</strong> permite transferirse a otro equipo en caso de que cambies de computadora.
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <h4 className="font-bold text-[#0B1F3A] mb-1">
+                    3. ¿Cómo funcionan las suscripciones como Canva Pro o Gemini AI Pro?
+                  </h4>
+                  <p className="text-xs text-slate-600">
+                    Se activan mediante invitación o enlace oficial enviado directamente a tu propio correo personal (sin necesidad de que entregues tu contraseña). En el caso de Microsoft 365, se entrega una cuenta dedicada exclusiva para hasta 5 dispositivos.
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <h4 className="font-bold text-[#0B1F3A] mb-1">
+                    4. ¿Qué métodos de pago aceptan?
+                  </h4>
+                  <p className="text-xs text-slate-600">
+                    Aceptamos pagos en Soles (S/) a través de Mercado Pago (Yape, tarjetas de crédito o débito y PagoEfectivo), así como PayPal en USD.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {normalizedSection === 'garantia' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">Política de Garantía UPCLIC</h3>
+              <p>
+                Todos los productos adquiridos en <strong>UPCLIC</strong> cuentan con garantía de activación y funcionamiento conforme a lo detallado en la ficha técnica de cada producto:
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Licencias de Clave Directa (Office, Windows, Project, Visio, CorelDRAW, McAfee):</strong> Garantía oficial de 6 meses de activación y funcionamiento más acompañamiento técnico.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Licencias de Activación por Teléfono:</strong> Garantía de activación de 30 días (1 mes) siguiendo el procedimiento automatizado de Microsoft.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Suscripciones y Streaming:</strong> Garantía de funcionamiento y soporte durante la vigencia contratada, siempre que el usuario respete las condiciones de uso indicadas (por ejemplo, no alterar datos en perfiles compartidos).
+                  </span>
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {normalizedSection === 'reembolsos' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">
+                Política de Cambios y Reembolsos
+              </h3>
+              <p>
+                Al tratarse de bienes digitales (claves alfanuméricas, invitaciones y accesos electrónicos), aplicamos las siguientes reglas justas para proteger al comprador:
+              </p>
+              <ul className="space-y-2 list-disc pl-5">
+                <li>
+                  Si una clave o acceso presenta algún inconveniente técnico al momento de la activación, nuestro equipo de soporte verificará el caso por WhatsApp y procederá con la solución técnica o el <strong>reemplazo inmediato sin costo</strong>.
+                </li>
+                <li>
+                  Si UPCLIC no pudiera entregar o activar el producto adquirido dentro del plazo establecido y el reemplazo tampoco fuera viable, se realizará el <strong>reembolso del 100% del importe pagado</strong> por el mismo medio de pago.
+                </li>
+                <li>
+                  Una vez que una clave digital ha sido activada exitosamente en el equipo del comprador o cuando el error se debe a incompatibilidad de hardware no consultada previamente (por ejemplo, comprar un software exclusivo de Windows para instalarlo en macOS), se podrá gestionar un cambio previo acuerdo con soporte si la clave no ha sido consumida.
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {normalizedSection === 'terminos' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">Términos y Condiciones de Uso</h3>
+              <p>
+                Al realizar un pedido en <strong>UPCLIC</strong>, el comprador acepta las condiciones descritas en la ficha de cada producto:
+              </p>
+              <ul className="space-y-2 list-disc pl-5">
+                <li>
+                  Los precios publicados en la tienda están expresados principalmente en Soles peruanos (S/).
+                </li>
+                <li>
+                  Los pedidos con pago manual (Yape, Plin o Transferencia Bancaria) quedan registrados inicialmente como <em>Pendiente de pago</em> o <em>Pago en revisión</em> hasta que el comprobante sea verificado.
+                </li>
+                <li>
+                  El comprador es responsable de proporcionar un correo electrónico y número de WhatsApp válidos para la recepción de su producto digital.
+                </li>
+                <li>
+                  Las marcas mencionadas en el catálogo pertenecen a sus respectivos propietarios y se utilizan únicamente para identificar la compatibilidad y naturaleza del software o servicio digital.
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {normalizedSection === 'privacidad' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-[#0B1F3A]">Política de Privacidad</h3>
+              <p>
+                En <strong>UPCLIC</strong> respetamos y protegemos la privacidad de nuestros clientes conforme a la normativa vigente en Perú (Ley N° 29733 — Ley de Protección de Datos Personales):
+              </p>
+              <ul className="space-y-2 list-disc pl-5">
+                <li>
+                  Solicitamos únicamente los datos estrictamente necesarios para procesar y entregar tu pedido: Nombre, Correo electrónico y Número de WhatsApp.
+                </li>
+                <li>
+                  <strong>Seguridad Financiera:</strong> UPCLIC nunca solicita ni almacena números completos de tarjetas de crédito/débito, códigos CVV ni claves bancarias. Los pagos con tarjeta se procesan de forma encriptada en las pasarelas correspondientes (Mercado Pago / PayPal).
+                </li>
+                <li>
+                  Tus datos de contacto no son vendidos ni cedidos a terceros bajo ninguna circunstancia.
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Footer CTA */}
+        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex items-center justify-between flex-wrap gap-3">
+          <span className="text-xs text-slate-500">
+            ¿Necesitas atención personalizada de nuestro equipo?
+          </span>
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, tengo una consulta sobre sus políticas y productos.')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-xl bg-[#E8440A] hover:bg-[#d83b01] text-white font-bold text-xs inline-flex items-center gap-1.5 transition-colors"
           >
-            {isEn ? 'Got it' : 'Entendido'}
-          </button>
+            <MessageCircle className="w-3.5 h-3.5" />
+            <span>Escribir por WhatsApp</span>
+          </a>
         </div>
       </div>
     </div>

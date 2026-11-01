@@ -35,7 +35,7 @@ export interface OrderEmailPayload {
   total: number;
   usdTotal?: number;
   items: OrderItemPayload[];
-  channel: "mercado_pago" | "paypal" | "whatsapp" | "email_registration";
+  channel: "mercado_pago" | "paypal" | "whatsapp" | "email_registration" | "yape" | "plin" | "transferencia" | string;
   status: string;
   discountAmount?: number;
   discountReason?: string | null;
@@ -61,7 +61,7 @@ export function getTransporter(): Transporter | null {
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
   const port = Number(process.env.SMTP_PORT || 587);
   const user = process.env.SMTP_USER || "leoch5829@gmail.com";
-  const rawPass = process.env.SMTP_PASS || "bwnqzjkjjwbvrtym";
+  const rawPass = process.env.SMTP_PASS || "";
   const pass = rawPass.replace(/\s+/g, "");
 
   if (!user || !pass || user.includes("tu-correo") || pass.includes("tu-contrasena")) {
@@ -103,7 +103,7 @@ export async function sendEmailWithFallback(options: EmailSendOptions): Promise<
   error?: string;
 }> {
   const user = process.env.SMTP_USER || "leoch5829@gmail.com";
-  const rawPass = process.env.SMTP_PASS || "bwnqzjkjjwbvrtym";
+  const rawPass = process.env.SMTP_PASS || "";
   const pass = rawPass.replace(/\s+/g, "");
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
   const resendApiKey = process.env.RESEND_API_KEY?.trim();
@@ -141,6 +141,10 @@ export async function sendEmailWithFallback(options: EmailSendOptions): Promise<
     } catch {
       isResendKeyActive = false;
     }
+  }
+
+  if (!pass) {
+    return { success: false, error: "SMTP_PASS no está configurado en las variables de entorno." };
   }
 
   // Strategy chain for SMTP
@@ -225,7 +229,7 @@ export async function sendEmailWithFallback(options: EmailSendOptions): Promise<
  */
 export async function diagnoseEmailStrategies(): Promise<Record<string, { ok: boolean; message: string }>> {
   const user = process.env.SMTP_USER || "leoch5829@gmail.com";
-  const rawPass = process.env.SMTP_PASS || "bwnqzjkjjwbvrtym";
+  const rawPass = process.env.SMTP_PASS || "";
   const pass = rawPass.replace(/\s+/g, "");
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
   const resendApiKey = process.env.RESEND_API_KEY?.trim();

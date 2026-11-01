@@ -1,294 +1,251 @@
 import React from 'react';
-import { useCart } from '../context/CartContext.tsx';
-import { ProductCategory } from '../types.ts';
-import { MessageCircle, Lock, Globe, ShoppingBag, ExternalLink, Headphones } from 'lucide-react';
-import { WHATSAPP_NUMBER, MERCADO_LIBRE_URL } from '../products.ts';
-import { UpClicLogo } from './UpClicLogo.tsx';
+import {
+  ShieldCheck,
+  MessageCircle,
+  Lock,
+  ExternalLink,
+  Settings
+} from 'lucide-react';
+import { WHATSAPP_NUMBER, WHATSAPP_DISPLAY, INSTAGRAM_URL, INSTAGRAM_DISPLAY, MERCADO_LIBRE_URL } from '../products';
+import { useCart, HelpSection } from '../context/CartContext';
+import { ProductCategory } from '../types';
+import { UpClicLogo } from './UpClicLogo';
 
-interface FooterProps {
-  onOpenHelpModal: (topic: string) => void;
-  onOpenAdminOrders?: () => void;
-}
+export const Footer: React.FC = () => {
+  const { setSelectedCategory, setActiveHelpSection, goToHome, goToAdmin } = useCart();
 
-export const Footer: React.FC<FooterProps> = ({ onOpenHelpModal }) => {
-  const { setActiveCategory, navigateToHome, currentPath, currency, language, setIsRegionModalOpen, t } = useCart();
+  const handleCategoryLink = (cat: ProductCategory) => {
+    setSelectedCategory(cat);
+    document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-  const handleCategory = (category: ProductCategory) => {
-    setActiveCategory(category);
-    if (currentPath !== '/') {
-      navigateToHome();
-    }
-    const el = document.getElementById('catalogo-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handlePolicyLink = (section: HelpSection) => {
+    setActiveHelpSection(section);
   };
 
   return (
-    <footer id="main-footer" className="bg-[#0B1F3A] text-slate-300 pt-12 sm:pt-16 pb-12 border-t border-[#173256] font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Pre-Footer Bento Advisory Card */}
-        <div className="mb-12 p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-[#102a4c] to-[#0f2544] border border-[#1e3f6d] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-[#0078d4] text-white flex items-center justify-center shrink-0 shadow-xs">
-              <Headphones className="w-5 h-5" />
+    <footer className="bg-[#0B1F3A] text-slate-300 border-t border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+          {/* Brand Column */}
+          <div className="lg:col-span-4 space-y-4">
+            <div
+              onClick={() => {
+                setSelectedCategory('all');
+                goToHome();
+              }}
+              className="cursor-pointer inline-block"
+            >
+              <UpClicLogo variant="dark" size="md" />
             </div>
-            <div>
-              <h3 className="font-display text-sm sm:text-base font-extrabold text-white leading-snug">
-                ¿Buscas licencias para tu estudio, oficina o suscripciones de cuentas premium?
-              </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Te asesoramos gratis en vivo sobre programas de Diseño, Office, Windows, Productividad y alquiler de Cuentas Premium.
-              </p>
-            </div>
-          </div>
-
-          <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UpClic, necesito asesoría sobre licencias de programas y cuentas premium.')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full md:w-auto px-5 py-3 rounded-2xl bg-[#0078d4] hover:bg-[#0062ad] text-white font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 shrink-0 shadow-xs whitespace-nowrap"
-          >
-            <MessageCircle className="w-4 h-4 shrink-0" />
-            <span>Hablar con un Especialista</span>
-          </a>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#173256]">
-          {/* Brand Info (2 cols on large screens) */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center">
-              <UpClicLogo size="md" variant="full" theme="dark" />
-            </div>
-
-            <p className="text-sm font-bold text-white max-w-sm">
-              {t('digitalLicensesSubtitle')}
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
+              Todo lo digital, en un solo lugar. Tienda online de licencias de software, herramientas de productividad, diseño, inteligencia artificial y entretenimiento digital con atención personalizada.
             </p>
-
-            <p className="text-xs text-slate-300 leading-relaxed max-w-sm font-normal">
-              {t('footerDesc')}
-            </p>
-
-            <div className="pt-1">
-              <a
-                href={MERCADO_LIBRE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#FFE600] hover:bg-[#E5CF00] text-[#2D3277] font-bold text-xs shadow-xs transition-colors cursor-pointer group"
-                title="Visitar tienda oficial de UpClic en Mercado Libre Perú"
-              >
-                <ShoppingBag className="w-3.5 h-3.5 text-[#2D3277]" />
-                <span>Tienda Oficial en Mercado Libre</span>
-                <ExternalLink className="w-3 h-3 text-[#2D3277] opacity-80 group-hover:translate-x-0.5 transition-transform" />
-              </a>
-            </div>
-          </div>
-
-          {/* Col 1: Categorías */}
-          <div>
-            <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
-              {t('categories')}
-            </h4>
-            <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
-              <li>
-                <button
-                  onClick={() => handleCategory('windows')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('windows')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleCategory('office')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('office')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleCategory('combos')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('combos')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleCategory('project-visio')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('projectVisio')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleCategory('apps')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('apps')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleCategory('offers')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('deals')}
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 2: Ayuda & Soporte */}
-          <div>
-            <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
-              {t('helpSection')}
-            </h4>
-            <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
-              <li>
-                <button
-                  onClick={() => onOpenHelpModal('faq')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('faq')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onOpenHelpModal('contact')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('contact')}
-                </button>
-              </li>
-              <li>
+            <div className="pt-2 space-y-1.5 text-xs text-slate-300">
+              <p>
+                <strong className="text-white">WhatsApp:</strong>{' '}
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold"
+                  className="text-[#7DB2FF] hover:underline font-bold"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>WhatsApp UpClic</span>
+                  {WHATSAPP_DISPLAY}
                 </a>
-              </li>
-              <li>
-                <a
-                  href={MERCADO_LIBRE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-yellow-300 hover:text-yellow-200 font-bold"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Mercado Libre</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Legal */}
-          <div>
-            <h4 className="text-xs font-black uppercase text-white tracking-wider mb-4">
-              {t('legalSection')}
-            </h4>
-            <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
-              <li>
-                <button
-                  onClick={() => onOpenHelpModal('terms')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('terms')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onOpenHelpModal('privacy')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('privacy')}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onOpenHelpModal('sales_terms')}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('salesTerms')}
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Single Unified Payment & Security Assurance Bar */}
-        <div className="py-6 border-b border-[#173256] flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-            <div className="flex items-center gap-2">
-              <div className="px-3.5 py-1.5 bg-white rounded-lg border border-slate-700/80 shadow-sm flex items-center justify-center shrink-0">
-                <img
-                  src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                  alt="Mercado Pago"
-                  className="h-6 sm:h-7 w-auto object-contain"
-                  loading="lazy"
-                />
-              </div>
-              <div className="px-3 py-1.5 bg-white rounded-lg border border-slate-700/80 shadow-sm flex items-center justify-center shrink-0">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                  alt="PayPal"
-                  className="h-5 sm:h-6 w-auto object-contain"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white flex items-center justify-center sm:justify-start gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>{language === 'ES' ? 'Pagos procesados y protegidos por Mercado Pago y PayPal' : 'Payments processed and secured by Mercado Pago & PayPal'}</span>
-              </p>
-              <p className="text-[11px] text-slate-400 mt-0.5 font-normal">
-                {language === 'ES' ? 'Transacciones internacionales encriptadas SSL de 256 bits con acreditación inmediata' : '256-bit SSL encrypted international transactions with instant confirmation'}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs font-semibold text-slate-300">
-            <span>PayPal USD</span>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <span>Visa</span>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <span>Mastercard</span>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <span>Yape / Plin</span>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <span>Transferencias</span>
+          {/* Categories Column */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-white">
+              Categorías del Catálogo
+            </h3>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => handleCategoryLink('streaming')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Streaming y Entretenimiento
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryLink('office')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Microsoft Office (365 / 2024 / 2021)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryLink('windows')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Windows (11 / 10 / 8.1)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryLink('ia')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Inteligencia Artificial (Gemini AI)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryLink('diseno')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Diseño y Edición (Canva / CorelDRAW)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryLink('profesional')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Software Profesional y Seguridad
+                </button>
+              </li>
+            </ul>
           </div>
-        </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-medium">
-          <div className="flex flex-wrap items-center gap-3">
-            <p>© {new Date().getFullYear()} UpClic. {t('allRightsReserved')}</p>
+          {/* Trust & Legal Policies Column */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-white">
+              Confianza y Políticas Legales
+            </h3>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('quienes-somos')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Quiénes somos
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('contacto')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Contacto
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('faq')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Preguntas frecuentes
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('garantia')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Política de garantía
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('reembolsos')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Política de cambios y reembolsos
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('terminos')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Términos y condiciones
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handlePolicyLink('privacidad')}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  Política de privacidad
+                </button>
+              </li>
+            </ul>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsRegionModalOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors cursor-pointer text-xs font-semibold"
-              title="Cambiar país, moneda e idioma"
+          {/* Direct Support & Payment Methods Column */}
+          <div className="lg:col-span-2 space-y-4">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-white">
+              Atención Directa
+            </h3>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola UPCLIC, deseo realizar una consulta comercial.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-2.5 px-3.5 rounded-xl bg-[#E8440A] hover:bg-[#d83b01] text-white font-bold text-xs inline-flex items-center justify-center gap-1.5 shadow-sm transition-colors"
             >
-              <Globe className="w-3.5 h-3.5 text-blue-400" />
-              <span>
-                {currency === 'PEN' && '🇵🇪 Perú (S/ PEN)'}
-                {currency === 'COP' && '🇨🇴 Colombia ($ COP)'}
-                {currency === 'MXN' && '🇲🇽 México ($ MXN)'}
-                {currency === 'USD' && '🇺🇸 USA / Global ($ USD)'}
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp Oficial</span>
+            </a>
+
+            <div className="space-y-1.5 text-xs text-slate-400 pt-1">
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-white transition-colors"
+              >
+                <span>Instagram: {INSTAGRAM_DISPLAY}</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+              <a
+                href={MERCADO_LIBRE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-white transition-colors"
+              >
+                <span>Tienda Mercado Libre</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <div className="pt-2 border-t border-slate-800">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                Medios de Pago Disponibles
               </span>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Mercado Pago (Yape, Tarjetas de crédito/débito y PagoEfectivo)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Copyright & Admin Link */}
+        <div className="mt-10 pt-6 border-t border-slate-800/90 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-[#7DB2FF]" />
+            <span>
+              © {new Date().getFullYear()} UPCLIC. Todos los derechos reservados.
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
+              <Lock className="w-3 h-3 text-emerald-400" /> Compra segura SSL
+            </span>
+            <button
+              onClick={goToAdmin}
+              className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+              title="Acceso restringido para administradores"
+            >
+              <Settings className="w-3 h-3" />
+              <span>Admin</span>
             </button>
-            <p className="flex items-center gap-1 text-slate-400">
-              <span>{t('legalNotice')}</span>
-            </p>
           </div>
         </div>
       </div>

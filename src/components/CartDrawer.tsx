@@ -1,301 +1,184 @@
-import { formatPrice } from '../products.ts';
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext.tsx';
-import { X, Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Tag, CheckCircle2, AlertCircle } from 'lucide-react';
-
+import {
+  X,
+  Trash2,
+  Plus,
+  Minus,
+  ShoppingBag,
+  ArrowRight,
+  ShieldCheck,
+  Tag,
+  CheckCircle2,
+  MessageCircle
+} from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { WHATSAPP_NUMBER } from '../products';
 
 export const CartDrawer: React.FC = () => {
   const {
     items,
     isCartOpen,
     setIsCartOpen,
-    removeItem,
+    removeFromCart,
     updateQuantity,
-    setQuantity,
-    clearCart,
-    totalQuantity,
-    subtotal,
-    hasDiscount,
-    discountRate,
-    discountAmount,
-    total,
-    discountReason,
-    isMultiItemDiscount,
-    isCouponApplied,
-    appliedCoupon,
+    cartTotals,
+    goToCheckout,
+    couponCode,
     applyCoupon,
     removeCoupon,
-    couponFeedback,
-    navigateToCheckout,
-    navigateToPayPal,
-    t,
-    language,
-    getProductName,
-    getDurationLabel
+    formatPrice
   } = useCart();
 
-  const [inputCoupon, setInputCoupon] = useState('');
-
-  // Check if PayPal is allowed for current cart
-  const isPayPalAllowed = items.length > 0 && !items.some(it => {
-    const gateways = it.product?.acceptedPaymentGateways;
-    return Boolean(gateways && !gateways.includes('paypal'));
-  });
-
-  // Only recommend coupon if the cart meets the requirements:
-  // Not already applied, no multi-item 10% discount already active, and has at least 1 product >= S/ 40.00
-  const isEligibleForCoupon =
-    !appliedCoupon &&
-    !isMultiItemDiscount &&
-    true;
+  const [couponInput, setCouponInput] = useState('');
+  const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   if (!isCartOpen) return null;
 
-  const handleApply = (e: React.FormEvent) => {
+  const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputCoupon.trim()) return;
-    applyCoupon(inputCoupon);
-    setInputCoupon('');
+    const res = applyCoupon(couponInput);
+    setCouponFeedback({
+      type: res.success ? 'success' : 'error',
+      text: res.message
+    });
+    if (res.success) {
+      setCouponInput('');
+    }
+  };
+
+  const whatsappCartMessage = () => {
+    const lines = items.map(
+      (i) =>
+        `• ${i.quantity}x ${i.product.name}${i.variantName ? ` (${i.variantName})` : ''} - ${formatPrice(
+          (i.unitPrice ?? i.product.price) * i.quantity
+        )}`
+    );
+    return `Hola UPCLIC, tengo una consulta sobre mi carrito de compras:\n\n${lines.join(
+      '\n'
+    )}\n\n*Total estimado: ${formatPrice(cartTotals.total)}*`;
   };
 
   return (
-    <div id="cart-drawer-overlay" className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs transition-opacity"
         onClick={() => setIsCartOpen(false)}
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
-        <div className="w-screen max-w-md bg-white shadow-lg flex flex-col h-full border-l border-slate-200/80">
-          {/* Drawer Header */}
-          <div className="px-5 py-4 sm:px-6 bg-white border-b border-slate-200/80 flex items-center justify-between">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between">
+          {/* Header */}
+          <div className="p-5 bg-[#0B1F3A] text-white flex items-center justify-between border-b border-slate-800">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#0078d4]/10 text-[#0078d4] flex items-center justify-center border border-[#0078d4]/20">
-                <ShoppingBag className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-lg bg-[#1668E3] flex items-center justify-center text-white">
+                <ShoppingBag className="w-5 h-5" />
               </div>
-              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
-                {t('myOrder')} <span className="text-slate-400 font-semibold text-sm font-mono">({totalQuantity} {totalQuantity === 1 ? t('item') : t('items')})</span>
-              </h2>
+              <div>
+                <h2 className="font-bold text-base leading-tight">Tu Carrito de Compras</h2>
+                <p className="text-xs text-slate-300">
+                  {cartTotals.totalQuantity}{' '}
+                  {cartTotals.totalQuantity === 1 ? 'producto seleccionado' : 'productos seleccionados'}
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              {items.length > 0 && (
-                <button
-                  type="button"
-                  onClick={clearCart}
-                  className="text-[11px] font-bold text-slate-400 hover:text-red-600 transition-colors cursor-pointer px-2 py-1 rounded-md hover:bg-red-50"
-                  title={t('clear')}
-                >
-                  {t('clear')}
-                </button>
-              )}
-              <button
-                onClick={() => setIsCartOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer border border-transparent hover:border-slate-200"
-                aria-label="Cerrar panel de pedido"
-              >
-                <X className="w-4.5 h-4.5" />
-              </button>
-            </div>
+            <button
+              onClick={() => setIsCartOpen(false)}
+              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              aria-label="Cerrar carrito"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Dynamic 10% Multi-License Discount Progress Indicator */}
-          {items.length > 0 && (
-            <div className={`px-5 py-2.5 border-b text-xs transition-colors ${
-              totalQuantity >= 2
-                ? 'bg-emerald-50/80 border-emerald-200/80 text-emerald-800'
-                : 'bg-[#f8fafc] border-slate-200/80 text-slate-700'
-            }`}>
-              <div className="flex items-center justify-between gap-2 mb-1.5">
-                <span className="font-bold text-[11px] flex items-center gap-1.5">
-                  {totalQuantity >= 2 ? (
-                    <>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>¡10% de descuento automático activado!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Tag className="w-3.5 h-3.5 text-[#0078d4] shrink-0" />
-                      <span>Agrega <strong>1 licencia más</strong> para activar <strong>10% DCTO</strong></span>
-                    </>
-                  )}
-                </span>
-                <span className="font-mono text-[10px] font-extrabold tabular-nums">
-                  {Math.min(totalQuantity, 2)}/2
-                </span>
-              </div>
-              <div className="w-full h-1.5 rounded-full bg-slate-200/80 overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    totalQuantity >= 2 ? 'w-full bg-emerald-500' : 'w-1/2 bg-[#0078d4]'
-                  }`}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Cart Item List */}
-          <div className="flex-1 overflow-y-auto p-5 sm:p-6 divide-y divide-slate-100">
+          {/* Cart Items */}
+          <div className="flex-1 overflow-y-auto p-5 divide-y divide-slate-100">
             {items.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-4">
-                  <ShoppingBag className="w-8 h-8 stroke-[1.5]" />
+              <div className="h-full flex flex-col items-center justify-center text-center py-12">
+                <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-4">
+                  <ShoppingBag className="w-8 h-8" />
                 </div>
-                <h3 className="font-extrabold text-slate-800 text-base">{t('emptyCartTitle')}</h3>
-                <p className="text-xs text-slate-500 mt-1 max-w-xs leading-relaxed">
-                  {t('emptyCartSub')}
+                <h3 className="text-base font-bold text-[#0B1F3A] mb-1">
+                  Tu carrito está vacío
+                </h3>
+                <p className="text-xs text-slate-500 max-w-xs mb-6 leading-relaxed">
+                  Explora nuestro catálogo de Microsoft Office, Windows, Diseño, IA y Streaming para agregar productos.
                 </p>
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="mt-5 px-5 py-2.5 rounded-xl bg-[#0078d4] text-white text-xs font-bold hover:bg-[#0062ad] shadow-xs hover:shadow-md transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#1668E3] hover:bg-blue-700 text-white font-bold text-xs transition-colors cursor-pointer"
                 >
-                  {t('exploreProductsBtn')}
+                  Explorar Catálogo
                 </button>
               </div>
             ) : (
-              items.map(item => {
-                const itemUnitPrice = item.unitPrice ?? item.product.price;
-                const itemSubtotal = itemUnitPrice * item.quantity;
-                const itemKey = item.id || (item.selectedVariant ? `${item.product.id}-${item.selectedVariant}` : item.product.id);
-                const displayVariantName = item.variantName || (
-                  item.selectedVariant === 'oem' ? t('licenseTypeOEM') || 'OEM Key' :
-                  item.selectedVariant === 'retail' ? t('licenseTypeRetail') || 'Retail Key' : undefined
-                );
-                const itemName = getProductName(item.product);
-                const itemDuration = getDurationLabel(item.product.duration);
+              items.map((item) => {
+                const itemKey = item.id || item.product.id;
+                const unitPrice = item.unitPrice ?? item.product.price;
                 return (
-                  <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5 items-start">
-                    {/* 1:1 Image */}
-                    <div className="w-16 h-16 rounded-xl bg-slate-50/80 border border-slate-200/80 p-1.5 shrink-0 flex items-center justify-center mt-0.5">
+                  <div key={itemKey} className="py-4 first:pt-0 last:pb-0 flex gap-3.5">
+                    <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-200/80 p-1.5 flex items-center justify-center shrink-0">
                       <img
                         src={item.product.imageUrl}
-                        alt={itemName}
-                        referrerPolicy="no-referrer"
+                        alt={item.product.name}
+                        className="max-h-full max-w-full object-contain"
                         onError={(e) => {
-                          e.currentTarget.src = item.product.fallbackImage;
+                          const target = e.currentTarget;
+                          if (item.product.fallbackImage && target.src !== item.product.fallbackImage) {
+                            target.src = item.product.fallbackImage;
+                          }
                         }}
-                        className="w-full h-full object-contain"
                       />
                     </div>
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug" title={itemName}>
-                            {itemName}
-                          </h4>
-                          {displayVariantName && (
-                            <span className="inline-block mt-0.5 text-[10px] font-bold text-[#0078d4]">
-                              {displayVariantName}
-                            </span>
-                          )}
-                        </div>
+                        <h4 className="text-xs sm:text-sm font-bold text-[#0B1F3A] leading-snug line-clamp-2">
+                          {item.product.name}
+                        </h4>
                         <button
-                          type="button"
-                          onClick={() => removeItem(itemKey)}
-                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                          title={t('removeProduct') || 'Remove product'}
-                          aria-label={t('removeProduct') || 'Remove product'}
+                          onClick={() => removeFromCart(itemKey)}
+                          className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer shrink-0"
+                          title="Eliminar del carrito"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
 
-                      <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                        {language === 'ES' ? 'Unitario' : 'Unit'}: {formatPrice(itemUnitPrice)} · {itemDuration}
-                      </div>
+                      {item.variantName && (
+                        <span className="inline-block mt-1 text-[10px] font-bold text-[#1668E3] bg-blue-50 px-2 py-0.5 rounded-md">
+                          {item.variantName}
+                        </span>
+                      )}
 
-                      {/* Quantity & Price Row */}
-                      <div className="mt-2.5 flex items-center justify-between gap-2">
-                        {/* Editable Stepper */}
-                        {(() => {
-                          const itemMaxStock = typeof item.product?.stock === 'number' && item.product.stock > 0
-                            ? item.product.stock
-                            : 99;
-                          const isAtMax = item.quantity >= itemMaxStock;
+                      <p className="text-[11px] text-slate-500 mt-0.5">{item.product.duration}</p>
 
-                          return (
-                            <div className="flex items-center gap-1.5">
-                              <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
-                                <button
-                                  type="button"
-                                  onClick={() => updateQuantity(itemKey, -1)}
-                                  className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-700 hover:text-slate-900 transition-colors cursor-pointer font-bold active:scale-95"
-                                  aria-label={t('decrease') || 'Decrease'}
-                                  title={item.quantity === 1 ? (t('removeProduct') || 'Remove product') : (t('decrease') || 'Decrease')}
-                                >
-                                  <Minus className="w-3 h-3" />
-                                </button>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max={itemMaxStock}
-                                  value={item.quantity}
-                                  onChange={(e) => {
-                                    const val = parseInt(e.target.value, 10);
-                                    if (!isNaN(val)) {
-                                      setQuantity(itemKey, Math.min(itemMaxStock, Math.max(1, val)));
-                                    }
-                                  }}
-                                  onBlur={(e) => {
-                                    const val = parseInt(e.target.value, 10);
-                                    if (isNaN(val) || val < 1) {
-                                      setQuantity(itemKey, 1);
-                                    } else if (val > itemMaxStock) {
-                                      setQuantity(itemKey, itemMaxStock);
-                                    }
-                                  }}
-                                  className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0066FF] rounded py-0.5 tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                  aria-label={t('editQuantity') || 'Edit quantity'}
-                                  title={t('clickToEdit') || 'Click to edit quantity'}
-                                />
-                                <button
-                                  type="button"
-                                  disabled={isAtMax}
-                                  onClick={() => updateQuantity(itemKey, 1)}
-                                  className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors font-bold ${
-                                    isAtMax
-                                      ? 'text-slate-300 bg-slate-100 cursor-not-allowed'
-                                      : 'hover:bg-white text-slate-700 hover:text-slate-900 cursor-pointer active:scale-95'
-                                  }`}
-                                  aria-label={t('increase') || 'Increase'}
-                                  title={isAtMax ? `Stock máximo alcanzado (${itemMaxStock})` : (t('increase') || 'Increase')}
-                                >
-                                  <Plus className="w-3 h-3" />
-                                </button>
-                              </div>
-                              {isAtMax && item.product?.stock && (
-                                <span className="text-[10px] font-bold text-amber-700">
-                                  Máx. {itemMaxStock}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })()}
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="inline-flex items-center border border-slate-200 rounded-lg bg-slate-50">
+                          <button
+                            onClick={() => updateQuantity(itemKey, item.quantity - 1)}
+                            className="p-1.5 text-slate-600 hover:text-[#0B1F3A] cursor-pointer"
+                            aria-label="Disminuir cantidad"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="px-2.5 text-xs font-bold text-[#0B1F3A]">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(itemKey, item.quantity + 1)}
+                            className="p-1.5 text-slate-600 hover:text-[#0B1F3A] cursor-pointer"
+                            aria-label="Aumentar cantidad"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
 
-                        {/* Subtotal */}
                         <div className="text-right">
-                          <span className="text-[10px] text-slate-400 block font-normal leading-none mb-0.5">{t('subtotal')}</span>
-                          <span className="font-black text-sm text-slate-900 tabular-nums">
-                            {formatPrice(itemSubtotal)}
+                          <span className="text-sm font-extrabold text-[#0B1F3A]">
+                            {formatPrice(unitPrice * item.quantity)}
                           </span>
                         </div>
-                      </div>
-
-                      {/* Action footer for item */}
-                      <div className="mt-1.5 flex items-center justify-between text-[11px]">
-                        <span className="text-[10px] text-slate-400">
-                          {t('clickToEdit')}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(itemKey)}
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          <span>{t('remove') || (language === 'ES' ? 'Eliminar' : 'Remove')}</span>
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -304,162 +187,100 @@ export const CartDrawer: React.FC = () => {
             )}
           </div>
 
-          {/* Drawer Footer with Promo Code, Totals and Checkout CTA */}
+          {/* Footer Totals & Actions */}
           {items.length > 0 && (
-            <div className="p-5 sm:p-6 bg-slate-50/90 border-t border-slate-200/80">
-              {/* Promo Code Section */}
-              <div className="mb-4 pb-4 border-b border-slate-200">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-[#0066FF]" />
-                    {t('hasCouponPrompt')}
-                  </span>
-                </div>
-
-                {appliedCoupon ? (
-                  <div className="bg-emerald-50/90 border border-emerald-200 rounded-lg p-2.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <div>
-                        <span className="font-mono font-black text-xs text-emerald-900 bg-white px-2 py-0.5 rounded border border-emerald-300">
-                          {appliedCoupon}
-                        </span>
-                        <span className="text-[11px] text-emerald-700 ml-1.5 font-medium">
-                          -{Math.round(discountRate * 100)}%
-                        </span>
-                      </div>
+            <div className="p-5 bg-slate-50 border-t border-slate-200 space-y-4">
+              {/* Coupon Box */}
+              <div>
+                {couponCode ? (
+                  <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl text-xs">
+                    <div className="flex items-center gap-1.5 text-emerald-800 font-bold">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>Cupón {couponCode} activo</span>
                     </div>
                     <button
-                      onClick={removeCoupon}
-                      className="text-xs text-slate-400 hover:text-red-600 font-bold p-1 cursor-pointer"
-                      title={t('removeCoupon') || 'Remove coupon'}
+                      onClick={() => {
+                        removeCoupon();
+                        setCouponFeedback(null);
+                      }}
+                      className="text-xs font-bold text-rose-600 hover:underline cursor-pointer"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      Quitar
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleApply} className="flex gap-2">
-                    <input
-                      id="promo-code-input-drawer"
-                      type="text"
-                      value={inputCoupon}
-                      onChange={e => setInputCoupon(e.target.value)}
-                      placeholder={t('couponCode')}
-                      className="flex-1 px-3 py-1.5 text-xs uppercase font-mono rounded-lg border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-[#0066FF]"
-                    />
+                  <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value)}
+                        placeholder="Código de cupón (opcional)"
+                        className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#1668E3]"
+                      />
+                    </div>
                     <button
                       type="submit"
-                      className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
+                      className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs transition-colors cursor-pointer"
                     >
-                      {t('apply')}
+                      Aplicar
                     </button>
                   </form>
                 )}
-
-                {/* Feedback message */}
                 {couponFeedback && (
-                  <div
-                    className={`mt-2 text-[11px] p-2.5 rounded-lg flex items-start gap-2 transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
-                      couponFeedback.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                        : couponFeedback.type === 'info'
-                        ? 'bg-blue-50 text-blue-800 border border-blue-200'
-                        : 'bg-red-50 text-red-700 border border-red-200 shadow-xs'
+                  <p
+                    className={`text-[11px] mt-1 font-medium ${
+                      couponFeedback.type === 'success' ? 'text-emerald-700' : 'text-rose-600'
                     }`}
                   >
-                    {couponFeedback.type === 'error' ? (
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-600" />
-                    ) : (
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />
-                    )}
-                    <span className="leading-snug">{couponFeedback.message}</span>
-                  </div>
+                    {couponFeedback.text}
+                  </p>
                 )}
               </div>
 
-              {/* Totals Breakdown */}
-              <div className="space-y-2 text-xs font-medium text-slate-600 mb-4">
-                <div className="flex justify-between items-baseline py-0.5">
-                  <span className="font-semibold text-slate-600">{t('subtotal')}:</span>
-                  <span className="font-display font-bold text-slate-800 tabular-nums text-sm tracking-tight">{formatPrice(subtotal)}</span>
+              {/* Subtotals & Total */}
+              <div className="space-y-1.5 text-xs border-t border-slate-200/80 pt-3">
+                <div className="flex justify-between text-slate-600">
+                  <span>Subtotal:</span>
+                  <span className="font-semibold">{formatPrice(cartTotals.subtotal)}</span>
                 </div>
-
-                {hasDiscount && (
-                  <div className="flex justify-between items-baseline py-0.5 text-emerald-600 font-semibold text-xs">
-                    <span>
-                      {isMultiItemDiscount
-                        ? (language === 'ES' ? 'Descuento 10%' : 'Discount 10%')
-                        : `${t('discount')} ${Math.round(discountRate * 100)}%`}:
-                    </span>
-                    <span className="font-display tabular-nums font-bold text-sm tracking-tight">-{formatPrice(discountAmount)}</span>
+                {cartTotals.hasDiscount && (
+                  <div className="flex justify-between text-emerald-700 font-semibold">
+                    <span>Descuento ({cartTotals.discountReason}):</span>
+                    <span>- {formatPrice(cartTotals.discountAmount)}</span>
                   </div>
                 )}
-
-                <div className="flex justify-between items-baseline text-base font-extrabold text-slate-950 pt-2.5 border-t border-slate-200">
-                  <span>TOTAL:</span>
-                  <span className="font-display text-[#0078d4] text-xl tabular-nums font-extrabold tracking-tight">{formatPrice(total)}</span>
+                <div className="flex justify-between items-baseline text-base font-extrabold text-[#0B1F3A] pt-1">
+                  <span>Total a pagar:</span>
+                  <span className="text-xl">{formatPrice(cartTotals.total)}</span>
                 </div>
               </div>
 
-              {/* Checkout Buttons */}
+              {/* Action Buttons */}
               <div className="space-y-2">
                 <button
-                  id="cart-go-to-checkout-btn"
-                  onClick={navigateToCheckout}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#d83b01] hover:bg-[#b83201] text-white font-extrabold text-sm shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                  onClick={goToCheckout}
+                  className="w-full py-3.5 px-5 rounded-xl bg-[#E8440A] hover:bg-[#d83b01] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                 >
-                  <span>{t('proceedToCheckout')}</span>
+                  <span>Continuar al Pago Seguro</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
-                {isPayPalAllowed && (
-                  <button
-                    id="cart-go-to-paypal-btn"
-                    onClick={navigateToPayPal}
-                    className="w-full py-2.5 px-4 rounded-xl bg-[#FFC439] hover:bg-[#F4B400] text-[#003087] font-extrabold text-xs shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 border border-amber-300"
-                  >
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                      alt="PayPal"
-                      className="h-4 w-auto object-contain"
-                    />
-                    <span>{language === 'ES' ? 'Pagar con PayPal ($ USD)' : 'Pay with PayPal ($ USD)'}</span>
-                  </button>
-                )}
-              </div>
-
-              <div className="mt-3 flex items-center justify-center gap-2">
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200/80 shadow-2xs">
-                  <span className="text-[10px] font-semibold text-slate-500">{language === 'ES' ? 'Aceptamos:' : 'Accepted:'}</span>
-                  <img
-                    src="https://woocommerce.com/wp-content/uploads/2021/05/fb-mercado-pago-v2@2x.png"
-                    alt="Mercado Pago"
-                    className="h-3.5 w-auto object-contain"
-                  />
-                  {isPayPalAllowed && (
-                    <>
-                      <span className="text-slate-300">|</span>
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                        alt="PayPal"
-                        className="h-3 w-auto object-contain"
-                      />
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-400">
-                <button
-                  onClick={clearCart}
-                  className="hover:text-red-600 transition-colors cursor-pointer"
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappCartMessage())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-[#0B1F3A] border border-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
                 >
-                  {t('clearCart')}
-                </button>
-                <span className="flex items-center gap-1 text-slate-600 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  {t('securePurchaseGuarantee')}
-                </span>
+                  <MessageCircle className="w-4 h-4 text-emerald-600" />
+                  <span>Consultar este carrito por WhatsApp</span>
+                </a>
+              </div>
+
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 text-center">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#1668E3] shrink-0" />
+                <span>Pagos con Mercado Pago (Yape, Tarjeta y PagoEfectivo)</span>
               </div>
             </div>
           )}
